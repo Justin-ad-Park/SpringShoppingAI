@@ -9,6 +9,7 @@ export const elements = {
   lessonGoal: document.getElementById('goal'),
   sourceDetails: document.getElementById('source-details'),
   sourceLocation: document.getElementById('source'),
+  sourceFiles: document.getElementById('source-files'),
   sourceCode: document.getElementById('source-code'),
   fixtureSelect: document.getElementById('fixture'),
   experimentSelect: document.getElementById('experiment'),

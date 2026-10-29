@@ -16,25 +16,25 @@ Spring-AI-Tutor/
     test/test.sh             # 테스트 공통 실행기
   src/main/java/com/example/shopping/tutor/
     TutorApplication.java
-    lesson/                  # 기능별 Cases 클래스, 58개 @TutorCase 메소드
-    support/                 # 모델 설정, 실행 context, fixture, 교육용 모델, Advisor
-    web/                     # catalog, REST/SSE, 파일 검증, 에러 경계
+    lesson/l00setup~l14multimodal/  # 단원별 학습 코드, README, 필요한 support
+    platform/config/              # 키·URL·모드 조립
+    platform/web/adapter/         # 58개 caseId를 학습 메소드에 연결
+    platform/execution/           # 입력 검증·턴별 상태·실행 상한
+    platform/observation/         # 모델 요청·usage 관찰
+    platform/stub/                # 준비된 응답 모델
   src/main/resources/
     application.yml
     knowledge/               # 로컬 가상 정책 TXT/JSON
     static/tutor/            # 독립 웹 학습실
   src/test/java/com/example/shopping/tutor/
-    CurriculumTest.java
-    CoreBehaviorTest.java
-    WebApiTest.java
-    ProviderContractTest.java
-    MediaProviderContractTest.java
-    McpIntegrationTest.java
-    PolicyMcpServerTest.java
-    LiveEvaluationTest.java
+    lesson/l00setup~l14multimodal/  # 단원 직접 테스트와 관련 계약·LIVE·MCP 테스트
+    platform/web/                 # 전체 catalog·세션·REST/SSE 회귀
+    platform/stub/                # 로컬 provider 계약 테스트
+    platform/support/             # 테스트 실행 fixture
+
 ```
 
-초급자가 읽기 쉽도록 단원별 패키지를 다시 깊게 나누는 대신 `lesson` 아래 기능별 클래스로 구성했다. 각 메소드의 annotation에 caseId·목표·예시·선택 기능을 선언하며 catalog와 웹 목록이 그 선언을 사용한다. 외부 입력으로 임의 클래스·메소드를 실행하지 않는다.
+단원별 핵심 코드와 준비 자료는 같은 폴더에 모았다. 웹 연결 annotation은 platform.web.adapter에만 있고 학습 메소드는 웹 실행 객체를 받지 않는다. 구체적인 읽는 순서는 [학습 코드 안내](08-learning-code-guide.md)를 참고한다.
 
 ## 실행 케이스 상태
 
@@ -54,7 +54,7 @@ native schema·pgvector·MCP 서버·멀티모달은 설정 및 기능을 지원
 
 ## 테스트의 구체화
 
-각 케이스마다 구조가 같은 클래스를 복제하는 대신 `CurriculumTest`의 dynamic test로 caseId별 실행과 입력 경계를 보고한다. 도구·금액·파싱·세션·취소·저장소·정책 필터의 실질적인 경계 테스트는 `CoreBehaviorTest` 등에 분리했다. MCP 3개 원격 케이스와 서버 노출은 별도 실제 서버 테스트에서 실행한다.
+각 케이스마다 구조가 같은 클래스를 복제하는 대신 `CurriculumTest`의 dynamic test로 caseId별 실행과 입력 경계를 보고한다. 도구·금액·파싱·세션·취소·저장소·정책 필터의 실질적인 경계 테스트는 단원 패키지의 `*LessonTest`에 분리했다. MCP 3개 원격 케이스와 서버 노출은 별도 실제 서버 테스트에서 실행한다.
 
 ProviderContractTest는 실제 OpenAI adapter에 로컬 HTTP 서버를 연결해 구조화 변환, tool call 왕복, SSE, vision 메시지 직렬화를 검증한다. MediaProviderContractTest는 이미지·전사·TTS·moderation의 실제 adapter 계약을 외부 비용 없이 검증한다.
 

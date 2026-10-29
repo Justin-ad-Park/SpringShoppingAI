@@ -22,8 +22,9 @@ export async function loadLearningEnvironment() {
   return { lessons, status };
 }
 
-export function fetchLessonSource(caseId) {
-  return requestJson(`/api/tutor/lessons/${caseId}/source`);
+export function fetchLessonSource(caseId, file) {
+  const query = file ? `?file=${encodeURIComponent(file)}` : '';
+  return requestJson(`/api/tutor/lessons/${caseId}/source${query}`);
 }
 
 export function deleteConversation(caseId, conversationId) {

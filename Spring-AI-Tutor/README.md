@@ -36,6 +36,8 @@ cp Spring-AI-Tutor/.env.example Spring-AI-Tutor/.env
 
 포트 변경은 `.env`의 `TUTOR_PORT`, 빌드 생략은 `--skip-build`를 사용합니다. 실행 로그와 PID는 `Spring-AI-Tutor/.run/`에 저장합니다. 포트가 사용 중이면 다른 서비스를 종료하지 않고 실패합니다.
 
+단원별 파일과 테스트를 찾으려면 [학습 코드 안내](docs/08-learning-code-guide.md)를 참고하세요. 각 단원 폴더의 README와 웹 소스 보기에 읽는 순서가 있습니다.
+
 ## 추천 학습 순서
 
 1. 00~02: 첫 호출 → 역할·프롬프트 → 구조화 응답.

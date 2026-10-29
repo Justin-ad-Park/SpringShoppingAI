@@ -17,7 +17,8 @@ dependencies {
 
 // 웹 학습실에는 허용된 Java 소스만 패키징한다. 임의 로컬 파일 조회 API는 두지 않는다.
 tasks.named('processResources') {
-    from('src/main/java') { include '**/*.java'; into 'lesson-sources' }
+    from('src/main/java') { include '**/*.java', '**/README.md'; into 'lesson-sources' }
+    from('src/test/java') { include 'com/example/shopping/tutor/lesson/**/*.java'; into 'lesson-test-sources' }
 }
 
 tasks.named('test') { useJUnitPlatform { excludeTags 'live', 'mcp', 'live-mcp' } }

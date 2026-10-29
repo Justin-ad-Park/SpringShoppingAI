@@ -127,3 +127,16 @@ export function updateExecutionControls(isRunning, isStreamingLesson) {
   elements.sendButton.hidden = isRunning && isStreamingLesson;
 
 }
+
+/** 단원 폴더를 읽는 순서대로 보여 준다. 테스트와 support도 같은 화면에서 확인한다. */
+export function renderLearningFiles(lesson, selectedPath, onSelectFile) {
+  elements.sourceFiles.replaceChildren();
+  lesson.files.forEach((file, index) => {
+    const button = createElement('button',
+      `${index + 1}. [${file.role}] ${file.label}`,
+      file.path === selectedPath ? 'active' : '');
+    button.type = 'button';
+    button.addEventListener('click', () => onSelectFile(file.path));
+    elements.sourceFiles.append(button);
+  });
+}

@@ -29,18 +29,19 @@ public final class ShoppingMcpTestServer implements AutoCloseable {
 
         Path log = Path.of("build/reports", logFilename);
         Files.createDirectories(log.getParent());
-        Path jar = Path.of("../shopping-mcp/build/libs/shopping-mcp-0.1.0.jar")
-                .toAbsolutePath()
-                .normalize();
+        Path jar =
+                Path.of("../shopping-mcp/build/libs/shopping-mcp-0.1.0.jar")
+                        .toAbsolutePath()
+                        .normalize();
 
-        ProcessBuilder builder = new ProcessBuilder(
-                "java", "-jar", jar.toString(), "--server.port=" + port);
+        ProcessBuilder builder =
+                new ProcessBuilder("java", "-jar", jar.toString(), "--server.port=" + port);
         // MCP 서버 자체는 API 키를 필요로 하지 않는다.
         builder.environment().remove("OPENAI_API_KEY");
         builder.redirectErrorStream(true).redirectOutput(log.toFile());
 
-        ShoppingMcpTestServer server = new ShoppingMcpTestServer(
-                builder.start(), "http://127.0.0.1:" + port);
+        ShoppingMcpTestServer server =
+                new ShoppingMcpTestServer(builder.start(), "http://127.0.0.1:" + port);
         try {
             server.waitUntilReady();
             return server;
@@ -55,12 +56,11 @@ public final class ShoppingMcpTestServer implements AutoCloseable {
     }
 
     private void waitUntilReady() throws Exception {
-        HttpClient http = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(1))
-                .build();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/actuator/health"))
-                .timeout(Duration.ofSeconds(1))
-                .build();
+        HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(1)).build();
+        HttpRequest request =
+                HttpRequest.newBuilder(URI.create(baseUrl + "/actuator/health"))
+                        .timeout(Duration.ofSeconds(1))
+                        .build();
 
         for (int attempt = 0; attempt < 80; attempt++) {
             if (!process.isAlive()) {
@@ -68,7 +68,8 @@ public final class ShoppingMcpTestServer implements AutoCloseable {
             }
 
             try {
-                if (http.send(request, HttpResponse.BodyHandlers.discarding()).statusCode() == 200) {
+                if (http.send(request, HttpResponse.BodyHandlers.discarding()).statusCode()
+                        == 200) {
                     return;
                 }
             } catch (IOException notReady) {

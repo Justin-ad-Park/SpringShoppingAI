@@ -4,6 +4,7 @@ import { elements } from './dom.js';
 import {
   renderLessonNavigation,
   showSelectedLesson,
+  renderLearningFiles,
   renderRunDiagnostics,
   updateExecutionControls,
 } from './lesson-view.js';
@@ -25,6 +26,8 @@ import {
 const state = {
   lessons: [],
   selectedLesson: null,
+  selectedSource: null,
+  sourceRequestVersion: 0,
   conversationId: crypto.randomUUID(),
   isRunning: false,
   abortController: null,
@@ -47,7 +50,10 @@ function selectLesson(lesson) {
 
   state.selectedLesson = lesson;
   state.conversationId = crypto.randomUUID();
+  state.selectedSource = lesson.source;
+  state.sourceRequestVersion += 1;
   showSelectedLesson(lesson);
+  renderLearningFiles(lesson, state.selectedSource, selectLearningFile);
   refreshLessonNavigation();
 }
 
@@ -149,20 +155,29 @@ function handleMessageKeydown(event) {
   }
 }
 
+function selectLearningFile(path) {
+  state.selectedSource = path;
+  renderLearningFiles(state.selectedLesson, path, selectLearningFile);
+  loadSelectedLessonSource();
+}
+
 async function loadSelectedLessonSource() {
   if (!elements.sourceDetails.open || !state.selectedLesson) {
     return;
   }
 
   const caseId = state.selectedLesson.id;
+  const requestVersion = ++state.sourceRequestVersion;
+  elements.sourceCode.textContent = "소스를 불러오는 중…";
   try {
-    const source = await fetchLessonSource(caseId);
+    const source = await fetchLessonSource(caseId, state.selectedSource);
     // 요청 중 선택 단원이 바뀌면 이전 소스를 새 단원에 표시하지 않는다.
-    if (state.selectedLesson.id === caseId) {
+    if (state.selectedLesson.id === caseId && requestVersion === state.sourceRequestVersion) {
+      elements.sourceLocation.textContent = `${source.source}\n학습 메소드: ${source.method}`;
       elements.sourceCode.textContent = source.code;
     }
   } catch (error) {
-    if (state.selectedLesson.id === caseId) {
+    if (state.selectedLesson.id === caseId && requestVersion === state.sourceRequestVersion) {
       elements.sourceCode.textContent = error.message;
     }
   }
