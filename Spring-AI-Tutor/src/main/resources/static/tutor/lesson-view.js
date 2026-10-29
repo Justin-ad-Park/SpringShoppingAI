@@ -1,5 +1,6 @@
 // 단원 목록, 학습 설명, 실행 관찰 패널을 그린다. 서버 요청과 대화 상태는 다루지 않는다.
 import { elements, createElement } from './dom.js';
+import { describeLearningResult } from './learning-observations.js';
 
 const LESSON_GROUP_TITLES = [
   '시작과 환경',
@@ -21,7 +22,6 @@ const LESSON_GROUP_TITLES = [
 
 
 const FILE_INPUT_CASE_IDS = ['L14-01', 'L14-02'];
-const EXPANDED_DIAGNOSTIC_SECTIONS = ['usage', 'toolCalls', '검증된 결과'];
 
 function getLessonGroupNumber(lesson) {
   // caseId의 L04-01에서 단원 번호 04를 읽는다.
@@ -81,6 +81,7 @@ export function showSelectedLesson(lesson) {
   ].join('\n');
   elements.sourceCode.textContent = '';
   elements.sourceDetails.open = false;
+  elements.lessonHeader.scrollTop = 0;
 
   elements.messages.replaceChildren();
   elements.messageInput.value = lesson.sample;
@@ -103,21 +104,33 @@ export function renderRunDiagnostics(result) {
   ].join(' · ');
   elements.diagnostics.replaceChildren();
 
+  for (const observation of describeLearningResult(result)) {
+    const card = createElement('section', undefined, 'learning-observation');
+    card.append(createElement('h3', observation.title));
+    observation.lines.forEach((line) => card.append(createElement('p', line)));
+    elements.diagnostics.append(card);
+  }
+
+  const rawDetails = createElement('details');
+  rawDetails.append(createElement('summary', '자세한 실행 기록 (JSON)'));
   const sections = { ...result.diagnostics, '검증된 결과': result.data };
 
   for (const [sectionName, value] of Object.entries(sections)) {
     const section = createElement('details');
-    section.open = EXPANDED_DIAGNOSTIC_SECTIONS.includes(sectionName);
+    section.open = false;
     section.append(
       createElement('summary', sectionName),
       createElement('pre', JSON.stringify(value, null, 2)),
     );
-    elements.diagnostics.append(section);
+    rawDetails.append(section);
   }
+  elements.diagnostics.append(rawDetails);
 }
 
 
 export function updateExecutionControls(isRunning, isStreamingLesson) {
+  elements.beginnerGuide.querySelectorAll('button').forEach((button) => { button.disabled = isRunning; });
+  elements.beginnerPath.querySelectorAll('button').forEach((button) => { button.disabled = isRunning; });
   elements.sendButton.disabled = isRunning;
   elements.resetButton.disabled = isRunning;
   elements.fixtureSelect.disabled = isRunning;

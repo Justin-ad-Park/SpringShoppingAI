@@ -2,6 +2,8 @@
 
 06 구조 개선안을 적용했다. 58개 caseId와 REST/SSE API를 유지하고 Java 예제와 학습실 실행 기반을 분리했다.
 
+처음 배우는 경우 [짧은 코드로 시작하는 다섯 수업](09-first-shopping-lessons.md)을 먼저 보세요.
+
 ## 시작 위치
 
 - [00 ChatClient 첫 호출과 STUB/LIVE 경계](../src/main/java/com/example/shopping/tutor/lesson/l00setup/README.md)

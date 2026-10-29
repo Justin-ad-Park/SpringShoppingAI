@@ -606,3 +606,95 @@ img.generated {
   outline: 2px solid var(--green);
   outline-offset: -2px;
 }
+
+/* 짧은 코드를 먼저 읽고, 필요할 때 설명과 준비 파일을 더 연다. */
+.lesson-head {
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.beginner-path-label {
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.beginner-path {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.beginner-path button,
+.beginner-guide button {
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f6f8f3;
+  color: var(--green);
+  font-size: 11px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.beginner-guide {
+  margin: 12px 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.beginner-guide h3 {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.beginner-guide details {
+  margin: 10px 0;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.beginner-guide button {
+  display: block;
+  margin: 6px 0;
+}
+
+.beginner-code {
+  padding: 9px;
+  background: #f6f8f3;
+  color: #203c2e;
+}
+
+.practice-notice {
+  padding-left: 8px;
+  border-left: 3px solid var(--green);
+}
+
+.learning-observation {
+  margin: 10px 0;
+  padding: 12px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.learning-observation h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.learning-observation p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+
+@media (max-width: 800px) {
+  .lesson-head {
+    max-height: none;
+    overflow: visible;
+  }
+}

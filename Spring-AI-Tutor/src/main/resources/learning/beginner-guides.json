@@ -1,0 +1,142 @@
+[
+  {
+    "id": "L00-01",
+    "title": "1. AI에게 질문하고 답변 받기",
+    "why": "먼저 상품을 찾기 전에, Java 코드에서 AI에게 질문을 보내는 방법부터 배웁니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l00setup/SetupLesson.java",
+    "method": "greet",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l00setup/SetupLessonTest.java",
+    "testMethod": "질문을_보내면_답변_문자열을_받는다",
+    "explanations": [
+      "question은 화면에서 입력한 질문입니다.",
+      "prompt()로 요청을 준비하고 user(question)으로 질문을 넣습니다.",
+      "call()에서 실제 요청을 보냅니다. content()로 답변 문자열을 꺼냅니다."
+    ],
+    "questions": [
+      "음료를 추천해줘"
+    ],
+    "observe": "오른쪽의 “AI에게 보낸 요청 순서”에 방금 입력한 문장이 있는지 확인하세요. 아직 실제 상품 목록을 조회하지 않습니다.",
+    "change": "질문을 “선물할 음료를 추천해줘”로 바꿔 보세요. AI에게 보낸 질문이 어떻게 달라질까요?",
+    "testInstruction": "SetupLessonTest에서 질문 문자열을 바꾸고 실행하세요. 답변이 비어 있지 않은지 확인합니다. 실제 AI의 답변 문장은 매번 달라질 수 있습니다.",
+    "preparation": "chatClient는 AI에게 요청을 보내도록 미리 준비한 객체입니다. 키 설정과 웹 서버 코드는 처음에는 읽지 않아도 됩니다.",
+    "modeNotice": "연습 모드(STUB)는 미리 준비한 답변을 줍니다. 질문을 바꿔도 답변 문장은 같을 수 있습니다. 실제 AI의 추천 내용은 LIVE에서 비교하세요.",
+    "next": "L02-01"
+  },
+  {
+    "id": "L02-01",
+    "title": "2. 질문에서 가격과 종류 꺼내기",
+    "why": "“15,000원 이하 음료”라는 문장을 Java에서 쓸 수 있는 가격과 종류로 나눕니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l02structured/StructuredOutputLesson.java",
+    "method": "extract",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l02structured/StructuredOutputLessonTest.java",
+    "testMethod": "extractReturnsValidatedRecord",
+    "explanations": [
+      "user(question)은 앞 수업과 같습니다.",
+      "entity(SearchCriteria.class)는 답변을 문자열 대신 SearchCriteria로 바꿉니다.",
+      "SearchCriteria의 category와 maxPrice에 어떤 값이 들어왔는지 확인합니다. 이처럼 정해진 모양으로 받는 답변을 구조화 응답이라고 합니다."
+    ],
+    "questions": [
+      "15000원 이하 음료를 추천해줘"
+    ],
+    "observe": "“질문에서 꺼낸 조건”에서 category가 음료, maxPrice가 15000인지 확인하세요. 아직 상품을 검색하지 않습니다.",
+    "change": "15000원을 10000원으로 바꿔 보세요. maxPrice만 달라질까요? 먼저 예상하고 실행하세요.",
+    "testInstruction": "extractReturnsValidatedRecord를 읽고 질문과 기대하는 금액을 함께 바꿔 실행하세요.",
+    "preparation": "CRITERIA는 어떤 항목을 꺼내야 하는지 AI에게 설명한 요청문입니다. 처음에는 extract()부터 읽고, 필요할 때 위쪽의 CRITERIA를 읽으세요.",
+    "modeNotice": "STUB은 예시 문장의 일부 표현만 처리합니다. 자유로운 표현의 이해 여부는 LIVE에서 확인하세요.",
+    "next": "L06-01"
+  },
+  {
+    "id": "L06-01",
+    "title": "3. 실제 상품 목록에서 찾기",
+    "why": "AI는 우리 쇼핑몰의 상품 목록을 모릅니다. 상품을 찾는 Java 메소드를 준비하고 AI가 사용하도록 연결합니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l06tools/ProductSearchTools.java",
+    "method": "searchProducts",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l06tools/ProductSearchToolsTest.java",
+    "testMethod": "가격이_만원_이하인_음료를_찾는다",
+    "explanations": [
+      "category는 상품 종류, maxPrice는 가격 상한입니다.",
+      "DemoProductCatalog.search()가 준비된 상품 목록을 검색합니다. 상품 가격을 AI가 만들어 내지 않습니다.",
+      "@Tool은 AI가 이 Java 메소드를 사용할 수 있게 설명을 붙입니다. AI가 메소드를 선택하고 실행하도록 연결하는 기능을 Tool Calling이라고 합니다."
+    ],
+    "questions": [
+      "15000원 이하 음료를 추천해줘"
+    ],
+    "observe": "오른쪽의 “AI가 사용한 Java 메소드”에서 searchProducts를 확인하세요. 어떤 가격으로 검색했으며 P004 허브티와 P005 커피가 조회됐는지 봅니다.",
+    "change": "먼저 ProductSearchToolsTest의 10000을 15000으로 바꿔 보세요. 커피 P005도 나올까요? 결과를 예상하고, 기대 상품을 수정해 테스트하세요.",
+    "testInstruction": "가격이_만원_이하인_음료를_찾는다를 먼저 실행하세요. 기본 값에서는 P004만 나와야 합니다. 그다음 15000원 예제 테스트와 비교하세요.",
+    "preparation": "처음에는 이 메소드와 ProductSearchToolsTest만 읽으세요. AI와 연결하는 코드는 ProductToolCallingLesson.callTool()에 있습니다. 상품 원본이 궁금할 때만 support/DemoProductCatalog.java를 읽으세요.",
+    "modeNotice": "STUB은 검색 인자를 음료·15000원으로 고정합니다. 가격을 바꾸는 연습은 먼저 Java 테스트에서 하세요. 웹에서 질문대로 인자가 바뀌는 것은 LIVE에서 확인합니다.",
+    "next": "L04-02"
+  },
+  {
+    "id": "L04-02",
+    "title": "4. 앞에서 나눈 대화 기억하기",
+    "why": "“내 예산이 얼마였지?”에 답하려면, 앞에서 말한 예산을 이번 질문과 함께 AI에게 전달해야 합니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l04memory/ConversationMemoryLesson.java",
+    "method": "chatWithMemory",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l04memory/ConversationMemoryLessonTest.java",
+    "testMethod": "같은_대화에서는_이전_질문이_함께_전달된다",
+    "explanations": [
+      "conversationId는 어떤 대화인지 구분하는 이름입니다. 같은 대화를 이어갈 때 같은 값을 씁니다.",
+      "MessageChatMemoryAdvisor는 이전 대화를 이번 요청에 함께 넣습니다. 이름에 있는 Advisor는 요청 전후에 일을 더해 주는 기능입니다.",
+      "마지막 user(question)과 call().content()는 첫 수업과 같습니다. 새로 더한 부분은 이전 대화를 붙이는 코드입니다."
+    ],
+    "questions": [
+      "예산은 3만원이야",
+      "내 예산이 얼마였지?"
+    ],
+    "observe": "질문을 순서대로 보내세요. 두 번째 실행의 “AI에게 함께 보낸 이전 대화”에 첫 질문이 있는지 확인합니다. 새 대화를 누르면 이전 기록이 없어집니다.",
+    "change": "ConversationMemoryLessonTest에서 두 번째 호출의 대화 이름을 다른 값으로 바꿔 보세요. 첫 질문이 함께 전달될까요? “다른_대화에는_이전_질문을_전달하지_않는다” 테스트와 비교하세요.",
+    "testInstruction": "같은 대화 테스트와 다른 대화 테스트를 각각 실행하세요. window 크기와 DB 저장은 그다음 수업에서 따로 배웁니다.",
+    "preparation": "모델과 메모리는 생성자에서 준비합니다. 처음에는 chatWithMemory()만 읽으세요. 웹 사용자를 구분하거나 실패한 대화를 되돌리는 코드는 지금 읽지 않아도 됩니다.",
+    "modeNotice": "STUB은 예산을 이해해 답하지 않습니다. 이전 대화가 AI 요청에 들어갔는지 오른쪽에서 확인하세요. 답변 내용은 LIVE에서 확인합니다.",
+    "next": "L09-01"
+  },
+  {
+    "id": "L09-01",
+    "title": "5. 반품 안내문을 찾아 답하기",
+    "why": "AI가 반품 기간을 추측하지 않도록, 준비된 반품 안내문을 찾아 함께 전달합니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l09rag/PolicyRagLesson.java",
+    "method": "retrieve",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l09rag/PolicyRagLessonTest.java",
+    "testMethod": "retrievalFiltersAreEnforcedBeforeModelCall",
+    "explanations": [
+      "먼저 retrieve()에서 질문과 관련 있는 안내문을 찾습니다.",
+      "answer()는 찾은 안내문을 질문과 함께 AI에게 전달합니다.",
+      "문서를 찾아 함께 전달하는 방식을 RAG라고 합니다. 앞 수업의 상품 검색은 상품 목록, 이번 검색은 안내문을 대상으로 합니다."
+    ],
+    "questions": [
+      "미개봉 상품의 반품 기간은?"
+    ],
+    "observe": "“찾아서 함께 보낸 안내문”에서 return-current가 있는지 확인하세요. 출처와 내용을 먼저 읽고 답변과 비교합니다.",
+    "change": "질문을 “개봉한 상품도 반품할 수 있어?”로 바꿔 보세요. 같은 안내문에서 어떤 부분으로 답할 수 있을까요?",
+    "testInstruction": "retrievalFiltersAreEnforcedBeforeModelCall을 읽고 현재 몰의 안내문만 검색되는지 확인하세요.",
+    "preparation": "07 단원의 검색 원리를 아직 모르면 PolicyDocumentFixtures에서 원문부터 읽어도 됩니다. 처음에는 찾은 안내문과 답변의 관계만 확인하세요.",
+    "modeNotice": "STUB의 답변은 고정 예시입니다. 관세 질문은 현재 코드에서 빈 결과를 주는 연습용 예외입니다. 일반적인 검색 정확도는 실제 검색 결과와 LIVE에서 따로 확인해야 합니다.",
+    "next": "L13-01"
+  },
+  {
+    "id": "L04-01",
+    "title": "앞 대화가 있는 요청과 없는 요청 비교하기",
+    "why": "“내 예산이 얼마였지?”에 답하려면, 앞에서 말한 예산을 이번 질문과 함께 AI에게 전달해야 합니다.",
+    "file": "src/main/java/com/example/shopping/tutor/lesson/l04memory/ConversationMemoryLesson.java",
+    "method": "chatWithMemory",
+    "test": "src/test/java/com/example/shopping/tutor/lesson/l04memory/ConversationMemoryLessonTest.java",
+    "testMethod": "같은_대화에서는_이전_질문이_함께_전달된다",
+    "explanations": [
+      "conversationId는 어떤 대화인지 구분하는 이름입니다. 같은 대화를 이어갈 때 같은 값을 씁니다.",
+      "MessageChatMemoryAdvisor는 이전 대화를 이번 요청에 함께 넣습니다. 이름에 있는 Advisor는 요청 전후에 일을 더해 주는 기능입니다.",
+      "마지막 user(question)과 call().content()는 첫 수업과 같습니다. 새로 더한 부분은 이전 대화를 붙이는 코드입니다."
+    ],
+    "questions": [
+      "예산은 3만원이야",
+      "내 예산이 얼마였지?"
+    ],
+    "observe": "두 번의 요청을 비교하세요. 오른쪽 “AI에게 보낸 요청 순서”에서 첫 요청에는 이번 질문만, 두 번째 요청에는 이전 대화도 포함되는지 확인합니다.",
+    "change": "ConversationMemoryLessonTest에서 두 번째 호출의 대화 이름을 다른 값으로 바꿔 보세요. 첫 질문이 함께 전달될까요? “다른_대화에는_이전_질문을_전달하지_않는다” 테스트와 비교하세요.",
+    "testInstruction": "같은 대화 테스트와 다른 대화 테스트를 각각 실행하세요. window 크기와 DB 저장은 그다음 수업에서 따로 배웁니다.",
+    "preparation": "모델과 메모리는 생성자에서 준비합니다. 처음에는 chatWithMemory()만 읽으세요. 웹 사용자를 구분하거나 실패한 대화를 되돌리는 코드는 지금 읽지 않아도 됩니다.",
+    "modeNotice": "STUB은 예산을 이해해 답하지 않습니다. 이전 대화가 AI 요청에 들어갔는지 오른쪽에서 확인하세요. 답변 내용은 LIVE에서 확인합니다.",
+    "next": "L09-01"
+  }
+]

@@ -4,6 +4,9 @@
 
 Java 21 · Spring Boot 3.5.12 · Spring AI 1.1.2 · 기본 포트 8090. 기존 chatbot-client, shopping-agent와 독립적으로 실행됩니다. Python 실행 파일은 사용하지 않습니다.
 
+
+처음이라면 [짧은 코드로 시작하는 다섯 수업](docs/09-first-shopping-lessons.md)을 따라가세요. 첫 호출·상품 검색·대화 기억은 `./Spring-AI-Tutor/scripts/test_beginner.sh`로 API 키 없이 확인할 수 있습니다.
+
 ## 바로 실행
 
 저장소 루트에서:

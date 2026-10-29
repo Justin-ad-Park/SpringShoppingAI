@@ -21,13 +21,14 @@ public class LessonCatalog {
             String source,
             String method,
             String test,
-            List<LearningSources.LearningFile> files) {}
+            List<LearningSources.LearningFile> files,
+            BeginnerGuides.LessonGuide beginnerGuide) {}
 
     private record Target(Object bean, Method method, Entry entry) {}
 
     private final SortedMap<String, Target> targets = new TreeMap<>();
 
-    public LessonCatalog(ApplicationContext context) {
+    public LessonCatalog(ApplicationContext context, BeginnerGuides beginnerGuides) {
         for (String name : context.getBeanDefinitionNames()) {
             Class<?> type = context.getType(name);
             if (type == null
@@ -63,7 +64,8 @@ public class LessonCatalog {
                                 source,
                                 a.learningMethod(),
                                 test,
-                                files);
+                                files,
+                                beginnerGuides.forCase(a.id(), files));
                 if (targets.put(a.id(), new Target(context.getBean(name), method, entry)) != null)
                     throw new IllegalStateException("중복 caseId: " + a.id());
             }

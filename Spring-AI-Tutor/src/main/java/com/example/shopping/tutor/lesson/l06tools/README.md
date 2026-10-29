@@ -1,55 +1,46 @@
-# 06. 모델의 도구 선택과 Java 실행
+# 06. AI가 실제 상품을 찾게 해 보세요
 
-선수 단원: 01, 02.
+오늘은 [ProductSearchTools.java](ProductSearchTools.java)의 **searchProducts()**부터 읽습니다.
 
-## 읽는 순서
+## 1. AI가 상품을 어떻게 알까요?
 
-ProductToolCallingLesson → ProductSearchTools → CartSummaryTools 순으로 읽는다. callback은 웹 어댑터가 등록하고 관찰 상한을 덧씌운다.
+AI는 우리 상품 목록을 모릅니다. 대신 상품을 찾는 Java 메소드를 준비합니다.
+category가 “음료”, maxPrice가 10000이면 만원 이하 음료를 찾습니다.
+@Tool에는 이 메소드를 언제 쓰는지 설명합니다.
+AI가 Java 메소드를 사용하도록 연결하는 기능을 Tool Calling이라고 합니다.
 
-1. 아래 핵심 Java 파일의 해당 실습 메소드를 읽는다.
-2. 호출하는 도구·설정 파일을 따라간다.
-3. 데이터가 궁금할 때만 support를 연다.
-4. 아래 단원 테스트를 실행하고 질문·옵션을 바꿔 본다.
+## 2. 먼저 Java 코드만 실행하기
 
-### 핵심 파일
+[ProductSearchToolsTest](../../../../../../../../test/java/com/example/shopping/tutor/lesson/l06tools/ProductSearchToolsTest.java)의
+가격이_만원_이하인_음료를_찾는다를 실행하세요.
+P004 허브티는 9,900원이므로 나옵니다. P005 커피는 12,500원이므로 나오지 않습니다.
+API 키나 웹 서버 없이 확인할 수 있습니다.
+저장소 루트에서 `./Spring-AI-Tutor/scripts/test_beginner.sh`를 실행하면 첫 호출·상품 검색·대화 기억 테스트를 함께 확인할 수 있습니다.
 
-- [CartSummaryTools.java](CartSummaryTools.java)
-- [ProductSearchTools.java](ProductSearchTools.java)
-- [ProductToolCallingLesson.java](ProductToolCallingLesson.java)
+## 3. 한 가지 바꾸기
 
-### support의 역할
+테스트의 10000을 15000으로 바꾸세요. 어떤 상품이 더 나올지 먼저 예상하세요.
+기존 P004만 기대하는 확인문은 실패해야 합니다. P005도 기대하도록 바꾸고 다시 실행하세요.
+가격을_만오천원으로_올리면_커피도_나온다에 완성된 비교 예제가 있습니다.
 
-- [DemoCartRepository.java](support/DemoCartRepository.java): standard/already-free/empty/no-match 합계 fixture.
-- [DemoProductCatalog.java](support/DemoProductCatalog.java): 가상 상품 원본·재고·검색. 실제 판매 DB를 사용하지 않는다.
-- [Product.java](support/Product.java): 상품 ID·가격·배송그룹·재고를 담는 record.
-- [SandboxCart.java](support/SandboxCart.java): 소유자·만료·중복 확인을 검사하는 데모 변경 저장소.
-- [ShippingPolicy.java](support/ShippingPolicy.java): 원 단위 배송비와 무료배송 경계 계산.
-- [ShippingQuoteCalculator.java](support/ShippingQuoteCalculator.java): 후보 추가 가정의 견적. 실제 장바구니는 바꾸지 않는다.
+## 4. AI와 연결해 확인하기
 
-### 테스트
+웹 **L06-01**에서 “15000원 이하 음료를 추천해줘”를 보내세요.
+오른쪽 “AI가 사용한 Java 메소드”에서 다음을 확인합니다.
+- 메소드 이름이 searchProducts인가요?
+- 전달한 category와 maxPrice는 무엇인가요?
+- Java가 조회한 상품 ID와 가격은 무엇인가요?
 
-- [ProductToolCallingLessonTest.java](../../../../../../../../test/java/com/example/shopping/tutor/lesson/l06tools/ProductToolCallingLessonTest.java)
+STUB은 검색 인자를 음료·15000원으로 고정합니다. 웹 질문에 따라 검색 인자가 달라지는 실습은 LIVE에서 합니다.
+상품 검색 자체의 조건은 Java 테스트로 먼저 확인하세요.
 
-저장소 루트에서 실행:
+## 필요할 때만 더 읽기
 
-```bash
-./gradlew :Spring-AI-Tutor:test --tests 'com.example.shopping.tutor.lesson.l06tools.*'
-```
+- [ProductToolCallingLesson.callTool()](ProductToolCallingLesson.java): AI 요청과 Java 메소드 연결.
+- [support/DemoProductCatalog.java](support/DemoProductCatalog.java): 준비된 상품과 검색 조건.
+- [support/Product.java](support/Product.java): 상품의 ID·이름·가격을 담는 형태.
+- L06-02와 [CartSummaryTools](CartSummaryTools.java): 배송비 계산.
+- L06-03~05: 고객 구분, 반복 실행 제한, 장바구니 변경 확인.
+- [ProductToolCallingLessonTest](../../../../../../../../test/java/com/example/shopping/tutor/lesson/l06tools/ProductToolCallingLessonTest.java): 위 추가 동작의 확인.
 
-태그가 붙은 LIVE/MCP 테스트는 전용 scripts/test_live.sh, test_mcp.sh, test_live_mcp.sh로 실행한다.
-
-## 웹 실습
-
-| caseId | 학습 목표 | 예시 질문 |
-|---|---|---|
-| L06-01 | 상품 검색 Tool Calling | 1만5천원 이하 음료 찾아줘 |
-| L06-02 | 무료배송 금액 계산 | 무료배송까지 얼마나 부족해? |
-| L06-03 | 신뢰할 ToolContext | 내 장바구니 확인해줘 |
-| L06-04 | 도구 실행 상한 | 도구를 9번 실행하는 실험 |
-| L06-05 | 샌드박스 변경 확인 | P004 하나 담아줘 |
-
-## 관찰과 변경 실험
-
-존재하지 않는 상품, 품절, 다른 배송그룹을 견적에 넣어 본다. 샌드박스는 확인 전 변경되지 않는다.
-
-학습 메소드는 필요한 Spring AI 객체와 일반 입력만 받는다. caseId 연결, 요청 검증, 세션 격리, 실패 턴 보호는 platform의 책임이다.
+다음은 [04 앞 대화 기억하기](../l04memory/README.md)입니다.

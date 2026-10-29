@@ -15,16 +15,16 @@ public final class ConversationMemoryLesson {
         this.chatMemory = chatMemory;
     }
 
-    /** 같은 ID를 전달하면 대화가 이어진다. 웹의 사용자 격리는 platform이 담당한다. */
+    /** 같은 conversationId를 쓰면 앞 대화를 이번 질문과 함께 보낸다. */
     public String chatWithMemory(String conversationId, String question) {
         MessageChatMemoryAdvisor memoryAdvisor =
                 MessageChatMemoryAdvisor.builder(chatMemory).build();
-        // Advisor가 이번 요청에 이전 메시지를 붙이고, 성공한 응답을 기억한다.
+        // 이전 대화를 이번 요청에 붙인다. 대화 이름이 다르면 다른 기록을 사용한다.
         return chatClient
                 .prompt()
                 .advisors(memoryAdvisor)
                 .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .user(question)
+                .user(question) // 이번에 입력한 질문이다. 이전 대화는 위에서 함께 넣는다.
                 .call()
                 .content();
     }

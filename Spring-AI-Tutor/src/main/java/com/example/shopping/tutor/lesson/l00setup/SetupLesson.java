@@ -4,9 +4,13 @@ import org.springframework.ai.chat.client.ChatClient;
 
 /** 00: 외부 도구나 메모리 없이 첫 응답을 받는다. */
 public final class SetupLesson {
-    /** 같은 코드에 STUB 또는 실제 provider의 ChatClient를 주입해 비교한다. */
+    /** question에 넣은 질문을 보내고 답변 문자열을 받는다. chatClient는 미리 준비한 요청 객체다. */
     public String greet(ChatClient chatClient, String question) {
-        return chatClient.prompt().user(question).call().content();
+        return chatClient
+                .prompt() // AI에게 보낼 요청을 준비한다.
+                .user(question) // 화면에서 입력한 질문을 넣는다.
+                .call() // 요청을 보내고 답변을 기다린다.
+                .content(); // 답변에서 문자열을 꺼낸다.
     }
 
     public record EnvironmentInfo(String mode, String model, String notice) {}

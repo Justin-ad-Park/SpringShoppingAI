@@ -2,9 +2,12 @@
 
 export const elements = {
   statusBadge: document.getElementById('status'),
+  beginnerPath: document.getElementById('beginner-path'),
+  beginnerGuide: document.getElementById('beginner-guide'),
   lessonSearch: document.getElementById('search'),
   lessonNavigation: document.getElementById('lessons'),
   caseId: document.getElementById('case-id'),
+  lessonHeader: document.getElementById('lesson-head'),
   lessonTitle: document.getElementById('title'),
   lessonGoal: document.getElementById('goal'),
   sourceDetails: document.getElementById('source-details'),

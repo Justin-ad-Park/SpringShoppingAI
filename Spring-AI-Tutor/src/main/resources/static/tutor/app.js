@@ -1,6 +1,7 @@
 // 학습실의 시작점이다. 화면 상태를 보관하고 사용자 동작을 API·화면 함수에 연결한다.
 // 읽는 순서: initializeLearningClient → selectLesson → handleChatSubmit.
 import { elements } from './dom.js';
+import { renderBeginnerGuide, renderBeginnerPath } from './beginner-view.js';
 import {
   renderLessonNavigation,
   showSelectedLesson,
@@ -21,6 +22,8 @@ import {
   executeStandardLesson,
   executeStreamingLesson,
 } from './tutor-api.js';
+
+const SOURCE_LOADING_TEXT = '소스를 불러오는 중…';
 
 // 다른 모듈은 이 상태를 직접 변경하지 않는다. 필요한 값이나 콜백만 전달한다.
 const state = {
@@ -54,6 +57,25 @@ function selectLesson(lesson) {
   state.sourceRequestVersion += 1;
   showSelectedLesson(lesson);
   renderLearningFiles(lesson, state.selectedSource, selectLearningFile);
+  renderBeginnerGuide(lesson, {
+    onReadFile: async (path) => {
+      elements.sourceDetails.open = true;
+      await selectLearningFile(path);
+      if (state.selectedSource === path) {
+        elements.sourceCode.scrollIntoView({ block: 'start' });
+      }
+    },
+    onChooseQuestion: (question) => {
+      if (state.isRunning) return;
+      elements.messageInput.value = question;
+      elements.messageInput.focus();
+    },
+    onNextLesson: (caseId) => {
+      const nextLesson = state.lessons.find((candidate) => candidate.id === caseId);
+      if (nextLesson) selectLesson(nextLesson);
+    },
+  });
+  if (lesson.beginnerGuide) elements.messageInput.value = lesson.beginnerGuide.instructions.questions[0];
   refreshLessonNavigation();
 }
 
@@ -158,7 +180,7 @@ function handleMessageKeydown(event) {
 function selectLearningFile(path) {
   state.selectedSource = path;
   renderLearningFiles(state.selectedLesson, path, selectLearningFile);
-  loadSelectedLessonSource();
+  return loadSelectedLessonSource();
 }
 
 async function loadSelectedLessonSource() {
@@ -168,7 +190,7 @@ async function loadSelectedLessonSource() {
 
   const caseId = state.selectedLesson.id;
   const requestVersion = ++state.sourceRequestVersion;
-  elements.sourceCode.textContent = "소스를 불러오는 중…";
+  elements.sourceCode.textContent = SOURCE_LOADING_TEXT;
   try {
     const source = await fetchLessonSource(caseId, state.selectedSource);
     // 요청 중 선택 단원이 바뀌면 이전 소스를 새 단원에 표시하지 않는다.
@@ -199,7 +221,12 @@ async function resetConversation() {
 function registerEventHandlers() {
   elements.chatForm.addEventListener('submit', handleChatSubmit);
   elements.messageInput.addEventListener('keydown', handleMessageKeydown);
-  elements.sourceDetails.addEventListener('toggle', loadSelectedLessonSource);
+  elements.sourceDetails.addEventListener('toggle', () => {
+    // 테스트 버튼은 파일을 직접 불러온다. 펼침 이벤트가 같은 파일을 다시 요청하지 않게 한다.
+    if (elements.sourceCode.textContent !== SOURCE_LOADING_TEXT) {
+      loadSelectedLessonSource();
+    }
+  });
   elements.resetButton.addEventListener('click', resetConversation);
   elements.stopButton.addEventListener('click', () => state.abortController?.abort());
   elements.lessonSearch.addEventListener('input', refreshLessonNavigation);
@@ -218,6 +245,7 @@ async function initializeLearningClient() {
     state.lessons = lessons;
     elements.statusBadge.textContent = `${status.mode.toUpperCase()} · ${status.model}`;
     elements.modeNotice.textContent = status.notice;
+    renderBeginnerPath(lessons, selectLesson);
     selectLesson(lessons[0]);
   } catch (error) {
     elements.statusBadge.textContent = '서버 연결 실패';

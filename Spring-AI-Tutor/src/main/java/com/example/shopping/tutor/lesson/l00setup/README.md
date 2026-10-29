@@ -1,46 +1,37 @@
-# 00. ChatClient 첫 호출과 STUB/LIVE 경계
+# 00. AI에게 질문을 보내 보세요
 
-선수 단원: 없음.
+오늘은 [SetupLesson.java](SetupLesson.java)의 **greet() 하나**만 읽습니다.
 
-## 읽는 순서
+## 1. 짧은 코드부터 읽기
 
-STUB에서 인사한 뒤 LIVE로 바꾸어 모델과 usage의 차이를 확인한다. 키는 서버 환경 변수로만 제공한다.
+파일의 question은 사용자가 입력한 질문입니다.
+- prompt(): 요청을 준비합니다.
+- user(question): 질문을 넣습니다.
+- call(): AI에게 보내고 답변을 기다립니다.
+- content(): 답변 문자열을 꺼냅니다.
 
-1. 아래 핵심 Java 파일의 해당 실습 메소드를 읽는다.
-2. 호출하는 도구·설정 파일을 따라간다.
-3. 데이터가 궁금할 때만 support를 연다.
-4. 아래 단원 테스트를 실행하고 질문·옵션을 바꿔 본다.
+## 2. 그대로 실행하기
 
-### 핵심 파일
+웹에서 **L00-01**을 선택하고 “음료를 추천해줘”를 보내세요.
+오른쪽 “AI에게 보낸 요청 순서”에 이 질문이 보이는지 확인하세요.
+지금은 상품 목록을 조회하지 않습니다. 실제 상품 가격은 다음 수업에서 확인합니다.
 
-- [ChatModelConfiguration.java](ChatModelConfiguration.java)
-- [SetupLesson.java](SetupLesson.java)
+## 3. 한 가지 바꾸기
 
-### support의 역할
+질문만 “선물할 음료를 추천해줘”로 바꿔 보세요.
+어떤 문자열이 AI에게 전달될지 먼저 예상하고 실행하세요.
+STUB은 준비한 답변을 주므로 두 질문의 답변이 같을 수 있습니다. 질문 전달값을 먼저 비교하세요.
 
-이 단원에는 별도의 support가 필요하지 않다.
+## 4. 테스트로 확인하기
 
-### 테스트
+[SetupLessonTest](../../../../../../../../test/java/com/example/shopping/tutor/lesson/l00setup/SetupLessonTest.java)의
+질문을_보내면_답변_문자열을_받는다를 읽으세요. 준비 → 실행 → 확인 순서입니다.
+저장소 루트에서 `./Spring-AI-Tutor/scripts/test_beginner.sh`를 실행하면 첫 호출·상품 검색·대화 기억 테스트를 함께 확인할 수 있습니다.
 
-- [SetupLessonTest.java](../../../../../../../../test/java/com/example/shopping/tutor/lesson/l00setup/SetupLessonTest.java)
+## 처음에는 건너뛰어도 됩니다
 
-저장소 루트에서 실행:
+ChatModelConfiguration은 모델 설정입니다. chatClient는 이미 준비해서 메소드에 전달합니다.
+API 키, 웹 서버, 실행 기록 코드는 첫 호출을 이해한 뒤 읽어도 됩니다.
+L00-02는 실제 실행 모드를 확인하는 추가 수업입니다.
 
-```bash
-./gradlew :Spring-AI-Tutor:test --tests 'com.example.shopping.tutor.lesson.l00setup.*'
-```
-
-태그가 붙은 LIVE/MCP 테스트는 전용 scripts/test_live.sh, test_mcp.sh, test_live_mcp.sh로 실행한다.
-
-## 웹 실습
-
-| caseId | 학습 목표 | 예시 질문 |
-|---|---|---|
-| L00-01 | 첫 ChatClient 호출 | 쇼핑 도우미야, 안녕 |
-| L00-02 | 실행 모드와 모델 | 현재 실행 환경을 알려줘 |
-
-## 관찰과 변경 실험
-
-질문을 비우면 모델 호출 전에 검증이 실패한다.
-
-학습 메소드는 필요한 Spring AI 객체와 일반 입력만 받는다. caseId 연결, 요청 검증, 세션 격리, 실패 턴 보호는 platform의 책임이다.
+다음은 [02 질문에서 가격과 종류 꺼내기](../l02structured/README.md)입니다.

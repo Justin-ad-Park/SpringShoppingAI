@@ -207,7 +207,9 @@ class WebApiTest {
         String folder = "src/main/java/com/example/shopping/tutor/lesson/l04memory/";
         mvc.perform(get("/api/tutor/lessons/L04-01/source").param("file", folder + "README.md"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(org.hamcrest.Matchers.containsString("읽는 순서")));
+                .andExpect(
+                        jsonPath("$.code")
+                                .value(org.hamcrest.Matchers.containsString("chatWithMemory()")));
         mvc.perform(
                         get("/api/tutor/lessons/L04-01/source")
                                 .param("file", folder + "support/DemoConversationMessages.java"))
@@ -226,5 +228,20 @@ class WebApiTest {
             mvc.perform(get("/api/tutor/lessons/L04-01/source").param("file", denied))
                     .andExpect(status().isBadRequest());
         }
+    }
+
+    @Test
+    void 처음_배우는_수업에는_짧은_코드와_질문과_변경_과제가_있다() throws Exception {
+        mvc.perform(get("/api/tutor/lessons"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].beginnerGuide.instructions.id").value("L00-01"))
+                .andExpect(
+                        jsonPath("$[0].beginnerGuide.code")
+                                .value(org.hamcrest.Matchers.containsString(".user(question)")))
+                .andExpect(
+                        jsonPath("$[0].beginnerGuide.instructions.testMethod")
+                                .value("질문을_보내면_답변_문자열을_받는다"));
+        mvc.perform(get("/tutor/beginner-view.js")).andExpect(status().isOk());
+        mvc.perform(get("/tutor/learning-observations.js")).andExpect(status().isOk());
     }
 }

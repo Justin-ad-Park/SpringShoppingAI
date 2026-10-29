@@ -1,67 +1,45 @@
 package com.example.shopping.tutor.lesson.l04memory;
 
-import static com.example.shopping.tutor.platform.support.LessonExecutionFixture.context;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.Assertions.*;
+import com.example.shopping.tutor.lesson.l04memory.support.QuestionRecordingModel;
 
-import com.example.shopping.tutor.lesson.l02structured.SearchCriteria;
-import com.example.shopping.tutor.lesson.l06tools.*;
-import com.example.shopping.tutor.platform.execution.LessonExecution;
-import com.example.shopping.tutor.platform.stub.ScriptedChatModel;
-import com.example.shopping.tutor.platform.web.adapter.MemoryCases;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.Message;
 
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.provider.*;
-import org.springframework.ai.chat.memory.*;
-import org.springframework.ai.chat.messages.*;
-import org.springframework.ai.chat.model.*;
-import org.springframework.ai.chat.prompt.*;
-
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
-
-/** 단원 핵심 API를 직접 검증하고, 웹 연결 동작도 회귀 확인한다. */
+/** 같은 대화와 다른 대화를 비교한다. DB나 웹 서버는 사용하지 않는다. */
 class ConversationMemoryLessonTest {
     @Test
-    void memoryCarriesHistoryOnlyAfterCommitAndDoesNotCrossContexts() {
-        var state = new LessonExecution.State();
-        var first = context("예산은 3만원", "normal", state, new ScriptedChatModel());
-        new MemoryCases().isolateAndReset(first);
-        first.finish(state);
-        assertThat(state.messages).hasSize(2);
-        var second = context("그 예산으로", "normal", state, new ScriptedChatModel());
-        new MemoryCases().isolateAndReset(second);
-        assertThat(second.prompts.toString()).contains("예산은 3만원");
-        var other = context("다른 세션");
-        new MemoryCases().isolateAndReset(other);
-        assertThat(other.prompts.toString()).doesNotContain("예산은 3만원");
-    }
-
-    @Test
-    void clearAndKeepAreDifferent() {
-        var old = new SearchCriteria(null, "음료", 30000L);
-        var none = new SearchCriteria(null, null, null);
-        assertThat(
-                        com.example.shopping.tutor.lesson.l04memory.SearchCriteriaReducer.merge(
-                                old, none, "예산 해제"))
-                .isEqualTo(new SearchCriteria(null, "음료", null));
-        assertThat(
-                        com.example.shopping.tutor.lesson.l04memory.SearchCriteriaReducer.merge(
-                                old, none, "계속 찾아줘"))
-                .isEqualTo(old);
-    }
-
-    @Test
-    void memoryLessonCanBeUsedWithoutPlatform() {
+    void 같은_대화에서는_이전_질문이_함께_전달된다() {
+        // 준비: 대화 내용을 보관할 곳과 연습용 모델을 연결한다.
         var memory = MessageWindowChatMemory.builder().build();
-        var lesson = new ConversationMemoryLesson(new ScriptedChatModel(), memory);
-        lesson.chatWithMemory("a", "나는 음료를 찾고 있어");
-        lesson.chatWithMemory("a", "계속 찾아줘");
-        assertThat(memory.get("a")).hasSize(4);
-        assertThat(memory.get("b")).isEmpty();
-        assertThat(new MessageWindowLesson().keepRecentMessages(4)).hasSize(4);
-        assertThat(new JdbcMemoryLesson().persistAndRestore("저장한 질문").getFirst().getText())
-                .isEqualTo("저장한 질문");
+        var model = new QuestionRecordingModel();
+        var lesson = new ConversationMemoryLesson(model, memory);
+
+        // 실행: 같은 대화 이름으로 질문을 두 번 보낸다.
+        lesson.chatWithMemory("my-shopping", "예산은 3만원이야");
+        lesson.chatWithMemory("my-shopping", "내 예산이 얼마였지?");
+
+        // 확인: AI 요청에 앞 질문과 이번 질문이 함께 들어갔는지 본다.
+        assertThat(model.questionsInLastRequest()).containsExactly("예산은 3만원이야", "내 예산이 얼마였지?");
+        assertThat(memory.get("my-shopping"))
+                .extracting(Message::getText)
+                .contains("예산은 3만원이야", "내 예산이 얼마였지?");
+    }
+
+    @Test
+    void 다른_대화에는_이전_질문을_전달하지_않는다() {
+        var memory = MessageWindowChatMemory.builder().build();
+        var model = new QuestionRecordingModel();
+        var lesson = new ConversationMemoryLesson(model, memory);
+        lesson.chatWithMemory("my-shopping", "예산은 3만원이야");
+
+        lesson.chatWithMemory("other-shopping", "내 예산이 얼마였지?");
+
+        assertThat(model.questionsInLastRequest()).containsExactly("내 예산이 얼마였지?");
+        assertThat(memory.get("other-shopping"))
+                .extracting(Message::getText)
+                .doesNotContain("예산은 3만원이야");
     }
 }

@@ -199,4 +199,22 @@ class CurriculumTest {
             }
         }
     }
+
+    @Test
+    void 따라하기는_실제_코드와_실행할_테스트를_함께_안내한다() throws Exception {
+        for (String caseId : List.of("L00-01", "L02-01", "L06-01", "L04-01", "L04-02", "L09-01")) {
+            var entry = catalog.entry(caseId);
+            var guide = entry.beginnerGuide();
+            assertThat(guide).isNotNull();
+            var instructions = guide.instructions();
+            assertThat(guide.code()).contains(instructions.method() + "(");
+            assertThat(LearningSources.read(entry.files(), instructions.test()))
+                    .contains("void " + instructions.testMethod() + "(");
+            assertThat(instructions.questions()).isNotEmpty();
+            assertThat(instructions.observe()).isNotBlank();
+            assertThat(instructions.change()).isNotBlank();
+            assertThat(catalog.entry(instructions.next())).isNotNull();
+        }
+        assertThat(catalog.entry("L06-01").beginnerGuide().code()).contains("@Tool");
+    }
 }
