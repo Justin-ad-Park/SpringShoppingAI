@@ -1,0 +1,45 @@
+server:
+  address: 127.0.0.1
+  port: ${TUTOR_PORT:8090}
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        name: TUTOR_SESSION
+        http-only: true
+        same-site: strict
+spring:
+  application:
+    name: spring-ai-tutor
+  ai:
+    mcp:
+      server:
+        enabled: ${TUTOR_MCP_SERVER_ENABLED:false}
+        name: tutor-policy
+        protocol: STREAMABLE
+        type: SYNC
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  mvc:
+    async:
+      request-timeout: 90000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+tutor:
+  mode: ${TUTOR_MODE:stub}
+  api-key: ${OPENAI_API_KEY:}
+  base-url: ${TUTOR_OPENAI_BASE_URL:https://api.openai.com}
+  chat-model: ${TUTOR_CHAT_MODEL:gpt-4.1-mini}
+  embedding-model: ${TUTOR_EMBEDDING_MODEL:text-embedding-3-small}
+  mcp-url: ${TUTOR_MCP_URL:http://127.0.0.1:8082}
+  native-schema: ${TUTOR_NATIVE_SCHEMA:false}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+logging:
+  level:
+    org.springframework.ai: WARN

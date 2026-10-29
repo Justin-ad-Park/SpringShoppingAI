@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spring AI Tutor · 쇼핑 AI 실습실</title><link rel="stylesheet" href="/tutor/style.css"></head>
+<body>
+<header><a class="brand" href="/tutor/"><span class="mark">S</span> Spring AI <strong>Tutor</strong></a><div id="status" class="badge">연결 확인 중</div></header>
+<main>
+  <aside class="curriculum"><div class="eyebrow">SHOPPING ASSISTANT LAB</div><h1>하나씩 배우고,<br>대화로 확인하세요.</h1><p class="muted">코드와 실행 흐름을 연결하는<br>쇼핑 AI 학습실</p><input id="search" type="search" placeholder="단원·기능 찾기" aria-label="단원 검색"><nav id="lessons" aria-label="실습 목록"></nav></aside>
+  <section class="workspace">
+    <div class="lesson-head"><div id="case-id" class="eyebrow"></div><h2 id="title">실습을 선택하세요</h2><p id="goal" class="muted"></p><details id="source-details"><summary>Java 코드와 테스트 위치 보기</summary><pre id="source"></pre><pre id="source-code"></pre></details></div>
+    <div class="toolbar"><label>장바구니 <select id="fixture"><option value="standard">기본 · 42,000원</option><option value="already-free">이미 무료배송</option><option value="empty">빈 장바구니</option><option value="no-match">후보 없음</option></select></label><label>실험 <select id="experiment"><option value="normal">정상 실행</option><option value="invalid-json">잘못된 JSON · STUB</option><option value="partial-error">스트림 중간 실패 · STUB</option><option value="timeout">실패 턴 · STUB</option><option value="empty-retrieval">검색 근거 없음 · STUB</option></select></label><details class="options"><summary>실습 옵션</summary><label>topK <input id="top-k" type="number" min="1" max="10" step="1" value="3"></label><label>temperature <input id="temperature" type="number" min="0" max="1" step="0.1" value="0.2"></label><small>검색·옵션 단원에서 적용</small></details><button id="reset" class="quiet">새 대화</button></div>
+    <div id="messages" class="messages" aria-live="polite"><div class="welcome"><span class="welcome-icon">✳</span><h3>질문 뒤에 어떤 일이 일어날까요?</h3><p>실습을 실행하면 오른쪽에서 모델에 전달한 메시지,<br>도구 호출, 검색 근거를 확인할 수 있습니다.</p></div></div>
+    <form id="chat-form"><button id="sample" type="button" class="sample">예시 질문 넣기 ↗</button><div class="input-wrap"><textarea id="message" rows="2" maxlength="2000" placeholder="쇼핑 어시스턴트에게 질문하세요" required aria-label="질문"></textarea><button id="send" type="submit">실행 ↑</button><button id="stop" type="button" hidden>정지 ■</button></div><div class="input-note"><span id="mode-note">STUB는 준비된 시나리오만 재현합니다.</span><span>Enter 전송 · Shift+Enter 줄바꿈</span></div><label id="file-label" hidden>이미지·음성 파일 <input id="attachment" type="file" accept="image/png,image/jpeg,audio/mpeg,audio/wav,audio/webm,audio/mp4"></label></form>
+  </section>
+  <aside class="inspector"><div class="eyebrow">UNDER THE HOOD</div><h2>실행 관찰</h2><p class="muted">실제 호출에서 수집한 데이터입니다.<br>STUB 결과와 모델 품질을 구분하세요.</p><div id="result-status" class="result-status">실행 대기</div><div id="diagnostics"><div class="empty">첫 실습을 실행해 보세요.<br>메시지 → 모델 → 결과 흐름이 나타납니다.</div></div></aside>
+</main><script type="module" src="/tutor/app.js"></script>
+</body></html>

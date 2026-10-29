@@ -1,5 +1,7 @@
 # Spring Shopping AI PoC
 
+Spring AI 학습용 독립 하위 프로젝트: [Spring-AI-Tutor 실행·테스트](Spring-AI-Tutor/README.md) · [15개 단원과 58개 케이스](Spring-AI-Tutor/docs/02-curriculum.md).
+
 세 개의 Spring Boot 서비스를 실행해 일반 상품 검색, 장바구니 무료배송 추천, 후속 조건 변경을 시연합니다.
 
 | 서브 프로젝트 | 포트 | 역할 |

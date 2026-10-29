@@ -1,0 +1,33 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.ai:spring-ai-openai'
+    implementation 'org.springframework.ai:spring-ai-client-chat'
+    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+    implementation 'org.springframework.ai:spring-ai-jsoup-document-reader'
+    implementation 'org.springframework.ai:spring-ai-model-chat-memory-repository-jdbc'
+    implementation 'org.springframework.ai:spring-ai-mcp'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
+    implementation 'org.springframework.ai:spring-ai-pgvector-store'
+    implementation 'org.springframework:spring-jdbc'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+// 웹 학습실에는 허용된 Java 소스만 패키징한다. 임의 로컬 파일 조회 API는 두지 않는다.
+tasks.named('processResources') {
+    from('src/main/java') { include '**/*.java'; into 'lesson-sources' }
+}
+
+tasks.named('test') { useJUnitPlatform { excludeTags 'live', 'mcp' } }
+['liveEvaluation': 'live', 'mcpIntegrationTest': 'mcp'].each { taskName, tagName ->
+    tasks.register(taskName, Test) {
+        group = 'verification'
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+        useJUnitPlatform { includeTags tagName }
+        outputs.upToDateWhen { false }
+        if (taskName == 'mcpIntegrationTest') { dependsOn ':shopping-mcp:bootJar' }
+    }
+}
