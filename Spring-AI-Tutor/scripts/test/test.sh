@@ -11,9 +11,13 @@ if [[ "$TEST_MODE" == --live || "$TEST_MODE" == --live-mcp ]]; then
 fi
 
 case "$TEST_MODE" in
+  --beginner) exec ./gradlew :Spring-AI-Tutor:test \
+    --tests 'com.example.shopping.tutor.lesson.l00setup.SetupLessonTest' \
+    --tests 'com.example.shopping.tutor.lesson.l06tools.ProductSearchToolsTest' \
+    --tests 'com.example.shopping.tutor.lesson.l04memory.ConversationMemoryLessonTest' ;;
   --stub) exec ./gradlew :Spring-AI-Tutor:test :Spring-AI-Tutor:bootJar ;;
   --live) exec ./gradlew :Spring-AI-Tutor:liveEvaluation ;;
   --mcp) exec ./gradlew :Spring-AI-Tutor:mcpIntegrationTest ;;
   --live-mcp) exec ./gradlew :Spring-AI-Tutor:liveMcpTest ;;
-  *) echo '사용법: scripts/test/test.sh [--stub|--live|--mcp|--live-mcp]'; exit 2 ;;
+  *) echo '사용법: scripts/test/test.sh [--beginner|--stub|--live|--mcp|--live-mcp]'; exit 2 ;;
 esac
