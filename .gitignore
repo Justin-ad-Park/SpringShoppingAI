@@ -1,0 +1,12 @@
+/.gradle/
+**/build/
+/.run/
+/.env
+*.log
+.idea/
+*.iml
+__pycache__/
+*.pyc
+.DS_Store
+.gradle
+!gradle/wrapper/gradle-wrapper.jar

@@ -1,58 +1,53 @@
 # Spring Shopping AI PoC
 
-독립 실행하는 세 개의 Spring Boot 서브 프로젝트로 쇼핑 에이전트를 시연합니다.
+세 개의 Spring Boot 서비스를 실행해 일반 상품 검색, 장바구니 무료배송 추천, 후속 조건 변경을 시연합니다.
 
-| 프로젝트 | 기본 포트 | 역할 |
+| 서브 프로젝트 | 포트 | 역할 |
 |---|---|---|
-| `chatbot-client` | 8080 | 채팅 화면, 상품 카드, 요청 프록시 |
-| `shopping-agent` | 8081 | Spring AI + GPT, MCP 도구 선택/실행, 응답 검증 |
-| `shopping-mcp` | 8082 | Mock 쇼핑 데이터 및 7개 MCP 도구 |
+| chatbot-client | 8080 | 채팅·상품 카드·검색 상태·MCP 호출 기록 |
+| shopping-agent | 8081 | GPT 의도 해석, 업무별 실행, 단기 조건 메모리 |
+| shopping-mcp | 8082 | 범용 상품 검색·장바구니·배송 견적·혜택 Mock 도구 |
 
-Java 21, Spring Boot 3.5.12, Spring AI 1.1.2, Gradle Wrapper 8.13 사용.
+Java 21 / Spring Boot 3.5.12 / Spring AI 1.1.2 / Gradle Wrapper 8.13.
 
 ```bash
-# Java 21+, Python 3, curl 필요. API 키 없이 실제 MCP 연결을 확인
-./scripts/run-all.sh --mock
+# API 키 없이 예시 표현으로 시연
+./scripts/mock-run-all.sh
 
-# GPT가 직접 MCP 도구를 선택하고 호출하는 모드
-# .env.example을 .env로 복사하고 OPENAI_API_KEY를 입력한 후
+# .env.example을 .env로 복사해 OPENAI_API_KEY 입력 후 GPT 실행
 ./scripts/run-all.sh
 ```
 
-브라우저에서 <http://127.0.0.1:8080>을 열고 질문합니다.
+브라우저: <http://127.0.0.1:8080>
 
-> 내 장바구니를 확인해서 무료배송이 가능하도록 추가 구매하기 적합한 상품을 추천해줘.
+다음 순서로 질문해 보세요.
 
-기본 장바구니 42,000원 / 무료배송 기준 50,000원 / 부족 금액 8,000원. 기본 추가 상품 검색 범위는 **8,000~15,000원**입니다.
-상품 카드는 한 상품을 1개씩 추가하는 **서로 독립된 대안**입니다.
-Mock 모드는 고정 흐름이며 GPT의 자연어 이해/도구 선택을 검증하지 않습니다.
-GPT 모드는 매 요청 독립 실행하며 이전 대화를 기억하지 않습니다.
+1. `무료배송을 채울 상품을 추천해줘.` → 기본 8,000~15,000원에서 추천.
+2. `음료 카테고리에서만 추천해줘.` → 무료배송 목적은 유지하고 카테고리 변경.
+3. `예산은 3만원까지로 변경해줘.` → 명시 예산 30,000원 유지.
+4. `생활 카테고리에서만 추천해줘.` → 텀블러 후보, 무료배송 견적 확인.
+5. `새로 3만원 이하 텀블러 찾아줘.` → 이전 조건을 상속하지 않는 일반 검색.
 
-- [설정·키 입력·실행·문제 해결](docs/SETUP.md)
-- [서비스 구성·요청 흐름](docs/ARCHITECTURE.md)
-- [Mock 데이터·도구·제약](docs/MOCK-DATA.md)
-- [테스트·검증 절차](docs/TESTING.md)
+‘새 검색 · 조건 초기화’ 버튼도 이전 조건을 상속하지 않는 검색을 시작합니다.
+전체 대화 대신 활성 업무와 사용자 조건만 단기 보관합니다(기본 비활성 30분).
+Mock은 정해진 표현만 지원하며 GPT의 언어 이해 품질을 검증하는 모드는 아닙니다.
+
+```bash
+./scripts/running-list.sh
+./scripts/stop-all.sh
+./scripts/run-all.sh --skip-build  # 코드 변경이 없을 때만
+```
+
+문서:
+
+- [설정·API 키·실행](docs/SETUP.md)
+- [구성과 책임·멀티턴 처리](docs/ARCHITECTURE.md)
+- [Mock 데이터·MCP 계약](docs/MOCK-DATA.md)
+- [테스트와 한계](docs/TESTING.md)
+- [SOLID·패턴 적용과 구현 결정](doc_tasks/2026-10-28-solid-and-implementation.md)
 
 ```bash
 ./gradlew test bootJar
-# --mock으로 서비스를 띄운 별도 터미널에서
-python3 scripts/smoke-test.py
+./gradlew :integration-tests:smokeTest    # Java/JUnit: 세 서비스 자동 실행/종료
+./gradlew :integration-tests:gptPathTest  # 로컬 GPT 대역, API 키/비용 없이 연결 검증
 ```
-
-브라우저 검증 화면: [PoC 미리보기](docs/images/poc-preview.png)
-
-서비스 종료 (Mock/GPT 공통):
-
-```bash
-./scripts/stop-all.sh --dry-run  # 대상 확인
-./scripts/stop-all.sh            # 정상 종료
-```
-
-자주 사용하는 옵션은 아래 스크립트로도 실행할 수 있습니다.
-
-```bash
-./scripts/running-list.sh  # 실행 중인 서비스 확인 (종료하지 않음)
-./scripts/mock-run-all.sh  # Mock 모드로 세 서비스 실행
-./scripts/mock-run-all.sh --skip-build  # 기존 빌드 사용
-```
-# SpringShoppingAI

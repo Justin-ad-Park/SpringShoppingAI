@@ -1,0 +1,3 @@
+rootProject.name = 'spring-shopping-ai'
+include 'chatbot-client', 'shopping-agent', 'shopping-mcp'
+include 'integration-tests'

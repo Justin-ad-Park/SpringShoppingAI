@@ -1,0 +1,36 @@
+server:
+  address: 127.0.0.1
+  port: ${AGENT_PORT:8081}
+spring:
+  application:
+    name: shopping-agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:unused-in-mock-mode}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4.1-mini}
+          temperature: 0.2
+    retry:
+      max-attempts: 1
+    mcp:
+      client:
+        name: shopping-agent
+        type: SYNC
+        request-timeout: 20s
+        streamable-http:
+          connections:
+            shopping:
+              url: ${MCP_URL:http://127.0.0.1:8082}
+              endpoint: /mcp
+shopping:
+  mode: gpt
+  catalog-execution: agent
+  memory:
+    ttl: 30m
+    max-conversations: 1000
+
+# The Client forwards this cookie; it does not use the MCP session as user identity.
+server.servlet.session.cookie.name: SHOPPING_SESSION
+server.servlet.session.cookie.http-only: true
+server.servlet.session.cookie.same-site: strict

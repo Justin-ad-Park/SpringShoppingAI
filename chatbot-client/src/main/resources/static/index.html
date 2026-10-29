@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>장바구니 연구소 · Shopping AI</title>
+        <link rel="stylesheet" href="/style.css">
+        <script src="/app.js" defer></script>
+    </head>
+    <body>
+        <main>
+            <header>
+                <div class="brand">
+                    <span class="logo">S</span>
+                    <div>
+                        장바구니 연구소
+                        <small>SPRING AI SHOPPING LAB</small>
+                    </div>
+                </div>
+                <span id="status" class="badge">연결 확인 중</span>
+            </header>
+
+            <section class="intro">
+                <span class="eyebrow">SHOP SMARTER, TOGETHER</span>
+                <h1>
+                    무료배송까지,<br>
+                    <em>꼭 맞는 한 가지.</em>
+                </h1>
+                <p>장바구니와 배송 정책을 확인하고, 조건에 맞는 추가 상품을 찾아드려요.</p>
+            </section>
+
+            <section class="layout">
+                <aside>
+                    <h2>오늘의 실험</h2>
+                    <label for="scenario">샘플 장바구니</label>
+                    <select id="scenario">
+                        <option value="standard">기본 · 42,000원</option>
+                        <option value="already-free">이미 무료배송 · 60,000원</option>
+                        <option value="empty">빈 장바구니</option>
+                        <option value="no-match">추천 후보 없음 · 1,000원</option>
+                    </select>
+
+                    <div class="policy">
+                        <span>무료배송 기준</span>
+                        <strong>50,000원</strong>
+                        <span>기본 배송비 3,000원 · 동일 배송그룹</span>
+                    </div>
+                    <p class="note">
+                        고정 데모 고객의 Mock 데이터입니다. 실제 구매나 장바구니 변경은 하지 않습니다.
+                    </p>
+
+                    <div class="examples">
+                        <h3>이렇게 물어보세요</h3>
+                        <button data-prompt="내 장바구니를 확인해서 무료배송이 가능하도록 추가 구매하기 적합한 상품을 추천해줘.">
+                            무료배송 상품 추천 ↗
+                        </button>
+                        <button data-prompt="무료배송을 채울 상품을 추천해줘. 추가 예산은 10,000원 이하야.">
+                            1만원 이내로 추천 ↗
+                        </button>
+                        <button data-prompt="음료 카테고리에서만 추천해줘.">
+                            이어서: 음료만 ↗
+                        </button>
+                        <button data-prompt="예산은 30,000원까지로 변경해줘.">
+                            이어서: 예산 3만원 ↗
+                        </button>
+                        <button data-prompt="새로 3만원 이하 텀블러 찾아줘.">
+                            새로 텀블러 검색 ↗
+                        </button>
+                        <button data-prompt="내 보유 쿠폰과 적립금을 조회해줘.">
+                            쿠폰·적립금 조회 ↗
+                        </button>
+                    </div>
+                </aside>
+
+                <div class="conversation">
+                    <div class="chat-heading">
+                        <span class="dot"></span>
+                        쇼핑 도우미
+                        <span>이전 검색에 조건을 추가해 보세요</span>
+                    </div>
+
+                    <div class="conversation-controls">
+                        <p id="task-state" aria-live="polite">검색 조건은 응답 후 표시됩니다.</p>
+                        <button id="new-search" type="button">새 검색 · 조건 초기화</button>
+                    </div>
+
+                    <div id="messages" aria-live="polite">
+                        <article class="assistant welcome">
+                            <span class="speaker">SHOPPING ASSISTANT</span>
+                            <p>
+                                안녕하세요! 장바구니를 확인하고 무료배송에 맞는 상품을 찾아드릴게요.
+                                아래에 요청을 입력해 주세요.
+                            </p>
+                        </article>
+                    </div>
+
+                    <form id="chat-form">
+                        <label class="sr-only" for="message">쇼핑 도우미에게 질문</label>
+                        <textarea
+                            id="message"
+                            rows="2"
+                            maxlength="2000"
+                            required
+                            placeholder="장바구니를 확인해서 무료배송 상품을 추천해줘"
+                        ></textarea>
+                        <button id="send" type="submit">보내기 ↑</button>
+                    </form>
+                    <p class="footnote">
+                        GPT 모드는 API를 사용합니다. Mock은 정해진 예시 표현만 지원합니다. 조건은 30분간 보관하며 새 검색으로 초기화할 수 있습니다.
+                    </p>
+                </div>
+            </section>
+
+            <footer>
+                Spring Boot · Spring AI · Model Context Protocol
+                <span>PoC / Mock catalog</span>
+            </footer>
+        </main>
+    </body>
+</html>

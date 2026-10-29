@@ -1,0 +1,50 @@
+// 애플리케이션이 아닌 JUnit 통합 테스트 전용 모듈이다.
+tasks.named('bootJar') { enabled = false }
+tasks.named('jar') { enabled = true }
+
+dependencies {
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform { excludeTags 'integration' }
+}
+
+def serviceJars = [':shopping-mcp:bootJar', ':shopping-agent:bootJar', ':chatbot-client:bootJar']
+
+def registerSuite = { String taskName, String suiteTag ->
+    tasks.register(taskName, Test) {
+        group = 'verification'
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+        useJUnitPlatform { includeTags suiteTag }
+        systemProperty 'shopping.root', rootProject.projectDir.absolutePath
+        // 실행 중인 서버 상태가 달라질 수 있으므로 통합 테스트는 매번 실행한다.
+        outputs.upToDateWhen { false }
+        testLogging { events 'passed', 'skipped', 'failed' }
+    }
+}
+
+registerSuite('smokeTest', 'smoke')
+registerSuite('gptPathTest', 'gpt-path')
+registerSuite('smokeExternalTest', 'smoke')
+
+tasks.named('smokeTest') { dependsOn serviceJars }
+tasks.named('gptPathTest') { dependsOn serviceJars }
+tasks.named('smokeExternalTest') {
+    systemProperty 'shopping.test.mode', 'EXTERNAL'
+    systemProperty 'shopping.baseUrl', providers.gradleProperty('smokeBaseUrl')
+            .orElse(providers.environmentVariable('SMOKE_BASE_URL'))
+            .getOrElse('http://127.0.0.1:8080')
+}
+
+// JavaExec은 표준 입력을 전달하므로 Enter를 눌러 미리보기를 종료할 수 있다.
+tasks.register('smokePreview', JavaExec) {
+    group = 'verification'
+    dependsOn serviceJars, tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.example.shopping.integration.support.SmokePreview'
+    systemProperty 'shopping.root', rootProject.projectDir.absolutePath
+    standardInput = System.in
+}
