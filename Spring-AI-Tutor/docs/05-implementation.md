@@ -8,7 +8,12 @@
 Spring-AI-Tutor/
   build.gradle
   .env.example
-  scripts/                   # env.sh, run.sh, stop.sh, test.sh, pgvector-up.sh
+  scripts/                   # env.sh, run.sh, stop.sh, pgvector-up.sh
+    test_stub.sh             # 공통 실행기에 --stub 전달
+    test_live.sh             # 공통 실행기에 --live 전달
+    test_mcp.sh              # 공통 실행기에 --mcp 전달
+    test_live_mcp.sh         # 공통 실행기에 --live-mcp 전달
+    test/test.sh             # 테스트 공통 실행기
   src/main/java/com/example/shopping/tutor/
     TutorApplication.java
     lesson/                  # 기능별 Cases 클래스, 58개 @TutorCase 메소드
@@ -85,3 +90,7 @@ LIVE 평가 태스크는 실제 텍스트·도구·임베딩/RAG·스트림·조
 LIVE 평가는 기본 설정의 `gpt-4.1-mini`와 `text-embedding-3-small`을 사용했다. 검증 질문은 가상 쇼핑 데이터이며 API 키를 결과 문서에 기록하지 않는다.
 
 브라우저에서 LIVE 무료배송 추천의 현재 금액/가상 견적, 상품 카드와 실제 Java 소스 보기를 확인했다. [실행 화면](images/live-preview.png).
+
+후속 가독성 개선에서 프런트엔드를 6개 역할별 JavaScript 모듈로 분리하고 HTML/CSS의 들여쓰기와 영역 설명을 정리했다. 단원 검색·일반 대화·소스 보기·초기화·스트리밍을 브라우저에서 확인했으며, 분할된 한글 바이트와 CRLF를 포함한 SSE 해석을 검증했다. [검증 화면](images/frontend-modules-preview.png).
+
+테스트 공통 실행기를 `scripts/test/test.sh`로 옮기고 4개의 진입 스크립트를 추가했다. `test_live_mcp.sh`의 실제 모델 + 실제 MCP 통합 테스트 1개가 추가로 통과했다. 이 테스트는 기본 `test`나 기존 `liveEvaluation`에 자동 포함되지 않는 명시 실행 태스크다.

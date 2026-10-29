@@ -60,17 +60,28 @@ L09-05: 미개봉 상품 반품 조건은? → 그럼 뜯은 건?
 
 ```bash
 # 기본 테스트·로컬 provider 계약 테스트·웹 API·JAR 빌드
-./Spring-AI-Tutor/scripts/test.sh --stub
+./Spring-AI-Tutor/scripts/test_stub.sh
 
 # 실제 API: 조건 추출·도구 선택·임베딩/RAG·스트림·회귀 질문
 # 서버를 따로 실행할 필요가 없습니다. 실제 API 사용량이 발생합니다.
-./Spring-AI-Tutor/scripts/test.sh --live
+./Spring-AI-Tutor/scripts/test_live.sh
 
 # 실제 MCP: 테스트가 임의 포트에서 필요한 서버를 시작하고 종료
-./Spring-AI-Tutor/scripts/test.sh --mcp
+./Spring-AI-Tutor/scripts/test_mcp.sh
+
+# 실제 AI 모델 + 실제 MCP 서버: L10-02 전체 연결 경로
+./Spring-AI-Tutor/scripts/test_live_mcp.sh
 ```
 
+`test_mcp.sh`는 STUB 모델과 실제 MCP 서버를 검증하며 API 키가 필요 없습니다. `test_live_mcp.sh`는 실제 모델이 원격 도구를 선택하고 결과로 답하는 경로를 검증하므로 API 키와 사용량이 필요합니다. `test_live.sh`의 로컬 도구·RAG 평가와 구분됩니다.
+
+네 실행 스크립트는 `scripts/test/test.sh`에 각각 `--stub`, `--live`, `--mcp`, `--live-mcp`를 붙여 호출합니다. 공통 실행기를 직접 호출할 수도 있습니다.
+
 HTML 결과는 `build/reports/tests/test/`, `liveEvaluation/`, `mcpIntegrationTest/`에 있습니다. LIVE 관찰 보고서는 `build/reports/live-evaluation.json`입니다. 위 경로는 모두 이 하위 프로젝트 기준이며 Git에서 제외됩니다. 기본 테스트는 외부 API·API 키·Docker가 필요 없습니다. Spring 애플리케이션과 로컬 HTTP 계약 검증을 위해 loopback 소켓은 사용합니다.
+
+LIVE+MCP의 HTML 결과는 `build/reports/tests/liveMcpTest/`, 관찰 보고서는 `build/reports/live-mcp-evaluation.json`입니다. MCP 테스트는 실행 중인 기본 서버와 별개로 임의 포트의 서버를 시작하고 정리합니다.
+
+프런트엔드의 파일별 역할과 읽는 순서는 [프런트엔드 코드 안내](docs/07-frontend-code-guide.md), Java 코드의 단원별 재구성 제안은 [학습 구조 개선안](docs/06-learning-structure-proposal.md)을 참고하세요.
 
 ## 선택 인프라와 모델
 

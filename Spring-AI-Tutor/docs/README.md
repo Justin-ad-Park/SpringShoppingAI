@@ -17,6 +17,8 @@
 | [자동화 테스트 설계](03-testing.md) | 무비용 테스트, 실제 모델 평가, fixture, 통과 기준과 CI |
 | [웹 학습실과 구현 순서](04-web-and-roadmap.md) | 대화형 실습 UX, API/SSE 계약, 단계별 완료 조건 |
 | [구현 현황과 차이](05-implementation.md) | 실제 패키지·태스크·선택 기능·검증 범위 |
+| [학습 구조 개선안](06-learning-structure-proposal.md) | Java 단원별 패키지, support 배치, 주석·코드·테스트 재구성 제안 |
+| [프런트엔드 코드 읽기](07-frontend-code-guide.md) | 역할별 JS 모듈, 함수명과 질문 처리 흐름 |
 
 ## 권장 구성
 

@@ -1,24 +1,213 @@
-const $=id=>document.getElementById(id);
-const groups=['시작과 환경','ChatClient · 프롬프트','구조화 응답','스트리밍','대화 메모리','Advisor','쇼핑 도구','임베딩 · 벡터','문서 ETL','근거 기반 RAG','MCP 연결','평가','관측 · 장애 처리','통합 쇼핑','이미지 · 음성'];
-let entries=[],selected,conversation=crypto.randomUUID(),busy=false,abort;
-function node(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
-async function json(url,options={}){const r=await fetch(url,options);const data=await r.json();if(!r.ok)throw Error(data.message||`HTTP ${r.status}`);return data;}
-function drawNav(filter=''){$('lessons').replaceChildren();for(let i=0;i<groups.length;i++){const cases=entries.filter(x=>Number(x.id.slice(1,3))===i&&(x.title+x.goal+x.id).toLowerCase().includes(filter.toLowerCase()));if(!cases.length)continue;const d=node('details');d.open=i===Number(selected?.id.slice(1,3))||!!filter;d.append(node('summary',`${String(i).padStart(2,'0')}  ${groups[i]}`));for(const e of cases){const b=node('button',e.title,e.id===selected?.id?'active':'');b.disabled=busy;b.onclick=()=>select(e);d.append(b);}$('lessons').append(d);}}
-async function select(e){if(busy)return;selected=e;$('source-code').textContent='';$('source-details').open=false;conversation=crypto.randomUUID();$('case-id').textContent=`${e.id}  /  ${groups[Number(e.id.slice(1,3))]}`;$('title').textContent=e.title;$('goal').textContent=e.goal;$('source').textContent=`${e.source}\n메소드: ${e.method}\n테스트: ${e.test}`;$('messages').replaceChildren();$('message').value=e.sample;$('diagnostics').replaceChildren(node('p','실행 후 실제 관찰값이 표시됩니다.','empty'));$('result-status').textContent='실행 대기';$('experiment').value='normal';$('attachment').value='';$('file-label').hidden=!['L14-01','L14-02'].includes(e.id);drawNav($('search').value);}
-function message(role,text){const a=node('article',undefined,role);a.append(node('span',role==='user'?'YOU':'SHOPPING AI','speaker'));const p=node('p',text);a.append(p);$('messages').append(a);$('messages').scrollTop=$('messages').scrollHeight;return {a,p};}
-function inspect(result){$('result-status').textContent=`${result.status} · ${result.mode.toUpperCase()} · ${result.diagnostics?.elapsedMs??'—'} ms`;$('diagnostics').replaceChildren();const values={...result.diagnostics,'검증된 결과':result.data};for(const [key,value]of Object.entries(values)){const d=node('details');d.open=['usage','toolCalls','검증된 결과'].includes(key);d.append(node('summary',key),node('pre',JSON.stringify(value,null,2)));$('diagnostics').append(d);}}
-function renderData(data,target){if(data?.products?.length){const list=node('div',undefined,'products');for(const p of data.products){if(!p.name)continue;const card=node('div',undefined,'product');card.append(node('strong',p.name),node('span',new Intl.NumberFormat('ko-KR').format(p.price)+'원'),node('small',`${p.id} · ${p.category}`));list.append(card);}target.append(list);}if(data?.confirmationToken){const button=node('button','샌드박스에 1개 추가 확인','confirm');button.type='button';button.onclick=async()=>{button.disabled=true;try{const r=await json('/api/tutor/cart-confirmations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({caseId:selected.id,conversationId:conversation,token:data.confirmationToken})});target.append(node('pre',JSON.stringify(r,null,2)));}catch(e){target.append(node('p',e.message));}};target.append(button);}if(data?.audioBase64){const audio=node('audio');audio.controls=true;audio.src=`data:${data.contentType};base64,${data.audioBase64}`;target.append(audio);}if(data?.imageBase64){const img=node('img',undefined,'generated');img.alt='학습용 AI 생성 선물 포장 이미지';img.src=`data:image/png;base64,${data.imageBase64}`;target.append(img);}if(data?.imageUrl){try{const u=new URL(data.imageUrl);if(u.protocol==='https:'){const a=node('a','생성 이미지 열기');a.href=u.href;a.target='_blank';a.rel='noopener';target.append(a);}}catch{}}}
-function setBusy(value){busy=value;$('send').disabled=value;$('reset').disabled=value;$('fixture').disabled=value;$('experiment').disabled=value;$('stop').hidden=!value||!selected?.stream;$('send').hidden=value&&selected?.stream;drawNav($('search').value);}
-// fetch chunk와 SSE frame 경계는 다르므로 decoder와 frame buffer를 유지한다.
-export async function readSse(response,onEvent){const reader=response.body.getReader();const decoder=new TextDecoder();let buffer='';try{for(;;){const {value,done}=await reader.read();buffer+=decoder.decode(value||new Uint8Array(),{stream:!done}).replace(/\r\n/g,'\n');let end;while((end=buffer.indexOf('\n\n'))>=0){const frame=buffer.slice(0,end);buffer=buffer.slice(end+2);let type='message';const data=[];for(const line of frame.split('\n')){if(line.startsWith('event:'))type=line.slice(6).trim();if(line.startsWith('data:'))data.push(line.slice(5).trimStart());}if(data.length)onEvent(type,JSON.parse(data.join('\n')));}if(done)break;}}finally{reader.releaseLock();}}
-$('chat-form').onsubmit=async e=>{e.preventDefault();if(busy||!selected)return;const text=$('message').value.trim();if(!text)return;setBusy(true);abort=new AbortController();message('user',text);const target=message('assistant','실행 중…');$('message').value='';const request={caseId:selected.id,conversationId:conversation,message:text,fixtureId:$('fixture').value,experiment:$('experiment').value,options:{topK:Number($('top-k').value),temperature:Number($('temperature').value)}};try{if(selected.stream){let output='',ended=false;const r=await fetch('/api/tutor/runs/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),signal:abort.signal});if(!r.ok)throw Error((await r.json()).message);await readSse(r,(type,data)=>{if(type==='text-delta'){output+=data.text;target.p.textContent=output;$('messages').scrollTop=$('messages').scrollHeight;}if(type==='completed'){ended=true;inspect(data);}if(type==='failed'){ended=true;target.a.classList.add('error');target.p.textContent=output+'\n'+data.message;$('result-status').textContent='FAILED · 부분 응답';}});if(!ended)throw Error('종료 이벤트 없이 연결이 끊겼습니다.');}else{let result;const file=$('attachment').files[0];if(['L14-01','L14-02'].includes(selected.id)){if(!file)throw Error('실습에 사용할 파일을 선택하세요.');const form=new FormData();form.append('request',new Blob([JSON.stringify(request)],{type:'application/json'}));form.append('file',file);result=await json('/api/tutor/media-runs',{method:'POST',body:form,signal:abort.signal});}else result=await json('/api/tutor/runs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),signal:abort.signal});target.p.textContent=result.answer;renderData(result.data,target.a);inspect(result);}}catch(error){target.a.classList.add('error');target.p.textContent=error.name==='AbortError'?'생성을 중지했습니다. 부분 응답은 확정하지 않았습니다.':error.message;$('result-status').textContent='중단 / 실패';}finally{setBusy(false);}};
-$('message').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('chat-form').requestSubmit();}};
-$('sample').onclick=()=>{if(selected)$('message').value=selected.sample;};$('stop').onclick=()=>abort?.abort();$('search').oninput=()=>drawNav($('search').value);
-$('source-details').ontoggle=async()=>{
-  if(!$('source-details').open||!selected)return;
-  const id=selected.id;
-  try{const source=await json(`/api/tutor/lessons/${id}/source`);if(selected.id===id)$('source-code').textContent=source.code;}
-  catch(error){$('source-code').textContent=error.message;}
+// 학습실의 시작점이다. 화면 상태를 보관하고 사용자 동작을 API·화면 함수에 연결한다.
+// 읽는 순서: initializeLearningClient → selectLesson → handleChatSubmit.
+import { elements } from './dom.js';
+import {
+  renderLessonNavigation,
+  showSelectedLesson,
+  renderRunDiagnostics,
+  updateExecutionControls,
+} from './lesson-view.js';
+import {
+  appendChatMessage,
+  renderLessonOutput,
+  scrollToLatestMessage,
+} from './chat-view.js';
+import {
+  loadLearningEnvironment,
+  fetchLessonSource,
+  deleteConversation,
+  confirmSandboxCart,
+  executeStandardLesson,
+  executeStreamingLesson,
+} from './tutor-api.js';
+
+// 다른 모듈은 이 상태를 직접 변경하지 않는다. 필요한 값이나 콜백만 전달한다.
+const state = {
+  lessons: [],
+  selectedLesson: null,
+  conversationId: crypto.randomUUID(),
+  isRunning: false,
+  abortController: null,
 };
-$('reset').onclick=async()=>{if(busy||!selected)return;try{await json(`/api/tutor/conversations/${conversation}?caseId=${selected.id}`,{method:'DELETE'});await select(selected);}catch(e){message('error',e.message);}};
-try{const [catalog,status]=await Promise.all([json('/api/tutor/lessons'),json('/api/tutor/status')]);entries=catalog;$('status').textContent=`${status.mode.toUpperCase()} · ${status.model}`;$('mode-note').textContent=status.notice;await select(entries[0]);}catch(e){$('status').textContent='서버 연결 실패';message('error',e.message);}
+
+function refreshLessonNavigation() {
+  renderLessonNavigation({
+    lessons: state.lessons,
+    selectedLesson: state.selectedLesson,
+    isRunning: state.isRunning,
+    searchText: elements.lessonSearch.value,
+    onSelectLesson: selectLesson,
+  });
+}
+
+function selectLesson(lesson) {
+  if (state.isRunning) {
+    return;
+  }
+
+  state.selectedLesson = lesson;
+  state.conversationId = crypto.randomUUID();
+  showSelectedLesson(lesson);
+  refreshLessonNavigation();
+}
+
+function setRunningState(isRunning) {
+  state.isRunning = isRunning;
+  updateExecutionControls(isRunning, Boolean(state.selectedLesson?.stream));
+  refreshLessonNavigation();
+}
+
+function createRunRequest(message) {
+  return {
+    caseId: state.selectedLesson.id,
+    conversationId: state.conversationId,
+    message,
+    fixtureId: elements.fixtureSelect.value,
+    experiment: elements.experimentSelect.value,
+    options: {
+      topK: Number(elements.topKInput.value),
+      temperature: Number(elements.temperatureInput.value),
+    },
+  };
+}
+
+/** 스트리밍은 여러 이벤트를 받으며 같은 응답 문단을 조금씩 갱신한다. */
+async function displayStreamingConversation(request, reply, signal) {
+  let receivedText = '';
+  let receivedFinalEvent = false;
+
+  await executeStreamingLesson(request, (eventType, data) => {
+    switch (eventType) {
+      case 'text-delta':
+        receivedText += data.text;
+        reply.paragraph.textContent = receivedText;
+        scrollToLatestMessage();
+        break;
+      case 'completed':
+        receivedFinalEvent = true;
+        renderRunDiagnostics(data);
+        break;
+      case 'failed':
+        receivedFinalEvent = true;
+        reply.article.classList.add('error');
+        reply.paragraph.textContent = `${receivedText}\n${data.message}`;
+        elements.resultStatus.textContent = 'FAILED · 부분 응답';
+        break;
+    }
+  }, signal);
+
+  if (!receivedFinalEvent) {
+    throw new Error('종료 이벤트 없이 연결이 끊겼습니다.');
+  }
+}
+
+/** 질문 제출의 전체 흐름. 실제 HTTP 요청과 화면 요소 생성은 담당 모듈에 위임한다. */
+async function handleChatSubmit(event) {
+  event.preventDefault();
+  const message = elements.messageInput.value.trim();
+  if (state.isRunning || !state.selectedLesson || !message) {
+    return;
+  }
+
+  setRunningState(true);
+  state.abortController = new AbortController();
+  const request = createRunRequest(message);
+  const signal = state.abortController.signal;
+  appendChatMessage('user', message);
+  const reply = appendChatMessage('assistant', '실행 중…');
+  elements.messageInput.value = '';
+
+  try {
+    if (state.selectedLesson.stream) {
+      await displayStreamingConversation(request, reply, signal);
+    } else {
+      const file = elements.attachmentInput.files[0];
+      const result = await executeStandardLesson(request, file, signal);
+      reply.paragraph.textContent = result.answer;
+      renderLessonOutput(result.data, reply.article, (token) => {
+        // 결과를 생성한 대화의 ID를 유지해 다른 대화의 장바구니를 변경하지 않는다.
+        return confirmSandboxCart(request, token);
+      });
+      renderRunDiagnostics(result);
+    }
+  } catch (error) {
+    reply.article.classList.add('error');
+    reply.paragraph.textContent = error.name === 'AbortError'
+      ? '생성을 중지했습니다. 부분 응답은 확정하지 않았습니다.'
+      : error.message;
+    elements.resultStatus.textContent = '중단 / 실패';
+  } finally {
+    setRunningState(false);
+  }
+}
+
+function handleMessageKeydown(event) {
+  const isSubmitKey = event.key === 'Enter' && !event.shiftKey && !event.isComposing;
+  if (isSubmitKey) {
+    event.preventDefault();
+    elements.chatForm.requestSubmit();
+  }
+}
+
+async function loadSelectedLessonSource() {
+  if (!elements.sourceDetails.open || !state.selectedLesson) {
+    return;
+  }
+
+  const caseId = state.selectedLesson.id;
+  try {
+    const source = await fetchLessonSource(caseId);
+    // 요청 중 선택 단원이 바뀌면 이전 소스를 새 단원에 표시하지 않는다.
+    if (state.selectedLesson.id === caseId) {
+      elements.sourceCode.textContent = source.code;
+    }
+  } catch (error) {
+    if (state.selectedLesson.id === caseId) {
+      elements.sourceCode.textContent = error.message;
+    }
+  }
+}
+
+async function resetConversation() {
+  if (state.isRunning || !state.selectedLesson) {
+    return;
+  }
+
+  try {
+    await deleteConversation(state.selectedLesson.id, state.conversationId);
+    selectLesson(state.selectedLesson);
+  } catch (error) {
+    appendChatMessage('error', error.message);
+  }
+}
+
+function registerEventHandlers() {
+  elements.chatForm.addEventListener('submit', handleChatSubmit);
+  elements.messageInput.addEventListener('keydown', handleMessageKeydown);
+  elements.sourceDetails.addEventListener('toggle', loadSelectedLessonSource);
+  elements.resetButton.addEventListener('click', resetConversation);
+  elements.stopButton.addEventListener('click', () => state.abortController?.abort());
+  elements.lessonSearch.addEventListener('input', refreshLessonNavigation);
+  elements.sampleButton.addEventListener('click', () => {
+    if (state.selectedLesson) {
+      elements.messageInput.value = state.selectedLesson.sample;
+    }
+  });
+}
+
+async function initializeLearningClient() {
+  registerEventHandlers();
+
+  try {
+    const { lessons, status } = await loadLearningEnvironment();
+    state.lessons = lessons;
+    elements.statusBadge.textContent = `${status.mode.toUpperCase()} · ${status.model}`;
+    elements.modeNotice.textContent = status.notice;
+    selectLesson(lessons[0]);
+  } catch (error) {
+    elements.statusBadge.textContent = '서버 연결 실패';
+    appendChatMessage('error', error.message);
+  }
+}
+
+await initializeLearningClient();

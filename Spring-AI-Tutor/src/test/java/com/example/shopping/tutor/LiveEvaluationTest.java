@@ -13,7 +13,7 @@ import com.example.shopping.tutor.lesson.*;
 import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.*;
 
-/** scripts/test.sh --live로 명시 실행. 키가 없으면 시작 실패하며 조용히 skip하지 않는다. */
+/** scripts/test_live.sh로 명시 실행. 키가 없으면 시작 실패하며 조용히 skip하지 않는다. */
 @Tag("live")
 @SpringBootTest(properties="tutor.mode=live")
 class LiveEvaluationTest {

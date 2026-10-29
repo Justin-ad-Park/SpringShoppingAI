@@ -20,14 +20,16 @@ tasks.named('processResources') {
     from('src/main/java') { include '**/*.java'; into 'lesson-sources' }
 }
 
-tasks.named('test') { useJUnitPlatform { excludeTags 'live', 'mcp' } }
-['liveEvaluation': 'live', 'mcpIntegrationTest': 'mcp'].each { taskName, tagName ->
+tasks.named('test') { useJUnitPlatform { excludeTags 'live', 'mcp', 'live-mcp' } }
+['liveEvaluation': 'live', 'mcpIntegrationTest': 'mcp', 'liveMcpTest': 'live-mcp'].each { taskName, tagName ->
     tasks.register(taskName, Test) {
         group = 'verification'
         testClassesDirs = sourceSets.test.output.classesDirs
         classpath = sourceSets.test.runtimeClasspath
         useJUnitPlatform { includeTags tagName }
         outputs.upToDateWhen { false }
-        if (taskName == 'mcpIntegrationTest') { dependsOn ':shopping-mcp:bootJar' }
+        if (taskName in ['mcpIntegrationTest', 'liveMcpTest']) {
+            dependsOn ':shopping-mcp:bootJar'
+        }
     }
 }

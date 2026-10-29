@@ -1,4 +1,581 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
-:root{--paper:#f8faf7;--green:#276445;--lime:#e4f0d9;--ink:#1e3027;--muted:#748078;--line:#e1e7de}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);font:14px 'DM Sans','Noto Sans KR',sans-serif}button,input,textarea,select{font:inherit}button,a,summary{cursor:pointer}button:disabled{cursor:wait;opacity:.5}header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff}.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-size:19px}.brand strong{font-weight:400;color:var(--green)}.mark{display:grid;place-items:center;background:var(--green);color:white;border-radius:12px;width:34px;height:34px;font-weight:700}.badge{padding:8px 13px;border-radius:20px;background:var(--lime);color:var(--green);font-size:12px;font-weight:700}main{display:grid;grid-template-columns:270px minmax(360px,1fr) 350px;height:calc(100vh - 76px)}.curriculum{overflow:auto;border-right:1px solid var(--line);padding:28px 20px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:1.8px;color:var(--green)}h1{font-size:23px;line-height:1.5;letter-spacing:-1px;margin:14px 0}h2{font-size:21px;letter-spacing:-.6px;margin:10px 0}h3{font-size:18px}.muted{color:var(--muted);font-size:12px;line-height:1.9}input[type=search]{width:100%;border:1px solid var(--line);border-radius:8px;background:white;padding:11px;margin:14px 0}nav details{border-bottom:1px solid var(--line);padding:12px 0}nav summary{font-weight:600;font-size:12px;list-style:none}nav summary:before{content:'＋';color:var(--muted);margin-right:9px}nav details[open] summary:before{content:'−'}nav button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--muted);font-size:12px;padding:10px 10px 10px 23px;border-radius:7px;margin-top:3px}nav button.active{background:var(--lime);color:var(--green);font-weight:700}.workspace{display:flex;flex-direction:column;min-width:0;background:white;overflow:hidden}.lesson-head{padding:25px 28px 15px;border-bottom:1px solid var(--line)}.lesson-head details{font-size:11px;color:var(--muted)}pre{font-size:11px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.toolbar{display:flex;gap:12px;padding:12px 28px;align-items:center;background:#fbfcfa;border-bottom:1px solid var(--line);font-size:11px;flex-wrap:wrap}select{border:1px solid var(--line);border-radius:5px;padding:6px;background:white;font-size:11px;color:var(--ink)}.quiet{margin-left:auto;border:1px solid var(--line);background:white;border-radius:5px;padding:7px;font-size:11px;color:var(--muted)}.messages{flex:1;overflow:auto;padding:24px 28px}.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:150px;text-align:center;color:var(--muted)}.welcome h3{color:var(--ink);font-weight:500}.welcome p{line-height:1.9;font-size:12px}.welcome-icon{font-size:36px;color:var(--green);background:var(--lime);padding:12px 20px;border-radius:20px}article{margin-bottom:24px}article .speaker{font-size:10px;font-weight:700;letter-spacing:1.4px;color:var(--green)}article.user .speaker{color:var(--muted)}article p{line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}article.user p{background:#f3f5f1;padding:12px 16px;border-radius:10px}article.error p{color:#9e4633}form{padding:16px 28px 20px;border-top:1px solid var(--line)}.sample{background:none;border:0;color:var(--green);font-size:11px;padding:0 0 10px}.input-wrap{display:flex;align-items:flex-end;border:1px solid #c7d5c3;border-radius:10px;padding:10px;background:#fcfdfb}.input-wrap:focus-within{outline:2px solid var(--lime)}textarea{width:100%;resize:none;border:0;outline:none;background:none;line-height:1.8;font-size:13px}#send,#stop{flex-shrink:0;border:0;border-radius:7px;background:var(--green);color:white;font-size:12px;padding:10px 13px}#stop{background:#9e4633}.input-note{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);padding-top:10px;gap:10px}.inspector{overflow:auto;background:#f6f8f3;border-left:1px solid var(--line);padding:28px 22px}.inspector h2{font-size:18px}.result-status{padding:10px 12px;font-size:11px;border-radius:7px;background:white;border:1px solid var(--line);margin:20px 0}.inspector details{background:white;border:1px solid var(--line);padding:12px;border-radius:8px;margin:10px 0}.inspector summary{font-size:12px;font-weight:600}.empty{padding:28px 10px;font-size:12px;line-height:2;color:var(--muted)}.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.product{padding:14px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:#fafcf8}.product strong{display:block;margin-bottom:8px}.product small{display:block;margin-top:8px;color:var(--muted)}.confirm{border:0;border-radius:7px;color:white;background:var(--green);padding:10px}audio{max-width:100%}img.generated{max-width:100%;border-radius:10px}#file-label{display:block;margin-top:12px;font-size:11px}#file-label[hidden]{display:none}@media(min-width:1600px){main{grid-template-columns:290px minmax(400px,1fr) 410px}}@media(max-width:1150px){main{grid-template-columns:230px minmax(330px,1fr)}.inspector{grid-column:1/-1;max-height:500px;border-top:1px solid var(--line)}main{height:auto;min-height:calc(100vh - 76px)}.workspace{height:calc(100vh - 76px)}.curriculum{max-height:calc(100vh - 76px)}}@media(max-width:680px){header{padding:0 16px;height:65px}.brand{font-size:16px}main{display:block}.curriculum{max-height:240px;padding:18px}.curriculum h1,.curriculum .muted{display:none}.curriculum nav{display:flex;gap:12px;overflow:auto}.curriculum nav details{min-width:190px}.workspace{height:760px}.lesson-head,.toolbar,.messages,form{padding-left:18px;padding-right:18px}.badge{max-width:150px;overflow:hidden;white-space:nowrap}.input-note span:last-child{display:none}}
-.options{font-size:11px}.options label{display:inline-block;margin:10px 8px 0 0}.options input{width:55px;border:1px solid var(--line);border-radius:4px;padding:5px}.options small{display:block;margin-top:6px;color:var(--muted)}
-#source-code{max-height:240px;overflow:auto;background:#f6f8f3;padding:12px;border-radius:6px}.messages{min-height:0}.lesson-head,.toolbar,form{flex-shrink:0}
+/* 공통 색상과 기본 요소 */
+:root {
+  --paper: #f8faf7;
+  --green: #276445;
+  --lime: #e4f0d9;
+  --ink: #1e3027;
+  --muted: #748078;
+  --line: #e1e7de;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font: 14px 'DM Sans','Noto Sans KR',sans-serif;
+}
+
+button,input,textarea,select {
+  font: inherit;
+}
+
+button,a,summary {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: .5;
+}
+
+/* 상단 브랜드와 실행 모드 */
+header {
+  height: 76px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: #fff;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 19px;
+}
+
+.brand strong {
+  font-weight: 400;
+  color: var(--green);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  background: var(--green);
+  color: white;
+  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  font-weight: 700;
+}
+
+.badge {
+  padding: 8px 13px;
+  border-radius: 20px;
+  background: var(--lime);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 기본 화면 배치: 단원 목록 / 대화 / 실행 관찰 */
+main {
+  display: grid;
+  grid-template-columns: 270px minmax(360px,1fr) 350px;
+  height: calc(100vh - 76px);
+}
+
+/* 왼쪽 단원 목록과 검색 */
+.curriculum {
+  overflow: auto;
+  border-right: 1px solid var(--line);
+  padding: 28px 20px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: var(--green);
+}
+
+h1 {
+  font-size: 23px;
+  line-height: 1.5;
+  letter-spacing: -1px;
+  margin: 14px 0;
+}
+
+h2 {
+  font-size: 21px;
+  letter-spacing: -.6px;
+  margin: 10px 0;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+input[type=search] {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  padding: 11px;
+  margin: 14px 0;
+}
+
+nav details {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+nav summary {
+  font-weight: 600;
+  font-size: 12px;
+  list-style: none;
+}
+
+nav summary:before {
+  content: '＋';
+  color: var(--muted);
+  margin-right: 9px;
+}
+
+nav details[open] summary:before {
+  content: '−';
+}
+
+nav button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 10px 10px 10px 23px;
+  border-radius: 7px;
+  margin-top: 3px;
+}
+
+nav button.active {
+  background: var(--lime);
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* 가운데 실습 설명과 실행 옵션 */
+.workspace {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: white;
+  overflow: hidden;
+}
+
+.lesson-head {
+  padding: 25px 28px 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lesson-head details {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+pre {
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 10px 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  padding: 12px 28px;
+  align-items: center;
+  background: #fbfcfa;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+
+select {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 6px;
+  background: white;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.quiet {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 5px;
+  padding: 7px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* 대화 메시지 */
+.messages {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 28px;
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 150px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.welcome h3 {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.welcome p {
+  line-height: 1.9;
+  font-size: 12px;
+}
+
+.welcome-icon {
+  font-size: 36px;
+  color: var(--green);
+  background: var(--lime);
+  padding: 12px 20px;
+  border-radius: 20px;
+}
+
+article {
+  margin-bottom: 24px;
+}
+
+article .speaker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--green);
+}
+
+article.user .speaker {
+  color: var(--muted);
+}
+
+article p {
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+article.user p {
+  background: #f3f5f1;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+article.error p {
+  color: #9e4633;
+}
+
+/* 질문 입력과 실행 버튼 */
+form {
+  padding: 16px 28px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.sample {
+  background: none;
+  border: 0;
+  color: var(--green);
+  font-size: 11px;
+  padding: 0 0 10px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid #c7d5c3;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fcfdfb;
+}
+
+.input-wrap:focus-within {
+  outline: 2px solid var(--lime);
+}
+
+textarea {
+  width: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: none;
+  line-height: 1.8;
+  font-size: 13px;
+}
+
+#send,#stop {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 7px;
+  background: var(--green);
+  color: white;
+  font-size: 12px;
+  padding: 10px 13px;
+}
+
+#stop {
+  background: #9e4633;
+}
+
+.input-note {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+  padding-top: 10px;
+  gap: 10px;
+}
+
+/* 오른쪽 실행 관찰 패널 */
+.inspector {
+  overflow: auto;
+  background: #f6f8f3;
+  border-left: 1px solid var(--line);
+  padding: 28px 22px;
+}
+
+.inspector h2 {
+  font-size: 18px;
+}
+
+.result-status {
+  padding: 10px 12px;
+  font-size: 11px;
+  border-radius: 7px;
+  background: white;
+  border: 1px solid var(--line);
+  margin: 20px 0;
+}
+
+.inspector details {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.inspector summary {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.empty {
+  padding: 28px 10px;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--muted);
+}
+
+/* 상품 카드와 미디어 결과 */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap: 8px;
+}
+
+.product {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 12px;
+  background: #fafcf8;
+}
+
+.product strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.product small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.confirm {
+  border: 0;
+  border-radius: 7px;
+  color: white;
+  background: var(--green);
+  padding: 10px;
+}
+
+audio {
+  max-width: 100%;
+}
+
+img.generated {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+#file-label {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+#file-label[hidden] {
+  display: none;
+}
+
+/* 넓은 화면 */
+@media (min-width: 1600px) {
+  main {
+    grid-template-columns: 290px minmax(400px,1fr) 410px;
+  }
+
+}
+
+/* 중간 화면: 실행 관찰 패널을 아래로 배치 */
+@media (max-width: 1150px) {
+  main {
+    grid-template-columns: 230px minmax(330px,1fr);
+  }
+
+  .inspector {
+    grid-column: 1/-1;
+    max-height: 500px;
+    border-top: 1px solid var(--line);
+  }
+
+  main {
+    height: auto;
+    min-height: calc(100vh - 76px);
+  }
+
+  .workspace {
+    height: calc(100vh - 76px);
+  }
+
+  .curriculum {
+    max-height: calc(100vh - 76px);
+  }
+
+}
+
+/* 좁은 화면: 세로로 배치 */
+@media (max-width: 680px) {
+  header {
+    padding: 0 16px;
+    height: 65px;
+  }
+
+  .brand {
+    font-size: 16px;
+  }
+
+  main {
+    display: block;
+  }
+
+  .curriculum {
+    max-height: 240px;
+    padding: 18px;
+  }
+
+  .curriculum h1,.curriculum .muted {
+    display: none;
+  }
+
+  .curriculum nav {
+    display: flex;
+    gap: 12px;
+    overflow: auto;
+  }
+
+  .curriculum nav details {
+    min-width: 190px;
+  }
+
+  .workspace {
+    height: 760px;
+  }
+
+  .lesson-head,.toolbar,.messages,form {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .badge {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .input-note span:last-child {
+    display: none;
+  }
+
+}
+
+/* 상세 실행 옵션 */
+.options {
+  font-size: 11px;
+}
+
+.options label {
+  display: inline-block;
+  margin: 10px 8px 0 0;
+}
+
+.options input {
+  width: 55px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.options small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+/* 접어서 보는 Java 소스 */
+#source-code {
+  max-height: 240px;
+  overflow: auto;
+  background: #f6f8f3;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.messages {
+  min-height: 0;
+}
+
+.lesson-head,.toolbar,form {
+  flex-shrink: 0;
+}
