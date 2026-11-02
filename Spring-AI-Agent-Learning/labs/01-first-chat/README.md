@@ -21,7 +21,15 @@ IDE 실행 시 Working directory를 저장소 루트로 설정합니다. 다른 
 ```
 
 - `FirstChatLocalMockModelTest`: 기본 `test`에서 실행. 로컬 고정 응답, `.env`와 외부 API 사용 없음.
-- `FirstChatOpenAiLiveTest`: 위 전용 명령으로 실행. 실제 OpenAI 호출 1회, 질문·응답 출력, API 사용량 발생.
+- `FirstChatOpenAiLiveTest`: 위 전용 명령 또는 IntelliJ에서 이 클래스/메서드의 Run으로 실행. 실제 OpenAI 호출 1회, 질문·응답 출력, API 사용량 발생.
+
+IntelliJ와 같은 Gradle 실행 명령:
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
+```
+
+기본 전체 테스트와 넓은 패키지·와일드카드 필터에서는 실제 모델 테스트를 제외합니다.
 
 `bootRun`으로 시작했다면 다른 터미널에서:
 

@@ -122,3 +122,18 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 보고서: `labs/01-first-chat/build/reports/tests/test/index.html`,
 `labs/01-first-chat/build/reports/tests/liveOpenAiTest/index.html`.
 실제 키는 소스·YAML·보고서에 기록하지 않습니다. 실제 모델 응답은 전용 테스트의 표준 출력과 보고서에서 확인합니다.
+
+## IntelliJ의 실제 OpenAI 테스트 Run 보완 — 2026-11-02
+
+기존에는 기본 test의 `live-openai` 제외 태그가 IntelliJ의 `--tests` 클래스 필터보다 우선해
+`No matching tests found`가 발생했습니다. 첫 실습의 Gradle 설정이 실제 테스트 클래스 또는 메서드의
+명시적 선택을 인식하면 제외 태그를 해제하도록 수정했습니다. 해당 실행은 매번 수행합니다.
+기본 전체 실행과 넓은 패키지·와일드카드 필터는 계속 MockModel만 실행합니다.
+이 동작이 앞 절의 “전용 태스크로만 실행” 제한을 대체합니다.
+
+검증 결과:
+
+- IntelliJ와 같은 `test --tests com.example.ailearning.FirstChatOpenAiLiveTest`: 실제 OpenAI 호출 1개 통과, 응답 출력 확인.
+- 클래스의 `callsRealOpenAiAndPrintsResponse` 메서드 필터: `--test-dry-run`에서 테스트 1개 선택 확인. 추가 API 호출 없음.
+- `test --tests '*'`: 로컬 MockModel 3개만 통과.
+- 기본 `test`: 로컬 MockModel 3개만 통과.

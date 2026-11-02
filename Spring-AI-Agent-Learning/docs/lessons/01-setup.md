@@ -155,8 +155,16 @@ spring:
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
 ```
 
-이 명령은 API 사용량이 발생합니다. `@Tag("live-openai")`로 분리해 일반 `test`에서는 실행하지 않습니다.
-`--tests` 필터만으로 일반 `test`의 제외 태그가 해제되지는 않습니다. 실제 호출은 위 전용 명령으로 실행합니다.
+이 명령은 API 사용량이 발생합니다. `@Tag("live-openai")`로 분리해 기본 전체 `test`에서는 실행하지 않습니다.
+IntelliJ에서 `FirstChatOpenAiLiveTest` 클래스 또는 그 테스트 메서드의 Run을 눌러도 실행할 수 있습니다.
+Gradle이 해당 클래스를 명시한 필터를 받으면 이 모듈의 `build.gradle`이 제외 태그를 해제합니다.
+전체 패키지 실행이나 `--tests '*'` 같은 넓은 필터는 실제 호출을 허용하지 않습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
+```
+
+명시적으로 실제 테스트를 선택한 실행은 매번 수행하며 up-to-date 결과로 생략하지 않습니다.
 기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
 
 ## 5. 막혔을 때

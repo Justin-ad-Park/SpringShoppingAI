@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 실제 OpenAI에 접속합니다. 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL을 사용합니다.
- * 일반 test에서는 제외되며 liveOpenAiTest로 실행할 때 API 사용량이 발생합니다.
+ * 일반 test에서는 제외됩니다. liveOpenAiTest 또는 이 클래스를 명시한 IntelliJ Run은 API 사용량이 발생합니다.
  * 요청과 응답만 출력하며 API 키를 출력하지 않습니다.
  */
 @Tag("live-openai")
