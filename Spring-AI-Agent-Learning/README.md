@@ -3,14 +3,14 @@
 Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음인 개발자를 위한 한국어 교재입니다.
 목표는 **한 번의 모델 호출을 이해하는 것부터 시작해, 도구를 선택하는 작은 Agent로 확장하는 것**입니다.
 
-이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다. 기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 이후 MCP 수업에서 shopping-mcp와 연결합니다. 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
+이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다. 기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 이후 선택 MCP 수업에서는 shopping-mcp와 연결할 수 있습니다. 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
 
 ## 이번에 작성한 범위
 
-2026-10-29에 기초 00~03과 첫 호출 실습을 작성했고, 2026-11-02에 04~07 교재와 독립 실행 실습을 추가했습니다.
-04 구조화 응답 → 05 Tool Calling → 06 Workflow/Agent/혼합 비교 → 07 대화 메모리 순으로 학습합니다.
-단원별 테스트와 JAR 빌드를 마치고 각각 커밋했습니다. [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
-12 이후는 계획 단계입니다.
+기초 00~03과 04~12 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → 평가 → 통합 상담 순으로 확장합니다.
+각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.
+[검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
+MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 구현하지 않았습니다.
 
 ## 어디부터 읽을까요?
 
@@ -28,10 +28,11 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
 | 11 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
 | 12 | [11. 평가와 운영 기초](docs/lessons/11-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
+| 13 | [12. 작은 쇼핑 상담 Agent](docs/lessons/12-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
-처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00 → 01 → 02 → 03 → 04 → 05 → 06 → 07 순으로 읽으세요.
+처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 12까지 번호 순으로 읽으세요.
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
 
 ## 실습 환경
@@ -79,7 +80,7 @@ docs/
   curriculum.md          전체 순서와 다음 제작 범위
   references.md          자료별 장점·주의점·읽을 부분
   verification.md        실제 검증 범위와 결과
-  lessons/00~07          순서대로 읽는 한국어 교재
+  lessons/00~12          순서대로 읽는 한국어 교재
   diagram-guide.md       그림의 종류·기호·읽는 순서
 labs/
   01-first-chat/         기초 호출과 프롬프트 실험
@@ -87,6 +88,11 @@ labs/
   05-tool-calling/       로컬 Java 도구
   06-workflow-agent/     Workflow·Agent·혼합 비교
   07-chat-memory/        이전 대화의 직접 저장·재전달
+  08-advisors/           호출 체인·메모리·도구 루프
+  09-embeddings-search/  임베딩·유사도·필터
+  10-rag/                문서 분할·검색·근거 확인
+  11-evaluation/         고정 사례 평가·사용량·실패 처리
+  12-shopping-agent/     상품·정책·후속 질문 통합
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
 
@@ -99,11 +105,3 @@ labs/
 04에 도구가, 05에 메모리가, 07에 다음 단원의 Advisor 코드가 먼저 등장하지 않습니다.
 반복되는 작은 상품 코드는 학습 순서를 위해 복사했으며 공통 모듈 추상화로 감추지 않았습니다.
 각 labs 폴더의 README에 코드 읽는 순서와 API·포트가 있습니다. 모든 실행은 저장소 루트의 공통 Wrapper를 사용합니다.
-
-- 추가 완료: [08 Advisor](docs/lessons/08-advisors.md).
-
-- 추가 완료: [09 임베딩과 검색](docs/lessons/09-embeddings-search.md).
-
-- 추가 완료: [10 RAG](docs/lessons/10-rag.md).
-
-- 추가 완료: [11 평가와 운영 기초](docs/lessons/11-evaluation.md).

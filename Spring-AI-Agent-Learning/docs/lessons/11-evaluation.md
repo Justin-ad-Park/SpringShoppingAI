@@ -201,3 +201,5 @@ usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니�
 
 보충: [공식 Evaluation](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).
 [이전: 10](10-rag.md) · [학습 지도](../curriculum.md)
+
+[다음: 12. 작은 쇼핑 상담 Agent](12-shopping-agent.md)
