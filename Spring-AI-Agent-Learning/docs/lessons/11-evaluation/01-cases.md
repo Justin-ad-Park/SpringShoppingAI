@@ -103,3 +103,5 @@ public class EvaluationRunner {
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
 [이전](../11-evaluation.md) · [다음 소수업](02-usage.md) · [학습 방법](../../learning-guide.md)
+
+[평가 API 실행 실습으로 확장](04-model-judge.md)
