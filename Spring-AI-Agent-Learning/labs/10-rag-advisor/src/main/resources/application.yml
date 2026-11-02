@@ -1,0 +1,19 @@
+server:
+  address: 127.0.0.1
+  port: 8103
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        max-retries: 0
+        timeout: 10s
+        options:
+          model: ${OPENAI_MODEL}
+      embedding:
+        max-retries: 0
+        timeout: 10s
+        options:
+          model: ${OPENAI_EMBEDDING_MODEL}

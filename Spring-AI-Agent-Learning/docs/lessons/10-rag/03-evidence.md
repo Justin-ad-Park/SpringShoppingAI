@@ -78,3 +78,5 @@ NO_CONTEXT는 검색 단계에서 근거 없음, NO_ANSWER는 찾은 문서로 �
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
 [이전](02-generation.md) · [단원 목차](../10-rag.md) · [학습 방법](../../learning-guide.md)
+
+[다음: 표준 Reader·Splitter 실습](04-standard-indexing.md)
