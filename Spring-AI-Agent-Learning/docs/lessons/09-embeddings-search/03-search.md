@@ -1,0 +1,76 @@
+# 09-3. 검색 결과와 필터 실험
+
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+
+**이번 목표:** 결과 없음과 검색 품질을 구분합니다.
+
+**코드 읽기 안내:** 가짜 벡터 테스트는 검색 코드의 연결을 검사합니다. 실제 의미 검색의 품질은 실제 임베딩 모델로 따로 관찰합니다.
+
+## 설정과 실행
+
+이 실습에는 Chat 모델 이름이 필요 없습니다. OPENAI_API_KEY와 **OPENAI_EMBEDDING_MODEL**을 지정합니다.
+[01장](../01-setup.md#4-실제-모델을-사용할-때의-환경-변수)처럼 키를 설정한 뒤, zsh에서는 다음을 사용합니다.
+
+```zsh
+read 'OPENAI_EMBEDDING_MODEL?사용 가능한 임베딩 모델 이름: '
+export OPENAI_EMBEDDING_MODEL
+```
+
+bash에서는 `read -r -p '임베딩 모델 이름: ' OPENAI_EMBEDDING_MODEL` 후 export하세요.
+명령은 저장소 루트에서 실행합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:test
+./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:bootRun
+curl -sS http://127.0.0.1:8099/api/embedding \
+  -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비'
+curl --get http://127.0.0.1:8099/api/search \
+  --data-urlencode 'query=운송 요금' --data-urlencode 'topK=2' --data-urlencode 'threshold=0.5'
+```
+
+bootRun은 **시작 시 문서 임베딩부터 실제 API를 호출**합니다. 검색 요청마다 질문 임베딩 호출이 추가됩니다.
+따라서 서버 재시작에도 사용량이 발생할 수 있습니다. 테스트는 실제 키 없이 로컬 임베딩 서버를 사용합니다.
+실제 결과 점수·배열 길이는 선택한 모델에 따라 다릅니다. 종료는 Ctrl+C입니다.
+
+## 바꾸면서 확인하기
+
+| 바꿀 값 | 관찰할 점 |
+|---|---|
+| query=배송비 / 운송 요금 | 문자열 결과와 벡터 결과의 차이. 모델이 항상 동의어를 찾는다는 보장은 없음 |
+| topK=1 / 3 | 최대 반환 수 차이. threshold로 걸러지면 그보다 적거나 0개 |
+| threshold=0.2 / 0.9 | 엄격해질수록 후보가 줄어드는지 확인 |
+| category=returns | 배송 문서는 의미가 가까워도 필터에서 제외 |
+| query=문서와 무관한 질문 | threshold가 낮으면 무관한 문서도 반환될 수 있음 |
+
+카테고리가 잘못되거나 topK/threshold가 범위를 벗어나면 400입니다.
+threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0.5는 서비스 품질을 보장하는 값이 아닙니다.
+
+[SearchContractTest](../../../labs/09-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchContractTest.java)는 실제 어댑터와 저장소를 사용합니다.
+테스트 서버는 정해진 단어군에 3차원 직교 벡터를 반환해 적재·검색·필터를 재현합니다.
+이는 실제 모델의 의미 검색 성능을 평가하는 테스트가 아닙니다. 실제 모델 품질은 별도 질문으로 확인해야 합니다.
+
+## 확인 질문
+
+1. 검색할 때 문서뿐 아니라 질문도 임베딩하는 이유는 무엇인가요?
+2. topK=3이면 항상 3개가 나오나요?
+3. score=0.9는 문서 내용이 90% 확률로 사실이라는 뜻인가요?
+4. 같은 차원의 다른 모델로 바꿔도 기존 벡터를 계속 써도 될까요?
+
+<details><summary>해설</summary>
+
+같은 벡터 공간에서 문서와 질문을 비교하기 위해서입니다. 필터/threshold에 따라 0개도 나올 수 있습니다.
+유사도는 사실 확률이 아니고, 모델이 바뀌면 같은 차원이어도 문서를 다시 임베딩해야 합니다.
+검색 결과의 원문·ID·점수를 확인하면 완료입니다.
+</details>
+
+보충: [공식 VectorStore API](https://docs.spring.io/spring-ai/reference/api/vectordbs.html).
+[이전: 08](../08-advisors.md) · [학습 지도](../../curriculum.md)
+
+[다음: 10. RAG](../10-rag.md)
+
+## 여기서 멈춰 확인하기
+
+코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
+설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+
+[이전](02-store.md) · [단원 목차](../09-embeddings-search.md) · [학습 방법](../../learning-guide.md)
