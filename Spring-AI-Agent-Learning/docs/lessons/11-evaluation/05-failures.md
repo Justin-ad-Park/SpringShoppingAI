@@ -1,4 +1,6 @@
-# 11-3. 실패·지연·재시도 관찰
+# 11-5. 실패·지연·재시도 관찰
+
+**실행 코드·설정·테스트:** [labs/11-evaluation](../../../labs/11-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
 
@@ -92,13 +94,11 @@ usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니�
 </details>
 
 보충: [공식 Evaluation](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).
-[이전: 10](../10-rag.md) · [학습 지도](../../curriculum.md)
 
-[다음: 12. 작은 쇼핑 상담 Agent](../12-shopping-agent.md)
 
 ## 여기서 멈춰 확인하기
 
 코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
-[이전](02-usage.md) · [단원 목차](../11-evaluation.md) · [학습 방법](../../learning-guide.md)
+[이전](04-actuator.md) · [다음](../11-evaluation.md) · [단원 목차](../11-evaluation.md) · [학습 방법](../../learning-guide.md)

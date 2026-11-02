@@ -1,6 +1,8 @@
-# 11-5. Actuator로 모델 호출과 토큰 지표 관찰하기
+# 11-4. Actuator로 모델 호출과 토큰 지표 관찰하기
 
-30~45분. 선수 지식: 02의 첫 호출, 11-2의 응답 usage.
+**실행 코드·설정·테스트:** [labs/11-observability](../../../labs/11-observability/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+
+30~45분. 선수 지식: 02의 첫 호출, 11-3의 응답 usage.
 이번 목표는 **Service에 계측 코드를 추가하지 않고 Spring AI 기본 지표를 조회**하는 것입니다.
 독립 모듈 `labs/11-observability`에 시작 클래스·Controller·Service·설정·계약 테스트가 있습니다.
 다른 애플리케이션·Docker·Prometheus·추적 서버는 필요하지 않습니다.
@@ -18,7 +20,7 @@
 | 트레이스 | 특정 요청이 통과한 여러 구간을 따라가는 기록 |
 
 이번 실행 실습은 **로컬 메트릭 조회**에 집중합니다. 분산 트레이스 수집·대시보드는 설치하지 않습니다.
-11-2에서 받은 한 응답의 usage가 여기서는 여러 요청의 누적 지표가 됩니다.
+11-3에서 받은 한 응답의 usage가 여기서는 여러 요청의 누적 지표가 됩니다.
 
 ## Java 코드는 첫 호출 그대로
 
@@ -132,4 +134,5 @@ curl -sS 'http://127.0.0.1:8105/actuator/metrics/gen_ai.client.token.usage?tag=g
 </details>
 
 보충: [공식 Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).
-[사용량 기초](02-usage.md) · [실패 관찰](03-failures.md) · [11단원 목차](../11-evaluation.md)
+
+[이전](03-usage.md) · [다음](05-failures.md) · [단원 목차](../11-evaluation.md) · [학습 방법](../../learning-guide.md)

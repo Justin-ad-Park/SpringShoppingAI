@@ -1,5 +1,18 @@
 # 01. 환경과 프로젝트 준비
 
+## 한 번에 읽을 범위
+
+각 행을 20~30분씩 읽고 관찰합니다. 첫 읽기에서는 Service의 핵심 호출에 집중하고,
+테스트 HTTP 서버·직렬화 보조 코드는 제공된 검증 도구로 사용합니다.
+
+| 순서 | 읽고 해볼 것 | 여기서 확인할 것 |
+|---|---|---|
+| 1 | Java·Gradle·의존성 위치 | 실행 명령의 저장소 위치와 첫 모듈 경로 확인 |
+| 2 | Mock 테스트만 실행 | 실제 키 없이 연결 계약이 확인됨을 설명 |
+| 3 | 루트 .env로 실제 모델 연결 준비 | 키·모델 이름·실행 작업 디렉터리의 관계 설명 |
+
+[공통 학습 방법](../learning-guide.md)
+
 예상 시간: 1시간. 먼저 [00장](00-llm-and-spring-ai.md)을 읽으세요.
 이번 목표는 프로젝트를 열고 **실제 API 키 없이 테스트를 통과시키는 것**입니다.
 실제 모델 호출은 02장에서 합니다.
@@ -24,25 +37,10 @@ IDE에서는 SpringShoppingAI의 `settings.gradle`을 열고 Gradle JVM을 Java 
 
 ## 2. 빌드 파일은 무엇을 설정할까?
 
-루트 `settings.gradle`은 실습을 등록합니다.
+루트 [settings.gradle](../../../settings.gradle)은 실습을 등록합니다. 처음에는 첫 실습의 등록 한 줄만 읽습니다. 아래 코드는 파일 전체가 아닌 발췌입니다.
 
 ```groovy
-rootProject.name = 'spring-shopping-ai'
-include 'chatbot-client', 'shopping-agent', 'shopping-mcp'
-include 'integration-tests'
-include 'Spring-AI-Tutor'
 include 'Spring-AI-Agent-Learning:labs:01-first-chat'
-include 'Spring-AI-Agent-Learning:labs:04-structured-output'
-include 'Spring-AI-Agent-Learning:labs:05-tool-calling'
-include 'Spring-AI-Agent-Learning:labs:06-workflow-agent'
-include 'Spring-AI-Agent-Learning:labs:07-chat-memory'
-include 'Spring-AI-Agent-Learning:labs:08-advisors'
-include 'Spring-AI-Agent-Learning:labs:09-embeddings-search'
-include 'Spring-AI-Agent-Learning:labs:10-rag'
-include 'Spring-AI-Agent-Learning:labs:11-evaluation'
-include 'Spring-AI-Agent-Learning:labs:12-shopping-agent'
-include 'Spring-AI-Agent-Learning:labs:10-rag-advisor'
-include 'Spring-AI-Agent-Learning:labs:11-model-evaluation'
 ```
 
 `:Spring-AI-Agent-Learning:labs:01-first-chat:test`는 교육 폴더의 첫 실습만 테스트한다는 뜻입니다. 다른 서비스를 시작하지 않습니다.
@@ -171,6 +169,7 @@ Gradle로 실제 테스트만 실행하려면 다음과 같습니다.
 필터 없이 이 모듈의 `test`를 실행하면 Mock과 Live 모두 실행하며 실제 API 사용량이 발생합니다.
 API 키 없이 실행하려면 3절의 Mock 클래스 지정 명령을 사용합니다.
 기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
+해당 변수의 실제 입력 명령은 [실행 설정 안내](../run-guide.md)에 있습니다.
 
 ## 5. 막혔을 때
 

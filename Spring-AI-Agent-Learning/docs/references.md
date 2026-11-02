@@ -1,6 +1,6 @@
 # 레퍼런스: 무엇을 언제 읽을까?
 
-확인일: 2026-10-29. 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.
+검토 갱신: 2026-11-03. 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.
 한국어 교재를 먼저 읽고 막힌 개념에 해당하는 절만 찾아보세요.
 
 ## 첫 묶음에서 읽을 자료
@@ -43,3 +43,15 @@
 실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.0.2와 Boot 4.0.9로 통일했습니다.
 SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유틸리티를 기본 기능처럼 혼합하지 않습니다.
 자료를 업데이트할 때는 버전 확인 → 컴파일 → 로컬 계약 테스트 → 필요한 경우 실제 모델 평가 순으로 확인합니다.
+
+## 이번 개편에 반영한 읽기 순서
+
+| 공식 과정에서 참고한 부분 | 자체 교재에서 적용한 방식 |
+|---|---|
+| 기초 설명 뒤 실습 | 00~03의 읽기 중단 지점, 04~12의 소수업 목차 |
+| RAG 원리 → Spring AI 구현 | [직접 구현](lessons/10-rag.md) 뒤 [Reader·Splitter](lessons/10-rag/04-standard-indexing.md)·[Advisor](lessons/10-rag/05-standard-advisor.md) 실행 실습 |
+| Testing과 Observability 분리 | [Evaluator](lessons/11-evaluation/02-model-judge.md)와 [Actuator](lessons/11-evaluation/04-actuator.md)를 다른 애플리케이션으로 구현 |
+| Agent의 개념 → 패턴 | [Workflow](lessons/06-workflow-agent/01-workflow.md)·[Agent](lessons/06-workflow-agent/02-agent.md)·[혼합](lessons/06-workflow-agent/03-hybrid.md)·[보충 상한](lessons/06-workflow-agent/04-limits.md)을 나눠 설명 |
+
+공식 과정의 문장이나 실습 코드를 대량 복제하지 않고, 이 저장소의 상품·정책 예제로 독립 구현했습니다.
+MCP·A2A·멀티 Agent는 선수 조건을 추가하지 않도록 선택 확장으로 유지합니다.

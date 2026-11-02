@@ -1,6 +1,6 @@
 # 실행 실습: Spring AI 기본 메트릭과 Actuator
 
-[11-5 교재](../../docs/lessons/11-evaluation/05-actuator.md)를 먼저 읽습니다.
+[11-4 교재](../../docs/lessons/11-evaluation/04-actuator.md)를 먼저 읽습니다.
 시작 클래스·Controller·Service·설정·테스트를 포함한 독립 모듈입니다.
 
 저장소 루트에서:

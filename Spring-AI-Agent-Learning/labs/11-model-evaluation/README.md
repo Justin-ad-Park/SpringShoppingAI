@@ -1,6 +1,6 @@
 # 실행 실습: Spring AI Evaluator
 
-[11-4 교재](../../docs/lessons/11-evaluation/04-model-judge.md)를 읽습니다.
+[11-2 교재](../../docs/lessons/11-evaluation/02-model-judge.md)를 읽습니다.
 이 모듈은 다른 실습과 독립이며 실행 애플리케이션·설정·테스트를 포함합니다.
 
 ```bash

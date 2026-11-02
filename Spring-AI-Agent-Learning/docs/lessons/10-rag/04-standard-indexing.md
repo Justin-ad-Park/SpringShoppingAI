@@ -1,5 +1,7 @@
 # 10-4. 직접 읽던 문서를 표준 Reader·Splitter로 바꾸기
 
+**실행 코드·설정·테스트:** [labs/10-rag-advisor](../../../labs/10-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+
 30~45분. 먼저 10-1의 문서 적재를 이해합니다. 이번 목표는 **읽기·분할·저장 역할을 표준 타입과 연결**하는 것입니다.
 이 수업과 다음 수업은 독립 실행 모듈 `labs/10-rag-advisor`를 공유합니다.
 Controller·Service·설정·문서 파일·계약 테스트가 모두 있으며 코드 조각만 제공하는 수업이 아닙니다.
@@ -56,4 +58,4 @@ flowchart LR
 읽기·분할·임베딩 적재를 다시 해야 새 문서가 검색됩니다. 질문을 다시 보내는 것만으로 저장된 벡터가 새 원문으로 바뀌지는 않습니다.
 </details>
 
-[이전: 출처 확인](03-evidence.md) · [다음: 검색을 Advisor로 연결](05-standard-advisor.md)
+[이전](03-evidence.md) · [다음](05-standard-advisor.md) · [단원 목차](../10-rag.md) · [학습 방법](../../learning-guide.md)

@@ -19,3 +19,14 @@
 
 각 소수업은 기존 단원의 실제 설명·코드를 나누어 담았습니다. 코드는 기존 독립 실습 모듈을 그대로 사용합니다.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
+
+## 실행 코드와 테스트
+
+[labs/07-chat-memory의 실행 안내](../../labs/07-chat-memory/README.md)를 확인합니다.
+이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test
+./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootRun
+```

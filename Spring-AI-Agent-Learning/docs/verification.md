@@ -125,3 +125,44 @@ Gradle의 필터 없는 `test`도 두 클래스를 모두 실행하며 실제 AP
 실제 키는 소스·YAML에 기록하지 않습니다. 질문과 응답은 표준 출력과 test 보고서에서 확인합니다.
 이는 단일 요청의 연결·응답 확인이며 전체 단원의 실제 모델 품질을 검증한 결과는 아닙니다.
 현재 보고서: `labs/01-first-chat/build/reports/tests/test/index.html`.
+
+## 초급 과정 개편과 표준 API 실행 실습 — 2026-11-03
+
+Spring Academy의 개념 → 구현 → 실습 구분을 참고해 기존 04~12 설명을 29개 소수업으로 분리했습니다.
+표준 API를 보완하는 설명 4개를 더해 소수업은 33개이며, 추가 구현은 3개의 독립 실행 모듈입니다.
+기존 전체 코드를 한 번에 늘리는 대신 기능별 애플리케이션을 분리하고, 소수업마다 실행 모듈·설정·테스트 링크를 제공합니다.
+00~03에는 읽기 중단 지점과 관찰 기준을 추가했습니다.
+
+| 추가 실행 모듈 | 테스트 | 확인한 실제 Spring AI 연결 |
+|---|---:|---|
+| 10-rag-advisor | 4 | TextReader·TokenTextSplitter·저장소·QuestionAnswerAdvisor, 문서 프롬프트 전달, 빈 검색의 생성 호출 |
+| 11-model-evaluation | 4 | RelevancyEvaluator·FactCheckingEvaluator의 평가 프롬프트와 YES/NO 해석 |
+| 11-observability | 2 | Micrometer·Actuator의 실제 모델 타이머·token.type:total 토큰 Counter 조회 |
+| 합계 | 10 | 실패·오류·스킵 없음 |
+
+각 모듈의 test와 bootJar를 통과한 뒤 커밋했습니다. 시작 클래스·Controller·Service·설정·테스트를 모두 포함합니다.
+각 모듈의 main Java는 3개 파일이며 각각 54·60·33줄입니다. 별도 실행 프레임워크나 계측 보조 클래스를 런타임에 만들지 않았습니다.
+테스트의 로컬 HTTP 모델 서버는 제공된 검증 도구로 분리했습니다.
+
+최종 회귀 검증:
+
+```bash
+./gradlew test bootJar :Spring-AI-Tutor:mcpIntegrationTest :integration-tests:smokeTest :integration-tests:gptPathTest -x :Spring-AI-Agent-Learning:labs:01-first-chat:test --console=plain
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest --console=plain
+```
+
+두 명령 모두 BUILD SUCCESSFUL. 기본 테스트 보고서 270개 + MCP 통합 6개 + smoke 17개 + GPT 경로 3개 = **296개 통과**.
+변경 없는 작업은 Gradle up-to-date 결과를 재사용했습니다. 과거 live 태스크의 결과는 합산하지 않았습니다.
+첫 모듈의 실제 OpenAI 테스트는 이번 검증에서 실행하지 않았고 Mock 클래스만 실행했습니다.
+첫 모듈의 단순한 두 테스트 클래스와 전체 test 실행 시 두 클래스가 실행되는 동작은 변경하지 않았습니다.
+
+문서 검증: 로컬 링크 388개 대상 존재, Mermaid 23개 파서 통과, 전체 Java 클래스 블록 18개가 실제 소스와 일치.
+Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다는 의미는 아닙니다.
+
+신규 모듈은 실제 모델로 실행 가능한 bootRun 설정과 요청 예제를 제공합니다.
+이번 자동 검증은 실제 Boot·Spring AI 어댑터와 로컬 고정 HTTP 응답을 연결했으며, 새 모듈의 유료 외부 모델 호출은 수행하지 않았습니다.
+실제 언어 이해·검색 품질·평가 모델 판정의 정확도는 각 수업의 실제 모델 관찰 실험에서 따로 확인합니다.
+
+특히 토큰 지표의 input·output·total을 필터 없이 더하면 중복 합산됩니다.
+실제 Actuator 응답을 확인한 뒤 `gen_ai.token.type:total` 필터를 적용해 입력 10+출력 5=15 증가를 검증했습니다.
+평가와 관측의 구현·설명을 나누고 이러한 측정 단위 차이도 교재에 반영했습니다.

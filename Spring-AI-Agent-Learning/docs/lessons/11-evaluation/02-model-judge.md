@@ -1,4 +1,6 @@
-# 11-4. Evaluator로 답변을 평가하는 모델 호출하기
+# 11-2. Evaluator로 답변을 평가하는 모델 호출하기
+
+**실행 코드·설정·테스트:** [labs/11-model-evaluation](../../../labs/11-model-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 30~45분. 선수 지식: 11-1의 고정 사례·기대 값 평가, 03의 ChatClient.
 이번 목표는 **질문·근거·후보 답변을 평가 모델에 전달하고 판정값을 읽는 것**입니다.
@@ -128,4 +130,5 @@ curl -sS http://127.0.0.1:8104/api/evaluate/facts \
 </details>
 
 보충: [공식 Evaluation API](https://docs.spring.io/spring-ai/reference/api/testing.html).
-[기준 세우기](01-cases.md) · [다음: 사용량](02-usage.md) · [11단원 목차](../11-evaluation.md)
+
+[이전](01-cases.md) · [다음](03-usage.md) · [단원 목차](../11-evaluation.md) · [학습 방법](../../learning-guide.md)

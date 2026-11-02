@@ -1,5 +1,7 @@
 # 04-3. 형식 오류와 값 오류 관찰
 
+**실행 코드·설정·테스트:** [labs/04-structured-output](../../../labs/04-structured-output/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+
 30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
 
 **이번 목표:** 변환 성공 후에도 Java 검증이 필요한 이유를 확인합니다.
@@ -63,11 +65,10 @@ JSON은 데이터 표현 문자열, record는 Java 코드가 접근할 객체, �
 </details>
 
 보충: [공식 Structured Output](https://docs.spring.io/spring-ai/reference/api/structured-output.html).
-[이전: 03](../03-chatclient-and-prompts.md) · [다음: 05. Tool Calling](../05-tool-calling.md) · [학습 지도](../../curriculum.md)
 
 ## 여기서 멈춰 확인하기
 
 코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
-[이전](02-convert.md) · [단원 목차](../04-structured-output.md) · [학습 방법](../../learning-guide.md)
+[이전](02-convert.md) · [다음](../04-structured-output.md) · [단원 목차](../04-structured-output.md) · [학습 방법](../../learning-guide.md)

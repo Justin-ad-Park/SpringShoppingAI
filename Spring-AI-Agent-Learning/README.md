@@ -14,8 +14,8 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 
 ## 한 수업씩 읽는 방법
 
-[초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요.
-04~12의 기존 문서 경로는 짧은 목차가 되었고, 실제 설명은 **29개 소수업**으로 나누었습니다.
+[초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요. 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.
+04~12의 기존 문서 경로는 짧은 목차가 되었고, 실제 설명은 **기존 29개 소수업 + 표준 API 실행 실습 4개 수업**으로 나누었습니다.
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -40,6 +40,21 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 
 처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 12까지 번호 순으로 읽으세요.
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
+
+## 추가한 독립 실행 실습
+
+설명용 코드 조각이 아니라 시작 클래스·Controller·Service·설정·테스트를 포함합니다.
+같은 기능의 설명을 나눈 소수업은 하나의 실행 모듈을 공유합니다.
+
+| 수업 | 모듈 | 실행 후 확인할 것 |
+|---|---|---|
+| [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
+| [11-2 모델 평가](docs/lessons/11-evaluation/02-model-judge.md) | `labs/11-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
+| [11-4 관측](docs/lessons/11-evaluation/04-actuator.md) | `labs/11-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
+
+각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.
+새 모듈은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
+기존 04~12의 설정·실행 경로와 첫 모듈의 단순한 Mock/Live 클래스는 그대로 유지했습니다.
 
 ## 실습 환경
 
@@ -97,7 +112,10 @@ labs/
   08-advisors/           호출 체인·메모리·도구 루프
   09-embeddings-search/  임베딩·유사도·필터
   10-rag/                문서 분할·검색·근거 확인
+  10-rag-advisor/        표준 Reader·Splitter·RAG Advisor
   11-evaluation/         고정 사례 평가·사용량·실패 처리
+  11-model-evaluation/   Spring AI Evaluator
+  11-observability/      기본 메트릭·Actuator
   12-shopping-agent/     상품·정책·후속 질문 통합
 ../gradlew               저장소 공통 Gradle Wrapper
 ```

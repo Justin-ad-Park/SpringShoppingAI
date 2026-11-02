@@ -1,5 +1,7 @@
 # 06-4. 보충: 호출 상한과 실패 처리
 
+**실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+
 30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
 
 **이번 목표:** 무한 반복과 긴 대기를 막는 코드의 위치를 확인합니다.
@@ -38,11 +40,10 @@ Thread/Future의 상세 학습을 Spring AI 입문의 선수 지식으로 요구
 </details>
 
 보충: [공식 Agent 패턴](https://docs.spring.io/spring-ai/reference/api/effective-agents.html), [Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html).
-[이전: 05](../05-tool-calling.md) · [다음: 07. 대화 메모리](../07-chat-memory.md) · [학습 지도](../../curriculum.md)
 
 ## 여기서 멈춰 확인하기
 
 코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
-[이전](03-hybrid.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)
+[이전](03-hybrid.md) · [다음](../06-workflow-agent.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)
