@@ -4,10 +4,9 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 }
 
-//// .env는 저장소 루트에 있다. 실행 디렉터리를 맞춰 Spring Boot가 읽도록 한다.
-//tasks.named('bootRun') { workingDir rootProject.projectDir }
-//tasks.withType(Test).configureEach { workingDir rootProject.projectDir }
-//
-//tasks.named('test') {
-//    testLogging { showStandardStreams = true }
-//}
+// 실행 작업 디렉터리를 저장소 루트로 고정해 .env를 읽습니다.
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

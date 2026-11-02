@@ -119,7 +119,7 @@ server:
 
 spring:
   config:
-    import: "optional:file:${LEARNING_ENV_FILE:.env}[.properties]"
+    import: "optional:file:.env[.properties]"
   application:
     name: first-chat
   ai:
@@ -136,7 +136,6 @@ spring:
 
 - `bootRun`과 테스트는 모듈의 `build.gradle`에서 작업 디렉터리를 저장소 루트로 맞춥니다.
 - 기본 `.env` 경로는 그 작업 디렉터리 기준입니다. IDE에서 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
-- 다른 실행 위치가 필요하면 `LEARNING_ENV_FILE`에 루트 `.env`의 절대 경로를 지정할 수 있습니다.
 - 이미 설정한 프로세스 환경 변수는 파일보다 우선합니다. 예상과 다른 모델이면 기존 `OPENAI_MODEL` 설정도 확인합니다.
 - `${LEARNING_PORT:8091}`은 포트 설정이 없으면 8091을 사용한다는 뜻입니다.
 - `embedding: none`은 아직 배우지 않은 임베딩 자동 설정을 끕니다.

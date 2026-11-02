@@ -8,7 +8,7 @@
 ```
 
 실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
-IDE 실행 시 Working directory를 저장소 루트로 설정합니다. 다른 위치에서는 `LEARNING_ENV_FILE`로 파일의 절대 경로를 지정할 수 있습니다.
+Gradle의 `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 고정합니다. IDE에서 Gradle을 거치지 않고 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
