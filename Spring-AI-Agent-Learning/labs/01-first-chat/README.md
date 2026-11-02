@@ -29,7 +29,11 @@ curl -i http://127.0.0.1:8091/api/chat \
 2. `FirstChatApplication.java`: 일반 Boot 시작 코드
 3. `ChatController.java`: HTTP 본문을 받고 입력 검증
 4. `ChatService.java`: ChatClient로 모델 연결
-5. 테스트: 관심 있을 때 읽기. 모델 API만 가짜 HTTP 서버로 교체
+5. 테스트 (선택): `modelProperties()`와 정상 호출 테스트부터 읽기. 가짜 서버 구현은 제공된 보조 코드로 사용
+
+첫 실습에서는 설정과 `ChatService.ask()`의 호출 흐름을 이해하면 충분합니다.
+입력 검증 테스트는 보충, 대화 기억 테스트는 03장, 인증 헤더 검증은 선택 심화로 읽습니다.
+테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call.md#테스트-코드-읽기-선택)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.
 테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 별도 실습입니다.

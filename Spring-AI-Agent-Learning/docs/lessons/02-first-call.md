@@ -54,6 +54,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ChatController {
+    public static final int MAX_MESSAGE_LENGTH = 2000;
+
     private final ChatService chatService;
 
     public ChatController(ChatService chatService) {
@@ -62,7 +64,7 @@ public class ChatController {
 
     @PostMapping(value = "/api/chat", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String chat(@RequestBody @NotBlank @Size(max = 2000) String message) {
+    public String chat(@RequestBody @NotBlank @Size(max = MAX_MESSAGE_LENGTH) String message) {
         return chatService.ask(message);
     }
 }
@@ -71,6 +73,9 @@ public class ChatController {
 생성자 주입으로 `ChatService`를 받습니다. `@RequestBody`는 HTTP 본문을 문자열로 읽습니다.
 `consumes`는 받을 본문 형식, `produces`는 반환할 형식을 지정합니다.
 `@NotBlank`는 공백뿐인 질문을, `@Size`는 2000자를 넘는 질문을 거부합니다.
+최대 길이는 `MAX_MESSAGE_LENGTH` 상수 한 곳에서 정의합니다.
+테스트도 `"가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1)`로 같은 상수를 사용해,
+허용 길이보다 정확히 한 글자 긴 입력을 보내면 HTTP 400이 반환되는지 확인합니다.
 이 입력 검증은 Spring MVC/Validation의 기능이며 모델의 판단에 맡기지 않습니다.
 이 실습의 2000자는 학습용 입력 제한입니다. 모델의 토큰 제한과 같은 값이 아닙니다.
 
@@ -109,6 +114,48 @@ public class ChatService {
 `content()` → 호출 결과의 텍스트 꺼내기로 읽으세요.
 이 연결을 평가하는 동안 외부 요청과 응답 대기가 일어납니다. Builder를 만들었다고 모델이 답변하는 것은 아닙니다.
 세부 관계는 다음 장에서 배웁니다.
+
+### 테스트 코드 읽기 (선택)
+
+첫 실습의 필수 학습 범위는 `application.yml`의 연결 설정과 세 클래스의 역할,
+`ChatService.ask()`의 네 줄입니다. 테스트는 제공된 검증 도구로 실행하면 충분하며,
+가짜 HTTP 서버를 직접 구현하는 것은 이번 학습 목표에 포함하지 않습니다.
+
+테스트도 읽고 싶다면 `FirstChatContractTest.java`에서 다음 순서로 확인하세요.
+
+1. `modelProperties()`: 테스트용 연결 설정
+2. `sendsUserMessageThroughSpringAiAndReturnsText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
+3. `rejectsBlankAndOversizedInputsBeforeCallingModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
+
+`doesNotAutomaticallyRememberPreviousRequest()`는 03장의 대화 기억 실험에서 읽습니다.
+인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
+
+`modelProperties()`의 설정은 `@DynamicPropertySource`를 통해 **테스트에서만** 적용됩니다.
+`application.yml`의 같은 설정을 덮어쓰거나 테스트에 필요한 설정을 추가합니다.
+
+| 설정 | 실제 실행 (`bootRun`) | 로컬 테스트 |
+|---|---|---|
+| `spring.ai.openai.api-key` | `OPENAI_API_KEY`의 실제 키 | 더미 키 `local-test-key` |
+| `spring.ai.openai.chat.options.model` | `OPENAI_CHAT_MODEL`의 실제 모델 이름 | 검증용 이름 `tutor-test-model` |
+| `spring.ai.openai.base-url` | 별도로 지정하지 않은 제공 업체 연결 주소 | 테스트가 시작한 로컬 가짜 서버 주소 |
+
+더미 키도 Spring AI의 연결 설정에 사용하므로 유지합니다. 가짜 서버는 이 키로 실제 계정 인증을 하지 않습니다.
+테스트의 인증 헤더 검증은 `Bearer local-test-key`가 요청에 담겼는지 확인합니다.
+
+테스트 중에는 두 개의 HTTP 서버가 동작합니다.
+
+```text
+테스트의 ask() → 애플리케이션 서버의 /api/chat → Controller → ChatService → Spring AI
+  → 가짜 모델 서버의 /v1/chat/completions → 고정 JSON 응답 → 응답 텍스트 반환
+```
+
+`RANDOM_PORT`는 애플리케이션 서버에, `InetSocketAddress("127.0.0.1", 0)`은 가짜 모델 서버에
+각각 사용 가능한 포트를 배정합니다. 테스트는 애플리케이션의 배정된 포트를 `@Value`로 받습니다.
+가짜 서버의 고정 JSON은 Spring AI가 읽을 수 있는 OpenAI 응답 형식을 흉내 낸 것이며 AI가 생성한 답변은 아닙니다.
+
+`@BeforeEach`는 테스트마다 요청 기록을 비우고, `@AfterAll`은 모든 테스트 후 가짜 서버를 종료합니다.
+`CopyOnWriteArrayList`는 가짜 서버 처리 스레드와 테스트 스레드가 요청 기록을 공유하기 위해 사용합니다.
+이 서버와 스레드 관련 구현은 첫 실습에서 넘어가도 됩니다.
 
 ## 4. 실제 모델 호출
 

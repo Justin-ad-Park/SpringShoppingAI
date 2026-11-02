@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ChatController {
+    public static final int MAX_MESSAGE_LENGTH = 2000;
+
     private final ChatService chatService;
 
     public ChatController(ChatService chatService) {
@@ -17,7 +19,7 @@ public class ChatController {
 
     @PostMapping(value = "/api/chat", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String chat(@RequestBody @NotBlank @Size(max = 2000) String message) {
+    public String chat(@RequestBody @NotBlank @Size(max = MAX_MESSAGE_LENGTH) String message) {
         return chatService.ask(message);
     }
 }
