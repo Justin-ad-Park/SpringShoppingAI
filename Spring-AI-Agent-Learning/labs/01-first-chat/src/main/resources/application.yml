@@ -3,6 +3,8 @@ server:
   port: ${LEARNING_PORT:8091}
 
 spring:
+  config:
+    import: "optional:file:${LEARNING_ENV_FILE:.env}[.properties]"
   application:
     name: first-chat
   ai:
@@ -11,5 +13,7 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
       chat:
+        max-retries: 0
+        timeout: 30s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}

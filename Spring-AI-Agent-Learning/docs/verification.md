@@ -17,14 +17,14 @@ Java 21 / Gradle 8.14.5 / Boot 4.0.9 / Spring AI 2.0.2를 저장소 전체에서
 - 두 번째 호출에 첫 번째 질문이 포함되지 않음을 확인. 자동 대화 메모리가 없는 상태를 검증.
 - 실행 가능한 Boot JAR 빌드 성공.
 - Markdown 로컬 파일 링크의 대상 존재 확인.
-- 01장의 전체 Gradle·YAML 예제, 02장의 전체 Java 클래스가 실제 소스와 일치함을 확인.
+- 01장의 Gradle 의존성·전체 YAML 예제, 02장의 전체 Java 클래스가 실제 소스와 일치함을 확인.
 
 테스트 보고서는 저장소 루트 기준 `Spring-AI-Agent-Learning/labs/01-first-chat/build/reports/tests/test/index.html`입니다.
 JAR은 `Spring-AI-Agent-Learning/labs/01-first-chat/build/libs/01-first-chat-0.1.0.jar`에 생성됩니다.
 
 ## 확인하지 않은 범위
 
-실제 API 키와 유료 모델을 사용한 호출은 실행하지 않았습니다.
+최초 검증에서는 실제 API 키와 유료 모델 호출을 실행하지 않았습니다. 첫 실습의 후속 실제 호출 결과는 아래 추가 기록을 참고하세요.
 실제 모델의 접근 권한·자연어 품질·비용·응답 시간은 이번 로컬 테스트가 보장하지 않습니다.
 교재의 자연어 응답은 형태 예시이며 실제 실행 결과로 표시하지 않았습니다.
 03장의 프롬프트 수정·실제 답변 비교는 학습자가 수행하는 실험입니다.
@@ -100,3 +100,25 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 테스트는 실제 Spring AI 어댑터와 로컬 고정 응답 HTTP 서버를 연결합니다.
 유료 모델 호출은 실행하지 않았으며, 실제 언어 이해·임베딩 품질·도구 선택 정확도는 학습자의 별도 평가 대상입니다.
 실제 실행 시의 모델 접근 권한·API 비용·운영 동시성·인증 완성도를 보장하는 검증은 아닙니다.
+
+## 첫 실습의 .env·MockModel·실제 OpenAI 테스트 보완 — 2026-11-02
+
+- `application.yml`이 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 읽습니다.
+  Gradle bootRun과 테스트 작업 디렉터리는 저장소 루트입니다.
+- 기본 테스트는 `FirstChatLocalMockModelTest`로 이름을 바꾸고, 클래스·메서드 표시 이름에도 로컬 MockModel임을 명시했습니다.
+  이 테스트는 설정 import를 비워 `.env`를 읽지 않으며 로컬 서버와 더미 키만 사용합니다.
+- 같은 테스트 소스 폴더에 `FirstChatOpenAiLiveTest`를 추가했습니다.
+  `live-openai` 태그를 기본 test에서 제외하고 전용 `liveOpenAiTest`로만 실행합니다.
+  SDK 재시도는 0회이며 실제 테스트는 ChatService를 한 번 호출해 질문과 응답을 출력합니다.
+- 로컬 MockModel 테스트 **3개 통과**, Boot JAR 빌드 성공.
+- 루트 `.env`를 사용한 **실제 OpenAI 호출 테스트 1개 통과**. 비어 있지 않은 한국어 응답을 확인했습니다.
+  이는 단일 요청의 연결·응답 확인이며 전체 단원의 실제 모델 품질을 검증한 결과는 아닙니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test :Spring-AI-Agent-Learning:labs:01-first-chat:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+```
+
+보고서: `labs/01-first-chat/build/reports/tests/test/index.html`,
+`labs/01-first-chat/build/reports/tests/liveOpenAiTest/index.html`.
+실제 키는 소스·YAML·보고서에 기록하지 않습니다. 실제 모델 응답은 전용 테스트의 표준 출력과 보고서에서 확인합니다.

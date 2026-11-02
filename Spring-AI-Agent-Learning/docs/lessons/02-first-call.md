@@ -121,22 +121,23 @@ public class ChatService {
 `ChatService.ask()`의 네 줄입니다. 테스트는 제공된 검증 도구로 실행하면 충분하며,
 가짜 HTTP 서버를 직접 구현하는 것은 이번 학습 목표에 포함하지 않습니다.
 
-테스트도 읽고 싶다면 `FirstChatContractTest.java`에서 다음 순서로 확인하세요.
+테스트도 읽고 싶다면 `FirstChatLocalMockModelTest.java`에서 다음 순서로 확인하세요.
 
 1. `modelProperties()`: 테스트용 연결 설정
-2. `sendsUserMessageThroughSpringAiAndReturnsText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
-3. `rejectsBlankAndOversizedInputsBeforeCallingModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
+2. `sendsUserMessageToLocalMockModelAndReturnsFixedText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
+3. `rejectsInvalidInputsBeforeCallingLocalMockModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
 
-`doesNotAutomaticallyRememberPreviousRequest()`는 03장의 대화 기억 실험에서 읽습니다.
+`doesNotSendPreviousRequestToLocalMockModelAutomatically()`는 03장의 대화 기억 실험에서 읽습니다.
 인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
 
+로컬 MockModel 테스트는 `spring.config.import=`로 루트 `.env` 읽기를 끕니다.
 `modelProperties()`의 설정은 `@DynamicPropertySource`를 통해 **테스트에서만** 적용됩니다.
 `application.yml`의 같은 설정을 덮어쓰거나 테스트에 필요한 설정을 추가합니다.
 
 | 설정 | 실제 실행 (`bootRun`) | 로컬 테스트 |
 |---|---|---|
-| `spring.ai.openai.api-key` | `OPENAI_API_KEY`의 실제 키 | 더미 키 `local-test-key` |
-| `spring.ai.openai.chat.options.model` | `OPENAI_CHAT_MODEL`의 실제 모델 이름 | 검증용 이름 `tutor-test-model` |
+| `spring.ai.openai.api-key` | 루트 `.env`의 `OPENAI_API_KEY` | 더미 키 `local-test-key` |
+| `spring.ai.openai.chat.options.model` | 루트 `.env`의 `OPENAI_MODEL` | 검증용 이름 `tutor-test-model` |
 | `spring.ai.openai.base-url` | 별도로 지정하지 않은 제공 업체 연결 주소 | 테스트가 시작한 로컬 가짜 서버 주소 |
 
 더미 키도 Spring AI의 연결 설정에 사용하므로 유지합니다. 가짜 서버는 이 키로 실제 계정 인증을 하지 않습니다.
@@ -159,7 +160,7 @@ public class ChatService {
 
 ## 4. 실제 모델 호출
 
-01장에서 설명한 `OPENAI_API_KEY`, `OPENAI_CHAT_MODEL`을 같은 터미널에 설정합니다.
+01장에서 설명한 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.
 저장소 루트에서 실행하세요.
 
 ```bash
@@ -194,11 +195,15 @@ Spring은 이 연결을 대신 관리해 코드의 결합도를 낮춰줍니다.
 상태 코드 200, 빈 문자열이 아닌 응답, 질문과 관련된 설명인지를 확인하세요.
 200이어도 사실이 맞는지는 별도로 확인해야 합니다.
 
-종료는 서버 터미널에서 Ctrl+C를 누릅니다. 학습 후 키를 제거하려면:
+종료는 서버 터미널에서 Ctrl+C를 누릅니다.
+실제 모델에 한 번 질문하고 응답만 출력해 보고 싶다면 서버 실행 대신 별도 테스트도 사용할 수 있습니다.
 
 ```bash
-unset OPENAI_API_KEY OPENAI_CHAT_MODEL
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
 ```
+
+`FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결하므로 API 사용량이 발생합니다.
+기본 `test`는 `FirstChatLocalMockModelTest`만 실행합니다.
 
 ## 5. 질문만 바꿔 보기
 

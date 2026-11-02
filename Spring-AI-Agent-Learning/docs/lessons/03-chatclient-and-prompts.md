@@ -124,7 +124,7 @@ curl -sS http://127.0.0.1:8091/api/chat \
 이 코드는 두 번째 호출에 첫 번째 대화를 포함하지 않습니다.
 같은 서버·같은 ChatClient를 사용해도 자동으로 대화가 이어지지 않습니다.
 모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.
-제공된 `doesNotAutomaticallyRememberPreviousRequest` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
+제공된 `doesNotSendPreviousRequestToLocalMockModelAutomatically` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
 메모리 수업에서는 대화 ID와 이전 메시지를 연결해 이 차이를 해결합니다.
 
 ## 7. 프롬프트로 할 일과 코드로 할 일

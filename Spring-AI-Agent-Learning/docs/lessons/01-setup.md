@@ -46,7 +46,8 @@ include 'Spring-AI-Agent-Learning:labs:12-shopping-agent'
 `:Spring-AI-Agent-Learning:labs:01-first-chat:test`는 교육 폴더의 첫 실습만 테스트한다는 뜻입니다. 다른 서비스를 시작하지 않습니다.
 등록과 공통 버전은 저장소가 관리하고, 교육용 코드는 별도 폴더에 둡니다.
 
-`Spring-AI-Agent-Learning/labs/01-first-chat/build.gradle`의 전체 내용입니다.
+`Spring-AI-Agent-Learning/labs/01-first-chat/build.gradle`의 의존성 부분입니다.
+파일 아래의 작업 디렉터리·테스트 태스크 설정은 제공된 실행 보조 코드로 사용하면 됩니다.
 
 ```groovy
 // Java·Spring Boot·Spring AI 버전과 공통 의존성은 저장소 루트에서 관리합니다.
@@ -83,7 +84,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 ```
 
 테스트는 더미 키와 가짜 모델 이름을 자체 설정합니다. 실제 계정이나 `.env`를 읽지 않습니다.
-`FirstChatContractTest.modelProperties()`의 `@DynamicPropertySource`가 테스트 실행에만 설정을 등록합니다.
+`FirstChatLocalMockModelTest.modelProperties()`의 `@DynamicPropertySource`가 테스트 실행에만 설정을 등록합니다.
 `application.yml`의 같은 설정보다 우선 적용되므로 환경 변수에 실제 키와 모델 이름을 넣지 않아도 됩니다.
 `base-url`도 로컬 가짜 모델 서버 주소로 지정해 외부 제공 업체로 요청하지 않습니다.
 확인하는 내용은 ① 모델에 전달되는 질문·모델 이름·인증 헤더 ② 빈 입력·과도한 입력 거부 ③ 이전 요청이 자동 전달되지 않음입니다.
@@ -94,35 +95,22 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 ## 4. 실제 모델을 사용할 때의 환경 변수
 
 **환경 변수**는 코드 밖에서 프로세스에 전달하는 설정입니다.
-모델 API 제공 업체에서 발급한 키와 계정에서 사용 가능한 Chat 모델 이름이 필요합니다.
-기존 저장소의 키를 자동으로 복사하거나 읽지 않습니다.
+첫 실습은 저장소 루트 `SpringShoppingAI/.env`에 있는 `OPENAI_API_KEY`, `OPENAI_MODEL`을 재사용합니다.
+YAML이나 테스트 코드에 실제 키를 적거나, 매번 터미널에서 export할 필요가 없습니다.
 
-zsh에서 다음 명령을 실행하면 키를 화면과 명령 기록에 직접 쓰지 않고 입력할 수 있습니다.
+설정 파일에는 다음 이름이 있어야 합니다. 아래 값은 설명용이며 실제 키·접근 가능한 모델 이름으로 설정합니다.
 
-```zsh
-read -rs 'OPENAI_API_KEY?API key: '
-echo
-export OPENAI_API_KEY
-read 'OPENAI_CHAT_MODEL?사용 가능한 Chat 모델 이름: '
-export OPENAI_CHAT_MODEL
+```properties
+OPENAI_API_KEY=본인의_API_키
+OPENAI_MODEL=사용_가능한_Chat_모델_이름
 ```
 
-bash라면 다음을 사용하세요.
+Spring Boot는 `.env`라는 이름을 자동 인식하지 않으므로 `spring.config.import`로 명시합니다.
+`[.properties]`는 확장자가 없는 설정 파일을 Java properties 형식으로 읽으라는 뜻입니다.
+`KEY=value` 형식을 사용하고, 셸의 `export` 접두어나 값을 감싸는 따옴표는 넣지 않습니다.
+`.env`를 셸 스크립트로 실행하지 않습니다. 저장소의 `.gitignore`가 루트 `.env`를 제외합니다.
 
-```bash
-read -rs -p 'API key: ' OPENAI_API_KEY
-echo
-export OPENAI_API_KEY
-read -r -p '사용 가능한 Chat 모델 이름: ' OPENAI_CHAT_MODEL
-export OPENAI_CHAT_MODEL
-```
-
-키 입력 중에는 화면에 문자가 보이지 않습니다. 입력 후 Enter를 누르세요.
-모델 이름은 예시 문구를 그대로 쓰지 말고 계정의 실제 모델 이름을 입력합니다.
-이 명령을 실행한 **동일 터미널**에서 `bootRun`을 실행해야 합니다.
-IDE 실행 버튼은 터미널의 환경 변수를 자동으로 받지 않을 수 있습니다.
-
-`Spring-AI-Agent-Learning/labs/01-first-chat/src/main/resources/application.yml`은 이 값을 읽습니다.
+`application.yml` 전체는 다음과 같습니다.
 
 ```yaml
 server:
@@ -130,6 +118,8 @@ server:
   port: ${LEARNING_PORT:8091}
 
 spring:
+  config:
+    import: "optional:file:${LEARNING_ENV_FILE:.env}[.properties]"
   application:
     name: first-chat
   ai:
@@ -138,17 +128,36 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
       chat:
+        max-retries: 0
+        timeout: 30s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}
 ```
 
-`${변수}`는 환경 변수 등의 설정에서 값을 찾습니다.
-`${LEARNING_PORT:8091}`은 포트 설정이 없으면 8091을 사용한다는 뜻입니다.
-`embedding: none`은 아직 사용하지 않는 임베딩 모델 자동 설정을 끕니다. 임베딩은 후속 수업에서 다룹니다.
-API 키와 모델 이름에는 기본값을 두지 않아, 잘못된 설정을 조기에 발견하도록 했습니다.
+- `bootRun`과 테스트는 모듈의 `build.gradle`에서 작업 디렉터리를 저장소 루트로 맞춥니다.
+- 기본 `.env` 경로는 그 작업 디렉터리 기준입니다. IDE에서 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
+- 다른 실행 위치가 필요하면 `LEARNING_ENV_FILE`에 루트 `.env`의 절대 경로를 지정할 수 있습니다.
+- 이미 설정한 프로세스 환경 변수는 파일보다 우선합니다. 예상과 다른 모델이면 기존 `OPENAI_MODEL` 설정도 확인합니다.
+- `${LEARNING_PORT:8091}`은 포트 설정이 없으면 8091을 사용한다는 뜻입니다.
+- `embedding: none`은 아직 배우지 않은 임베딩 자동 설정을 끕니다.
+- `max-retries: 0`은 자동 재시도를 끄고, `timeout: 30s`는 SDK 요청 시간 제한입니다.
 
-Spring Boot는 `.env` 파일을 놓았다는 이유만으로 자동으로 읽지 않습니다.
-이 실습은 위 환경 변수 방식만 사용합니다. 실제 키를 YAML이나 Git에 기록하지 마세요.
+기본 로컬 MockModel 테스트는 `spring.config.import=`로 파일 읽기를 끄고 더미 설정을 주입합니다.
+실제 파일과 외부 API가 없어도 실행할 수 있습니다.
+
+### 실제 OpenAI에 연결하는 테스트
+
+첫 실습과 같은 `src/test/java/com/example/ailearning` 폴더에
+`FirstChatOpenAiLiveTest.java`가 있습니다. `ChatService`로 실제 OpenAI를 호출하고 질문과 응답을 출력합니다.
+고정 문장 일치가 아니라 응답이 비어 있지 않은지 확인합니다. 키는 출력하지 않습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+```
+
+이 명령은 API 사용량이 발생합니다. `@Tag("live-openai")`로 분리해 일반 `test`에서는 실행하지 않습니다.
+`--tests` 필터만으로 일반 `test`의 제외 태그가 해제되지는 않습니다. 실제 호출은 위 전용 명령으로 실행합니다.
+기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
 
 ## 5. 막혔을 때
 
@@ -157,10 +166,10 @@ Spring Boot는 `.env` 파일을 놓았다는 이유만으로 자동으로 읽지
 | `Permission denied` | 저장소 루트에서 `chmod +x gradlew` |
 | `JAVA_HOME`/Java 버전 오류 | 터미널 `java -version`, IDE의 Gradle JVM, Java 21 설치 |
 | 의존성 다운로드 실패 | 인터넷, 프록시, Maven Central·Gradle 배포 서버 접근 |
-| 키·모델 placeholder 오류 | 같은 터미널에서 변수를 입력했는지 확인. 값을 출력해 키를 노출하지 않기 |
+| 키·모델 placeholder 오류 | 루트 `.env`의 변수 이름과 IDE 작업 디렉터리 확인. 키 값은 출력하지 않기 |
 | 포트 충돌 | 다음 실행에 `LEARNING_PORT=8092 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun` 사용 |
 
-테스트까지는 API 키가 없어도 됩니다. 다음 장의 실제 호출은 키와 모델 접근 권한이 필요합니다.
+기본 로컬 MockModel 테스트까지는 API 키가 없어도 됩니다. 다음 장의 실제 호출은 키와 모델 접근 권한이 필요합니다.
 
 ## 확인 질문
 

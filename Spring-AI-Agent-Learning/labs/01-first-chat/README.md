@@ -7,13 +7,23 @@
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
 ```
 
-실제 모델은 같은 터미널에 OPENAI_API_KEY와 OPENAI_CHAT_MODEL을 설정한 뒤 실행합니다.
+실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
+IDE 실행 시 Working directory를 저장소 루트로 설정합니다. 다른 위치에서는 `LEARNING_ENV_FILE`로 파일의 절대 경로를 지정할 수 있습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
 ```
 
-다른 터미널에서:
+서버를 시작하지 않고 실제 응답을 출력하는 테스트:
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+```
+
+- `FirstChatLocalMockModelTest`: 기본 `test`에서 실행. 로컬 고정 응답, `.env`와 외부 API 사용 없음.
+- `FirstChatOpenAiLiveTest`: 위 전용 명령으로 실행. 실제 OpenAI 호출 1회, 질문·응답 출력, API 사용량 발생.
+
+`bootRun`으로 시작했다면 다른 터미널에서:
 
 ```bash
 curl -i http://127.0.0.1:8091/api/chat \
@@ -36,7 +46,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call.md#테스트-코드-읽기-선택)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.
-테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 별도 실습입니다.
+테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 `bootRun` 또는 `liveOpenAiTest`로 수행합니다.
 학습용 외부 오류는 기본 500으로 나타날 수 있으며 서버 로그에서 원인을 확인합니다.
 
 [전체 코드와 실행 해설](../../docs/lessons/02-first-call.md) · [프롬프트 변경 실험](../../docs/lessons/03-chatclient-and-prompts.md)

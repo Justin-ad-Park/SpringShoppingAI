@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,8 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 // 실제 Spring AI 어댑터를 사용하되 외부 모델 API만 로컬 HTTP 서버로 대체합니다.
 // 02장에서는 modelProperties와 정상 호출 테스트만 읽고, 서버 구현은 제공된 보조 코드로 사용하세요.
 // RANDOM_PORT는 테스트할 애플리케이션 서버에 사용 가능한 포트를 배정합니다.
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class FirstChatContractTest {
+@DisplayName("첫 Chat 호출 — 로컬 MockModel 계약 테스트")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.config.import=")
+class FirstChatLocalMockModelTest {
     private static final ObjectMapper JSON = new ObjectMapper();
     // 가짜 서버의 처리 스레드와 테스트 스레드가 요청 기록을 공유합니다.
     private static final List<JsonNode> REQUESTS = new CopyOnWriteArrayList<>();
@@ -67,9 +70,10 @@ class FirstChatContractTest {
 
     // 02장 핵심: 질문 전달과 고정 응답 반환을 확인합니다.
     @Test
-    void sendsUserMessageThroughSpringAiAndReturnsText() throws Exception {
+    @DisplayName("로컬 MockModel에 질문을 전달하고 고정 응답을 반환한다")
+    void sendsUserMessageToLocalMockModelAndReturnsFixedText() throws Exception {
         HttpResponse<String> response = ask("스프링이 무엇인가요?");
-        printResponse("sendsUserMessageThroughSpringAiAndReturnsText / 정상 질문", response);
+        printResponse("LocalMockModel / 정상 호출 / 정상 질문", response);
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("로컬 테스트 모델의 고정 응답입니다.");
@@ -89,13 +93,14 @@ class FirstChatContractTest {
      * @throws Exception
      */
     @Test
-    void rejectsBlankAndOversizedInputsBeforeCallingModel() throws Exception {
+    @DisplayName("잘못된 입력은 로컬 MockModel 호출 전에 거부한다")
+    void rejectsInvalidInputsBeforeCallingLocalMockModel() throws Exception {
         HttpResponse<String> blankResponse = ask("   ");
-        printResponse("rejectsBlankAndOversizedInputsBeforeCallingModel / 공백 입력", blankResponse);
+        printResponse("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
         assertThat(blankResponse.statusCode()).isEqualTo(400);
 
         HttpResponse<String> oversizedResponse = ask("가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1));
-        printResponse("rejectsBlankAndOversizedInputsBeforeCallingModel / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
+        printResponse("LocalMockModel / 입력 검증 / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
         assertThat(oversizedResponse.statusCode()).isEqualTo(400);
         assertThat(REQUESTS).isEmpty();
     }
@@ -103,13 +108,14 @@ class FirstChatContractTest {
     // 03장에서 읽기: 두 번째 요청에 현재 질문만 담기는지 확인합니다.
     // 실제 모델의 기억 능력을 평가하는 테스트는 아닙니다.
     @Test
-    void doesNotAutomaticallyRememberPreviousRequest() throws Exception {
+    @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")
+    void doesNotSendPreviousRequestToLocalMockModelAutomatically() throws Exception {
         HttpResponse<String> firstResponse = ask("제 이름은 민수입니다.");
-        printResponse("doesNotAutomaticallyRememberPreviousRequest / 첫 번째 요청", firstResponse);
+        printResponse("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
         assertThat(firstResponse.statusCode()).isEqualTo(200);
 
         HttpResponse<String> secondResponse = ask("제 이름이 무엇인가요?");
-        printResponse("doesNotAutomaticallyRememberPreviousRequest / 두 번째 요청", secondResponse);
+        printResponse("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
         assertThat(secondResponse.statusCode()).isEqualTo(200);
 
         assertThat(REQUESTS).hasSize(2);
