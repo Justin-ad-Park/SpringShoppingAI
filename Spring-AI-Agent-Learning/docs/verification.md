@@ -101,61 +101,27 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 유료 모델 호출은 실행하지 않았으며, 실제 언어 이해·임베딩 품질·도구 선택 정확도는 학습자의 별도 평가 대상입니다.
 실제 실행 시의 모델 접근 권한·API 비용·운영 동시성·인증 완성도를 보장하는 검증은 아닙니다.
 
-## 첫 실습의 .env·MockModel·실제 OpenAI 테스트 보완 — 2026-11-02
+## 첫 실습의 현재 테스트 구성 — 2026-11-02
 
-- `application.yml`이 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 읽습니다.
-  Gradle bootRun과 테스트 작업 디렉터리는 저장소 루트입니다.
-- 기본 테스트는 `FirstChatLocalMockModelTest`로 이름을 바꾸고, 클래스·메서드 표시 이름에도 로컬 MockModel임을 명시했습니다.
-  이 테스트는 설정 import를 비워 `.env`를 읽지 않으며 로컬 서버와 더미 키만 사용합니다.
-- 같은 테스트 소스 폴더에 `FirstChatOpenAiLiveTest`를 추가했습니다.
-  `live-openai` 태그를 기본 test에서 제외하고 전용 `liveOpenAiTest`로만 실행합니다.
-  SDK 재시도는 0회이며 실제 테스트는 ChatService를 한 번 호출해 질문과 응답을 출력합니다.
-- 로컬 MockModel 테스트 **3개 통과**, Boot JAR 빌드 성공.
-- 루트 `.env`를 사용한 **실제 OpenAI 호출 테스트 1개 통과**. 비어 있지 않은 한국어 응답을 확인했습니다.
-  이는 단일 요청의 연결·응답 확인이며 전체 단원의 실제 모델 품질을 검증한 결과는 아닙니다.
+두 테스트를 연결 대상에 따라 별도 클래스로 두었습니다. 태그·실행 허용 변수·별도 Live 태스크·클래스 감지 로직은 없습니다.
 
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test :Spring-AI-Agent-Learning:labs:01-first-chat:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
-```
+| 클래스 | 연결 대상 | 검증 결과 |
+|---|---|---|
+| `FirstChatLocalMockModelTest` | 로컬 MockServer와 더미 키 | 3개 통과 |
+| `FirstChatOpenAiLiveTest` | 실제 OpenAI, 루트 `.env`의 `OPENAI_API_KEY`·`OPENAI_MODEL` | 1개 통과·응답 출력 확인 |
 
-보고서: `labs/01-first-chat/build/reports/tests/test/index.html`,
-`labs/01-first-chat/build/reports/tests/liveOpenAiTest/index.html`.
-실제 키는 소스·YAML·보고서에 기록하지 않습니다. 실제 모델 응답은 전용 테스트의 표준 출력과 보고서에서 확인합니다.
-
-## IntelliJ의 실제 OpenAI 테스트 Run 보완 — 2026-11-02
-
-기존에는 기본 test의 `live-openai` 제외 태그가 IntelliJ의 `--tests` 클래스 필터보다 우선해
-`No matching tests found`가 발생했습니다. 첫 실습의 Gradle 설정이 실제 테스트 클래스 또는 메서드의
-명시적 선택을 인식하면 제외 태그를 해제하도록 수정했습니다. 해당 실행은 매번 수행합니다.
-기본 전체 실행과 넓은 패키지·와일드카드 필터는 계속 MockModel만 실행합니다.
-이 동작이 앞 절의 “전용 태스크로만 실행” 제한을 대체합니다.
-
-검증 결과:
-
-- IntelliJ와 같은 `test --tests com.example.ailearning.FirstChatOpenAiLiveTest`: 실제 OpenAI 호출 1개 통과, 응답 출력 확인.
-- 클래스의 `callsRealOpenAiAndPrintsResponse` 메서드 필터: `--test-dry-run`에서 테스트 1개 선택 확인. 추가 API 호출 없음.
-- `test --tests '*'`: 로컬 MockModel 3개만 통과.
-- 기본 `test`: 로컬 MockModel 3개만 통과.
-
-## JUnit 조건으로 실행 구분 단순화 — 2026-11-02
-
-위의 IntelliJ 필터 감지 방식을 제거하고 JUnit 표준 기능으로 대체했습니다.
-이 절이 현재의 실행 방법입니다. 별도 `liveOpenAiTest` 태스크는 제거했습니다.
-
-- Mock 클래스: `@Tag("mock")`.
-- Live 클래스: `@Tag("live-openai")`와 `@EnabledIfEnvironmentVariable`.
-- `RUN_LIVE_OPENAI_TEST=true`이면 Live 실행, 없으면 클래스 전체 skipped.
-- Gradle은 `.env` 위치를 위한 작업 디렉터리, 표준 출력, 실행 허용 변수의 입력 선언만 설정합니다.
-- IntelliJ는 Live 클래스/메서드 Run configuration의 Environment variables에 위 변수를 넣습니다.
-
-검증: 기본 실행에서 Mock 3개 통과·Live 1개 skipped, 허용 변수 없이 Live 클래스 단독 실행은
-매칭 오류 없이 1개 skipped, 허용 변수로 Live 클래스 실행은 실제 OpenAI 응답 출력·1개 통과.
-허용 변수를 제거한 후에도 다시 Mock 3개 통과·Live 1개 skipped를 확인했습니다.
+IntelliJ에서는 각 클래스 또는 메서드의 Run을 사용합니다.
+Gradle의 필터 없는 `test`도 두 클래스를 모두 실행하며 실제 API 사용량이 발생합니다.
+`build.gradle`에는 작업 디렉터리와 테스트 출력 설정만 추가합니다.
 
 ```bash
+# Mock만 실행 (실제 키 불필요)
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+# 두 클래스 모두 실행
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
-RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-실제 호출 결과는 현재 test 태스크의 보고서에 기록합니다. 이전 전용 태스크의 보고서 경로는 과거 기록입니다.
+두 클래스 전체 실행으로 4개 통과, 실패·스킵 없음과 실제 응답 출력을 확인했습니다.
+실제 키는 소스·YAML에 기록하지 않습니다. 질문과 응답은 표준 출력과 test 보고서에서 확인합니다.
+이는 단일 요청의 연결·응답 확인이며 전체 단원의 실제 모델 품질을 검증한 결과는 아닙니다.
+현재 보고서: `labs/01-first-chat/build/reports/tests/test/index.html`.

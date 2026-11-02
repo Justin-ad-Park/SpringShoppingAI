@@ -4,12 +4,10 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 }
 
-// .env는 저장소 루트에 있다. 실행 디렉터리를 맞춰 Spring Boot가 읽도록 한다.
-tasks.named('bootRun') { workingDir rootProject.projectDir }
-tasks.withType(Test).configureEach { workingDir rootProject.projectDir }
-
-// 실제 호출 허용 여부가 바뀌면 테스트를 다시 실행한다. 실행 조건은 JUnit이 판단한다.
-tasks.named('test') {
-    inputs.property('runLiveOpenAiTest', providers.environmentVariable('RUN_LIVE_OPENAI_TEST').orElse('false'))
-    testLogging { showStandardStreams = true }
-}
+//// .env는 저장소 루트에 있다. 실행 디렉터리를 맞춰 Spring Boot가 읽도록 한다.
+//tasks.named('bootRun') { workingDir rootProject.projectDir }
+//tasks.withType(Test).configureEach { workingDir rootProject.projectDir }
+//
+//tasks.named('test') {
+//    testLogging { showStandardStreams = true }
+//}

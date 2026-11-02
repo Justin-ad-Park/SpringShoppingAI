@@ -4,7 +4,7 @@
 아래 명령은 모두 **저장소 루트**에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 ```
 
 실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
@@ -14,23 +14,20 @@ IDE 실행 시 Working directory를 저장소 루트로 설정합니다. 다른 
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
 ```
 
-테스트 종류는 JUnit 태그와 조건으로 구분합니다.
+테스트는 연결 대상에 따라 두 클래스로 나뉩니다.
 
-- `FirstChatLocalMockModelTest`: `@Tag("mock")`. 로컬 고정 응답, `.env`와 외부 API 사용 없음.
-- `FirstChatOpenAiLiveTest`: `@Tag("live-openai")`. `RUN_LIVE_OPENAI_TEST=true`일 때만 실행하며, 기본 실행에서는 건너뜁니다.
+- `FirstChatLocalMockModelTest`: 로컬 MockServer의 고정 응답을 사용합니다. 실제 키가 필요 없습니다.
+- `FirstChatOpenAiLiveTest`: 루트 `.env`로 실제 OpenAI에 접속하고 응답을 출력합니다.
 
-서버를 시작하지 않고 실제 OpenAI 응답을 출력하려면:
+IntelliJ에서는 원하는 클래스 또는 메서드의 Run을 누르면 됩니다. 별도 실행 허용 변수나 태그 설정은 없습니다.
+터미널에서 실제 테스트만 실행하려면:
 
 ```bash
-RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-API 사용량이 발생합니다. `--rerun-tasks`는 이전 실행 결과를 재사용하지 않고 다시 호출하려고 지정합니다.
-별도 `liveOpenAiTest` 태스크는 사용하지 않습니다.
-
-IntelliJ에서는 이 클래스 또는 메서드의 Run configuration → Environment variables에
-`RUN_LIVE_OPENAI_TEST=true`를 넣고 Run합니다. 변수가 없으면 오류 대신 테스트를 건너뜁니다.
-클래스 이름으로 필터를 감지하는 Gradle 로직은 없습니다.
+필터 없이 이 모듈의 `test`를 실행하면 두 클래스가 모두 실행됩니다.
+실제 테스트는 API 사용량이 발생합니다. `--rerun-tasks`는 이전 결과를 재사용하지 않고 다시 실행하려는 옵션입니다.
 
 `bootRun`으로 시작했다면 다른 터미널에서:
 

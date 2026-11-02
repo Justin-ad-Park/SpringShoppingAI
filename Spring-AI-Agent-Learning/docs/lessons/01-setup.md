@@ -70,7 +70,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 ```
 
 성공 시 마지막에 `BUILD SUCCESSFUL`이 나옵니다.
@@ -83,7 +83,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
   → 로컬 가짜 모델 HTTP 서버 → 고정 응답 반환
 ```
 
-테스트는 더미 키와 가짜 모델 이름을 자체 설정합니다. 실제 계정이나 `.env`를 읽지 않습니다.
+이 Mock 테스트는 더미 키와 가짜 모델 이름을 자체 설정합니다. 실제 계정이나 `.env`를 읽지 않습니다.
 `FirstChatLocalMockModelTest.modelProperties()`의 `@DynamicPropertySource`가 테스트 실행에만 설정을 등록합니다.
 `application.yml`의 같은 설정보다 우선 적용되므로 환경 변수에 실제 키와 모델 이름을 넣지 않아도 됩니다.
 `base-url`도 로컬 가짜 모델 서버 주소로 지정해 외부 제공 업체로 요청하지 않습니다.
@@ -151,28 +151,24 @@ spring:
 `FirstChatOpenAiLiveTest.java`가 있습니다. `ChatService`로 실제 OpenAI를 호출하고 질문과 응답을 출력합니다.
 고정 문장 일치가 아니라 응답이 비어 있지 않은지 확인합니다. 키는 출력하지 않습니다.
 
-테스트는 `@Tag("mock")`, `@Tag("live-openai")`로 종류를 표시합니다.
-태그는 이름표이며 실제 호출을 허용하는 조건은 다음 JUnit 어노테이션입니다.
+두 테스트는 연결 대상이 다른 별도 클래스입니다. 태그나 실행 조건을 설정하지 않습니다.
 
-```java
-@EnabledIfEnvironmentVariable(named = "RUN_LIVE_OPENAI_TEST", matches = "true",
-        disabledReason = "실제 호출은 RUN_LIVE_OPENAI_TEST=true로 명시적으로 허용한 경우만 실행합니다.")
-```
+| 클래스 | 연결 대상 | 실행 방법 |
+|---|---|---|
+| `FirstChatLocalMockModelTest` | 테스트에서 시작한 로컬 MockServer | 클래스 또는 메서드 Run |
+| `FirstChatOpenAiLiveTest` | 실제 OpenAI API | 클래스 또는 메서드 Run |
 
-변수가 없거나 `true`가 아니면 클래스 전체를 건너뛰어 실제 API를 호출하지 않습니다.
-로컬 MockModel 테스트는 조건 없이 실행됩니다.
+IntelliJ에서 원하는 테스트의 Run을 누르면 됩니다. 별도 허용 환경 변수는 필요 없습니다.
+Live 테스트에 필요한 키와 모델 이름은 저장소 루트 `.env`에서 읽습니다.
+Gradle로 실제 테스트만 실행하려면 다음과 같습니다.
 
 ```bash
-RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-이 명령은 API 사용량이 발생합니다. `--rerun-tasks`는 실제 응답을 매번 새로 확인하려는 옵션입니다.
-IntelliJ에서는 `FirstChatOpenAiLiveTest`의 Run configuration → Environment variables에
-`RUN_LIVE_OPENAI_TEST=true`를 넣고 클래스 또는 메서드의 Run을 누릅니다.
-변수가 없으면 `No matching tests` 오류가 아니라 JUnit의 skipped/disabled 결과가 나옵니다.
-
-별도의 `liveOpenAiTest` 태스크·태그 제외·클래스 필터 감지 로직은 없습니다.
-`build.gradle`에는 작업 디렉터리와 출력 설정, 환경 변수 변경 시 재검증하도록 하는 입력 선언만 둡니다.
+`--rerun-tasks`는 이전 결과를 재사용하지 않고 실제 응답을 새로 확인하려는 옵션입니다.
+필터 없이 이 모듈의 `test`를 실행하면 Mock과 Live 모두 실행하며 실제 API 사용량이 발생합니다.
+API 키 없이 실행하려면 3절의 Mock 클래스 지정 명령을 사용합니다.
 기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
 
 ## 5. 막혔을 때

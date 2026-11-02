@@ -1,10 +1,8 @@
 package com.example.ailearning;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,12 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 실제 OpenAI에 접속합니다. 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL을 사용합니다.
- * RUN_LIVE_OPENAI_TEST=true일 때만 실행됩니다. 실행하면 API 사용량이 발생합니다.
  * 요청과 응답만 출력하며 API 키를 출력하지 않습니다.
  */
-@Tag("live-openai")
-@EnabledIfEnvironmentVariable(named = "RUN_LIVE_OPENAI_TEST", matches = "true",
-        disabledReason = "실제 호출은 RUN_LIVE_OPENAI_TEST=true로 명시적으로 허용한 경우만 실행합니다.")
 @DisplayName("첫 Chat 호출 — 실제 OpenAI 연결 테스트 (API 사용량 발생)")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
         properties = "spring.ai.openai.base-url=https://api.openai.com/v1")
@@ -29,7 +23,7 @@ class FirstChatOpenAiLiveTest {
     @Timeout(60)
     @DisplayName("실제 OpenAI에 질문하고 응답을 출력한다")
     void callsRealOpenAiAndPrintsResponse() {
-        String question = "Spring의 의존성 주입을 초보자에게 한국어 두 문장으로 설명해 주세요.";
+        String question = "내 이름은 Justin이야. 내 이름이 뭐야?";
         String answer = chatService.ask(question);
 
         System.out.println("=== 실제 OpenAI 응답 (MockModel 아님) ===");
