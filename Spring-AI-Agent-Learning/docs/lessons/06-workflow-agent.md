@@ -245,4 +245,4 @@ Thread/Future의 상세 학습을 Spring AI 입문의 선수 지식으로 요구
 </details>
 
 보충: [공식 Agent 패턴](https://docs.spring.io/spring-ai/reference/api/effective-agents.html), [Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html).
-[이전: 05](05-tool-calling.md) · [학습 지도](../curriculum.md)
+[이전: 05](05-tool-calling.md) · [다음: 07. 대화 메모리](07-chat-memory.md) · [학습 지도](../curriculum.md)

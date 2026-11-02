@@ -161,4 +161,4 @@ ChatClient 재사용만으로 대화 기록이 저장·전달되지는 않습니
 
 보충 읽기: [Chat Client API](https://docs.spring.io/spring-ai/reference/api/chatclient.html)의 프롬프트 구성과 Builder 부분.
 
-[이전: 02](02-first-call.md) · [다음 묶음 계획: 구조화 응답 → 도구 → Workflow/Agent](../curriculum.md) · [학습 지도](../../README.md)
+[이전: 02](02-first-call.md) · [다음: 04. 구조화 응답](04-structured-output.md) · [학습 지도](../../README.md)

@@ -243,4 +243,4 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 </details>
 
 보충: [공식 Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html)의 정의·Quick Start.
-[이전: 04](04-structured-output.md) · [학습 지도](../curriculum.md)
+[이전: 04](04-structured-output.md) · [다음: 06. Workflow와 Agent](06-workflow-agent.md) · [학습 지도](../curriculum.md)

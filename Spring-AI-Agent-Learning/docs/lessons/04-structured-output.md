@@ -198,4 +198,4 @@ JSON은 데이터 표현 문자열, record는 Java 코드가 접근할 객체, �
 </details>
 
 보충: [공식 Structured Output](https://docs.spring.io/spring-ai/reference/api/structured-output.html).
-[이전: 03](03-chatclient-and-prompts.md) · [학습 지도](../curriculum.md)
+[이전: 03](03-chatclient-and-prompts.md) · [다음: 05. Tool Calling](05-tool-calling.md) · [학습 지도](../curriculum.md)
