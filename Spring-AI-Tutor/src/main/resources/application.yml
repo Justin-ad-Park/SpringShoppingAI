@@ -19,7 +19,7 @@ spring:
         protocol: STREAMABLE
         type: SYNC
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    exclude: org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
   mvc:
     async:
       request-timeout: 90000

@@ -5,14 +5,14 @@ import com.example.shopping.tutor.lesson.l14multimodal.ImageModelConfiguration;
 import com.example.shopping.tutor.lesson.l14multimodal.ModerationModelConfiguration;
 
 import org.springframework.ai.openai.*;
-import org.springframework.ai.openai.api.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.retry.support.RetryTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 
-import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
+
+
+import org.springframework.stereotype.Component;
+
+
+
 
 /** 이미지·음성·moderation API는 채팅 모델과 별도로 설정한다. */
 @Component
@@ -30,21 +30,10 @@ public class MediaModelConfiguration {
             @Value("${TUTOR_SPEECH_MODEL:tts-1}") String speechModel,
             @Value("${TUTOR_MODERATION_MODEL:omni-moderation-latest}") String moderationModel) {
         String apiKey = key.isBlank() ? "stub-not-a-key" : key;
-        var factory = new JdkClientHttpRequestFactory();
-        factory.setReadTimeout(Duration.ofSeconds(60));
-        var rest = RestClient.builder().requestFactory(factory);
-        var retry = RetryTemplate.builder().maxAttempts(1).build();
-        image = ImageModelConfiguration.create(apiKey, url, imageModel, rest.clone(), retry);
-        var audio =
-                OpenAiAudioApi.builder()
-                        .apiKey(apiKey)
-                        .baseUrl(url)
-                        .restClientBuilder(rest.clone())
-                        .build();
-        transcription = AudioModelConfiguration.transcription(audio, transcriptionModel, retry);
-        speech = AudioModelConfiguration.speech(audio, speechModel, retry);
-        moderation =
-                ModerationModelConfiguration.create(
-                        apiKey, url, moderationModel, rest.clone(), retry);
+        String baseUrl = AiModelConfiguration.sdkBaseUrl(url);
+        image = ImageModelConfiguration.create(apiKey, baseUrl, imageModel);
+        transcription = AudioModelConfiguration.transcription(apiKey, baseUrl, transcriptionModel);
+        speech = AudioModelConfiguration.speech(apiKey, baseUrl, speechModel);
+        moderation = ModerationModelConfiguration.create(apiKey, baseUrl, moderationModel);
     }
 }

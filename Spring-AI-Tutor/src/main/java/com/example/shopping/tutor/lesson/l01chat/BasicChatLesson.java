@@ -40,7 +40,7 @@ public final class BasicChatLesson {
             throw new IllegalArgumentException("temperature는 0~1입니다.");
         return chatClient
                 .prompt()
-                .options(ChatOptions.builder().temperature(temperature).build())
+                .options(ChatOptions.builder().temperature(temperature))
                 .user(question)
                 .call()
                 .chatResponse();

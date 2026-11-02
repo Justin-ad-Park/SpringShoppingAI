@@ -13,10 +13,19 @@ import java.util.regex.*;
 
 /** 준비된 실험만 재현하는 모델. 실제 언어 이해를 흉내 냈다고 주장하지 않는다. */
 public class ScriptedChatModel implements ChatModel {
+    @Override
+    public ToolCallingChatOptions getOptions() {
+        return ToolCallingChatOptions.builder().build();
+    }
+
     public ChatResponse call(Prompt prompt) {
         String system = prompt.getSystemMessage().getText();
         String user = prompt.getUserMessage().getText();
         if (user.contains("[timeout]")) throw new IllegalStateException("학습용 timeout");
+        if (prompt.getInstructions().getLast() instanceof ToolResponseMessage result) {
+            return response("STUB 도구 결과: " + result.getResponses().stream()
+                    .map(ToolResponseMessage.ToolResponse::responseData).collect(java.util.stream.Collectors.joining("\n")));
+        }
         String answer;
         if (system.contains("TASK:CRITERIA")) {
             String category =
@@ -60,8 +69,8 @@ public class ScriptedChatModel implements ChatModel {
         else if (system.contains("TASK:RAG") || user.contains("Context information"))
             answer = "학습용 정책 근거를 확인했습니다. 미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다. 개봉 상품은 별도 확인이 필요합니다.";
         else if (prompt.getOptions() instanceof ToolCallingChatOptions options
-                && !options.getToolCallbacks().isEmpty()) {
-            // Spring AI의 실제 ToolCallingManager를 통해 callback -> ToolResponseMessage를 만든다.
+                && options.getToolCallbacks() != null && !options.getToolCallbacks().isEmpty()) {
+            // 모델은 도구 요청만 반환한다. 2.0 ToolCallingAdvisor가 실행하고 재호출한다.
             var defs = ToolCallingManager.builder().build().resolveToolDefinitions(options);
             String name =
                     defs.stream()
@@ -84,7 +93,7 @@ public class ScriptedChatModel implements ChatModel {
                             .orElseThrow()
                             .inputSchema()
                             .contains("\"query\"")) args = "{\"query\":" + args + "}";
-            ChatResponse toolResponse =
+            return
                     new ChatResponse(
                             List.of(
                                     new Generation(
@@ -98,9 +107,6 @@ public class ScriptedChatModel implements ChatModel {
                                                                             name,
                                                                             args)))
                                                     .build())));
-            var executed =
-                    ToolCallingManager.builder().build().executeToolCalls(prompt, toolResponse);
-            answer = "STUB 도구 결과: " + executed.conversationHistory().getLast().getText();
         } else
             answer =
                     "STUB 학습 응답: 예산·용도·취향을 먼저 확인하세요. 현재 재고는 도구 조회가 필요합니다. (전달 메시지 "

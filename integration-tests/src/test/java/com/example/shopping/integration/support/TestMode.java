@@ -17,7 +17,7 @@ public enum TestMode {
             var stub = environment.startStub();
             return List.of(
                     "--spring.profiles.active=default",
-                    "--spring.ai.openai.base-url=" + stub.baseUrl(),
+                    "--spring.ai.openai.base-url=" + stub.baseUrl() + "/v1",
                     "--spring.ai.openai.api-key=local-stub-key");
         }
     },

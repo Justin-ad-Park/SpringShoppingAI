@@ -17,7 +17,7 @@
 
 ## 01. ChatModel, ChatClient와 프롬프트
 
-목표: Prompt/Message/ChatResponse와 fluent API를 연결한다. **알지 못하는 현재 상품 사실을 모델만으로 답할 수 없다는 점**을 먼저 체험한다. [ChatClient API](https://docs.spring.io/spring-ai/reference/1.1/api/chatclient.html)의 개념을 쇼핑 질문에 적용한다.
+목표: Prompt/Message/ChatResponse와 fluent API를 연결한다. **알지 못하는 현재 상품 사실을 모델만으로 답할 수 없다는 점**을 먼저 체험한다. [ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html)의 개념을 쇼핑 질문에 적용한다.
 
 | ID | 클래스#메소드 | 질문/실험 | 관찰과 자동화 검증 |
 |---|---|---|---|
@@ -77,7 +77,7 @@ TraceAdvisor 같은 이름은 프로젝트가 구현할 교육용 코드다. Spr
 
 ## 06. Tool Calling: 상품·장바구니·배송
 
-목표: 모델 요청 → Java 도구 실행 → 결과 재전달 → 설명 생성 흐름을 익힌다. 로컬 도구부터 시작한다. Spring AI의 `@Tool`, `@ToolParam`, ToolContext와 도구 콜백을 사용하되 Java 업무 검증을 유지한다. [공식 도구 실행 흐름](https://docs.spring.io/spring-ai/reference/1.1/api/tools.html)
+목표: 모델 요청 → Java 도구 실행 → 결과 재전달 → 설명 생성 흐름을 익힌다. 로컬 도구부터 시작한다. Spring AI의 `@Tool`, `@ToolParam`, ToolContext와 도구 콜백을 사용하되 Java 업무 검증을 유지한다. [공식 도구 실행 흐름](https://docs.spring.io/spring-ai/reference/api/tools.html)
 
 | ID | 클래스#메소드 | 질문/실험 | 관찰과 자동화 검증 |
 |---|---|---|---|
@@ -127,7 +127,7 @@ reader와 splitter의 정확한 지원 타입·옵션은 선택 버전에 맞춘
 | L09-04 | RagCases#filterPolicyAndTreatUntrustedText | 이전 정책/다른 몰 문서/지시문 삽입 | 서버가 current/store 필터 적용; 문서 속 지시를 권한으로 사용하지 않음, 가짜 인용 거부 |
 | L09-05 | RagCases#improveRetrieval | 그럼 뜯은 건? | 질문 재작성·topK 비교, 선택적으로 RetrievalAugmentationAdvisor 구성; 원 질문 보존·이력 격리·검색 재현 평가 |
 
-L09-05는 심화다. 지원 API가 1.1.2에 없으면 명시적 Java 파이프라인으로 원리를 먼저 학습한다. 검색 점수 임계값은 데이터셋으로 조정하며 유사도 점수를 사실 확률로 표시하지 않는다. 답변 출처는 실제 검색 문서 ID에서만 연결한다.
+L09-05는 심화다. 지원 API가 2.0.2에 없으면 명시적 Java 파이프라인으로 원리를 먼저 학습한다. 검색 점수 임계값은 데이터셋으로 조정하며 유사도 점수를 사실 확률로 표시하지 않는다. 답변 출처는 실제 검색 문서 ID에서만 연결한다.
 
 ## 10. MCP Client/Server 연결
 

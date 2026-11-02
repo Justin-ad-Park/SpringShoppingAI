@@ -7,7 +7,7 @@ import com.example.shopping.tutor.platform.execution.LessonExecution;
 import com.example.shopping.tutor.platform.web.Outcome;
 import com.example.shopping.tutor.platform.web.adapter.McpCases;
 import com.example.shopping.tutor.support.ShoppingMcpTestServer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

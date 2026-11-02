@@ -1,8 +1,9 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.12' apply false
+    id 'org.springframework.boot' version '4.0.9' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
 }
-subprojects {
+// 자료 폴더와 labs 컨테이너에는 애플리케이션 플러그인을 적용하지 않는다.
+configure(subprojects.findAll { it.childProjects.isEmpty() }) {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
@@ -11,7 +12,7 @@ subprojects {
     java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
     repositories { mavenCentral() }
     dependencyManagement {
-        imports { mavenBom 'org.springframework.ai:spring-ai-bom:1.1.2' }
+        imports { mavenBom 'org.springframework.ai:spring-ai-bom:2.0.2' }
     }
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-actuator'

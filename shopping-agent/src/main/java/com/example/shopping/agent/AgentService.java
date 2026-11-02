@@ -1,7 +1,7 @@
 package com.example.shopping.agent;
 
 import java.util.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

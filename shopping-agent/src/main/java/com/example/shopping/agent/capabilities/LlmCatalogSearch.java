@@ -2,7 +2,7 @@ package com.example.shopping.agent.capabilities;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import static com.example.shopping.agent.ports.ShoppingContracts.*;
@@ -26,10 +26,10 @@ public class LlmCatalogSearch implements CatalogSearchStrategy {
             장바구니나 무료배송 조건을 추가하지 마세요. 검색 조건은 서버가 확정합니다.
             최종 JSON은 {"productIds":["상품ID"]}입니다. 결과가 있으면 적합한 상품을 최소 1개 선택하세요.
             """).user(message + "\n확정 검색 조건: " + mapper.valueToTree(query))
-            .toolCallbacks(tool).call().content();
+            .tools(tool).call().content();
         Selection result;
         try { result = mapper.readValue(content == null ? "" : content.strip().replaceAll("^```(?:json)?\\s*|\\s*```$", ""), Selection.class); }
-        catch (com.fasterxml.jackson.core.JsonProcessingException e) { throw new InvalidPlan(); }
+        catch (tools.jackson.core.JacksonException e) { throw new InvalidPlan(); }
         List<Product> found = observed.get();
         if (found == null || result == null || result.productIds() == null || result.productIds().size() > 5
                 || (!found.isEmpty() && result.productIds().isEmpty())) throw new InvalidPlan();

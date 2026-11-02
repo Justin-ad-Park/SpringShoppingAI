@@ -4,7 +4,7 @@ import com.example.shopping.integration.support.ChatClient;
 import com.example.shopping.integration.support.IntegrationSuite;
 import com.example.shopping.integration.support.TestMode;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;

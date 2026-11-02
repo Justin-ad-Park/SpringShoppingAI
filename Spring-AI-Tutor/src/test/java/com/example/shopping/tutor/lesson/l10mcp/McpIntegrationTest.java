@@ -94,8 +94,8 @@ class McpIntegrationTest {
     @Test
     void L1002_actualMcpCallbackPassesThroughModelToolLoop() {
         var c = context("15000원 이하 음료");
-        new McpCases().letModelUseRemoteTool(c);
-        assertThat(c.toolCalls).hasSize(1);
+        var outcome = new McpCases().letModelUseRemoteTool(c);
+        assertThat(c.toolCalls).as("answer=%s, prompts=%s", outcome.answer(), c.prompts).hasSize(1);
         assertThat(c.toolCalls.toString()).contains("P004", "P005");
     }
 
@@ -103,6 +103,19 @@ class McpIntegrationTest {
     void L1003_localAndRemoteQuoteAgree() {
         var out = new McpCases().compareLocalAndRemote(context("견적"));
         assertThat(out.data().toString()).contains("51900");
+    }
+
+    @Test
+    void optionalSearchFieldsCanBeOmittedButInvalidTypesAreRejected() {
+        try (var client = new McpLesson().connect(url)) {
+            var result = client.callTool(new io.modelcontextprotocol.spec.McpSchema.CallToolRequest(
+                    "searchProducts", Map.of("query", Map.of("category", "음료", "maxPrice", 15000))));
+            assertThat(result.isError()).isNotEqualTo(true);
+            assertThat(result.toString()).contains("P004", "P005");
+            var invalid = client.callTool(new io.modelcontextprotocol.spec.McpSchema.CallToolRequest(
+                    "searchProducts", Map.of("query", Map.of("maxPrice", "invalid-number"))));
+            assertThat(invalid.isError()).isTrue();
+        }
     }
 
     @Test

@@ -11,8 +11,8 @@ spring:
         options:
           model: ${OPENAI_MODEL:gpt-4.1-mini}
           temperature: 0.2
-    retry:
-      max-attempts: 1
+          max-retries: 0
+          timeout: 45s
     mcp:
       client:
         name: shopping-agent

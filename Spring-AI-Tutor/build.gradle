@@ -1,8 +1,8 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.ai:spring-ai-openai'
     implementation 'org.springframework.ai:spring-ai-client-chat'
-    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+    implementation 'org.springframework.ai:spring-ai-vector-store-advisor'
     implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
     implementation 'org.springframework.ai:spring-ai-jsoup-document-reader'
     implementation 'org.springframework.ai:spring-ai-model-chat-memory-repository-jdbc'
@@ -34,3 +34,5 @@ tasks.named('test') { useJUnitPlatform { excludeTags 'live', 'mcp', 'live-mcp' }
         }
     }
 }
+
+dependencies { testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test' }

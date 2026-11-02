@@ -1,7 +1,7 @@
 package com.example.shopping.agent.adapters;
 
 import java.util.*;
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import com.example.shopping.agent.execution.McpSession;
 import static com.example.shopping.agent.ports.ShoppingContracts.*;
 

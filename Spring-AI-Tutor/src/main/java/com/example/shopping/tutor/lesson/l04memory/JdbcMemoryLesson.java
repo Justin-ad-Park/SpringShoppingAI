@@ -27,7 +27,11 @@ public final class JdbcMemoryLesson {
                             .build();
             return second.findByConversationId("demo");
         } finally {
-            new JdbcTemplate(dataSource).execute("SHUTDOWN");
+            try {
+                new JdbcTemplate(dataSource).execute("SHUTDOWN");
+            } finally {
+                dataSource.destroy();
+            }
         }
     }
 }

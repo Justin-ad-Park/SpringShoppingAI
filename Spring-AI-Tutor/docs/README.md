@@ -48,12 +48,12 @@ flowchart LR
 
 기능 관계는 다음처럼 정확히 구분한다.
 
-- 모델은 도구 호출을 요청하고 애플리케이션이 도구를 실행한다. [공식 Tool Calling 문서](https://docs.spring.io/spring-ai/reference/1.1/api/tools.html)
-- ChatClient의 동기 응답, 구조화 변환, 스트리밍은 별도 실습으로 비교한다. [공식 ChatClient 문서](https://docs.spring.io/spring-ai/reference/1.1/api/chatclient.html)
+- 모델은 도구 호출을 요청하고 애플리케이션이 도구를 실행한다. [공식 Tool Calling 문서](https://docs.spring.io/spring-ai/reference/api/tools.html)
+- ChatClient의 동기 응답, 구조화 변환, 스트리밍은 별도 실습으로 비교한다. [공식 ChatClient 문서](https://docs.spring.io/spring-ai/reference/api/chatclient.html)
 - 모델을 이용한 평가는 보조 품질 신호다. 사실성 전체를 증명하는 테스트로 취급하지 않는다. [공식 평가 문서](https://docs.spring.io/spring-ai/reference/api/testing.html)
 
 ## 버전 원칙
 
-현재 저장소는 Java 21 / Spring Boot 3.5.12 / Spring AI BOM 1.1.2 / Gradle 8.13이다. 첫 구현은 이 기준을 유지하는 것을 제안한다. 공식 기본 문서는 조회 시 2.x, `/1.1/` 문서는 1.1 계열의 후속 패치로 표시되므로, 문서의 예제가 1.1.2에서 그대로 동작한다고 가정하지 않는다. 구현 시 각 API·starter를 BOM 1.1.2의 소스/Javadoc 및 컴파일로 확인하고, 지원되지 않으면 해당 케이스를 선택 확장으로 옮기거나 명시적인 버전 변경안을 작성한다. 전체 저장소를 학습 프로젝트 때문에 자동 업그레이드하지 않는다.
+현재 저장소는 Java 21 / Spring Boot 4.0.9 / Spring AI BOM 2.0.2 / Gradle 8.14.5를 공통 사용합니다. 입문 자료와 기존 쇼핑·MCP 예제의 버전을 맞추기 위해 2026-11-02에 마이그레이션했습니다. 버전은 저장소 루트 build.gradle과 Gradle Wrapper에서 관리합니다. 1.x 예제의 옵션·OpenAI 어댑터 생성·도구 루프 코드를 그대로 섞지 않고, 2.0.2 API와 테스트를 기준으로 확인합니다.
 
 공식 기능 범위 확인: [Spring AI Reference](https://docs.spring.io/spring-ai/reference/). 이 설계의 클래스명·API 경로·데이터·태스크는 프로젝트 제안이며 Spring AI가 제공하는 내장 기능 이름과 구분한다.

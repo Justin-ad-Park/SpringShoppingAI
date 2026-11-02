@@ -2,7 +2,7 @@
 
 쇼핑 어시스턴트를 시나리오로 Spring AI를 배우는 Java/Spring Boot 하위 프로젝트입니다. **15개 단원, 58개 케이스**를 별도 메소드로 제공하며 웹에서 대화, 실행 관찰, 실제 Java 코드 보기를 할 수 있습니다.
 
-Java 21 · Spring Boot 3.5.12 · Spring AI 1.1.2 · 기본 포트 8090. 기존 chatbot-client, shopping-agent와 독립적으로 실행됩니다. Python 실행 파일은 사용하지 않습니다.
+Java 21 · Spring Boot 4.0.9 · Spring AI 2.0.2 · 기본 포트 8090. 기존 chatbot-client, shopping-agent와 독립적으로 실행됩니다. Python 실행 파일은 사용하지 않습니다.
 
 
 처음이라면 [짧은 코드로 시작하는 다섯 수업](docs/09-first-shopping-lessons.md)을 따라가세요. 첫 호출·상품 검색·대화 기억은 `./Spring-AI-Tutor/scripts/test_beginner.sh`로 API 키 없이 확인할 수 있습니다.

@@ -1,7 +1,7 @@
 package com.example.shopping.agent;
 
 import java.util.*;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import jakarta.validation.constraints.*;
 import com.example.shopping.agent.conversation.ConversationModels.Criteria;
 

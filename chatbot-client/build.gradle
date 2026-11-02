@@ -1,1 +1,4 @@
-dependencies { implementation 'org.springframework.boot:spring-boot-starter-web' }
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-restclient'
+}

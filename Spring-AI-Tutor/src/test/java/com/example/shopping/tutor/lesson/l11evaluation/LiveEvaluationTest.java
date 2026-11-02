@@ -14,7 +14,7 @@ import com.example.shopping.tutor.platform.web.adapter.ShoppingAssistantCases;
 import com.example.shopping.tutor.platform.web.adapter.StreamingCases;
 import com.example.shopping.tutor.platform.web.adapter.StructuredOutputCases;
 import com.example.shopping.tutor.platform.web.adapter.ToolCallingCases;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.*;
 import org.springframework.ai.chat.model.ChatModel;
@@ -150,7 +150,7 @@ class LiveEvaluationTest {
                         path.toFile(),
                         Map.of(
                                 "springAiVersion",
-                                "1.1.2",
+                                "2.0.2",
                                 "executedAt",
                                 java.time.Instant.now().toString(),
                                 "scope",

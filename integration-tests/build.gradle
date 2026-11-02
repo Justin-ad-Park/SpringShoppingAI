@@ -3,7 +3,7 @@ tasks.named('bootJar') { enabled = false }
 tasks.named('jar') { enabled = true }
 
 dependencies {
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    testImplementation 'tools.jackson.core:jackson-databind'
     testImplementation 'org.junit.platform:junit-platform-launcher'
 }
 

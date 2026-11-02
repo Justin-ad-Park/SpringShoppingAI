@@ -59,7 +59,7 @@ public class McpLesson {
             return Result.text(
                     chatClient
                             .prompt()
-                            .toolCallbacks(decorateCallbacks.apply(callbacks))
+                            .tools((Object[]) decorateCallbacks.apply(callbacks))
                             .user(question)
                             .call()
                             .content());

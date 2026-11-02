@@ -22,7 +22,7 @@ import java.util.*;
 class MediaProviderContractTest {
     HttpServer server;
     MediaModelConfiguration models;
-    com.fasterxml.jackson.databind.JsonNode imageRequest;
+    tools.jackson.databind.JsonNode imageRequest;
 
     @BeforeEach
     void start() throws Exception {
@@ -31,7 +31,7 @@ class MediaProviderContractTest {
                 "/v1/images/generations",
                 x -> {
                     imageRequest =
-                            new com.fasterxml.jackson.databind.ObjectMapper()
+                            new tools.jackson.databind.ObjectMapper()
                                     .readTree(x.getRequestBody().readAllBytes());
                     reply(
                             x,
@@ -55,7 +55,7 @@ class MediaProviderContractTest {
                         reply(
                                 x,
                                 "application/json",
-                                "{\"id\":\"mod\",\"model\":\"contract\",\"results\":[{\"flagged\":false,\"categories\":{},\"category_scores\":{}}]}"
+                                moderationResponse()
                                         .getBytes(StandardCharsets.UTF_8)));
         server.start();
         models =
@@ -66,6 +66,21 @@ class MediaProviderContractTest {
                         "contract-transcription",
                         "contract-speech",
                         "contract-moderation");
+    }
+
+    String moderationResponse() {
+        var mapper = new tools.jackson.databind.ObjectMapper();
+        var root = mapper.createObjectNode().put("id", "mod").put("model", "contract");
+        var result = root.putArray("results").addObject().put("flagged", false);
+        var categories = result.putObject("categories");
+        var scores = result.putObject("category_scores");
+        for (String name : List.of("sexual", "sexual/minors", "harassment", "harassment/threatening",
+                "hate", "hate/threatening", "illicit", "illicit/violent", "self-harm",
+                "self-harm/intent", "self-harm/instructions", "violence", "violence/graphic")) {
+            categories.put(name, false);
+            scores.put(name, 0.0);
+        }
+        return root.toString();
     }
 
     void reply(com.sun.net.httpserver.HttpExchange x, String type, byte[] bytes)

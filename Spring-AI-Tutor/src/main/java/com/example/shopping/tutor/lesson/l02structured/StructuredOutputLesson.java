@@ -5,7 +5,7 @@ import com.example.shopping.tutor.lesson.l06tools.support.DemoProductCatalog;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.api.ResponseFormat;
+import org.springframework.ai.openai.OpenAiChatModel.ResponseFormat;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.*;
@@ -126,8 +126,7 @@ public class StructuredOutputLesson {
                                 ResponseFormat.builder()
                                         .type(ResponseFormat.Type.JSON_SCHEMA)
                                         .jsonSchema(converter.getJsonSchema())
-                                        .build())
-                        .build();
+                                        .build());
         SearchCriteria criteria =
                 chatClient
                         .prompt()

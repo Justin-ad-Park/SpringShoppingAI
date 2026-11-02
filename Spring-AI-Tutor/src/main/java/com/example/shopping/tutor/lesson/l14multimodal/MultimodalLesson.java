@@ -66,7 +66,7 @@ public class MultimodalLesson {
         if (inputFile == null || inputMime == null || !inputMime.startsWith("audio/"))
             throw new IllegalArgumentException("음성 파일이 필요합니다.");
         if (mode.equals("stub")) return Result.unsupported("파일 검증은 통과했습니다. 실제 전사는 LIVE에서 실행하세요.");
-        String transcript = transcriptionModel.call(inputFile);
+        String transcript = transcriptionModel.call(new org.springframework.ai.audio.transcription.AudioTranscriptionPrompt(inputFile)).getResult().getOutput();
         return Result.ok(transcript, Map.of("transcript", transcript, "automaticExecution", false));
     }
 

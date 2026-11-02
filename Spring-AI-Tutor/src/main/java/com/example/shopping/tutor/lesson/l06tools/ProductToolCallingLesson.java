@@ -21,7 +21,7 @@ public class ProductToolCallingLesson {
     public String callTool(ChatClient chatClient, String question, ToolCallback[] toolCallbacks) {
         return chatClient
                 .prompt()
-                .toolCallbacks(toolCallbacks)
+                .tools((Object[]) toolCallbacks)
                 .toolContext(Map.of("customerId", "demo-trusted-customer"))
                 .user(question)
                 .call()

@@ -100,7 +100,7 @@ Spring-AI-Tutor/
 
 초기 의존성 후보: Web MVC, Validation, Actuator, Spring AI ChatClient/모델 starter, JUnit 5, AssertJ, Mockito, 스트림 검증용 reactor-test. Web MVC에서도 SSE 응답을 제공하되 실제 선택 버전의 `Flux` 통합 지원을 확인한다. MVC와 WebFlux 서버 starter를 동시에 넣어 학습을 복잡하게 만들지 않는다.
 
-후속 단원에서 memory/JDBC, vector store, RAG advisor, 문서 reader, MCP client 의존성을 필요에 맞게 추가한다. 정확한 artifact 좌표와 자동 구성 조건은 구현 단계에서 BOM 1.1.2로 검증한다. 모델 자동 구성은 stub에서 자격증명·외부 연결을 요구하지 않도록 비활성화한다. MCP 자동 연결과 컨테이너 시작 역시 선택 기능에서만 활성화한다.
+후속 단원에서 memory/JDBC, vector store, RAG advisor, 문서 reader, MCP client 의존성을 필요에 맞게 추가한다. 정확한 artifact 좌표와 자동 구성 조건은 구현 단계에서 BOM 2.0.2로 검증한다. 모델 자동 구성은 stub에서 자격증명·외부 연결을 요구하지 않도록 비활성화한다. MCP 자동 연결과 컨테이너 시작 역시 선택 기능에서만 활성화한다.
 
 기존 루트 `subprojects`는 모든 모듈에 Boot 플러그인·BOM을 적용한다. 향후 `include 'Spring-AI-Tutor'`를 추가하면 이 설정을 상속하므로 중복 BOM이나 별도 wrapper를 만들지 않는다. 기존 통합 테스트의 서비스 목록에는 Tutor를 자동 추가하지 않는다.
 

@@ -1,21 +1,19 @@
 package com.example.shopping.tutor.lesson.l00setup;
 
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.openai.*;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.retry.support.RetryTemplate;
+import java.time.Duration;
 
-/** 모델명·최대 출력 토큰을 정한다. API 키와 네트워크 설정은 platform에서 주입한다. */
+/** 2.0은 OpenAI SDK를 사용한다. 옵션으로 연결·출력·재시도 한도를 명시한다. */
 public final class ChatModelConfiguration {
     private ChatModelConfiguration() {}
 
     public static OpenAiChatModel create(
-            OpenAiApi api, String modelName, ObservationRegistry observation) {
+            String key, String baseUrl, String modelName, ObservationRegistry observation) {
         return OpenAiChatModel.builder()
-                .openAiApi(api)
-                .defaultOptions(OpenAiChatOptions.builder().model(modelName).maxTokens(800).build())
-                .retryTemplate(RetryTemplate.builder().maxAttempts(1).build())
+                .options(OpenAiChatOptions.builder().apiKey(key).baseUrl(baseUrl)
+                        .model(modelName).maxTokens(800).maxRetries(0)
+                        .timeout(Duration.ofSeconds(45)).build())
                 .observationRegistry(observation)
                 .build();
     }

@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.*;
 import com.example.shopping.tutor.lesson.l02structured.SearchCriteria;
 import com.example.shopping.tutor.lesson.l06tools.CartSummaryTools;
 import com.example.shopping.tutor.lesson.l06tools.ProductSearchTools;
-import com.fasterxml.jackson.databind.*;
+import tools.jackson.databind.*;
 import com.sun.net.httpserver.HttpServer;
 
 import org.junit.jupiter.api.*;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.*;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.retry.support.RetryTemplate;
+
+
 
 import reactor.test.StepVerifier;
 
@@ -39,16 +39,11 @@ class ProviderContractTest {
 
     ChatClient client() {
         server.start();
-        var api =
-                OpenAiApi.builder()
-                        .apiKey("contract-placeholder")
-                        .baseUrl("http://127.0.0.1:" + server.getAddress().getPort())
-                        .build();
         return ChatClient.create(
                 OpenAiChatModel.builder()
-                        .openAiApi(api)
-                        .defaultOptions(OpenAiChatOptions.builder().model("contract-model").build())
-                        .retryTemplate(RetryTemplate.builder().maxAttempts(1).build())
+                        .options(OpenAiChatOptions.builder().apiKey("contract-placeholder")
+                                .baseUrl("http://127.0.0.1:" + server.getAddress().getPort() + "/v1")
+                                .model("contract-model").maxRetries(0).build())
                         .build());
     }
 

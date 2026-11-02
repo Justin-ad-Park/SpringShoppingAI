@@ -15,6 +15,11 @@ public final class ObservedChatModel implements ChatModel {
         this.observation = observation;
     }
 
+    @Override
+    public org.springframework.ai.chat.prompt.ChatOptions getOptions() {
+        return delegate.getOptions();
+    }
+
     public ChatResponse call(Prompt prompt) {
         observation.recordPrompt(prompt);
         ChatResponse response = delegate.call(prompt);
