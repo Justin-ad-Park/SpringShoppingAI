@@ -1,0 +1,16 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8099}
+spring:
+  application:
+    name: embeddings-search
+  ai:
+    model:
+      chat: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      embedding:
+        options:
+          model: ${OPENAI_EMBEDDING_MODEL}
+          max-retries: 0
+          timeout: 15s

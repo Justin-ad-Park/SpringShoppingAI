@@ -182,3 +182,5 @@ Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 �
 
 보충: [공식 Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html).
 [이전: 07](07-chat-memory.md) · [학습 지도](../curriculum.md)
+
+[다음: 09. 임베딩과 검색](09-embeddings-search.md)

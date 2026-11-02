@@ -10,7 +10,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 2026-10-29에 기초 00~03과 첫 호출 실습을 작성했고, 2026-11-02에 04~07 교재와 독립 실행 실습을 추가했습니다.
 04 구조화 응답 → 05 Tool Calling → 06 Workflow/Agent/혼합 비교 → 07 대화 메모리 순으로 학습합니다.
 단원별 테스트와 JAR 빌드를 마치고 각각 커밋했습니다. [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
-09 이후는 계획 단계입니다.
+10 이후는 계획 단계입니다.
 
 ## 어디부터 읽을까요?
 
@@ -25,6 +25,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 7 | [06. Workflow와 Agent](docs/lessons/06-workflow-agent.md) | 같은 요구의 세 방식·실행 기록·상한 비교 |
 | 8 | [07. 대화 메모리](docs/lessons/07-chat-memory.md) | 이전 질문·응답을 다음 프롬프트에 재전달·대화 격리 |
 | 9 | [08. Advisor](docs/lessons/08-advisors.md) | 호출 전후 순서·메모리 자동 연결·도구 루프 |
+| 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
@@ -98,3 +99,5 @@ labs/
 각 labs 폴더의 README에 코드 읽는 순서와 API·포트가 있습니다. 모든 실행은 저장소 루트의 공통 Wrapper를 사용합니다.
 
 - 추가 완료: [08 Advisor](docs/lessons/08-advisors.md).
+
+- 추가 완료: [09 임베딩과 검색](docs/lessons/09-embeddings-search.md).
