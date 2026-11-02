@@ -32,3 +32,5 @@ usage가 없거나 파싱 전에 실패하면 토큰은 null이며, JSON 설정�
 설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
 
 [이전](01-cases.md) · [다음 소수업](03-failures.md) · [학습 방법](../../learning-guide.md)
+
+[다음: Actuator 메트릭 실행 실습](05-actuator.md)

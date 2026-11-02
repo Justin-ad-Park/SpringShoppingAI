@@ -1,0 +1,7 @@
+// Actuator는 저장소 루트의 공통 의존성에 포함되어 있습니다.
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+}
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') { workingDir rootProject.projectDir }
