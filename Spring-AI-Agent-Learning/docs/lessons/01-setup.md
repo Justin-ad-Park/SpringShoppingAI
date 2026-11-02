@@ -151,20 +151,28 @@ spring:
 `FirstChatOpenAiLiveTest.java`가 있습니다. `ChatService`로 실제 OpenAI를 호출하고 질문과 응답을 출력합니다.
 고정 문장 일치가 아니라 응답이 비어 있지 않은지 확인합니다. 키는 출력하지 않습니다.
 
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+테스트는 `@Tag("mock")`, `@Tag("live-openai")`로 종류를 표시합니다.
+태그는 이름표이며 실제 호출을 허용하는 조건은 다음 JUnit 어노테이션입니다.
+
+```java
+@EnabledIfEnvironmentVariable(named = "RUN_LIVE_OPENAI_TEST", matches = "true",
+        disabledReason = "실제 호출은 RUN_LIVE_OPENAI_TEST=true로 명시적으로 허용한 경우만 실행합니다.")
 ```
 
-이 명령은 API 사용량이 발생합니다. `@Tag("live-openai")`로 분리해 기본 전체 `test`에서는 실행하지 않습니다.
-IntelliJ에서 `FirstChatOpenAiLiveTest` 클래스 또는 그 테스트 메서드의 Run을 눌러도 실행할 수 있습니다.
-Gradle이 해당 클래스를 명시한 필터를 받으면 이 모듈의 `build.gradle`이 제외 태그를 해제합니다.
-전체 패키지 실행이나 `--tests '*'` 같은 넓은 필터는 실제 호출을 허용하지 않습니다.
+변수가 없거나 `true`가 아니면 클래스 전체를 건너뛰어 실제 API를 호출하지 않습니다.
+로컬 MockModel 테스트는 조건 없이 실행됩니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
+RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-명시적으로 실제 테스트를 선택한 실행은 매번 수행하며 up-to-date 결과로 생략하지 않습니다.
+이 명령은 API 사용량이 발생합니다. `--rerun-tasks`는 실제 응답을 매번 새로 확인하려는 옵션입니다.
+IntelliJ에서는 `FirstChatOpenAiLiveTest`의 Run configuration → Environment variables에
+`RUN_LIVE_OPENAI_TEST=true`를 넣고 클래스 또는 메서드의 Run을 누릅니다.
+변수가 없으면 `No matching tests` 오류가 아니라 JUnit의 skipped/disabled 결과가 나옵니다.
+
+별도의 `liveOpenAiTest` 태스크·태그 제외·클래스 필터 감지 로직은 없습니다.
+`build.gradle`에는 작업 디렉터리와 출력 설정, 환경 변수 변경 시 재검증하도록 하는 입력 선언만 둡니다.
 기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
 
 ## 5. 막혔을 때

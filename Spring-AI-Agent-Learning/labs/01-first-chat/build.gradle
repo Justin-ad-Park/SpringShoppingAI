@@ -8,35 +8,8 @@ dependencies {
 tasks.named('bootRun') { workingDir rootProject.projectDir }
 tasks.withType(Test).configureEach { workingDir rootProject.projectDir }
 
-// IntelliJ의 Gradle Run은 test --tests <클래스 또는 메서드>를 사용한다.
-// 전체 실행이나 넓은 와일드카드는 실제 호출을 허용하지 않는다.
-def explicitlySelectsLiveOpenAiTest = { testTask ->
-    def liveClass = 'com.example.ailearning.FirstChatOpenAiLiveTest'
-    def simpleClass = 'FirstChatOpenAiLiveTest'
-    def patterns = testTask.filter.commandLineIncludePatterns + testTask.filter.includePatterns
-    patterns.any { pattern ->
-        pattern == liveClass || pattern == simpleClass ||
-                pattern.startsWith(liveClass + '.') || pattern.startsWith(simpleClass + '.')
-    }
-}
-
-// 기본 test는 Mock만 실행하고, 실제 클래스를 명시한 IntelliJ Run만 예외로 허용한다.
+// 실제 호출 허용 여부가 바뀌면 테스트를 다시 실행한다. 실행 조건은 JUnit이 판단한다.
 tasks.named('test') {
-    useJUnitPlatform { excludeTags 'live-openai' }
-    outputs.upToDateWhen { !explicitlySelectsLiveOpenAiTest(it) }
-    doFirst {
-        if (explicitlySelectsLiveOpenAiTest(it)) {
-            options.excludeTags = options.excludeTags - 'live-openai'
-        }
-    }
+    inputs.property('runLiveOpenAiTest', providers.environmentVariable('RUN_LIVE_OPENAI_TEST').orElse('false'))
     testLogging { showStandardStreams = true }
-}
-tasks.register('liveOpenAiTest', Test) {
-    group = 'verification'
-    description = '루트 .env의 설정으로 실제 OpenAI를 한 번 호출하고 응답을 출력합니다.'
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-    useJUnitPlatform { includeTags 'live-openai' }
-    outputs.upToDateWhen { false }
-    testLogging { events 'passed', 'failed', 'skipped'; showStandardStreams = true }
 }

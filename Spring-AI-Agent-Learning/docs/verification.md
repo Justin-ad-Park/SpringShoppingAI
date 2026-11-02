@@ -137,3 +137,25 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 - 클래스의 `callsRealOpenAiAndPrintsResponse` 메서드 필터: `--test-dry-run`에서 테스트 1개 선택 확인. 추가 API 호출 없음.
 - `test --tests '*'`: 로컬 MockModel 3개만 통과.
 - 기본 `test`: 로컬 MockModel 3개만 통과.
+
+## JUnit 조건으로 실행 구분 단순화 — 2026-11-02
+
+위의 IntelliJ 필터 감지 방식을 제거하고 JUnit 표준 기능으로 대체했습니다.
+이 절이 현재의 실행 방법입니다. 별도 `liveOpenAiTest` 태스크는 제거했습니다.
+
+- Mock 클래스: `@Tag("mock")`.
+- Live 클래스: `@Tag("live-openai")`와 `@EnabledIfEnvironmentVariable`.
+- `RUN_LIVE_OPENAI_TEST=true`이면 Live 실행, 없으면 클래스 전체 skipped.
+- Gradle은 `.env` 위치를 위한 작업 디렉터리, 표준 출력, 실행 허용 변수의 입력 선언만 설정합니다.
+- IntelliJ는 Live 클래스/메서드 Run configuration의 Environment variables에 위 변수를 넣습니다.
+
+검증: 기본 실행에서 Mock 3개 통과·Live 1개 skipped, 허용 변수 없이 Live 클래스 단독 실행은
+매칭 오류 없이 1개 skipped, 허용 변수로 Live 클래스 실행은 실제 OpenAI 응답 출력·1개 통과.
+허용 변수를 제거한 후에도 다시 Mock 3개 통과·Live 1개 skipped를 확인했습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
+RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
+```
+
+실제 호출 결과는 현재 test 태스크의 보고서에 기록합니다. 이전 전용 태스크의 보고서 경로는 과거 기록입니다.

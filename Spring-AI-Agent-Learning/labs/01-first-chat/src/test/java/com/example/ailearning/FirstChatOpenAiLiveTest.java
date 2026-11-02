@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,10 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 실제 OpenAI에 접속합니다. 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL을 사용합니다.
- * 일반 test에서는 제외됩니다. liveOpenAiTest 또는 이 클래스를 명시한 IntelliJ Run은 API 사용량이 발생합니다.
+ * RUN_LIVE_OPENAI_TEST=true일 때만 실행됩니다. 실행하면 API 사용량이 발생합니다.
  * 요청과 응답만 출력하며 API 키를 출력하지 않습니다.
  */
 @Tag("live-openai")
+@EnabledIfEnvironmentVariable(named = "RUN_LIVE_OPENAI_TEST", matches = "true",
+        disabledReason = "실제 호출은 RUN_LIVE_OPENAI_TEST=true로 명시적으로 허용한 경우만 실행합니다.")
 @DisplayName("첫 Chat 호출 — 실제 OpenAI 연결 테스트 (API 사용량 발생)")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
         properties = "spring.ai.openai.base-url=https://api.openai.com/v1")

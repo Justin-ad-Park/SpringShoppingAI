@@ -199,11 +199,12 @@ Spring은 이 연결을 대신 관리해 코드의 결합도를 낮춰줍니다.
 실제 모델에 한 번 질문하고 응답만 출력해 보고 싶다면 서버 실행 대신 별도 테스트도 사용할 수 있습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
 `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결하므로 API 사용량이 발생합니다.
-기본 `test`는 `FirstChatLocalMockModelTest`만 실행합니다.
+기본 `test`는 `FirstChatLocalMockModelTest`를 실행하고 실제 호출 테스트는 건너뜁니다.
+IntelliJ Run에서 허용 변수를 설정하는 방법은 01장을 참고하세요.
 
 ## 5. 질문만 바꿔 보기
 

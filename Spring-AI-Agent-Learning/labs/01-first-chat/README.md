@@ -14,22 +14,23 @@ IDE 실행 시 Working directory를 저장소 루트로 설정합니다. 다른 
 ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
 ```
 
-서버를 시작하지 않고 실제 응답을 출력하는 테스트:
+테스트 종류는 JUnit 태그와 조건으로 구분합니다.
+
+- `FirstChatLocalMockModelTest`: `@Tag("mock")`. 로컬 고정 응답, `.env`와 외부 API 사용 없음.
+- `FirstChatOpenAiLiveTest`: `@Tag("live-openai")`. `RUN_LIVE_OPENAI_TEST=true`일 때만 실행하며, 기본 실행에서는 건너뜁니다.
+
+서버를 시작하지 않고 실제 OpenAI 응답을 출력하려면:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:liveOpenAiTest
+RUN_LIVE_OPENAI_TEST=true ./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-- `FirstChatLocalMockModelTest`: 기본 `test`에서 실행. 로컬 고정 응답, `.env`와 외부 API 사용 없음.
-- `FirstChatOpenAiLiveTest`: 위 전용 명령 또는 IntelliJ에서 이 클래스/메서드의 Run으로 실행. 실제 OpenAI 호출 1회, 질문·응답 출력, API 사용량 발생.
+API 사용량이 발생합니다. `--rerun-tasks`는 이전 실행 결과를 재사용하지 않고 다시 호출하려고 지정합니다.
+별도 `liveOpenAiTest` 태스크는 사용하지 않습니다.
 
-IntelliJ와 같은 Gradle 실행 명령:
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
-```
-
-기본 전체 테스트와 넓은 패키지·와일드카드 필터에서는 실제 모델 테스트를 제외합니다.
+IntelliJ에서는 이 클래스 또는 메서드의 Run configuration → Environment variables에
+`RUN_LIVE_OPENAI_TEST=true`를 넣고 Run합니다. 변수가 없으면 오류 대신 테스트를 건너뜁니다.
+클래스 이름으로 필터를 감지하는 Gradle 로직은 없습니다.
 
 `bootRun`으로 시작했다면 다른 터미널에서:
 
@@ -54,7 +55,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call.md#테스트-코드-읽기-선택)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.
-테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 `bootRun` 또는 `liveOpenAiTest`로 수행합니다.
+테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 `bootRun` 또는 위의 환경 변수를 지정한 Live 테스트로 수행합니다.
 학습용 외부 오류는 기본 500으로 나타날 수 있으며 서버 로그에서 원인을 확인합니다.
 
 [전체 코드와 실행 해설](../../docs/lessons/02-first-call.md) · [프롬프트 변경 실험](../../docs/lessons/03-chatclient-and-prompts.md)
