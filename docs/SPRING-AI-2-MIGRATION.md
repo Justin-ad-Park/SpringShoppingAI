@@ -69,3 +69,10 @@ bootRun에는 OPENAI_API_KEY와 OPENAI_CHAT_MODEL 설정이 필요합니다. tes
 
 참고: [Spring AI 업그레이드 안내](https://docs.spring.io/spring-ai/reference/upgrade-notes.html),
 [Spring Boot 업그레이드 안내](https://docs.spring.io/spring-boot/4.0/upgrading.html).
+
+## 연결 설정 검증 보완 — 2026-11-02
+
+입문 11의 429 테스트로 연결 설정의 위치를 다시 검증했습니다.
+Starter 자동 설정의 재시도·타임아웃은 `spring.ai.openai.chat.max-retries`와 `spring.ai.openai.chat.timeout`에 둡니다.
+임베딩도 `spring.ai.openai.embedding.max-retries`/`timeout`에 둡니다. 생성 옵션의 options 하위와 구분합니다.
+입문 04~11과 shopping-agent를 수정하고 실제 요청 횟수·타임아웃 테스트를 추가했습니다.

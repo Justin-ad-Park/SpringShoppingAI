@@ -9,12 +9,12 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
       chat:
+        max-retries: 0
+        timeout: 15s
         options:
           model: ${OPENAI_CHAT_MODEL}
-          max-retries: 0
-          timeout: 15s
       embedding:
+        max-retries: 0
+        timeout: 15s
         options:
           model: ${OPENAI_EMBEDDING_MODEL}
-          max-retries: 0
-          timeout: 15s

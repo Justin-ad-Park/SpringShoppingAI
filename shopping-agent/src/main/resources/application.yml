@@ -8,11 +8,11 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY:unused-in-mock-mode}
       chat:
+        max-retries: 0
+        timeout: 45s
         options:
           model: ${OPENAI_MODEL:gpt-4.1-mini}
           temperature: 0.2
-          max-retries: 0
-          timeout: 45s
     mcp:
       client:
         name: shopping-agent

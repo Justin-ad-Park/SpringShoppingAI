@@ -227,3 +227,5 @@ NO_CONTEXT는 검색 단계에서 근거 없음, NO_ANSWER는 찾은 문서로 �
 보충: [공식 RAG](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html).
 08에서 배운 Advisor로 이 흐름을 감싸는 확장도 가능하지만, 여기서는 직접 구성한 순서를 먼저 익힙니다.
 [이전: 09](09-embeddings-search.md) · [학습 지도](../curriculum.md)
+
+[다음: 11. 평가와 운영 기초](11-evaluation.md)

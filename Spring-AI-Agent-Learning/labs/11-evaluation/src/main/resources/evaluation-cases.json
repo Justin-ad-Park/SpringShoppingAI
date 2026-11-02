@@ -1,0 +1,5 @@
+[
+  {"id":"shipping","question":"배송비는 얼마인가요?","expectedStatus":"ANSWERED","expectedSourceIds":["shipping"],"expectedText":"3000"},
+  {"id":"sealed","question":"미개봉 반품 기간은?","expectedStatus":"ANSWERED","expectedSourceIds":["return-sealed"],"expectedText":"7일"},
+  {"id":"unknown","question":"우주 여행 비용은?","expectedStatus":"NO_CONTEXT","expectedSourceIds":[],"expectedText":""}
+]

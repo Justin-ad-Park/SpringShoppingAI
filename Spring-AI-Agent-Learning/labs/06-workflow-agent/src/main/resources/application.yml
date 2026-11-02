@@ -11,10 +11,10 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
       chat:
+        max-retries: 0
+        timeout: 5s
         options:
           model: ${OPENAI_CHAT_MODEL}
-          max-retries: 0
-          timeout: 5s
 
 learning:
   limits:
