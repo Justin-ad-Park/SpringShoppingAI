@@ -36,6 +36,7 @@ include 'Spring-AI-Agent-Learning:labs:04-structured-output'
 include 'Spring-AI-Agent-Learning:labs:05-tool-calling'
 include 'Spring-AI-Agent-Learning:labs:06-workflow-agent'
 include 'Spring-AI-Agent-Learning:labs:07-chat-memory'
+include 'Spring-AI-Agent-Learning:labs:08-advisors'
 ```
 
 `:Spring-AI-Agent-Learning:labs:01-first-chat:test`는 교육 폴더의 첫 실습만 테스트한다는 뜻입니다. 다른 서비스를 시작하지 않습니다.

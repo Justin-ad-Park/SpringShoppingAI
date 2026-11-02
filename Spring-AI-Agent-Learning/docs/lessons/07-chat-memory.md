@@ -261,3 +261,5 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 보충: [공식 Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html).
 다음 08에서는 지금 직접 작성한 연결 작업을 Advisor로 확장합니다. 이 단원 코드는 08에 의존하지 않습니다.
 [이전: 06](06-workflow-agent.md) · [학습 지도](../curriculum.md)
+
+[다음: 08. Advisor](08-advisors.md)
