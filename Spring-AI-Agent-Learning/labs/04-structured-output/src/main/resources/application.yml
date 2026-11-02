@@ -1,0 +1,17 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8094}
+
+spring:
+  application:
+    name: structured-output
+  ai:
+    model:
+      embedding: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL}
+          max-retries: 0
+          timeout: 15s
