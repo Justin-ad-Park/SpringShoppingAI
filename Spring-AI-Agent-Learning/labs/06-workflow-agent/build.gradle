@@ -1,0 +1,5 @@
+// 공통 버전과 테스트 의존성은 저장소 루트에서 관리합니다.
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+}

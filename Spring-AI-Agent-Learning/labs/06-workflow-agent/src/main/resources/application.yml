@@ -1,0 +1,23 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8096}
+
+spring:
+  application:
+    name: workflow-agent
+  ai:
+    model:
+      embedding: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL}
+          max-retries: 0
+          timeout: 5s
+
+learning:
+  limits:
+    max-model-calls: 8
+    max-tool-calls: 4
+    timeout-ms: 10000
