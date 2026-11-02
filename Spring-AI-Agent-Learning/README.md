@@ -8,7 +8,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 ## 이번에 작성한 범위
 
 2026-10-29 첫 묶음: 기초 교재 00~03, 실행 가능한 첫 호출 실습 1개, 전체 교육 계획과 레퍼런스 검토.
-2026-11-02: [04 구조화 응답](docs/lessons/04-structured-output.md) 교재·실습을 추가했습니다. 후속 단원은 차례대로 작성합니다.
+2026-11-02: [04 구조화 응답](docs/lessons/04-structured-output.md) 교재·실습을 추가했습니다. [05 Tool Calling](docs/lessons/05-tool-calling.md)도 교재·실습을 제공합니다. 후속 단원은 차례대로 작성합니다.
 특히 Workflow/Agent 비교는 [교육 계획의 상세 설계](docs/curriculum.md#workflow와-agent-비교-수업)로 먼저 정의했습니다.
 
 ## 어디부터 읽을까요?
@@ -20,6 +20,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 3 | [02. 첫 모델 호출](docs/lessons/02-first-call.md) | 세 클래스의 전체 코드 읽기, 실제 모델 호출 |
 | 4 | [03. ChatClient와 프롬프트](docs/lessons/03-chatclient-and-prompts.md) | 호출 코드 해설, system/user 메시지와 대화 기억 실험 |
 | 5 | [04. 구조화 응답](docs/lessons/04-structured-output.md) | 문자열과 Java 객체 비교·값 검증 |
+| 6 | [05. Tool Calling](docs/lessons/05-tool-calling.md) | Java 직접 호출과 모델의 도구 선택 비교 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
