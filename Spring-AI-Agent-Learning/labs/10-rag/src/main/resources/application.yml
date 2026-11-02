@@ -1,0 +1,20 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8100}
+
+spring:
+  application:
+    name: rag
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL}
+          max-retries: 0
+          timeout: 15s
+      embedding:
+        options:
+          model: ${OPENAI_EMBEDDING_MODEL}
+          max-retries: 0
+          timeout: 15s

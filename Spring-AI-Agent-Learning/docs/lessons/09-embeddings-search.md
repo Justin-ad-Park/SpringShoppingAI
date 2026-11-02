@@ -200,3 +200,5 @@ threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0
 
 보충: [공식 VectorStore API](https://docs.spring.io/spring-ai/reference/api/vectordbs.html).
 [이전: 08](08-advisors.md) · [학습 지도](../curriculum.md)
+
+[다음: 10. RAG](10-rag.md)
