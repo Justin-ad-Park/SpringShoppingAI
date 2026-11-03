@@ -5,10 +5,10 @@ OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하
 
 [설명과 전체 코드 읽기](../../docs/lessons/02-first-call/04-multiple-models.md)
 
-저장소 루트에서 로컬 서버를 사용하는 테스트와 실행 JAR 빌드:
+저장소 루트에서 로컬 서버를 사용하는 테스트만 선택해 실행하고 JAR을 빌드합니다:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
 ```
 
 실제 호출은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`을 사용합니다.
@@ -19,7 +19,24 @@ OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하
 ```
 
 POST `/api/multi-chat/openai` 또는 `/api/multi-chat/anthropic`에 `Content-Type: text/plain`으로 질문을 보내세요.
-테스트는 두 외부 API를 로컬 고정 응답 서버로 대체하며 실제 키나 네트워크 호출이 필요하지 않습니다.
+`MultipleProvidersContractTest`는 두 외부 API를 로컬 고정 응답 서버로 대체하며 실제 키나 외부 네트워크 호출이 필요하지 않습니다.
+
+## 실제 모델 Live 테스트
+
+같은 테스트 패키지의 [MultipleProvidersLiveTest.java](src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
+`MultipleModelsService`를 통해 실제 OpenAI와 Anthropic을 각각 호출합니다. HTTP Controller는 거치지 않습니다.
+질문과 업체별 응답을 출력하고 응답이 비어 있지 않은지 검사합니다. 고정 문장 일치나 답변 품질을 판정하는 테스트는 아닙니다.
+
+루트 `.env`에 위의 네 값을 준비한 뒤 IntelliJ에서 클래스 또는 원하는 메서드의 Run으로 실행하세요.
+두 클라이언트를 함께 구성하므로 메서드 하나만 실행해도 두 업체의 설정값이 필요합니다.
+Gradle로 Live 클래스만 실행하려면 다음 명령을 사용합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
+```
+
+태그·실행 조건·별도 Live 태스크는 없습니다. **필터 없이 이 모듈의 `test`를 실행하면 로컬 테스트 3개와 Live 테스트 2개가 모두 실행되며 실제 API 사용량이 발생합니다.**
+실제 API의 인증·모델 접근 권한·호출 제한·시간 초과로 Live 테스트가 실패할 수 있습니다.
 
 ## IntelliJ에서 Run 아이콘이 보이지 않을 때
 

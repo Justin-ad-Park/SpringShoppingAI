@@ -196,3 +196,11 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - IntelliJ에서 다중 모델 모듈이 Gradle에 동기화되지 않아 테스트 소스가 상위 labs 디렉터리 소속으로 보이고 Run 아이콘이 없는 상태를 확인했습니다. 동기화 후 `02-multiple-models.test` 소속과 Run 항목이 나타났습니다.
 - IDE와 터미널의 동시 테스트 실행에서 XML 결과 파일 쓰기 충돌이 한 차례 발생했습니다. 테스트 자체 실패와 구분해야 하며 같은 모듈은 한쪽에서만 실행합니다.
 - 변경된 `02-first-chat`의 로컬 Mock 테스트와 `02-multiple-models` 테스트·두 모듈의 `bootJar` 빌드가 성공했습니다. 검증 명령은 첫 모듈의 실제 OpenAI 테스트를 제외했습니다.
+
+## 다중 모델 Live 테스트 추가 — 2026-11-03
+
+- `MultipleProvidersLiveTest`를 별도 클래스로 추가했습니다. 루트 `.env`의 두 업체 키·모델 설정을 읽고 서비스에서 실제 OpenAI와 Anthropic을 각각 호출하도록 구성했습니다.
+- 업체별 질문·응답을 출력하며, 응답이 비어 있지 않은지 확인하는 테스트 2개입니다. 태그·실행 조건·별도 Live 태스크는 없습니다.
+- 두 Live 메서드까지 포함한 테스트 소스 컴파일과 `bootJar` 빌드가 성공했습니다. `--tests com.example.ailearning.l02multiple.MultipleProvidersContractTest`로 기존 로컬 테스트 3개가 모두 통과했습니다(실패 0개, 건너뜀 0개).
+- 실제 Live 메서드와 유료 외부 API는 이번 검증에서 실행하지 않았습니다. API 키·접근 권한·실제 응답 결과는 검증하지 않았습니다.
+- 실행 가이드와 교재에 전체 test 실행 시 Live 테스트도 실행되는 점과 로컬 클래스 선택 명령을 반영했습니다. Markdown 로컬 링크 424개 검사 통과.

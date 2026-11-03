@@ -240,7 +240,7 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 실제 키 대신 테스트용 값을 지정하며 저장소의 `.env`를 읽지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest
 ```
 
 - OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다. Anthropic 요청은 발생하지 않아야 합니다.
@@ -249,6 +249,22 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 업체 선택 테스트 2개는 이름으로 지정한 객체가 올바른 제공 업체 호출로 연결되는지 검증합니다.
 8절의 요청별 모델 선택 테스트 1개까지 포함하면 이 클래스의 전체 테스트는 3개입니다.
 실제 외부 모델의 답변 품질이나 API 키 권한은 검증하지 않습니다.
+
+### 선택: 실제 OpenAI와 Anthropic에 연결하기
+
+같은 테스트 패키지의 [MultipleProvidersLiveTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
+서비스의 `askOpenAi()`와 `askAnthropic()`으로 실제 모델을 호출하는 테스트 두 개입니다.
+Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답이 비어 있지 않은지 검사합니다.
+
+루트 `.env`에 두 업체의 키와 모델 ID 네 값을 준비한 뒤, IntelliJ에서 클래스 또는 개별 메서드의 Run으로 실행합니다.
+애플리케이션이 두 클라이언트를 함께 준비하므로 메서드 하나만 실행할 때도 네 설정값이 필요합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
+```
+
+태그나 실행 허용 변수는 없습니다. 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 Live 테스트 2개가 모두 실행됩니다.
+Live 테스트는 실제 API 사용량이 발생하며, 로컬 테스트 통과가 실제 API 접근 권한이나 답변 품질을 보장하지는 않습니다.
 
 ## 8. 같은 업체의 모델 두 개를 쓴다면?
 
@@ -326,7 +342,7 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 이 이름은 로컬 서버가 받는 테스트용 문자열이므로 실제 API에서 사용할 수 있는 모델 이름이라는 뜻은 아닙니다.
 
 테스트는 OpenAI 요청의 `model` 값이 순서대로 A → B → 기본 모델인지, 세 요청이 같은 OpenAI 인증 정보를 사용하는지 확인합니다.
-Anthropic 요청은 발생하지 않아야 합니다. 실행 명령은 7절과 같고, 전체 테스트는 3개입니다.
+Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행하는 명령은 7절과 같고, `MultipleProvidersContractTest`의 테스트는 총 3개입니다.
 
 ## 확인 질문
 

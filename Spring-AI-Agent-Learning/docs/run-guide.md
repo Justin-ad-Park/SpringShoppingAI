@@ -56,13 +56,19 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 
 로컬 Mock 테스트는 `.env` 읽기를 끄고 더미 키·모델 이름·로컬 서버 주소를 직접 설정합니다.
 고정 HTTP 응답으로 코드의 연결을 검증하며, 실제 모델의 답변 품질을 평가하는 테스트와 다릅니다.
-첫 실습의 Live 클래스만 실제 OpenAI를 호출하며, 해당 모듈의 전체 test에도 포함됩니다.
-다른 모듈의 자동 테스트에는 실제 키가 필요 없습니다. 실제 모델 호출은 각 모듈의 bootRun으로 확인합니다.
+`02-first-chat`의 `FirstChatOpenAiLiveTest`와 `02-multiple-models`의 `MultipleProvidersLiveTest`는 실제 API를 호출하며, 각 모듈의 전체 test에도 포함됩니다.
+다중 모델 Live 테스트는 OpenAI와 Anthropic의 키·모델 설정이 모두 필요합니다. 이 두 Live 클래스를 제외한 자동 테스트에는 실제 키가 필요 없습니다. 실제 모델 호출은 각 모듈의 bootRun으로 확인합니다.
 
 첫 실습에서 Mock 테스트만 실행하려면 클래스를 지정하세요.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+```
+
+다중 모델 실습에서도 로컬 테스트만 실행하려면 클래스를 지정합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest
 ```
 
 [학습 방법](learning-guide.md) · [교육 계획](curriculum.md)
