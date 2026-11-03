@@ -122,6 +122,7 @@ public class ChatService {
 처음 보는 핵심은 `ChatClient` 하나입니다.
 `ChatClient.Builder`는 Spring Boot 자동 설정이 준비하고 생성자로 주입합니다.
 OpenAI용 객체가 선택되고 설정값이 적용되는 과정은 [생성자 주입 상세 설명](02-first-call/01-constructor-injection.md)에서 따로 살펴봅니다.
+프롬프트의 메시지와 역할별 호출 코드는 [프롬프트·메시지·역할 이해하기](00-llm-and-spring-ai/01-prompt-and-messages.md)에서 보충 학습할 수 있습니다.
 
 `build()`로 호출에 사용할 클라이언트를 만듭니다. `ask()`는 질문마다 새 요청을 구성합니다.
 

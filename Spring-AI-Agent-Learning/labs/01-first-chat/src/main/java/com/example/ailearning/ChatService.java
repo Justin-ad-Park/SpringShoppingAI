@@ -1,6 +1,7 @@
 package com.example.ailearning;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +13,8 @@ public class ChatService {
     }
 
     public String ask(String message) {
+        chatClient.prompt().messages(new AssistantMessage.ToolCall());
+
         return chatClient.prompt()
                 .user(message)
                 .call()
