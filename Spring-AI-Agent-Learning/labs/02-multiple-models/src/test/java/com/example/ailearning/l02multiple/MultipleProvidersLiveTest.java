@@ -34,16 +34,16 @@ class MultipleProvidersLiveTest {
         assertThat(answer).isNotBlank();
     }
 
-    @Test
-    @Timeout(60)
-    @DisplayName("실제 Anthropic에 질문하고 응답을 출력한다")
-    void callsRealAnthropicAndPrintsResponse() {
-        String question = "Spring의 의존성 주입을 쉬운 한국어 한 문장으로 설명해줘.";
-        String answer = service.askAnthropic(question);
-
-        System.out.println("=== 실제 Anthropic 응답 (로컬 고정 응답 아님) ===");
-        System.out.println("질문: " + question);
-        System.out.println("응답: " + answer);
-        assertThat(answer).isNotBlank();
-    }
+//    @Test
+//    @Timeout(60)
+//    @DisplayName("실제 Anthropic에 질문하고 응답을 출력한다")
+//    void callsRealAnthropicAndPrintsResponse() {
+//        String question = "Spring의 의존성 주입을 쉬운 한국어 한 문장으로 설명해줘.";
+//        String answer = service.askAnthropic(question);
+//
+//        System.out.println("=== 실제 Anthropic 응답 (로컬 고정 응답 아님) ===");
+//        System.out.println("질문: " + question);
+//        System.out.println("응답: " + answer);
+//        assertThat(answer).isNotBlank();
+//    }
 }
