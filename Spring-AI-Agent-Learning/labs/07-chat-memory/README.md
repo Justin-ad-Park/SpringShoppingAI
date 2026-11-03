@@ -12,5 +12,5 @@
 
 포트 8097. POST `/api/stateless`는 기억 없음, POST `/api/memory/demo`는 세션별 기억을 사용합니다.
 GET/DELETE `/api/memory/demo`는 현재 세션의 해당 대화만 조회/삭제합니다. POST 본문은 text/plain입니다.
-bootRun에는 OPENAI_API_KEY와 OPENAI_CHAT_MODEL이 필요합니다. 테스트에는 실제 키가 필요 없습니다.
+bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 테스트에는 실제 키가 필요 없습니다.
 저장은 JVM 메모리뿐이며 서버 재시작 시 사라집니다. 저장 6개, 전송 최대 8개 메시지를 구분하세요.

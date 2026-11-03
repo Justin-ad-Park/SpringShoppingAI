@@ -14,6 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.config.import=",
         "learning.limits.max-tool-calls=4", "learning.limits.timeout-ms=1000"})
 class ShoppingAgentContractTest {
     static final ModelWireServer MODEL = start();

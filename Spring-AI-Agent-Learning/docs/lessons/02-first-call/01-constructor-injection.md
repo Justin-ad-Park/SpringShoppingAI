@@ -7,8 +7,8 @@
 핵심은 **OpenAI Starter가 OpenAI용 자동 설정을 제공하고, application.yml이 그 객체의 연결 설정을 제공한다**는 점입니다.
 그 결과 준비된 OpenAI 모델 호출 객체가 `ChatClient.Builder`에 연결되고, 이 Builder가 `ChatService`의 생성자 인자로 전달됩니다.
 
-현재 실습 파일 이름은 `application.yml`입니다. `.yaml`과 `.yml`은 모두 YAML 확장자로 사용하지만, 이 저장소의 실제 파일을 기준으로 설명합니다.
 이 문서에서는 Builder의 준비와 생성자 전달까지만 살펴봅니다.
+처음에는 각 절의 연결 관계와 5절의 그림을 읽으세요. Properties 클래스와 조건 애너테이션은 펼침 참고로 분리했습니다.
 
 ## 1. 생성자가 필요로 하는 객체부터 확인하기
 
@@ -83,6 +83,8 @@ Gradle의 작업 디렉터리는 저장소 루트로 고정되어 있으므로 `
 Spring Boot는 이 값들을 라이브러리의 설정 객체에 담고, OpenAI 자동 설정 코드는 그 값을 이용해 모델 호출 객체를 준비합니다.
 우리가 직접 API 키를 생성자 인자로 조립해 전달할 필요가 없는 이유입니다.
 
+<details><summary>선택 참고: 설정값을 담는 Properties 클래스</summary>
+
 실제 라이브러리에서 설정값을 받는 타입도 다음처럼 구분됩니다.
 
 | 설정 범위 | 설정값을 담는 객체 |
@@ -93,6 +95,8 @@ Spring Boot는 이 값들을 라이브러리의 설정 객체에 담고, OpenAI 
 이 두 설정 객체를 읽는 `OpenAiChatAutoConfiguration`이 OpenAI용 모델 호출 객체를 준비합니다.
 즉, YAML의 값을 읽는 단계와 그 값으로 실제 호출용 Java 객체를 구성하는 단계가 연결되어 있습니다.
 
+</details>
+
 ## 4. 왜 다른 제공 업체가 아니라 OpenAI용 객체가 준비되는가?
 
 현재 예제의 조건을 순서대로 보면 다음과 같습니다.
@@ -101,6 +105,10 @@ Spring Boot는 이 값들을 라이브러리의 설정 객체에 담고, OpenAI 
 2. 따라서 OpenAI용 자동 설정 코드가 실행 후보에 들어갑니다.
 3. Chat 제공 업체를 다른 것으로 바꾸는 설정은 작성하지 않았습니다.
 4. OpenAI Chat 자동 설정의 기본 활성 조건을 만족하므로, OpenAI용 설정값으로 `OpenAiChatModel`을 준비합니다.
+
+현재는 제공 업체 선택 설정을 생략해도 OpenAI 자동 설정이 활성화되는 기본 조건을 사용합니다.
+
+<details><summary>선택 참고: 자동 설정의 실제 활성 조건</summary>
 
 Spring AI 2.0.2의 `OpenAiChatAutoConfiguration`에는 다음 조건이 붙어 있습니다.
 아래는 라이브러리의 실제 조건을 보여 주는 발췌이며 애플리케이션에 추가할 코드는 아닙니다.
@@ -122,6 +130,8 @@ Spring AI 2.0.2의 `OpenAiChatAutoConfiguration`에는 다음 조건이 붙어 �
 현재 application.yml에는 `spring.ai.model.chat`을 적지 않았습니다.
 그런데도 OpenAI용 자동 설정이 활성 조건을 만족하는 이유가 `matchIfMissing = true`입니다.
 이는 **현재 예제에 들어 있는 OpenAI 자동 설정의 조건**이며, 모든 제공 업체를 언제나 OpenAI로 선택한다는 뜻은 아닙니다.
+
+</details>
 
 여기서 이름에 model이 들어간 두 설정을 구분해야 합니다.
 
@@ -181,12 +191,7 @@ public ChatService(ChatClient.Builder builder)
 
 **현재 클래스는 생성자가 하나이므로 생성자에 `@Autowired`를 붙이지 않아도 Spring이 주입합니다.**
 
-설정에서 생성자까지의 관계를 설명하면 다음과 같습니다.
-
-> OpenAI Starter가 OpenAI 연동 구현과 자동 설정 코드를 제공합니다.
-> 자동 설정은 application.yml과 .env의 값을 사용해 OpenAiChatModel을 준비합니다.
-> ChatClient 자동 설정은 그 모델 호출 객체를 사용하는 Builder를 준비합니다.
-> Spring은 ChatService를 생성할 때 그 Builder를 생성자 인자로 전달합니다.
+생성자가 받는 것은 외부 모델 자체가 아니라, OpenAI 호출 객체에 연결된 Builder입니다.
 
 ## 선택 학습: 모델을 두 개 이상 사용한다면?
 

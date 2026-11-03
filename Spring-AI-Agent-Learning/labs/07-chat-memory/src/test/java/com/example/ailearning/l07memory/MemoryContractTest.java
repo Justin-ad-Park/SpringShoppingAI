@@ -10,7 +10,8 @@ import java.net.*;
 import java.net.http.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.config.import=")
 class MemoryContractTest {
     static final LocalModelServer MODEL = start();
     @Value("${local.server.port}") int port;

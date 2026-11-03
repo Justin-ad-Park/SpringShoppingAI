@@ -42,12 +42,10 @@ HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 
 ./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:test :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootJar
 ```
 
-실제 실행은 01장의 API 키·Chat 모델과 09장의 임베딩 모델 환경 변수를 같은 터미널에 설정합니다.
+실제 실행은 저장소 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 준비한 뒤 실행합니다.
+작성 방법은 [실행 설정 안내](../../run-guide.md)를 참고하세요.
 
 ```bash
-export OPENAI_API_KEY='본인의 키'
-export OPENAI_CHAT_MODEL='사용 가능한 Chat 모델'
-export OPENAI_EMBEDDING_MODEL='사용 가능한 임베딩 모델'
 ./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootRun
 ```
 

@@ -3,6 +3,8 @@ server:
   port: ${LEARNING_PORT:8101}
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: evaluation
   ai:
@@ -12,7 +14,7 @@ spring:
         max-retries: 0
         timeout: 2s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}
       embedding:
         max-retries: 0
         timeout: 2s

@@ -41,7 +41,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 
 읽는 순서:
 
-1. `src/main/resources/application.yml`: 환경 변수와 모델 설정
+1. `src/main/resources/application.yml`: 루트 `.env` 읽기와 모델 설정
 2. `FirstChatApplication.java`: 일반 Boot 시작 코드
 3. `ChatController.java`: HTTP 본문을 받고 입력 검증
 4. `ChatService.java`: ChatClient로 모델 연결
@@ -52,7 +52,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call/02-test-code.md)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.
-테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 `bootRun` 또는 위의 환경 변수를 지정한 Live 테스트로 수행합니다.
+테스트의 고정 응답은 실제 AI 답변이 아닙니다. 실제 계정 호출은 `bootRun` 또는 루트 `.env`를 읽는 Live 테스트로 수행합니다.
 학습용 외부 오류는 기본 500으로 나타날 수 있으며 서버 로그에서 원인을 확인합니다.
 
 [전체 코드와 실행 해설](../../docs/lessons/02-first-call.md) · [프롬프트 변경 실험](../../docs/lessons/03-chatclient-and-prompts.md)

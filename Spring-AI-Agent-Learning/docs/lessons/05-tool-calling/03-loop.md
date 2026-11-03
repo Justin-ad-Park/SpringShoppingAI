@@ -38,7 +38,7 @@ Spring AI 2.0의 도구 루프가 이 반복을 처리합니다. 지금은 사�
 폴더 `labs/05-tool-calling`, 패키지 `com.example.ailearning.l05tools`를 열어보세요.
 Product → Offer → ProductCatalog → ShoppingTools → ToolChatService → [ToolController](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolController.java) 순서입니다.
 
-명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 환경 변수](../01-setup.md#4-실제-모델을-사용할-때의-환경-변수)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
+명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 환경 변수](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test

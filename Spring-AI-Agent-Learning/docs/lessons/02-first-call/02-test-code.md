@@ -10,6 +10,9 @@
 2. `sendsUserMessageToLocalMockModelAndReturnsFixedText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
 3. `rejectsInvalidInputsBeforeCallingLocalMockModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
 
+`rejectsInvalidInputsBeforeCallingLocalMockModel()`는 `"가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1)`로
+허용 길이보다 정확히 한 글자 긴 입력을 만듭니다. Controller와 같은 상수를 사용하며, HTTP 400과 모델 요청 0회를 확인합니다.
+
 `doesNotSendPreviousRequestToLocalMockModelAutomatically()`는 03장의 대화 기억 실험에서 읽습니다.
 인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
 
@@ -37,9 +40,13 @@
 각각 사용 가능한 포트를 배정합니다. 테스트는 애플리케이션의 배정된 포트를 `@Value`로 받습니다.
 가짜 서버의 고정 JSON은 Spring AI가 읽을 수 있는 OpenAI 응답 형식을 흉내 낸 것이며 AI가 생성한 답변은 아닙니다.
 
+<details><summary>선택 참고: 가짜 서버의 종료와 요청 기록 공유</summary>
+
 `@BeforeEach`는 테스트마다 요청 기록을 비우고, `@AfterAll`은 모든 테스트 후 가짜 서버를 종료합니다.
 `CopyOnWriteArrayList`는 가짜 서버 처리 스레드와 테스트 스레드가 요청 기록을 공유하기 위해 사용합니다.
 이 서버와 스레드 관련 구현은 첫 실습에서 넘어가도 됩니다.
+
+</details>
 
 ## Mock 테스트 실행
 

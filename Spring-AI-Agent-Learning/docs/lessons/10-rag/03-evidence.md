@@ -23,7 +23,7 @@ ANSWERED는 **모든 문장이 근거로 증명되었다는 뜻은 아닙니다.
 
 ## 실행
 
-키와 `OPENAI_CHAT_MODEL`, `OPENAI_EMBEDDING_MODEL`이 필요합니다. 설정은 [01장](../01-setup.md#4-실제-모델을-사용할-때의-환경-변수)과 [09장](../09-embeddings-search.md)을 참고합니다.
+루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 사용합니다. 설정은 [01장](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)과 [09장](../09-embeddings-search.md)을 참고합니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash

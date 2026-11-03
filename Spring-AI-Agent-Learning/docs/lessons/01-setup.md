@@ -2,8 +2,9 @@
 
 ## 한 번에 읽을 범위
 
-각 행을 20~30분씩 읽고 관찰합니다. 첫 읽기에서는 Service의 핵심 호출에 집중하고,
-테스트 HTTP 서버·직렬화 보조 코드는 제공된 검증 도구로 사용합니다.
+아래 세 주제를 순서대로 학습합니다. 전체 약 1시간을 기준으로 환경 확인과 의존성 이해에 20분,
+Mock 테스트 실행에 20분, 실제 연결을 위한 설정 준비에 20분을 배정합니다. 다운로드와 오류 해결 시간은 별도로 잡으세요.
+테스트용 HTTP 서버를 직접 구현할 필요는 없습니다.
 
 | 순서 | 읽고 해볼 것 | 여기서 확인할 것 |
 |---|---|---|
@@ -19,10 +20,11 @@
 
 ## 1. 프로젝트 위치와 Java 확인
 
-macOS/Linux 터미널 기준입니다. SpringShoppingAI 저장소 루트로 이동하세요.
+macOS/Linux 터미널 기준입니다. SpringShoppingAI 저장소를 내려받은 폴더로 이동하세요.
+아래 `/path/to/SpringShoppingAI`는 예시 경로이므로 본인의 저장 위치로 바꿉니다.
 
 ```bash
-cd /Users/justinpark/idea/AI/SpringShoppingAI
+cd /path/to/SpringShoppingAI
 java -version
 ./gradlew --version
 ```
@@ -92,11 +94,19 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 가짜 서버는 테스트 실행 중에만 동작합니다. `bootRun`을 위한 가짜 모델 실행 모드는 제공하지 않습니다.
 이번 장에서는 테스트를 실행하고 결과를 확인하면 충분합니다. 코드 읽기 범위는 [02장](02-first-call/02-test-code.md)을 참고하세요.
 
-## 4. 실제 모델을 사용할 때의 환경 변수
+## 4. 실제 모델 연결을 위한 설정 준비
 
-**환경 변수**는 코드 밖에서 프로세스에 전달하는 설정입니다.
-첫 실습은 저장소 루트 `SpringShoppingAI/.env`에 있는 `OPENAI_API_KEY`, `OPENAI_MODEL`을 재사용합니다.
+**환경 변수**와 **설정 파일**은 값을 전달하는 서로 다른 방법입니다.
+
+| 구분 | 값을 준비하는 방법 | 이 실습에서 읽는 방식 |
+|---|---|---|
+| 프로세스 환경 변수 | 터미널의 `export`나 IDE의 Environment variables로 실행할 프로세스에 전달 | Spring Boot가 프로세스 환경에서 읽음 |
+| 루트 `.env` 설정 파일 | 저장소 루트 파일에 `KEY=value`로 기록 | `spring.config.import`로 properties 설정 파일로 읽음 |
+
+이 실습은 두 번째 방식으로 `OPENAI_API_KEY`, `OPENAI_MODEL`을 준비합니다.
+`.env`를 만든다고 운영체제의 환경 변수가 설정되는 것은 아닙니다.
 YAML이나 테스트 코드에 실제 키를 적거나, 매번 터미널에서 export할 필요가 없습니다.
+현재는 설정만 준비하며, 실제 모델 호출은 02장에서 진행합니다.
 
 설정 파일에는 다음 이름이 있어야 합니다. 아래 값은 설명용이며 실제 키·접근 가능한 모델 이름으로 설정합니다.
 
@@ -105,6 +115,7 @@ OPENAI_API_KEY=본인의_API_키
 OPENAI_MODEL=사용_가능한_Chat_모델_이름
 ```
 
+현재 실습의 설정 파일 이름은 `application.yml`입니다. `.yaml`도 YAML 확장자이지만 이 저장소에서는 `.yml`을 사용합니다.
 Spring Boot는 `.env`라는 이름을 자동 인식하지 않으므로 `spring.config.import`로 명시합니다.
 `[.properties]`는 확장자가 없는 설정 파일을 Java properties 형식으로 읽으라는 뜻입니다.
 `KEY=value` 형식을 사용하고, 셸의 `export` 접두어나 값을 감싸는 따옴표는 넣지 않습니다.
@@ -136,6 +147,7 @@ spring:
 
 - `bootRun`과 테스트는 모듈의 `build.gradle`에서 작업 디렉터리를 저장소 루트로 맞춥니다.
 - 기본 `.env` 경로는 그 작업 디렉터리 기준입니다. IDE에서 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
+- `optional:`은 `.env` 파일이 없어도 파일 읽기 오류를 내지 않는다는 뜻입니다. 실제 호출에 필요한 키·모델 값까지 생략할 수 있다는 뜻은 아닙니다.
 - 이미 설정한 프로세스 환경 변수는 파일보다 우선합니다. 예상과 다른 모델이면 기존 `OPENAI_MODEL` 설정도 확인합니다.
 - `${LEARNING_PORT:8091}`은 포트 설정이 없으면 8091을 사용한다는 뜻입니다.
 - `embedding: none`은 아직 배우지 않은 임베딩 자동 설정을 끕니다.
@@ -144,32 +156,15 @@ spring:
 기본 로컬 MockModel 테스트는 `spring.config.import=`로 파일 읽기를 끄고 더미 설정을 주입합니다.
 실제 파일과 외부 API가 없어도 실행할 수 있습니다.
 
-### 실제 OpenAI에 연결하는 테스트
+### 설정 준비 후 어디에서 실행할까?
 
-첫 실습과 같은 `src/test/java/com/example/ailearning` 폴더에
-`FirstChatOpenAiLiveTest.java`가 있습니다. `ChatService`로 실제 OpenAI를 호출하고 질문과 응답을 출력합니다.
-고정 문장 일치가 아니라 응답이 비어 있지 않은지 확인합니다. 키는 출력하지 않습니다.
+이 장에서는 3절의 Mock 테스트까지 통과하면 됩니다.
+실제 API 호출은 [02-3. 실제 모델 호출](02-first-call/03-live-model-call.md)에서 서버 실행과 Live 테스트 중 원하는 경로로 진행합니다.
+`FirstChatLocalMockModelTest`는 로컬 가짜 모델에, `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결합니다.
+두 클래스에는 태그나 별도 실행 조건이 없습니다. **필터 없이 이 모듈의 `test`를 실행하면 둘 다 실행되므로 실제 API 사용량이 발생할 수 있습니다.**
 
-두 테스트는 연결 대상이 다른 별도 클래스입니다. 태그나 실행 조건을 설정하지 않습니다.
-
-| 클래스 | 연결 대상 | 실행 방법 |
-|---|---|---|
-| `FirstChatLocalMockModelTest` | 테스트에서 시작한 로컬 MockServer | 클래스 또는 메서드 Run |
-| `FirstChatOpenAiLiveTest` | 실제 OpenAI API | 클래스 또는 메서드 Run |
-
-IntelliJ에서 원하는 테스트의 Run을 누르면 됩니다. 별도 허용 환경 변수는 필요 없습니다.
-Live 테스트에 필요한 키와 모델 이름은 저장소 루트 `.env`에서 읽습니다.
-Gradle로 실제 테스트만 실행하려면 다음과 같습니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
-```
-
-`--rerun-tasks`는 이전 결과를 재사용하지 않고 실제 응답을 새로 확인하려는 옵션입니다.
-필터 없이 이 모듈의 `test`를 실행하면 Mock과 Live 모두 실행하며 실제 API 사용량이 발생합니다.
-API 키 없이 실행하려면 3절의 Mock 클래스 지정 명령을 사용합니다.
-기존 04 이후 실습은 별도 안내가 없는 한 `OPENAI_CHAT_MODEL` 환경 변수 방식을 유지합니다.
-해당 변수의 실제 입력 명령은 [실행 설정 안내](../run-guide.md)에 있습니다.
+후속 학습 모듈도 루트 `.env`와 `OPENAI_MODEL`을 사용합니다.
+임베딩이 필요한 실습은 `OPENAI_EMBEDDING_MODEL`을 추가로 사용합니다. 모듈별 필수 값은 [실행 설정 안내](../run-guide.md)를 확인하세요.
 
 ## 5. 막혔을 때
 

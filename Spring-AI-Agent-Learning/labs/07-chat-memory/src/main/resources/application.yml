@@ -3,6 +3,8 @@ server:
   port: ${LEARNING_PORT:8097}
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: chat-memory
   ai:
@@ -14,7 +16,7 @@ spring:
         max-retries: 0
         timeout: 15s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}
 
 # 브라우저의 다른 실습 서버 쿠키와 구분합니다.
 server.servlet.session.cookie.name: LEARNING_MEMORY_SESSION

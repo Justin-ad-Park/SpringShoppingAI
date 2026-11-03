@@ -12,5 +12,5 @@
 
 포트 8096. POST `/api/compare/workflow`, `/api/compare/agent`, `/api/compare/hybrid`는 text/plain 질문을 받습니다.
 응답의 status와 steps, clientCalls/modelCalls/toolCalls를 비교하세요.
-bootRun에는 OPENAI_API_KEY와 OPENAI_CHAT_MODEL이 필요합니다. 테스트에는 실제 키가 필요 없습니다.
+bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 테스트에는 실제 키가 필요 없습니다.
 SDK 호출 타임아웃과 전체 요청 대기 상한은 교재에 설명되어 있습니다. 실제 모델에 따라 TIMEOUT이 날 수 있으며 성공처럼 취급하지 않습니다.

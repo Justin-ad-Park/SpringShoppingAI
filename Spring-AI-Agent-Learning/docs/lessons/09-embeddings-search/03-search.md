@@ -10,15 +10,8 @@
 
 ## 설정과 실행
 
-이 실습에는 Chat 모델 이름이 필요 없습니다. OPENAI_API_KEY와 **OPENAI_EMBEDDING_MODEL**을 지정합니다.
-[01장](../01-setup.md#4-실제-모델을-사용할-때의-환경-변수)처럼 키를 설정한 뒤, zsh에서는 다음을 사용합니다.
-
-```zsh
-read 'OPENAI_EMBEDDING_MODEL?사용 가능한 임베딩 모델 이름: '
-export OPENAI_EMBEDDING_MODEL
-```
-
-bash에서는 `read -r -p '임베딩 모델 이름: ' OPENAI_EMBEDDING_MODEL` 후 export하세요.
+이 실습에는 채팅 모델 이름이 필요 없습니다. 저장소 루트 `.env`에 `OPENAI_API_KEY`와 `OPENAI_EMBEDDING_MODEL`을 준비합니다.
+키를 셸 환경 변수로 따로 입력할 필요는 없습니다. 작성 방법은 [실행 설정 안내](../../run-guide.md)를 참고하세요.
 명령은 저장소 루트에서 실행합니다.
 
 ```bash

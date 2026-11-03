@@ -4,6 +4,14 @@
 이 문서는 선택 학습입니다. 이후 기본 수업을 진행하기 위한 필수 조건은 아닙니다.
 실행 예제는 기존 첫 호출 실습과 분리한 [02-multiple-models](../../../labs/02-multiple-models/README.md)에 있습니다.
 
+### 권장 학습 순서
+
+먼저 [1절](#1-먼저-두-가지-경우를-구분하기)로 차이를 구분하고,
+[8절의 요청별 모델 ID 변경](#8-같은-업체의-모델-두-개를-쓴다면)을 읽으세요. 같은 OpenAI 클라이언트에서 요청 옵션 하나를 바꾸는 부분에 집중합니다.
+그다음 다른 업체도 함께 사용하려면 2~7절을 순서대로 따라가며 두 Starter·설정·이름이 있는 클라이언트를 구성합니다.
+8절 코드는 같은 실행 모듈의 `openAiChatClient`를 재사용하므로 **설명은 먼저 읽어도, 기존 첫 실습에 그대로 붙여 넣는 코드는 아닙니다.**
+로컬 테스트는 두 업체의 실제 키 없이 실행할 수 있고, 이 모듈로 실제 호출할 때는 두 업체 설정을 모두 준비해야 합니다.
+
 ## 1. 먼저 두 가지 경우를 구분하기
 
 | 상황 | 달라지는 것 | 예 |
@@ -238,7 +246,8 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 - OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다. Anthropic 요청은 발생하지 않아야 합니다.
 - Anthropic URL 호출: Anthropic 형식의 요청, Anthropic 모델 이름, Anthropic용 인증 정보가 전달되는지 확인합니다. OpenAI 요청은 발생하지 않아야 합니다.
 
-두 테스트는 이름으로 선택한 객체가 올바른 제공 업체 호출로 연결되는지 검증합니다.
+업체 선택 테스트 2개는 이름으로 지정한 객체가 올바른 제공 업체 호출로 연결되는지 검증합니다.
+8절의 요청별 모델 선택 테스트 1개까지 포함하면 이 클래스의 전체 테스트는 3개입니다.
 실제 외부 모델의 답변 품질이나 API 키 권한은 검증하지 않습니다.
 
 ## 8. 같은 업체의 모델 두 개를 쓴다면?
@@ -306,7 +315,13 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 
 ### 테스트에서 확인하기
 
-기존 `MultipleProvidersContractTest`에 같은 서비스의 테스트도 추가했습니다.
+[MultipleProvidersContractTest의 `requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersContractTest.java)에서
+`SameProviderModelsService`를 주입받아 실행합니다. IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersContractTest.requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault'
+```
+
 로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.
 이 이름은 로컬 서버가 받는 테스트용 문자열이므로 실제 API에서 사용할 수 있는 모델 이름이라는 뜻은 아닙니다.
 

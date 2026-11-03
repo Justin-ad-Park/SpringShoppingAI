@@ -11,6 +11,7 @@ import java.net.http.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.config.import=",
         "learning.limits.max-model-calls=5", "learning.limits.max-tool-calls=3", "learning.limits.timeout-ms=1000"})
 class WorkflowAgentContractTest {
     static final LocalModelServer MODEL = start();

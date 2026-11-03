@@ -179,3 +179,12 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - `SameProviderModelsService`를 추가하고 전체 테스트 3개와 `bootJar`가 통과했습니다.
 - 요청 옵션으로 OpenAI 모델 A와 B를 선택한 뒤 기본 모델 호출이 원래 설정을 유지하는지 검증했습니다.
 - 세 요청이 같은 OpenAI 인증 정보를 사용하고 Anthropic 호출이 발생하지 않음을 확인했습니다. 실제 유료 API는 호출하지 않았습니다.
+
+## 입문 설명 정리와 루트 .env 통일 — 2026-11-03
+
+- 14개 학습 모듈 모두 실제 실행 시 루트 `.env`를 읽고, 채팅 모델 설정은 `OPENAI_MODEL`로 통일했습니다. 임베딩 사용 모듈만 `OPENAI_EMBEDDING_MODEL`을 추가로 사용합니다.
+- 각 모듈의 `bootRun`·`test` 작업 디렉터리는 저장소 루트입니다. 로컬 가짜 모델 테스트는 `spring.config.import=`로 파일 읽기를 끄고 기존 더미 키·모델·로컬 주소를 사용합니다.
+- 14개 모듈의 테스트 70개가 실패·스킵 없이 통과했고, 각 `bootJar` 빌드가 성공했습니다. 변경 없는 작업은 Gradle의 up-to-date 결과를 재사용했습니다.
+- 첫 모듈은 `--tests com.example.ailearning.FirstChatLocalMockModelTest`로 로컬 테스트만 실행했습니다. 실제 OpenAI Live 테스트와 유료 외부 API는 실행하지 않았습니다.
+- 앞서 승인 검토 오류로 보류됐던 입문 실습 검증도 이번 실행에서 완료했습니다.
+- 검토 대상 입문 문서 8개의 기존 Java 예제를 보존했음을 비교했고, Markdown 로컬 링크 422개와 Mermaid 26개의 문법 검사를 통과했습니다. 다이어그램의 픽셀 단위 렌더링 검증은 수행하지 않았습니다.

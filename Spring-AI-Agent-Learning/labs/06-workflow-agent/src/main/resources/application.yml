@@ -3,6 +3,8 @@ server:
   port: ${LEARNING_PORT:8096}
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: workflow-agent
   ai:
@@ -14,7 +16,7 @@ spring:
         max-retries: 0
         timeout: 5s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}
 
 learning:
   limits:

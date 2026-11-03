@@ -10,7 +10,8 @@ import java.net.http.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.config.import=")
 class ToolCallingContractTest {
     static final LocalModelServer MODEL = start();
     @Value("${local.server.port}") int port;

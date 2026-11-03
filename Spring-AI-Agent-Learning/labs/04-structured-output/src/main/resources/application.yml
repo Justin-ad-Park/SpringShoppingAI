@@ -3,6 +3,8 @@ server:
   port: ${LEARNING_PORT:8094}
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: structured-output
   ai:
@@ -14,4 +16,4 @@ spring:
         max-retries: 0
         timeout: 15s
         options:
-          model: ${OPENAI_CHAT_MODEL}
+          model: ${OPENAI_MODEL}

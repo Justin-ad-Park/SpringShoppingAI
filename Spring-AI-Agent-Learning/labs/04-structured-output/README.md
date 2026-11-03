@@ -9,5 +9,5 @@
 ```
 
 포트 8094. POST `/api/criteria`는 record, POST `/api/criteria/text`는 원문 텍스트를 반환합니다.
-두 API 모두 text/plain 질문을 받습니다. 실제 실행에는 OPENAI_API_KEY, OPENAI_CHAT_MODEL이 필요합니다.
+두 API 모두 text/plain 질문을 받습니다. 실제 실행에는 루트 `.env`의 OPENAI_API_KEY, OPENAI_MODEL이 필요합니다.
 다른 단원·기존 쇼핑 서비스에 대한 프로젝트 의존성은 없습니다.

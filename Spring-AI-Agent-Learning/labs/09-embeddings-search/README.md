@@ -9,4 +9,4 @@
 ./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:bootRun
 ```
 
-테스트는 외부 유료 API를 호출하지 않습니다. 실제 실행에 필요한 환경 변수와 한계는 교재를 확인하세요.
+테스트는 외부 유료 API를 호출하지 않습니다. 실제 실행은 저장소 루트 `.env`를 읽습니다. 필요한 설정값과 한계는 교재를 확인하세요.

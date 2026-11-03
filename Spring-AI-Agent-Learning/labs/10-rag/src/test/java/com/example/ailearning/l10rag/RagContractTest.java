@@ -9,7 +9,8 @@ import java.net.URI;
 import java.net.http.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.config.import=")
 class RagContractTest {
     static final ModelWireServer MODEL = start();
     @Value("${local.server.port}") int port;

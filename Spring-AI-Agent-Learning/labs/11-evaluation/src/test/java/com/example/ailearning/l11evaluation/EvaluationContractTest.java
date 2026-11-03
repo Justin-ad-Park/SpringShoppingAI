@@ -9,7 +9,7 @@ import java.net.URI;
 import java.net.http.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "spring.ai.openai.chat.timeout=500ms")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"spring.config.import=", "spring.ai.openai.chat.timeout=500ms"})
 class EvaluationContractTest {
     static final ModelWireServer MODEL = start();
     @Value("${local.server.port}") int port;

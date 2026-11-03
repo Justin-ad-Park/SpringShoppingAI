@@ -12,7 +12,7 @@
 
 파일 읽기: TraceAdvisor → AdvisorChatService → [PriceTools](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/PriceTools.java) → [AdvisorController](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorController.java).
 PriceTools는 05에서 배운 @Tool 방식으로 가상 허브티 가격 12000원을 조회하는 작은 도구입니다.
-명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 환경 변수](../01-setup.md#4-실제-모델을-사용할-때의-환경-변수)를 설정합니다.
+명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 환경 변수](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test
