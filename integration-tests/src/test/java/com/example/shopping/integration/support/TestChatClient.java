@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** 쿠키를 보관하는 브라우저 세션. 테스트마다 새 객체를 만들어 상태를 격리한다. */
-public final class ChatClient implements AutoCloseable {
+public final class TestChatClient implements AutoCloseable {
     static final ObjectMapper JSON = new ObjectMapper();
     private final String baseUrl;
     private final HttpClient http = HttpClient.newBuilder()
@@ -24,7 +24,7 @@ public final class ChatClient implements AutoCloseable {
             .connectTimeout(Duration.ofSeconds(5))
             .build();
 
-    public ChatClient(String baseUrl) {
+    public TestChatClient(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 

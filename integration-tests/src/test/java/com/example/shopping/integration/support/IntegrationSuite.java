@@ -13,7 +13,7 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class IntegrationSuite {
     protected TestEnvironment environment;
-    protected ChatClient client;
+    protected TestChatClient client;
 
     protected abstract TestMode defaultMode();
 
@@ -26,7 +26,7 @@ public abstract class IntegrationSuite {
 
     @BeforeEach
     protected void newSession() {
-        client = new ChatClient(environment.baseUrl());
+        client = new TestChatClient(environment.baseUrl());
     }
 
     @AfterEach

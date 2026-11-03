@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static com.example.shopping.integration.support.ChatClient.ids;
-import static com.example.shopping.integration.support.ChatClient.tools;
+import static com.example.shopping.integration.support.TestChatClient.ids;
+import static com.example.shopping.integration.support.TestChatClient.tools;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

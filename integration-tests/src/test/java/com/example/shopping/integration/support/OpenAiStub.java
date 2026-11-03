@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.example.shopping.integration.support.ChatClient.JSON;
+import static com.example.shopping.integration.support.TestChatClient.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** 실제 모델 대신 고정 응답을 반환한다. 모델 품질이 아니라 API·MCP 연결 경로를 검사한다. */

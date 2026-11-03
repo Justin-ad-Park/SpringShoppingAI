@@ -1,6 +1,6 @@
 package com.example.shopping.integration;
 
-import com.example.shopping.integration.support.ChatClient;
+import com.example.shopping.integration.support.TestChatClient;
 import com.example.shopping.integration.support.IntegrationSuite;
 import com.example.shopping.integration.support.TestMode;
 
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static com.example.shopping.integration.support.ChatClient.ids;
-import static com.example.shopping.integration.support.ChatClient.tools;
+import static com.example.shopping.integration.support.TestChatClient.ids;
+import static com.example.shopping.integration.support.TestChatClient.tools;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -33,7 +33,7 @@ class MockIntegrationTest extends IntegrationSuite {
 
     @BeforeAll
     void requireMockMode() throws Exception {
-        try (var check = new ChatClient(environment.baseUrl())) {
+        try (var check = new TestChatClient(environment.baseUrl())) {
             assertThat(check.status().path("mode").asText()).isEqualTo("mock");
         }
     }
@@ -207,7 +207,7 @@ class MockIntegrationTest extends IntegrationSuite {
     void sessionIsolation() throws Exception {
         client.conversation("shared-id").say("무료배송 상품 추천해줘");
 
-        try (var otherBrowser = new ChatClient(environment.baseUrl())) {
+        try (var otherBrowser = new TestChatClient(environment.baseUrl())) {
             var isolated = otherBrowser.conversation("shared-id").say("음료만");
 
             assertThat(isolated.path("outcome").asText()).isEqualTo("NEEDS_INPUT");
@@ -260,7 +260,7 @@ class MockIntegrationTest extends IntegrationSuite {
     }
 
     /** 후속 요청에 필요한 최초 무료배송 대화만 준비한다. 검증은 각 테스트에서 수행한다. */
-    private ChatClient.Conversation startFreeShippingConversation() throws Exception {
+    private TestChatClient.Conversation startFreeShippingConversation() throws Exception {
         var conversation = client.conversation();
         conversation.say("무료배송 상품을 추천해줘");
         return conversation;
