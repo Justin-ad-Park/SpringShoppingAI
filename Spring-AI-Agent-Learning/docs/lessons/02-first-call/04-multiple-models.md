@@ -248,6 +248,71 @@ OpenAI 호출 구현을 공유하고 요청 옵션으로 모델 ID를 바꾸거�
 반면 이번 예제는 제공 업체 자체가 달라서 서로 다른 `ChatModel` 구현과 인증 정보를 준비했습니다.
 `@Qualifier`는 원격 모델 ID를 지정하는 설정이 아니라 **주입할 Java 객체를 구분하는 이름**이라는 점을 기억하세요.
 
+### 요청마다 모델 이름 지정하기
+
+먼저 가장 간단한 방식으로, 이미 준비한 `openAiChatClient` 하나를 공유하고 **이번 요청의 옵션**에 모델 ID를 지정해 보겠습니다.
+아래 클래스는 별도 예시 문구가 아니라 [실습에 포함된 실행 코드](../../../labs/02-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)입니다.
+기존 서비스는 그대로 두고 같은 패키지에 추가했습니다.
+
+```java
+package com.example.ailearning.l02multiple;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SameProviderModelsService {
+    private final ChatClient openAi;
+
+    public SameProviderModelsService(
+            @Qualifier("openAiChatClient") ChatClient openAi) {
+        this.openAi = openAi;
+    }
+
+    public String ask(String question, String modelId) {
+        return openAi.prompt()
+                .user(question)
+                .options(OpenAiChatOptions.builder().model(modelId))
+                .call()
+                .content();
+    }
+}
+```
+
+여기서 두 가지 선택은 서로 다른 단계에서 이루어집니다.
+
+- 생성자의 `@Qualifier("openAiChatClient")`: 사용할 Java 객체를 선택합니다. 따라서 호출 대상 제공 업체는 OpenAI입니다.
+- `OpenAiChatOptions.builder().model(modelId)`: 그 제공 업체에서 **이번 요청에 사용할 모델 ID**를 지정합니다. 이 값은 `application.yml`의 기본 모델 이름보다 우선합니다.
+
+예를 들어 다른 Spring 서비스나 테스트에서 `SameProviderModelsService`를 주입받았다면 다음처럼 사용할 수 있습니다.
+
+```java
+// modelA와 modelB는 같은 OpenAI 계정에서 사용할 수 있는 서로 다른 실제 모델 ID입니다.
+String shortAnswer = sameProviderModels.ask("생성자 주입을 짧게 설명해줘", modelA);
+String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 설명해줘", modelB);
+```
+
+`modelA`, `modelB`는 설명을 위한 변수 이름이며 모델 ID 자체가 아닙니다.
+실제로 실행할 때는 계정에서 접근할 수 있고 이 Chat API를 지원하는 모델 ID를 전달하세요.
+모델이 다르면 지원 옵션과 비용도 다를 수 있습니다.
+
+이 저장소의 Spring AI 2.0.2에서는 `.options(...)`에 옵션 Builder를 전달하므로, 위 코드에서 `.build()`를 붙이지 않습니다.
+
+`.options(...)`는 새로 구성하는 요청에만 적용됩니다. 공유 중인 ChatClient의 기본 모델 설정을 바꾸지 않습니다.
+따라서 기존 `MultipleModelsService.askOpenAi()`처럼 모델 옵션을 지정하지 않는 호출은 계속 `OPENAI_MODEL`을 사용합니다.
+질문을 두 번 호출하면 모델 API 요청도 두 번 발생하며, 이전 답변을 자동으로 함께 보내지는 않습니다.
+
+### 테스트에서 확인하기
+
+기존 `MultipleProvidersContractTest`에 같은 서비스의 테스트도 추가했습니다.
+로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.
+이 이름은 로컬 서버가 받는 테스트용 문자열이므로 실제 API에서 사용할 수 있는 모델 이름이라는 뜻은 아닙니다.
+
+테스트는 OpenAI 요청의 `model` 값이 순서대로 A → B → 기본 모델인지, 세 요청이 같은 OpenAI 인증 정보를 사용하는지 확인합니다.
+Anthropic 요청은 발생하지 않아야 합니다. 실행 명령은 7절과 같고, 전체 테스트는 3개입니다.
+
 ## 확인 질문
 
 1. 두 객체가 모두 ChatClient인데 생성자에서 어떻게 구분하나요?

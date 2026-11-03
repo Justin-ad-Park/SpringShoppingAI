@@ -2,6 +2,7 @@ package com.example.ailearning.l02multiple;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MultipleProvidersContractTest {
     static final LocalProvidersServer PROVIDERS = new LocalProvidersServer();
     @Value("${local.server.port}") int port;
+    @Autowired SameProviderModelsService sameProviderModels;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-openai-key");
@@ -47,6 +49,19 @@ class MultipleProvidersContractTest {
         assertThat(PROVIDERS.anthropicAuth).containsExactly("local-anthropic-key");
         assertThat(PROVIDERS.openAiRequests).isEmpty();
     }
+    @Test void requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault() throws Exception {
+        sameProviderModels.ask("짧게 설명해줘", "openai-model-a");
+        sameProviderModels.ask("자세히 설명해줘", "openai-model-b");
+        ask("openai");
+
+        assertThat(PROVIDERS.openAiRequests)
+                .extracting(request -> request.path("model").asString())
+                .containsExactly("openai-model-a", "openai-model-b", "openai-test-model");
+        assertThat(PROVIDERS.openAiAuth)
+                .containsExactly("Bearer local-openai-key", "Bearer local-openai-key", "Bearer local-openai-key");
+        assertThat(PROVIDERS.anthropicRequests).isEmpty();
+    }
+
     HttpResponse<String> ask(String provider) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
             return http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/multi-chat/"+provider))
