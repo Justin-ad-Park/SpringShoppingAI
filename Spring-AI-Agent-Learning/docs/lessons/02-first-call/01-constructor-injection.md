@@ -188,6 +188,12 @@ public ChatService(ChatClient.Builder builder)
 > ChatClient 자동 설정은 그 모델 호출 객체를 사용하는 Builder를 준비합니다.
 > Spring은 ChatService를 생성할 때 그 Builder를 생성자 인자로 전달합니다.
 
+## 선택 학습: 모델을 두 개 이상 사용한다면?
+
+지금까지는 OpenAI 모델 하나와 기본 Builder를 사용했습니다.
+OpenAI와 Anthropic을 함께 사용하고 `@Qualifier`로 주입할 ChatClient를 선택하는 방법은
+[서로 다른 제공 업체의 모델을 함께 사용하기](04-multiple-models.md)에서 설명합니다. 실행 가능한 별도 실습과 테스트도 포함합니다.
+
 ## 확인 질문
 
 1. YAML의 `spring.ai.openai.*` 설정만 있으면 OpenAI Starter가 없어도 동일한 자동 설정이 제공될까요?

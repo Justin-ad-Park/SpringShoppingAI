@@ -1,0 +1,7 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+}
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') { workingDir rootProject.projectDir }

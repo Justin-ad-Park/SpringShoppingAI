@@ -1,0 +1,26 @@
+server:
+  address: 127.0.0.1
+  port: 8092
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  ai:
+    model:
+      embedding: none
+    chat:
+      client:
+        enabled: false
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        max-retries: 0
+        timeout: 10s
+        options:
+          model: ${OPENAI_MODEL}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      max-retries: 0
+      timeout: 10s
+      chat:
+        model: ${ANTHROPIC_MODEL}
+        max-tokens: 256
