@@ -33,7 +33,7 @@ JSON 요청 객체를 추가하기 전에 흐름에 집중하도록 요청과 �
 
 ## 1. 시작 클래스
 
-파일: `Spring-AI-Agent-Learning/labs/01-first-chat/src/main/java/com/example/ailearning/FirstChatApplication.java`
+파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/FirstChatApplication.java`
 
 ```java
 package com.example.ailearning;
@@ -55,7 +55,7 @@ public class FirstChatApplication {
 
 ## 2. HTTP 요청을 받는 Controller
 
-파일: `Spring-AI-Agent-Learning/labs/01-first-chat/src/main/java/com/example/ailearning/ChatController.java`
+파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/ChatController.java`
 
 ```java
 package com.example.ailearning;
@@ -94,7 +94,7 @@ public class ChatController {
 
 ## 3. 모델을 호출하는 Service
 
-파일: `Spring-AI-Agent-Learning/labs/01-first-chat/src/main/java/com/example/ailearning/ChatService.java`
+파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/ChatService.java`
 
 ```java
 package com.example.ailearning;

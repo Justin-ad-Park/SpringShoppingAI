@@ -20,3 +20,11 @@ OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하
 
 POST `/api/multi-chat/openai` 또는 `/api/multi-chat/anthropic`에 `Content-Type: text/plain`으로 질문을 보내세요.
 테스트는 두 외부 API를 로컬 고정 응답 서버로 대체하며 실제 키나 네트워크 호출이 필요하지 않습니다.
+
+## IntelliJ에서 Run 아이콘이 보이지 않을 때
+
+저장소 루트의 Gradle 프로젝트를 연 상태에서 **Sync Gradle Changes** 또는 Gradle 창의 **Reload All Gradle Projects**를 실행합니다.
+새 모듈을 추가한 뒤 동기화하지 않으면 이 폴더가 일반 디렉터리로만 표시되어 `src/test/java`의 테스트를 인식하지 못할 수 있습니다.
+동기화 후 이 클래스가 `02-multiple-models.test` 모듈에 속하는지 확인하고 에디터의 Run으로 실행하세요.
+테스트 클래스가 package-private인 것은 JUnit 5에서 정상이며, 실행을 위해 public으로 바꿀 필요는 없습니다.
+같은 모듈의 Gradle 테스트를 IDE와 터미널에서 동시에 실행하면 결과 파일 쓰기가 충돌할 수 있으므로 한쪽에서만 실행합니다.

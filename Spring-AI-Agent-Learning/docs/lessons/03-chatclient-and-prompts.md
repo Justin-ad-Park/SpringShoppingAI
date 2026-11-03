@@ -96,7 +96,7 @@ public String ask(String message) {
 기존 서버를 Ctrl+C로 종료하고 같은 터미널에서 다시 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
 ```
 
 다른 터미널에서 같은 질문을 보냅니다.
@@ -117,7 +117,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 되돌린 후 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test
 ```
 
 ## 6. 대화 기억 실험

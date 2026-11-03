@@ -7,7 +7,7 @@ Java 21 / Gradle 8.14.5 / Boot 4.0.9 / Spring AI 2.0.2를 저장소 전체에서
 ## 확인한 범위
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test :Spring-AI-Agent-Learning:labs:01-first-chat:bootJar --no-daemon
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test :Spring-AI-Agent-Learning:labs:02-first-chat:bootJar --no-daemon
 ```
 
 - Java 코드와 테스트 코드 컴파일 성공.
@@ -19,8 +19,8 @@ Java 21 / Gradle 8.14.5 / Boot 4.0.9 / Spring AI 2.0.2를 저장소 전체에서
 - Markdown 로컬 파일 링크의 대상 존재 확인.
 - 01장의 Gradle 의존성·전체 YAML 예제, 02장의 전체 Java 클래스가 실제 소스와 일치함을 확인.
 
-테스트 보고서는 저장소 루트 기준 `Spring-AI-Agent-Learning/labs/01-first-chat/build/reports/tests/test/index.html`입니다.
-JAR은 `Spring-AI-Agent-Learning/labs/01-first-chat/build/libs/01-first-chat-0.1.0.jar`에 생성됩니다.
+테스트 보고서는 저장소 루트 기준 `Spring-AI-Agent-Learning/labs/02-first-chat/build/reports/tests/test/index.html`입니다.
+JAR은 `Spring-AI-Agent-Learning/labs/02-first-chat/build/libs/02-first-chat-0.1.0.jar`에 생성됩니다.
 
 ## 확인하지 않은 범위
 
@@ -44,7 +44,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 | 05 Tool Calling | 05-tool-calling | 6 | 통과 |
 | 06 Workflow/Agent 비교 | 06-workflow-agent | 8 | 통과 |
 | 07 대화 메모리 | 07-chat-memory | 7 | 통과 |
-| 합계 | 독립 모듈 4개 | 26 | 실패·스킵 없음 |
+| 합계 | 독립 모듈 4개 | 26 | 전체 테스트 통과(실패 0개, 건너뜀 0개) |
 
 각 모듈의 test와 bootJar를 단원별로 실행한 후 커밋했습니다.
 추가로 저장소 루트에서 `./gradlew test bootJar --console=plain` 회귀 빌드가 성공했습니다.
@@ -71,7 +71,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 | 10 RAG | 10-rag | 6 | 통과 |
 | 11 평가와 운영 기초 | 11-evaluation | 5 | 통과 |
 | 12 통합 상담 Agent | 12-shopping-agent | 9 | 통과 |
-| 합계 | 독립 모듈 5개 | 28 | 실패·스킵 없음 |
+| 합계 | 독립 모듈 5개 | 28 | 전체 테스트 통과(실패 0개, 건너뜀 0개) |
 
 각 모듈의 test와 bootJar를 실행한 뒤 단원별로 커밋했습니다.
 마지막 회귀 검증 명령은 다음과 같습니다.
@@ -80,7 +80,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 ./gradlew test bootJar :Spring-AI-Tutor:mcpIntegrationTest :integration-tests:smokeTest :integration-tests:gptPathTest --console=plain
 ```
 
-결과: BUILD SUCCESSFUL. 기본 test 260개 + MCP 통합 6개 + smoke 17개 + GPT 경로 3개 = **286개 통과**, 실패·오류·스킵 없음.
+결과: BUILD SUCCESSFUL. 기본 test 260개 + MCP 통합 6개 + smoke 17개 + GPT 경로 3개 = **286개 통과**, 실패 0개, 오류 0개, 건너뜀 0개.
 변경 없는 작업은 Gradle의 up-to-date 결과를 재사용했습니다. 전체 기본 test에는 교육 실습 57개가 포함됩니다.
 이 명령에 포함하지 않은 live 태스크의 과거 XML 결과는 합산하지 않았습니다.
 
@@ -116,15 +116,15 @@ Gradle의 필터 없는 `test`도 두 클래스를 모두 실행하며 실제 AP
 
 ```bash
 # Mock만 실행 (실제 키 불필요)
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 # 두 클래스 모두 실행
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test
 ```
 
-두 클래스 전체 실행으로 4개 통과, 실패·스킵 없음과 실제 응답 출력을 확인했습니다.
+두 클래스 전체 실행으로 테스트 4개가 모두 통과했고(실패 0개, 건너뜀 0개), 실제 응답 출력도 확인했습니다.
 실제 키는 소스·YAML에 기록하지 않습니다. 질문과 응답은 표준 출력과 test 보고서에서 확인합니다.
 이는 단일 요청의 연결·응답 확인이며 전체 단원의 실제 모델 품질을 검증한 결과는 아닙니다.
-현재 보고서: `labs/01-first-chat/build/reports/tests/test/index.html`.
+현재 보고서: `labs/02-first-chat/build/reports/tests/test/index.html`.
 
 ## 초급 과정 개편과 표준 API 실행 실습 — 2026-11-03
 
@@ -138,7 +138,7 @@ Spring Academy의 개념 → 구현 → 실습 구분을 참고해 기존 04~12 
 | 10-rag-advisor | 4 | TextReader·TokenTextSplitter·저장소·QuestionAnswerAdvisor, 문서 프롬프트 전달, 빈 검색의 생성 호출 |
 | 11-model-evaluation | 4 | RelevancyEvaluator·FactCheckingEvaluator의 평가 프롬프트와 YES/NO 해석 |
 | 11-observability | 2 | Micrometer·Actuator의 실제 모델 타이머·token.type:total 토큰 Counter 조회 |
-| 합계 | 10 | 실패·오류·스킵 없음 |
+| 합계 | 10 | 실패 0개, 오류 0개, 건너뜀 0개 |
 
 각 모듈의 test와 bootJar를 통과한 뒤 커밋했습니다. 시작 클래스·Controller·Service·설정·테스트를 모두 포함합니다.
 각 모듈의 main Java는 3개 파일이며 각각 54·60·33줄입니다. 별도 실행 프레임워크나 계측 보조 클래스를 런타임에 만들지 않았습니다.
@@ -147,8 +147,8 @@ Spring Academy의 개념 → 구현 → 실습 구분을 참고해 기존 04~12 
 최종 회귀 검증:
 
 ```bash
-./gradlew test bootJar :Spring-AI-Tutor:mcpIntegrationTest :integration-tests:smokeTest :integration-tests:gptPathTest -x :Spring-AI-Agent-Learning:labs:01-first-chat:test --console=plain
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest --console=plain
+./gradlew test bootJar :Spring-AI-Tutor:mcpIntegrationTest :integration-tests:smokeTest :integration-tests:gptPathTest -x :Spring-AI-Agent-Learning:labs:02-first-chat:test --console=plain
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest --console=plain
 ```
 
 두 명령 모두 BUILD SUCCESSFUL. 기본 테스트 보고서 270개 + MCP 통합 6개 + smoke 17개 + GPT 경로 3개 = **296개 통과**.
@@ -184,7 +184,15 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 
 - 14개 학습 모듈 모두 실제 실행 시 루트 `.env`를 읽고, 채팅 모델 설정은 `OPENAI_MODEL`로 통일했습니다. 임베딩 사용 모듈만 `OPENAI_EMBEDDING_MODEL`을 추가로 사용합니다.
 - 각 모듈의 `bootRun`·`test` 작업 디렉터리는 저장소 루트입니다. 로컬 가짜 모델 테스트는 `spring.config.import=`로 파일 읽기를 끄고 기존 더미 키·모델·로컬 주소를 사용합니다.
-- 14개 모듈의 테스트 70개가 실패·스킵 없이 통과했고, 각 `bootJar` 빌드가 성공했습니다. 변경 없는 작업은 Gradle의 up-to-date 결과를 재사용했습니다.
+- 14개 모듈의 테스트 70개가 모두 통과했고(실패 0개, 건너뜀 0개), 각 `bootJar` 빌드가 성공했습니다. 변경 없는 작업은 Gradle의 up-to-date 결과를 재사용했습니다.
 - 첫 모듈은 `--tests com.example.ailearning.FirstChatLocalMockModelTest`로 로컬 테스트만 실행했습니다. 실제 OpenAI Live 테스트와 유료 외부 API는 실행하지 않았습니다.
 - 앞서 승인 검토 오류로 보류됐던 입문 실습 검증도 이번 실행에서 완료했습니다.
 - 검토 대상 입문 문서 8개의 기존 Java 예제를 보존했음을 비교했고, Markdown 로컬 링크 422개와 Mermaid 26개의 문법 검사를 통과했습니다. 다이어그램의 픽셀 단위 렌더링 검증은 수행하지 않았습니다.
+
+## 02장 실습 번호 정리와 IntelliJ 테스트 인식 — 2026-11-03
+
+- 첫 호출 실습을 `labs/02-first-chat`으로 옮기고 Gradle 등록·명령·문서 링크를 수정했습니다. 다중 모델 보충 실습은 `labs/02-multiple-models`를 유지합니다.
+- 변경 전 다중 모델 클래스를 명시한 Gradle 실행으로 테스트 3개가 모두 통과했습니다.
+- IntelliJ에서 다중 모델 모듈이 Gradle에 동기화되지 않아 테스트 소스가 상위 labs 디렉터리 소속으로 보이고 Run 아이콘이 없는 상태를 확인했습니다. 동기화 후 `02-multiple-models.test` 소속과 Run 항목이 나타났습니다.
+- IDE와 터미널의 동시 테스트 실행에서 XML 결과 파일 쓰기 충돌이 한 차례 발생했습니다. 테스트 자체 실패와 구분해야 하며 같은 모듈은 한쪽에서만 실행합니다.
+- 변경된 `02-first-chat`의 로컬 Mock 테스트와 `02-multiple-models` 테스트·두 모듈의 `bootJar` 빌드가 성공했습니다. 검증 명령은 첫 모듈의 실제 OpenAI 테스트를 제외했습니다.

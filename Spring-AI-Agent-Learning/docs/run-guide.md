@@ -19,7 +19,7 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 
 | 실행 모듈 | 루트 .env에서 사용하는 값 |
 |---|---|
-| `01-first-chat`, `04`~`08`, `11-model-evaluation`, `11-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
+| `02-first-chat`, `04`~`08`, `11-model-evaluation`, `11-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
 | `09-embeddings-search` | `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL` — 채팅 모델은 사용하지 않음 |
 | `10-rag`, `10-rag-advisor`, `11-evaluation`, `12-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
@@ -62,7 +62,7 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 첫 실습에서 Mock 테스트만 실행하려면 클래스를 지정하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 ```
 
 [학습 방법](learning-guide.md) · [교육 계획](curriculum.md)

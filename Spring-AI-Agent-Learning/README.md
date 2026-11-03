@@ -72,7 +72,7 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 상위 SpringShoppingAI 저장소 루트에서 실행합니다. 첫 실행은 인터넷으로 Gradle과 라이브러리를 받습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 ```
 
 위 명령은 외부 모델을 호출하지 않습니다. 실제 Spring AI가 **로컬 가짜 모델 HTTP 서버**에 보낸 요청을 검증합니다.
@@ -81,7 +81,7 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 실제 모델 호출은 [환경 설정](docs/lessons/01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 다음 명령으로 시작합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
 ```
 
 다른 터미널에서:
@@ -104,7 +104,8 @@ docs/
   lessons/00~12          순서대로 읽는 한국어 교재
   diagram-guide.md       그림의 종류·기호·읽는 순서
 labs/
-  01-first-chat/         기초 호출과 프롬프트 실험
+  02-first-chat/         02장 기본 호출과 03장 프롬프트 실험
+  02-multiple-models/    02장 선택 보충: OpenAI·Anthropic 모델 선택
   04-structured-output/  조건 record와 응답 변환
   05-tool-calling/       로컬 Java 도구
   06-workflow-agent/     Workflow·Agent·혼합 비교

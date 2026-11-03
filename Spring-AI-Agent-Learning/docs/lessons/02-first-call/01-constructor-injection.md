@@ -12,7 +12,7 @@
 
 ## 1. 생성자가 필요로 하는 객체부터 확인하기
 
-[ChatService.java](../../../labs/01-first-chat/src/main/java/com/example/ailearning/ChatService.java)의 생성자는 다음 인자를 받습니다.
+[ChatService.java](../../../labs/02-first-chat/src/main/java/com/example/ailearning/ChatService.java)의 생성자는 다음 인자를 받습니다.
 
 ```java
 public ChatService(ChatClient.Builder builder)
@@ -25,7 +25,7 @@ public ChatService(ChatClient.Builder builder)
 
 ## 2. OpenAI용 자동 설정은 어디에서 오는가?
 
-[첫 실습의 build.gradle](../../../labs/01-first-chat/build.gradle)에 다음 의존성이 있습니다.
+[첫 실습의 build.gradle](../../../labs/02-first-chat/build.gradle)에 다음 의존성이 있습니다.
 
 ```groovy
 implementation 'org.springframework.ai:spring-ai-starter-model-openai'
@@ -48,7 +48,7 @@ YAML은 그 코드가 사용할 설정값을 제공합니다.
 
 ## 3. 현재 application.yml은 어떤 값을 제공하는가?
 
-[application.yml](../../../labs/01-first-chat/src/main/resources/application.yml)의 모델 연결 관련 부분입니다. 전체 파일에서 발췌했습니다.
+[application.yml](../../../labs/02-first-chat/src/main/resources/application.yml)의 모델 연결 관련 부분입니다. 전체 파일에서 발췌했습니다.
 
 ```yaml
 spring:
@@ -217,6 +217,6 @@ ChatClient.Builder에는 이미 현재 예제의 ChatModel 구현인 OpenAiChatM
 설명 확인 기준: 저장소가 사용하는 Spring AI 2.0.2의 Starter 의존성,
 `OpenAiChatAutoConfiguration`의 제공 업체 조건, `ChatClientAutoConfiguration`의 Builder 생성 코드를 확인했습니다.
 
-[02장으로 돌아가기](../02-first-call.md) · [실습 설정과 실행 안내](../../../labs/01-first-chat/README.md)
+[02장으로 돌아가기](../02-first-call.md) · [실습 설정과 실행 안내](../../../labs/02-first-chat/README.md)
 
 [다음: 테스트 코드 읽기 (선택)](02-test-code.md) · [실제 모델 호출](03-live-model-call.md)

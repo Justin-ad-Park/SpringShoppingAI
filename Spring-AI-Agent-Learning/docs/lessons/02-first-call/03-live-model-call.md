@@ -15,7 +15,7 @@
 저장소 루트에서 실행하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
 ```
 
 시작 로그에서 애플리케이션이 8091 포트로 시작했는지 확인합니다.
@@ -53,7 +53,7 @@ Spring은 이 연결을 대신 관리해 코드의 결합도를 낮춰줍니다.
 이 테스트는 HTTP 서버를 띄우지 않고 Spring이 주입한 `ChatService`로 실제 OpenAI를 호출합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
 `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결하므로 API 사용량이 발생합니다.

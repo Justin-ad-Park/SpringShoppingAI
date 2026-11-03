@@ -51,8 +51,13 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 ## 설명 수업과 실행 모듈의 대응
 
+실행 모듈 앞의 숫자는 연결된 본 단원 번호입니다. 02장의 기본 실습은 `02-first-chat`, 선택 보충은 `02-multiple-models`입니다.
+하위 설명 파일의 `01`·`02`·`03`·`04`는 그 단원 안에서의 읽기 순서이며 실행 모듈 번호와는 구분합니다.
+
 | 설명 수업 | 실행 모듈 | 함께 제공하는 코드와 테스트 |
 |---|---|---|
+| 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
+| 02장 보충 4: 여러 모델 | `02-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
 | 04~12의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
 | [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
 | [11-2 모델 평가](lessons/11-evaluation/02-model-judge.md) | `11-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |

@@ -4,14 +4,14 @@
 아래 명령은 모두 **저장소 루트**에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
 ```
 
 실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
 Gradle의 `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 고정합니다. IDE에서 Gradle을 거치지 않고 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
 ```
 
 테스트는 연결 대상에 따라 두 클래스로 나뉩니다.
@@ -23,7 +23,7 @@ IntelliJ에서는 원하는 클래스 또는 메서드의 Run을 누르면 됩�
 터미널에서 실제 테스트만 실행하려면:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
 필터 없이 이 모듈의 `test`를 실행하면 두 클래스가 모두 실행됩니다.
