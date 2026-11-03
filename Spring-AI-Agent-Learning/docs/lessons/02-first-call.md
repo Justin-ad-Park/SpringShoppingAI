@@ -121,7 +121,8 @@ public class ChatService {
 
 처음 보는 핵심은 `ChatClient` 하나입니다.
 `ChatClient.Builder`는 Spring Boot 자동 설정이 준비하고 생성자로 주입합니다.
-OpenAI용 객체가 선택되고 설정값이 적용되는 과정은 [생성자 주입 상세 설명](02-first-call/constructor-injection.md)에서 따로 살펴봅니다.
+OpenAI용 객체가 선택되고 설정값이 적용되는 과정은 [생성자 주입 상세 설명](02-first-call/01-constructor-injection.md)에서 따로 살펴봅니다.
+
 `build()`로 호출에 사용할 클라이언트를 만듭니다. `ask()`는 질문마다 새 요청을 구성합니다.
 
 `prompt()` → 요청 준비, `user()` → 사용자 메시지 추가, `call()` → 동기 호출 지정,
@@ -131,94 +132,12 @@ OpenAI용 객체가 선택되고 설정값이 적용되는 과정은 [생성자 
 
 ### 테스트 코드 읽기 (선택)
 
-첫 실습의 필수 학습 범위는 `application.yml`의 연결 설정과 세 클래스의 역할,
-`ChatService.ask()`의 네 줄입니다. 테스트는 제공된 검증 도구로 실행하면 충분하며,
-가짜 HTTP 서버를 직접 구현하는 것은 이번 학습 목표에 포함하지 않습니다.
-
-테스트도 읽고 싶다면 `FirstChatLocalMockModelTest.java`에서 다음 순서로 확인하세요.
-
-1. `modelProperties()`: 테스트용 연결 설정
-2. `sendsUserMessageToLocalMockModelAndReturnsFixedText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
-3. `rejectsInvalidInputsBeforeCallingLocalMockModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
-
-`doesNotSendPreviousRequestToLocalMockModelAutomatically()`는 03장의 대화 기억 실험에서 읽습니다.
-인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
-
-로컬 MockModel 테스트는 `spring.config.import=`로 루트 `.env` 읽기를 끕니다.
-`modelProperties()`의 설정은 `@DynamicPropertySource`를 통해 **테스트에서만** 적용됩니다.
-`application.yml`의 같은 설정을 덮어쓰거나 테스트에 필요한 설정을 추가합니다.
-
-| 설정 | 실제 실행 (`bootRun`) | 로컬 테스트 |
-|---|---|---|
-| `spring.ai.openai.api-key` | 루트 `.env`의 `OPENAI_API_KEY` | 더미 키 `local-test-key` |
-| `spring.ai.openai.chat.options.model` | 루트 `.env`의 `OPENAI_MODEL` | 검증용 이름 `tutor-test-model` |
-| `spring.ai.openai.base-url` | 별도로 지정하지 않은 제공 업체 연결 주소 | 테스트가 시작한 로컬 가짜 서버 주소 |
-
-더미 키도 Spring AI의 연결 설정에 사용하므로 유지합니다. 가짜 서버는 이 키로 실제 계정 인증을 하지 않습니다.
-테스트의 인증 헤더 검증은 `Bearer local-test-key`가 요청에 담겼는지 확인합니다.
-
-테스트 중에는 두 개의 HTTP 서버가 동작합니다.
-
-```text
-테스트의 ask() → 애플리케이션 서버의 /api/chat → Controller → ChatService → Spring AI
-  → 가짜 모델 서버의 /v1/chat/completions → 고정 JSON 응답 → 응답 텍스트 반환
-```
-
-`RANDOM_PORT`는 애플리케이션 서버에, `InetSocketAddress("127.0.0.1", 0)`은 가짜 모델 서버에
-각각 사용 가능한 포트를 배정합니다. 테스트는 애플리케이션의 배정된 포트를 `@Value`로 받습니다.
-가짜 서버의 고정 JSON은 Spring AI가 읽을 수 있는 OpenAI 응답 형식을 흉내 낸 것이며 AI가 생성한 답변은 아닙니다.
-
-`@BeforeEach`는 테스트마다 요청 기록을 비우고, `@AfterAll`은 모든 테스트 후 가짜 서버를 종료합니다.
-`CopyOnWriteArrayList`는 가짜 서버 처리 스레드와 테스트 스레드가 요청 기록을 공유하기 위해 사용합니다.
-이 서버와 스레드 관련 구현은 첫 실습에서 넘어가도 됩니다.
+테스트 설정과 두 HTTP 서버의 역할, 선택해서 읽을 메서드는 [02-2. 테스트 코드 읽기](02-first-call/02-test-code.md)에 정리했습니다.
 
 ## 4. 실제 모델 호출
 
-01장에서 설명한 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.
-저장소 루트에서 실행하세요.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:bootRun
-```
-
-시작 로그에서 애플리케이션이 8091 포트로 시작했는지 확인합니다.
-새 터미널을 열고 다음 명령을 실행합니다. 이 터미널에는 API 키를 입력할 필요가 없습니다.
-키는 Spring 애플리케이션이 외부 모델을 호출할 때 사용합니다.
-
-```bash
-curl -i http://127.0.0.1:8091/api/chat \
-  -H 'Content-Type: text/plain; charset=UTF-8' \
-  --data-raw 'Spring의 의존성 주입을 초보자에게 두 문장으로 설명해줘.'
-```
-
-`--data-raw`가 본문을 보내므로 POST 요청이 됩니다. `-i`는 상태 코드와 헤더도 보여줍니다.
-포트를 바꿨다면 curl 주소도 함께 바꿉니다.
-
-다음은 **응답 형태 예시**이며 실제 모델 실행 결과를 복사한 것이 아닙니다.
-
-```text
-HTTP/1.1 200
-Content-Type: text/plain;charset=UTF-8
-...
-
-의존성 주입은 객체가 필요한 다른 객체를 직접 만들지 않고 외부에서 전달받는 방식입니다.
-Spring은 이 연결을 대신 관리해 코드의 결합도를 낮춰줍니다.
-```
-
-문장과 응답 시간은 모델·상황에 따라 달라집니다. 정확히 같은 문장이 나오는지가 성공 기준은 아닙니다.
-상태 코드 200, 빈 문자열이 아닌 응답, 질문과 관련된 설명인지를 확인하세요.
-200이어도 사실이 맞는지는 별도로 확인해야 합니다.
-
-종료는 서버 터미널에서 Ctrl+C를 누릅니다.
-실제 모델에 한 번 질문하고 응답만 출력해 보고 싶다면 서버 실행 대신 별도 테스트도 사용할 수 있습니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:01-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
-```
-
-`FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결하므로 API 사용량이 발생합니다.
-IntelliJ에서는 클래스 또는 메서드의 Run으로 실행합니다. 별도 허용 변수는 없습니다.
-필터 없이 이 모듈의 `test`를 실행하면 두 클래스가 모두 실행됩니다.
+서버 실행·curl 요청·실제 OpenAI 테스트 실행과 결과 해석은 [02-3. 실제 모델 호출](02-first-call/03-live-model-call.md)을 따라가세요.
+실행 후 아래의 질문 변경·입력 오류 실험으로 이어집니다.
 
 ## 5. 질문만 바꿔 보기
 
