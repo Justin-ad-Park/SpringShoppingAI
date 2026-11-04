@@ -6,7 +6,70 @@
 
 **이번 목표:** 변환 성공 후에도 Java 검증이 필요한 이유를 확인합니다.
 
-**코드 읽기 안내:** null은 아직 모르는 값입니다. 사용자가 말하지 않은 예산을 임의로 채우지 않는지 관찰합니다.
+**코드 읽기 안내:** 변환된 객체의 필드가 허용된 값인지 검사하는 코드와, 실패를 HTTP 응답으로 바꾸는 부분을 읽습니다.
+
+## 생략한 조건과 숫자 0 구분하기
+
+이 예제는 사용자가 말하지 않은 필드를 `null`로 받도록 요청합니다. 가격을 정하지 않은 경우와 0원을 지정한 경우는 검색 조건이 다릅니다.
+
+| 사용자 입력 | `maxPrice` | 해석 |
+|---|---|---|
+| “음료를 추천해줘” | `null` | 가격 조건을 정하지 않음 |
+| “0원 이하 음료를 찾아줘” | `0` | 가격 상한을 0원으로 지정함 |
+
+말하지 않은 가격을 0으로 채우면 가격 제한이 없던 요청을 0원 이하로 제한하게 됩니다.
+
+## 변환 뒤 값 검사하기
+
+[SearchCriteria.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 전체 코드입니다.
+
+```java
+package com.example.ailearning.l04structured;
+
+import java.util.Set;
+
+/** null은 사용자가 조건을 말하지 않았다는 뜻이다. 0이나 기본 예산으로 채우지 않는다. */
+public record SearchCriteria(String category, Integer maxPrice) {
+    public void validate() {
+        if (category != null && !Set.of("음료", "생활").contains(category)) {
+            throw new IllegalArgumentException("category는 음료/생활 또는 null이어야 합니다.");
+        }
+        if (maxPrice != null && maxPrice < 0) {
+            throw new IllegalArgumentException("maxPrice는 0 이상 또는 null이어야 합니다.");
+        }
+    }
+}
+```
+
+객체 변환에 성공했더라도 카테고리나 가격이 허용 범위를 벗어날 수 있으므로 `validate()`로 검사합니다.
+다음은 [CriteriaService.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 `extract()` 메서드 발췌입니다.
+
+```java
+    public SearchCriteria extract(String question) {
+        SearchCriteria criteria;
+        try {
+            // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
+            criteria = client.prompt().system(INSTRUCTION).user(question)
+                    .call().entity(SearchCriteria.class);
+        } catch (RuntimeException error) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                    "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
+        }
+        if (criteria == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "모델 응답이 비었습니다.");
+        }
+        try {
+            // Java 객체로 바뀌었어도 업무 규칙은 별도로 검사한다.
+            criteria.validate();
+        } catch (IllegalArgumentException error) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, error.getMessage());
+        }
+        return criteria;
+    }
+```
+
+`try/catch`는 실패를 HTTP 상태로 연결하는 Java/Spring 코드입니다. 모델 호출·형식 변환 문제는 502,
+변환은 됐지만 허용되지 않는 값이면 422로 구분합니다. 이 실습은 형식 오류를 모델에 다시 고치게 하는 재시도나 제공 업체의 별도 구조 강제 설정을 추가하지 않습니다.
 
 ## 실행
 
@@ -43,12 +106,12 @@ curl -i http://127.0.0.1:8094/api/criteria \
 |---|---|
 | “선물 추천해줘” | 명시하지 않은 조건은 null. HTTP JSON에서는 null 필드가 생략될 수 있음 |
 | “0원 이하 음료” | maxPrice=0과 null의 차이 |
-| 모델이 음수 예산/허용되지 않은 카테고리를 반환 | Java 업무 검증으로 422 |
+| 모델이 음수 예산/허용되지 않은 카테고리를 반환 | Java 값 검증으로 422 |
 | 모델이 JSON 대신 설명 문장을 반환 | 형식 변환 실패로 502 |
 | 공백 질문 | Controller에서 400, 모델 호출 없음 |
 
 실제 모델에게 잘못된 JSON을 요청해도 실패를 항상 재현할 수는 없습니다.
-[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 실제 Spring AI와 로컬 모델 API를 연결해 정상·누락·형식 오류·업무 값 오류를 확정적으로 재현합니다.
+[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 실제 Spring AI와 로컬 모델 API를 연결해 정상·누락·형식 오류·허용 범위를 벗어난 값를 확정적으로 재현합니다.
 이는 자연어 이해 성능 평가가 아닙니다. 잘못 추출한 **양수** 예산은 값 검증을 통과할 수 있으므로 사용자 의도와 맞는지도 확인해야 합니다.
 
 ## 확인 질문

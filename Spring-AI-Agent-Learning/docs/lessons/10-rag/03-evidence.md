@@ -8,6 +8,27 @@
 
 **코드 읽기 안내:** 상태 이름을 외우기보다 어떤 조건에서 생성 호출을 하지 않고, 어떤 조건에서 답변을 보류하는지 설명하세요.
 
+## 응답을 채택할지 결정하는 코드
+
+다음은 [RagService.answer()](../../../labs/10-rag/src/main/java/com/example/ailearning/l10rag/RagService.java)에서
+모델 응답을 받은 뒤 실행하는 부분의 발췌입니다. `draft`는 모델 응답 객체이고, `sources`는 이번 질문으로 실제 검색한 문서 목록입니다.
+
+```java
+if (draft != null && Boolean.FALSE.equals(draft.answerable())) {
+    return new Reply("NO_ANSWER", "검색된 근거로는 답할 수 없습니다.", List.of());
+}
+if (draft == null || !Boolean.TRUE.equals(draft.answerable()) || draft.answer() == null || draft.answer().isBlank() || draft.sourceIds() == null
+        || draft.sourceIds().isEmpty()
+        || draft.sourceIds().stream().anyMatch(id -> sources.stream().noneMatch(source -> source.id().equals(id)))) {
+    return new Reply("INVALID_CITATION", "모델 답변의 출처를 확인할 수 없습니다.", List.of());
+}
+List<Source> cited = sources.stream().filter(source -> draft.sourceIds().contains(source.id())).toList();
+return new Reply("ANSWERED", draft.answer(), cited);
+```
+
+모델이 답할 수 없다고 하면 `NO_ANSWER`, 필수 응답이나 실제 검색한 출처 ID가 없으면 `INVALID_CITATION`으로 보류합니다.
+마지막 `cited`에는 실제 검색 결과 중 모델이 선택한 문서만 담습니다.
+
 ## 결과 상태를 구분하기
 
 | 상태 | 의미 |

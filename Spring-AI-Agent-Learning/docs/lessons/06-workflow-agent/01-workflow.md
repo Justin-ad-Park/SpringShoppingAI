@@ -8,24 +8,13 @@
 
 **코드 읽기 안내:** RunState는 제공된 실행 기록 보조 코드입니다. 이번에는 catalog 호출과 filter만 따라가세요.
 
-## 같은 질문, 세 가지 구현
+## Java가 처리할 질문과 가격 조건
 
 요청: “배송비 포함 3만원 이하인 음료 선물을 추천해줘.”
 가상 상품은 05와 같습니다. 허브티 총 15000원, 커피 총 31000원, 텀블러 총 35000원입니다.
 **커피는 상품 가격 28000원이지만 배송비를 더하면 예산을 초과**합니다.
 이번 `GiftCriteria.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
 배송 정책은 국내 기본 배송으로 고정하며 지역/주소는 입력받지 않습니다.
-
-| 항목 | Workflow | Agent | 혼합(hybrid) |
-|---|---|---|---|
-| 다음 행동 결정 | Java가 단계와 분기 지정 | 모델이 도구와 다음 행동 선택 | 단계별로 Java·모델의 역할 분리 |
-| 모델의 역할 | 조건 추출, 확정 후보 설명 | 조회·재조회·종료 여부 판단 | 조건 추출 후 조회 선택 |
-| 최종 후보 필터 | Java가 총액으로 필터 | 모델이 목표를 따르도록 지시 | Java가 조회한 사실을 총액으로 재검증 |
-| 프롬프트 | 각 단계의 작업과 출력 형식 | 목표·제약·사용 가능한 도구·종료 기준 | 목표 + Java 확정 조건 |
-| 도구 노출 | 추출·설명 요청에는 도구 없음 | 모델 요청에 등록 | 모델 요청에 등록, 검색 조건을 Java에 고정 |
-
-Agent 방식의 모델 답변은 틀릴 수 있습니다. 이 실습은 차이를 관찰하기 위해 자유 판단 경로를 함께 제공합니다.
-업무상 예산 준수가 필요하다면 혼합 방식처럼 실행 결과를 코드로 검증합니다.
 
 ## Workflow: 코드가 순서를 보장한다
 
@@ -48,18 +37,7 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 [ComparisonService.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
 
-여기서 `client(run)`은 [ComparisonService의 도우미 메서드](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)입니다.
-앞 단원처럼 Builder를 주입받는 대신, 이번에는 주입받은 `ChatModel`을 호출 기록용 `CountedChatModel`로 감싸 ChatClient를 만듭니다.
-`run.startClient()`는 이 생성 위치를 세므로, 이 실습에서는 그 수가 최상위 호출 수와 같습니다. ChatClient 생성 자체가 모델 요청은 아닙니다.
-
-```java
-private ChatClient client(RunState run) {
-    run.startClient();
-    return ChatClient.create(new CountedChatModel(model, run));
-}
-```
-
-`RunState`와 `CountedChatModel`은 횟수·시간을 확인하는 제공된 보조 코드입니다. 내부 구현은 [06-4](04-limits.md)에서 필요할 때 읽습니다.
+`client(run)`은 호출 기록을 붙인 ChatClient를 준비하는 보조 메서드입니다. [06-4의 보충 설명](04-limits.md#호출-기록용-클라이언트-보충)에서 구현을 확인할 수 있습니다.
 아래에서는 `catalog` 호출과 예산 필터를 중심으로 따라갑니다.
 
 ```java

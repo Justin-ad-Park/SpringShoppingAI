@@ -55,7 +55,7 @@ Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 �
 <details><summary>해설</summary>
 
 요청에는 먼저, 응답에는 나중에 실행됩니다. 수동 저장과 Advisor 저장을 중복 적용하면 같은 턴이 두 번 들어갈 수 있습니다.
-현재 구성은 도구 루프 밖에서 user와 최종 assistant만 저장하므로 가능합니다. 다음 단원에서는 모델 호출 없이 검색용 벡터부터 배웁니다.
+현재 구성은 도구 루프 밖에서 user와 최종 assistant만 저장하므로 가능합니다.
 </details>
 
 보충: [공식 Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html).

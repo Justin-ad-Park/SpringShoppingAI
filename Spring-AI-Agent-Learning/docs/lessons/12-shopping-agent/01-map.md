@@ -74,7 +74,7 @@ flowchart TD
 ## 3. 코드 읽는 순서
 
 실행 모듈: [12-shopping-agent](../../../labs/12-shopping-agent/README.md).
-패키지: `com.example.ailearning.l12shopping`. 다른 단원이나 기존 쇼핑 서비스의 코드를 import하지 않습니다.
+패키지: `com.example.ailearning.l12shopping`.
 
 1. [ProductCatalog](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/ProductCatalog.java): 05와 같은 상품·배송비 규칙.
 2. [PolicySearch](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/PolicySearch.java)와 같은 폴더의 `PolicyLoader`, `Source`: 09~10의 문서 적재·검색.

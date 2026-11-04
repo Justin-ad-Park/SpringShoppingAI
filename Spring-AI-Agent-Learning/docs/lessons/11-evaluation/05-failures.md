@@ -68,14 +68,20 @@ curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
 
 실제 실행은 시작 시 문서 임베딩, 평가 시 질문 임베딩과 답변 생성 비용이 발생할 수 있습니다.
 /run 한 번은 여러 외부 요청을 만들며, 자동으로 주기 실행하지 않습니다. 종료는 Ctrl+C입니다.
-실습 전후 보고서를 각각 저장하려면 curl 출력에 `> /tmp/learning11-before.json` 등을 사용하세요.
 
-## 바꿔서 비교하기
+## 로컬 서버로 실패와 요청 횟수 확인하기
 
-1. 같은 질문 세트를 여러 번 실행해 문장 차이와 지연 변동을 기록합니다.
-2. “7일”을 “7 일”로 답했을 때 단순 문구 평가의 한계를 설명합니다.
-3. 질문에 “반품 담당자의 이름”을 추가하고 정책에 없는 정보의 보류 여부를 확인합니다.
-4. threshold나 프롬프트 한 항목만 바꾸고 사례별 결과를 비교합니다. 비율만 보고 어떤 문제가 바뀌었는지 놓치지 않습니다.
+외부 API에서 실제 429를 발생시키는 대신 위 로컬 테스트를 실행하고 다음 메서드의 검증문을 읽습니다.
+고정 서버의 응답과 요청 기록으로 실패를 반복해서 확인할 수 있습니다.
+
+| 테스트 메서드 | 확인할 것 |
+|---|---|
+| `rateLimitIsFailureNotSuccessfulFallbackAndSdkDoesNotRetry` | 429가 `RATE_LIMIT`으로 기록되고, 평가 전체 채팅 요청이 2회(각 생성 질문당 1회)이며 추가 재시도가 없는지 |
+| `slowModelIsRecordedAsTimeoutWithoutAutomaticRetry` | 느린 응답이 `TIMEOUT`으로 기록되고 자동 재시도가 없는지 |
+| `malformedOutputIsRecordedAsFailureWithoutLeakingExceptionMessage` | 형식 오류가 실패로 기록되고 내부 예외 원문이 API 결과에 노출되지 않는지 |
+
+먼저 원래 설정으로 테스트를 실행합니다. 그다음 테스트의 타임아웃 설정 위치와 요청 횟수 검증문을 찾아
+대기 시간과 재시도가 서로 다른 설정임을 설명해 보세요. 실제 서버의 정상 지연과 로컬 테스트의 인위적인 지연도 구분합니다.
 
 [EvaluationContractTest](../../../labs/11-evaluation/src/test/java/com/example/ailearning/l11evaluation/EvaluationContractTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.
 usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니다. 실제 비용이나 품질로 표시하지 않습니다.
@@ -83,14 +89,15 @@ usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니�
 
 ## 확인 질문
 
-1. 통과율이 올랐는데 평가 질문을 바꿨다면 공정한 비교일까요?
-2. 토큰 사용량을 읽으려고 모델을 다시 호출해야 할까요?
-3. 답변에 출처가 있지만 “30일”이라고 틀리게 말하면 어떤 검증이 추가로 필요한가요?
+1. 429 응답은 어떤 실패 종류로 기록되며, SDK가 다시 요청했는지는 무엇으로 확인하나요?
+2. 타임아웃과 재시도 횟수는 각각 무엇을 제한하나요?
+3. HTTP 200과 `actual.reply.status=FAILED`가 함께 올 수 있는 이유는 무엇인가요?
 
 <details><summary>해설</summary>
 
-같은 고정 세트가 기준이어야 합니다. 같은 응답의 ChatResponse metadata를 읽습니다.
-출처 ID 검사만으로 부족하므로 기대 값·원문 대조와 더 다양한 질문 평가가 필요합니다. 실패와 품질 저하를 구분하면 완료입니다.
+429는 `RATE_LIMIT`으로 기록합니다. 재시도 여부는 로컬 서버가 받은 실제 요청 수로 확인합니다.
+타임아웃은 요청의 대기 시간, 재시도 횟수는 실패 후 추가 시도 수를 제한합니다.
+평가 API는 여러 사례의 결과를 정상적으로 반환하되, 개별 모델 요청 실패는 본문의 `FAILED`로 표현합니다.
 </details>
 
 보충: [공식 Evaluation](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).

@@ -73,3 +73,4 @@
 - [초기 적용 기록](reports/2026-11-03-initial-application.md)
 - [03~12장 검토 피드백](reports/2026-11-04-lessons-review-feedback.md)
 - [구성 개선과 평가 준비 기록](reports/2026-11-04-harness-operation-review.md)
+- [학습 목표와 설명 배치 개선 기록](reports/2026-11-04-lesson-focus.md)

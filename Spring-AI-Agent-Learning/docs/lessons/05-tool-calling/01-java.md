@@ -15,14 +15,11 @@
 모델은 도구 이름과 인자를 응답하고, Spring AI가 Java 메서드를 실행한 뒤 결과를 모델에 다시 보냅니다.
 
 **도구(tool)**는 애플리케이션이 허용한 실행 가능한 기능입니다.
-`@Tool`은 메서드를 도구로 설명하고, `@ToolParam`은 인자의 설명이나 생략 가능 여부를 정합니다.
-어노테이션을 붙였다고 모든 모델 호출에서 자동으로 노출되지는 않습니다. 이번 요청의 `.tools(tools)`에 명시적으로 등록합니다.
 
 ## 먼저 일반 Java 서비스를 읽기
 
-가상 데이터와 배송 정책은 이 단원 폴더 안에 있습니다. 다른 실습을 import하지 않습니다.
+가상 상품 데이터와 배송 정책을 사용하는 Java 서비스부터 읽습니다.
 상품 한 개씩 비교하며, 국내 기본 배송비는 상품 가격 3만원 이상이면 0원, 미만이면 3000원입니다.
-장바구니 합산·지역별 배송비·실제 주문은 구현 범위가 아닙니다.
 
 | ID | 상품 | 카테고리 | 상품 가격 | 배송비 포함 총액 |
 |---|---|---|---:|---:|
@@ -33,21 +30,16 @@
 ```mermaid
 classDiagram
     class ToolController
-    class ToolChatService {
-        +ask(question) String
-    }
-    class ShoppingTools {
-        +searchProducts(category, maxPrice) List
-        +calculateShipping(productId) Offer
-    }
     class ProductCatalog {
         +search(category, maxPrice) List
         +quote(productId) Offer
     }
+    class Product
+    class Offer
     ToolController --> ProductCatalog : 직접 호출 경로
-    ToolController --> ToolChatService : 모델 요청 경로
-    ToolChatService --> ShoppingTools : tools로 등록
-    ShoppingTools --> ProductCatalog : 실제 Java 실행
+    ProductCatalog --> Product : 상품 조회
+    ProductCatalog --> Offer : 배송비 포함 총액 반환
+    Offer --> Product : 상품 정보 포함
 ```
 
 [ProductCatalog.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 전체 코드입니다.

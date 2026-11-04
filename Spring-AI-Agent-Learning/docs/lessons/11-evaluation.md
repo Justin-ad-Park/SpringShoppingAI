@@ -6,14 +6,12 @@
 
 | 순서 | 소수업 | 실행 모듈 | 완료 기준 |
 |---|---|---|---|
-| 1 | [고정 사례로 기준 세우기](11-evaluation/01-cases.md) | `11-evaluation` | 기대 값·출처 비교와 코드 계약 테스트 구분 |
+| 1 | [고정 사례로 기준 세우기](11-evaluation/01-cases.md) | `11-evaluation` | 고정 질문·기대 결과와 실제 답변 비교 |
 | 2 | [Evaluator로 모델 응답 평가](11-evaluation/02-model-judge.md) | `11-model-evaluation` | 규칙 검사와 평가 모델의 판정 구분 |
-| 3 | [같은 응답에서 사용량 읽기](11-evaluation/03-usage.md) | `11-evaluation` | 추가 호출 없이 usage 읽기 |
+| 3 | [같은 응답에서 사용량 읽기](11-evaluation/03-usage.md) | `11-evaluation` | 응답에서 입력·출력 토큰 사용량 읽기 |
 | 4 | [Actuator로 기본 메트릭 조회](11-evaluation/04-actuator.md) | `11-observability` | 호출 횟수·시간·토큰 지표 관찰 |
 | 5 | [실패·지연·재시도 관찰](11-evaluation/05-failures.md) | `11-evaluation` | 잘못된 답변과 요청 실패 구분 |
 
-각 모듈은 Controller·Service·설정·테스트를 갖춘 독립 애플리케이션입니다.
-같은 구현을 여러 소수업에서 다시 읽는 경우에도 다른 모듈을 실행하거나 import하지 않습니다.
 실행 명령과 실제 모델/로컬 테스트 구분은 각 수업과 모듈 README에 있습니다.
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)

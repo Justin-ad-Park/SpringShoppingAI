@@ -4,102 +4,67 @@
 
 30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
-**이번 목표:** content()와 entity()가 반환하는 값을 비교합니다.
+**이번 목표:** 문자열 응답과 객체 응답의 반환 타입과 사용 방법을 비교합니다.
 
-**코드 읽기 안내:** 먼저 SearchCriteria의 필드, 다음 Service의 변환 호출을 읽으세요. Controller와 오류 응답의 세부 구현은 그 뒤에 읽습니다.
+**코드 읽기 안내:** 먼저 결과 객체의 필드를 읽고, 문자열로 받을 때와 객체로 받을 때의 호출을 비교합니다.
 
 ## 코드 읽는 순서
 
 모듈: `labs/04-structured-output`, 패키지: `com.example.ailearning.l04structured`.
 아래 파일은 교육 폴더 기준이며 실제 파일을 그대로 읽을 수 있습니다.
 
-1. [SearchCriteria.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java): 결과 형태와 값 검증
+1. [SearchCriteria.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java): 결과 필드. 검증 메서드는 다음 소수업에서 읽습니다.
 2. [CriteriaService.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java): 모델 요청과 변환
 3. [CriteriaController.java](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java): HTTP 입력 연결
 4. [application.yml](../../../labs/04-structured-output/src/main/resources/application.yml), [build.gradle](../../../labs/04-structured-output/build.gradle): 루트 `.env`의 키·모델을 사용하는 방식은 첫 호출 실습과 같습니다. 포트는 8094, 채팅 타임아웃은 15초입니다(첫 호출은 30초).
 
-### 결과를 담는 record 전체 코드
+### 결과 객체의 필드
+
+다음은 `SearchCriteria`의 **필드 구성을 보여 주는 구조 예시**입니다. 실제 파일에는 다음 소수업에서 읽을 `validate()`도 있습니다.
 
 ```java
-package com.example.ailearning.l04structured;
+public record SearchCriteria(String category, Integer maxPrice) {}
+```
 
-import java.util.Set;
+| 필드 | 이 예제에서 담는 값 |
+|---|---|
+| `category` | 사용자가 말한 상품 카테고리 |
+| `maxPrice` | 사용자가 말한 상품 한 개의 가격 상한(원) |
 
-/** null은 사용자가 조건을 말하지 않았다는 뜻이다. 0이나 기본 예산으로 채우지 않는다. */
-public record SearchCriteria(String category, Integer maxPrice) {
-    public void validate() {
-        if (category != null && !Set.of("음료", "생활").contains(category)) {
-            throw new IllegalArgumentException("category는 음료/생활 또는 null이어야 합니다.");
-        }
-        if (maxPrice != null && maxPrice < 0) {
-            throw new IllegalArgumentException("maxPrice는 0 이상 또는 null이어야 합니다.");
-        }
-    }
+### 문자열로 받기와 객체로 받기
+
+아래 두 코드는 `CriteriaService.java`에서 발췌했습니다. `client`는 생성자에서 Builder로 준비한 ChatClient이고,
+`INSTRUCTION`은 카테고리와 가격 상한을 추출하라는 system 지시입니다. 전체 선언은 위 소스 링크에서 확인합니다.
+
+문자열로 받는 `text()`:
+
+```java
+public String text(String question) {
+    return client.prompt().system(INSTRUCTION).user(question).call().content();
 }
 ```
 
-`validate()`는 객체를 만든 뒤 서비스에서 호출합니다. 검증을 모델 프롬프트에만 맡기지 않습니다.
-
-### 호출을 담당하는 서비스 전체 코드
+객체로 받는 `extract()` 안의 변환 부분:
 
 ```java
-package com.example.ailearning.l04structured;
-
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-@Service
-public class CriteriaService {
-    static final String INSTRUCTION = """
-            사용자 요청에서 상품 카테고리(category)와 상품 가격 상한(maxPrice)을 추출하세요.
-            category는 음료/생활 중 사용자가 명시한 것만 쓰세요.
-            가격은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
-            배송비는 계산하지 마세요. 실제 상품을 검색하는 작업도 하지 않습니다.
-            """;
-    private final ChatClient client;
-
-    public CriteriaService(ChatClient.Builder builder) {
-        client = builder.build();
-    }
-
-    public String text(String question) {
-        return client.prompt().system(INSTRUCTION).user(question).call().content();
-    }
-
-    public SearchCriteria extract(String question) {
-        SearchCriteria criteria;
-        try {
-            // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
-            criteria = client.prompt().system(INSTRUCTION).user(question)
-                    .call().entity(SearchCriteria.class);
-        } catch (RuntimeException error) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                    "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
-        }
-        if (criteria == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "모델 응답이 비었습니다.");
-        }
-        try {
-            // Java 객체로 바뀌었어도 업무 규칙은 별도로 검사한다.
-            criteria.validate();
-        } catch (IllegalArgumentException error) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, error.getMessage());
-        }
-        return criteria;
-    }
-}
+criteria = client.prompt().system(INSTRUCTION).user(question)
+        .call().entity(SearchCriteria.class);
 ```
 
-`.content()`는 문자열을 반환하고, `.entity(SearchCriteria.class)`는 형식 지시·파싱·타입 변환을 수행합니다.
-두 경로는 모델에 전달되는 형식 지시가 다릅니다. 이 실습은 제공 업체 API가 출력 구조를 강제하는 별도 설정이나, 잘못된 형식을 모델에 다시 고치게 하는 재시도는 추가하지 않습니다.
-502는 모델 연결/형식 변환 문제, 422는 파싱은 됐지만 업무 값이 허용되지 않는 경우로 나눴습니다.
-`try/catch`는 실패를 HTTP 상태로 연결하기 위한 일반 Java/Spring 코드입니다.
+`.content()`는 문자열을 반환하고, `.entity(SearchCriteria.class)`는 응답 형식 지시를 추가하고 결과를 지정한 타입으로 변환합니다.
+두 경로는 모델에 전달되는 형식 지시가 다릅니다.
 
+객체를 받은 뒤 필드를 읽는 **사용 예시**입니다. `criteria`는 변환에 성공해 받은 객체라고 가정합니다.
+
+```java
+String category = criteria.category();
+Integer maxPrice = criteria.maxPrice();
+```
+
+문장을 직접 잘라 값을 찾는 대신 접근자로 각 값을 읽습니다. 변환 실패와 허용되지 않는 값 처리는 [다음 소수업](03-validate.md)에서 실제 코드와 함께 확인합니다.
 
 ## 여기서 멈춰 확인하기
 
-`entity()`가 만든 객체를 `validate()`로 다시 검사하는 위치를 찾아보세요.
+문자열로 받은 응답과 객체로 받은 응답은 각각 어떤 타입이며, 객체의 가격 필드는 어떻게 읽나요?
 
 [이전](01-format.md) · [다음](03-validate.md) · [단원 목차](../04-structured-output.md) · [학습 방법](../../learning-guide.md)

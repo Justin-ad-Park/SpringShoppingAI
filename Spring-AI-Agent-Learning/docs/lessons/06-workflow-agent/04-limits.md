@@ -25,18 +25,32 @@ Thread/Future의 상세 학습을 Spring AI 입문의 선수 지식으로 요구
 상한을 넘기면 HTTP 통신 자체는 200이고 본문의 status가 TOOL_LIMIT/MODEL_LIMIT/TIMEOUT입니다. COMPLETED와 구분하세요.
 빈 질문은 Controller에서 400입니다. 이 실습에는 이전 대화 기억이 없으며 요청마다 기록과 한도가 초기화됩니다.
 
+## 호출 기록용 클라이언트 (보충)
+
+여기서 `client(run)`은 [ComparisonService의 도우미 메서드](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)입니다.
+앞 단원처럼 Builder를 주입받는 대신, 이번에는 주입받은 `ChatModel`을 호출 기록용 `CountedChatModel`로 감싸 ChatClient를 만듭니다.
+`run.startClient()`는 이 생성 위치를 세므로, 이 실습에서는 그 수가 최상위 호출 수와 같습니다. ChatClient 생성 자체가 모델 요청은 아닙니다.
+
+```java
+private ChatClient client(RunState run) {
+    run.startClient();
+    return ChatClient.create(new CountedChatModel(model, run));
+}
+```
+
+`RunState`와 `CountedChatModel`은 횟수·시간을 확인하는 제공된 보조 코드입니다. 필요할 때 위 소스 링크를 따라 읽습니다.
+
 ## 확인 질문
 
-1. Workflow가 조건 추출에 모델을 썼다면 전체가 자율 Agent일까요?
-2. Agent 프롬프트에 순서를 적으면 코드가 그 순서를 강제한 것과 같을까요?
-3. 최상위 호출 1회인데 modelCalls가 4인 이유는 무엇인가요?
-4. 예산 준수·가격 계산·도구 실행 상한을 코드로 확인해야 하는 이유는 무엇인가요?
+1. 모델 요청 상한과 도구 실행 상한은 각각 어떤 보조 코드가 검사하나요?
+2. 응답 본문의 `TIMEOUT`은 외부 모델의 과금 중단까지 보장하나요?
+3. HTTP 200 응답에서 실행 상한으로 중단된 것을 어떻게 구분하나요?
 
 <details><summary>해설</summary>
 
-다음 행동을 Java의 미리 정한 경로가 선택하면 Workflow입니다. 프롬프트는 행동 지시이고 코드의 순서 보장과 다릅니다.
-도구 결과를 받은 모델이 다시 판단하므로 여러 모델 요청이 발생합니다. 정확한 계산·실행 제한은 모델 문장의 준수 여부와 별도로 강제해야 합니다.
-호출 기록에서 각 판단 주체를 찾고 같은 요구에 맞는 방식을 선택하면 완료입니다.
+`CountedChatModel`이 모델 호출을 기록하고 `RunState`가 모델·도구의 다음 실행 전 한도를 검사합니다.
+시간을 초과하면 작업 취소를 요청하지만 제공 업체의 계산·과금 중단까지 보장하지 않습니다.
+HTTP 상태와 별개로 본문의 `MODEL_LIMIT`, `TOOL_LIMIT`, `TIMEOUT`을 확인합니다.
 </details>
 
 보충: [공식 Agent 패턴](https://docs.spring.io/spring-ai/reference/api/effective-agents.html), [Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html).

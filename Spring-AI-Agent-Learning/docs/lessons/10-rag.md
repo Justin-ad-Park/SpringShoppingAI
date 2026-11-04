@@ -12,8 +12,6 @@
 | 4 | [표준 Reader·Splitter로 적재](10-rag/04-standard-indexing.md) | `10-rag-advisor` | 읽기·분할·저장 역할 대응 |
 | 5 | [QuestionAnswerAdvisor로 연결](10-rag/05-standard-advisor.md) | `10-rag-advisor` | 문맥 전달 자동화와 업무 검증 구분 |
 
-두 실행 모듈은 각각 시작 클래스·Controller·Service·설정·테스트를 포함합니다.
-동일한 구현을 단계별로 설명하는 수업끼리는 모듈을 공유합니다. 설명용 코드 조각만 제공하는 수업이 아닙니다.
 01~03의 직접 구성 실습은 약 2시간, 표준 API 연결 실습은 약 1시간으로 나눠 학습합니다.
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)

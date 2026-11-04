@@ -10,6 +10,9 @@
 
 ## 같은 기능에 도구 설명 붙이기
 
+`@Tool`은 메서드를 도구로 설명하고, `@ToolParam`은 인자의 설명이나 생략 가능 여부를 정합니다.
+어노테이션을 붙였다고 모든 모델 호출에서 자동으로 노출되지는 않습니다. 이번 요청의 `.tools(tools)`에 명시적으로 등록합니다.
+
 [ShoppingTools.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 전체 코드입니다.
 
 ```java
