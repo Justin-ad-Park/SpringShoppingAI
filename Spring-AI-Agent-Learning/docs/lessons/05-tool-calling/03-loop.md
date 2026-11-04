@@ -2,9 +2,9 @@
 
 **실행 코드·설정·테스트:** [labs/05-tool-calling](../../../labs/05-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
-**이번 목표:** 한 번의 call() 안에 여러 모델 요청이 생기는 이유를 설명합니다.
+**이번 목표:** 한 번의 `.call().content()` 실행에서 여러 모델 요청이 생기는 이유를 설명합니다.
 
 **코드 읽기 안내:** 도구 등록은 호출 강제가 아닙니다. 모델이 바로 답한 실행과 도구를 요청한 실행을 비교합니다.
 
@@ -38,7 +38,7 @@ Spring AI 2.0의 도구 루프가 이 반복을 처리합니다. 지금은 사�
 폴더 `labs/05-tool-calling`, 패키지 `com.example.ailearning.l05tools`를 열어보세요.
 Product → Offer → ProductCatalog → ShoppingTools → ToolChatService → [ToolController](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolController.java) 순서입니다.
 
-명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 환경 변수](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
+명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test
@@ -70,9 +70,15 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 | 바꿀 것 | 관찰할 것 |
 |---|---|
 | 질문을 “안녕”으로 변경 | 도구 없이 답할 수 있음 |
-| 상품 가격만 질문 → 배송비도 질문 | 선택하는 도구와 모델 왕복 수 차이 |
+| 상품 가격만 질문 → 배송비도 질문 | 답변에서 상품 가격과 배송비가 구분되는지 확인. 실제 호출 기록 확인 방법은 아래 안내 참고 |
 | 서비스에서 `.tools(tools)` 줄 제거 | 프롬프트에 조회 지시가 있어도 실제 Java 도구는 실행할 수 없음 |
 | Java 배송비 기준 변경 | 모델 프롬프트 수정 없이 계산 결과가 달라짐. 실험 후 원복 |
+
+현재 `/api/tools/chat`은 답변 문자열만 반환합니다. 답변만 보고 도구 선택이나 모델 요청 횟수를 확정할 수는 없습니다.
+로컬 테스트의 `modelRequestsToolApplicationExecutesAndSendsResultBack`에서 `MODEL.requests`가 2개인지, 두 번째 요청에 도구 결과가 담겼는지 확인하세요.
+`greetingCanFinishWithoutToolCall`은 요청 1개를 확인합니다. 이는 고정 응답으로 만든 두 흐름의 비교이며 실제 모델의 선택을 측정한 값이 아닙니다.
+실제 모델의 도구 이름·결과·호출 횟수를 응답에서 비교하는 실습은 [06-3](../06-workflow-agent/03-hybrid.md#실행과-관찰)에서 진행합니다.
+코드를 바꾸는 실험은 서버를 종료한 뒤 다시 시작하고, 실험 후 원복한 코드로도 재시작합니다.
 
 [ToolCallingContractTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingContractTest.java)는 직접 호출 시 모델 요청 0회, 도구 선택 시 결과 재전달, 배송비 근거, 도구 없는 답변과 검증을 확인합니다.
 외부 API만 고정 서버로 바꾸고 실제 Spring AI가 콜백을 실행합니다.
@@ -96,7 +102,6 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+검색 도구를 한 번 사용한 그림에서 외부 모델 요청이 두 번 필요한 이유를 설명해 보세요.
 
 [이전](02-tools.md) · [다음](../05-tool-calling.md) · [단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

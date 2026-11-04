@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/08-advisors](../../../labs/08-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 로그의 반복과 중복 저장 여부를 관찰합니다.
 
@@ -12,7 +12,7 @@
 
 파일 읽기: TraceAdvisor → AdvisorChatService → [PriceTools](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/PriceTools.java) → [AdvisorController](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorController.java).
 PriceTools는 05에서 배운 @Tool 방식으로 가상 허브티 가격 12000원을 조회하는 작은 도구입니다.
-명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 환경 변수](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
+명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test
@@ -43,7 +43,7 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 - `.defaultAdvisors(...)`를 빼면 이전 대화가 자동으로 전달되지 않습니다.
 - `memory.add()`를 중복 추가하지 않고 저장 메시지 수를 확인합니다.
 
-[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)는 순서, 메모리 재전달/중복 방지, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
+[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
 Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 장기 저장하는 것은 아닙니다.
 
 ## 확인 질문
@@ -63,7 +63,6 @@ Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 �
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+도구를 한 번 호출했을 때 A와 B의 기록 횟수가 다른 이유를 응답의 `steps`로 설명해 보세요.
 
 [이전](02-memory-loop.md) · [다음](../08-advisors.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)

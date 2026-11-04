@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 조건 추출 뒤의 검색·배송비 순서가 Java 코드임을 찾습니다.
 
@@ -48,6 +48,20 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 [ComparisonService.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
 
+여기서 `client(run)`은 [ComparisonService의 도우미 메서드](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)입니다.
+앞 단원처럼 Builder를 주입받는 대신, 이번에는 주입받은 `ChatModel`을 호출 기록용 `CountedChatModel`로 감싸 ChatClient를 만듭니다.
+`run.startClient()`는 이 생성 위치를 세므로, 이 실습에서는 그 수가 최상위 호출 수와 같습니다. ChatClient 생성 자체가 모델 요청은 아닙니다.
+
+```java
+private ChatClient client(RunState run) {
+    run.startClient();
+    return ChatClient.create(new CountedChatModel(model, run));
+}
+```
+
+`RunState`와 `CountedChatModel`은 횟수·시간을 확인하는 제공된 보조 코드입니다. 내부 구현은 [06-4](04-limits.md)에서 필요할 때 읽습니다.
+아래에서는 `catalog` 호출과 예산 필터를 중심으로 따라갑니다.
+
 ```java
 private GiftCriteria extract(String question, RunState run) {
         GiftCriteria criteria = client(run).prompt().system(EXTRACT).user(question)
@@ -83,7 +97,6 @@ private Draft workflow(String question, RunState run) {
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+조건 추출 뒤 검색·배송비 계산·예산 필터의 순서를 정하는 Java 코드를 찾아보세요.
 
 [이전](../06-workflow-agent.md) · [다음](02-agent.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

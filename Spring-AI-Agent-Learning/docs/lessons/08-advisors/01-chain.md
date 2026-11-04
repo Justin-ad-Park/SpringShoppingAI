@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/08-advisors](../../../labs/08-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** A before → B before → B after → A after를 설명합니다.
 
@@ -20,6 +20,24 @@
 - `MessageChatMemoryAdvisor`: 07에서 직접 연결한 메모리 작업을 제공하는 기본 구현입니다.
 
 ## 먼저 A와 B의 순서만 관찰하기
+
+Advisor 클래스를 작성하는 것만으로는 호출에 참여하지 않습니다. 요청에 `.advisors(...)`로 등록해야 합니다.
+다음은 등록 원리를 보여주는 부분 예제입니다. `client`는 앞 단원처럼 만든 ChatClient이고, `TraceAdvisor` 전체 코드는 아래에 있습니다.
+메모리와 도구는 등록하지 않아 A·B의 순서에만 집중할 수 있습니다.
+
+```java
+var steps = new java.util.ArrayList<String>();
+String answer = client.prompt().user("안녕하세요.")
+        .advisors(new TraceAdvisor("A", 0, steps),
+                new TraceAdvisor("B", 10, steps))
+        .call().content();
+System.out.println(steps); // [A:before, B:before, B:after, A:after]
+```
+
+실행 모듈의 등록 위치는 [AdvisorChatService.chat()](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)입니다.
+그 코드에는 다음 수업에서 설명할 메모리와 도구 루프 기준 순서도 포함되어 있습니다.
+먼저 위 등록 원리와 아래 `adviseCall()`의 앞뒤 처리를 연결하세요.
+도구 없는 실제 API 실행 명령은 [08-3](03-observe.md#실행)에 있고, 같은 순서는 `advisorsUnwindInReverseOrder` 로컬 테스트로도 확인합니다.
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +87,6 @@ public record TraceAdvisor(String name, int order, List<String> steps) implement
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+A·B 등록 코드와 `chain.nextCall()`을 연결해 before·after의 순서를 설명해 보세요.
 
 [이전](../08-advisors.md) · [다음](02-memory-loop.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)

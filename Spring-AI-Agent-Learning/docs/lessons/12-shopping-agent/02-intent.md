@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/12-shopping-agent](../../../labs/12-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 바깥 순서는 Java, 안쪽 도구 선택은 모델이라는 구조를 설명합니다.
 
@@ -10,7 +10,7 @@
 
 ## 3.1 바깥 순서와 안쪽 모델 판단
 
-다음은 실제 `CounselService.execute()` 전체입니다. import와 나머지 클래스 코드는 위 소스 링크에서 확인합니다.
+다음은 실제 `CounselService.execute()` 전체입니다. import와 나머지 클래스 코드는 [CounselService.java](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/CounselService.java)에서 확인합니다.
 
 ```java
     private Draft execute(String question, List<Message> previous, RunState run) {
@@ -53,7 +53,6 @@
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+정책 질문일 때 상품 도구를 제공하지 않는 분기를 찾아보세요.
 
 [이전](01-map.md) · [다음](03-verify.md) · [단원 목차](../12-shopping-agent.md) · [학습 방법](../../learning-guide.md)

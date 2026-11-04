@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/11-evaluation](../../../labs/11-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 답변과 usage를 받기 위해 두 번 호출할 필요가 없음을 확인합니다.
 
@@ -22,15 +22,41 @@ DraftAnswer draft = response.entity();
 var usage = response.response().getMetadata().getUsage();
 ```
 
-위 코드는 새 API를 설명하기 위한 부분 예제입니다. `questionAndContext`를 만드는 실제 실행 코드는 RagService에 있습니다.
+위 코드는 새 API를 설명하기 위한 부분 예제입니다. 질문과 근거를 조립하는 실제 실행 코드는 [RagService.answerInternal()](../../../labs/11-evaluation/src/main/java/com/example/ailearning/l11evaluation/RagService.java)에 있습니다. 실제 소스는 `questionAndContext` 변수 대신 문자열을 직접 조립합니다.
 토큰을 읽으려고 모델을 두 번 호출하지 않습니다.
-usage가 없거나 파싱 전에 실패하면 토큰은 null이며, JSON 설정에 따라 필드가 생략될 수 있습니다. 0으로 채워 실제 사용량이 없었다고 표시하지 않습니다.
-`elapsedMs`에는 검색과 생성 전체 시간이 포함되지만 토큰 필드는 **채팅 응답에서 보고된 값만** 포함됩니다.
+
+### 사용량을 응답 필드로 옮기기
+
+같은 메서드에서 사용량을 아래처럼 옮깁니다. 실제 코드의 `Stats`에는 `Integer input, output` 필드가 있고 초기값은 null입니다.
+
+```java
+if (usage != null && usage.getTotalTokens() > 0) {
+    stats.input = usage.getPromptTokens();
+    stats.output = usage.getCompletionTokens();
+}
+```
+
+이 예제는 보고된 전체 토큰이 양수일 때만 값을 채웁니다. usage가 없거나 응답 변환 전에 실패하면 null을 유지하며, JSON 설정에 따라 필드가 생략될 수 있습니다.
+null은 사용량을 확인하지 못했다는 뜻이며 0회 사용으로 바꾸지 않습니다. 토큰 필드는 채팅 응답에서 보고된 값만 담습니다.
+
+### 검색과 생성을 합친 시간은 별도로 측정하기
+
+다음은 같은 클래스의 시간 측정 위치를 보여주는 발췌입니다. 성공 결과를 만드는 경로만 표시했고 예외 처리는 [11-5](05-failures.md)에서 읽습니다.
+
+```java
+long started = System.nanoTime();
+var stats = new Stats();
+Reply reply = answerInternal(question, stats); // 질문 임베딩·검색, 필요하면 채팅 생성
+return new Run(reply, metrics(started, stats, null));
+```
+
+`metrics()`는 `(System.nanoTime() - started) / 1_000_000`을 `elapsedMs`로 반환합니다.
+따라서 `elapsedMs`는 검색과 생성 전체 시간이고, 입력·출력 토큰은 그중 채팅 응답의 사용량입니다.
+실제 응답은 [11-5 실행 명령](05-failures.md#실행)의 `/api/evaluation/ask`를 호출해 `metrics` 필드에서 확인합니다.
 
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+사용량을 읽는 코드와 경과 시간을 계산하는 코드가 각각 어떤 범위를 측정하는지 설명해 보세요.
 
 [이전](02-model-judge.md) · [다음](04-actuator.md) · [단원 목차](../11-evaluation.md) · [학습 방법](../../learning-guide.md)

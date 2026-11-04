@@ -25,6 +25,7 @@ class AdvisorContractTest {
     }
     @BeforeEach void reset() {
         MODEL.requests.clear();
+        MODEL.statusCode = 200;
         MODEL.responder = request -> LocalModelServer.message("고정 응답");
     }
     @AfterAll static void stop() { MODEL.close(); }
@@ -43,6 +44,21 @@ class AdvisorContractTest {
             assertThat(json(response).path("storedMessages").asInt()).isEqualTo(4);
             assertThat(MODEL.requests.get(1).path("messages").toString()).contains("예산은 3만원");
             assertThat(MODEL.requests.get(1).path("messages").size()).isEqualTo(4);
+        }
+    }
+    @Test void failedModelCallLeavesUserMessageInMemory() throws Exception {
+        try (var browser = browser()) {
+            MODEL.statusCode = 503;
+            var failed = post(browser, "/api/advisors/demo", "실패한 요청의 예산은 3만원");
+            assertThat(failed.statusCode()).isEqualTo(500);
+
+            MODEL.statusCode = 200;
+            var next = post(browser, "/api/advisors/demo", "이전 질문이 남아 있나요?");
+            assertThat(next.statusCode()).isEqualTo(200);
+            var messages = MODEL.requests.get(1).path("messages");
+            assertThat(messages.toString()).contains("실패한 요청의 예산은 3만원", "이전 질문이 남아 있나요?");
+            // 실패한 user + 다음 user/assistant. 실패한 호출의 assistant는 없다.
+            assertThat(json(next).path("storedMessages").asInt()).isEqualTo(3);
         }
     }
     @Test void insideTraceSeesEachToolIterationOutsideTraceSeesWholeTurn() throws Exception {

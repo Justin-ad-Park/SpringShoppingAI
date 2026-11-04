@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/08-advisors](../../../labs/08-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 앞에서 직접 만든 문맥 전달을 Advisor와 연결합니다.
 
@@ -60,7 +60,7 @@ A는 자동 ToolCallingAdvisor보다 앞에, B는 뒤에 둡니다. 그래서 A�
 
 ```mermaid
 flowchart TD
-    M[기본 Memory Advisor: 이전 대화 읽기] --> A[A before: 전체 요청 시작]
+    M[기본 Memory Advisor: 이전 대화 읽기와 현재 user 저장] --> A[A before: 전체 요청 시작]
     A --> T[ToolCallingAdvisor: 루프 관리]
     T --> B[B before]
     B --> C[외부 모델 요청]
@@ -69,8 +69,19 @@ flowchart TD
     Q -->|있음| X[Java: 허용된 도구 실행]
     X --> T
     Q -->|없음| R[A after: 최종 응답]
-    R --> S[기본 Memory Advisor: 최종 대화 저장]
+    R --> S[기본 Memory Advisor: 최종 assistant 저장]
 ```
+
+### 07장과 저장 시점이 다릅니다
+
+| 구현 | 호출 전 | 정상 응답 후 | 모델 호출이 실패하면 |
+|---|---|---|---|
+| 07장의 직접 저장 | 이전 메시지 조회, 새 프롬프트 구성 | user·assistant를 함께 저장 | 이번 질문·답변을 저장하지 않음 |
+| 이번 기본 메모리 Advisor | 이전 메시지 조회, 현재 user 저장 | 최종 assistant 저장 | 현재 user가 이미 저장되어 남을 수 있음 |
+
+따라서 07장의 코드를 Advisor로 바꾸면 성공한 대화의 재전달은 간단해지지만, 실패 시 저장 정책까지 같아지는 것은 아닙니다.
+[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)의 `failedModelCallLeavesUserMessageInMemory`가 실패 뒤 다음 요청의 메시지를 확인합니다.
+성공한 대화만 저장해야 하는 요구라면 07장 또는 12장처럼 저장 시점을 직접 제어할 수 있습니다.
 
 기본 메모리 Advisor는 도구 루프 밖에 있습니다. 이 구성은 user와 최종 assistant만 저장하며 tool 메시지는 저장하지 않습니다.
 도구 결과는 같은 요청 안의 반복에는 전달됩니다. “이번 요청에서 사용”과 “다음 대화에도 저장”을 구분하세요.
@@ -79,7 +90,6 @@ flowchart TD
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+기본 메모리 Advisor가 user와 assistant를 각각 언제 저장하는지 07장과 비교해 보세요.
 
 [이전](01-chain.md) · [다음](03-observe.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)

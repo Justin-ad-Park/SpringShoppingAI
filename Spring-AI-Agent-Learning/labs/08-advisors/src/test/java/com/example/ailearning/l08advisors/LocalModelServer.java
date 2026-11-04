@@ -17,6 +17,7 @@ import java.util.function.Function;
 final class LocalModelServer implements AutoCloseable {
     static final ObjectMapper JSON = new ObjectMapper();
     final List<JsonNode> requests = new CopyOnWriteArrayList<>();
+    volatile int statusCode = 200;
     volatile Function<JsonNode, ObjectNode> responder = request -> message("고정 응답");
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private final HttpServer server;
@@ -35,7 +36,7 @@ final class LocalModelServer implements AutoCloseable {
                 choice.put("finish_reason", "stop");
                 byte[] bytes = response.toString().getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(200, bytes.length);
+                exchange.sendResponseHeaders(statusCode, bytes.length);
                 exchange.getResponseBody().write(bytes);
             }
         });

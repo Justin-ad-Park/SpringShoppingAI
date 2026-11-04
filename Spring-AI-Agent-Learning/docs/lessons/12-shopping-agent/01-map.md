@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/12-shopping-agent](../../../labs/12-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 단원 전체 시간은 목차의 기존 예상 시간에 포함됩니다.
+30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
 
 **이번 목표:** 기존 개념이 어느 클래스에 연결되는지 찾습니다.
 
@@ -80,14 +80,13 @@ flowchart TD
 2. [PolicySearch](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/PolicySearch.java)와 같은 폴더의 `PolicyLoader`, `Source`: 09~10의 문서 적재·검색.
 3. [Intent](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/Intent.java)와 [TurnFacts](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/TurnFacts.java): 추출한 조건과 실제 사실 구분.
 4. [ProductTools](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/ProductTools.java), [PolicyTools](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/PolicyTools.java): 실행과 기록.
-5. [CounselService](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/CounselService.java): 아래 핵심 메서드, 이후 `chat()`의 저장·실패 처리.
+5. [CounselService](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/CounselService.java): 다음 [12-2](02-intent.md)의 `execute()`, [12-3](03-verify.md)의 `verify()`를 읽고, [12-4](04-conversation.md)에서 `chat()`의 저장·실패 처리를 확인합니다.
 6. [RunState](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/support/RunState.java)와 같은 폴더의 `CountedChatModel`: 06의 상한·실제 모델 요청 계수 복습.
 7. [CounselController](../../../labs/12-shopping-agent/src/main/java/com/example/ailearning/l12shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
 
 
 ## 여기서 멈춰 확인하기
 
-코드를 닫고 “이번 입력 → 새로 하는 처리 → 확인할 결과”를 한 문장으로 적어 보세요.
-설명하기 어렵다면 위 핵심 메서드만 다시 읽습니다. 테스트용 HTTP 서버 구현을 이해해야 다음으로 갈 수 있는 것은 아닙니다.
+이전 대화와 이번 요청의 조회 사실을 보관하는 객체를 클래스 그림에서 각각 찾아보세요.
 
 [이전](../12-shopping-agent.md) · [다음](02-intent.md) · [단원 목차](../12-shopping-agent.md) · [학습 방법](../../learning-guide.md)
