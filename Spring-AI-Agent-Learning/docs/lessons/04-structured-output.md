@@ -12,7 +12,7 @@
 
 | 순서 | 소수업 | 완료 기준 |
 |---|---|---|
-| 1 | [문자열과 객체는 무엇이 다른가](04-structured-output/01-format.md) | 모델의 응답을 문자열 대신 객체로 받아 필드별로 사용하는 방법을 이해합니다. |
+| 1 | [구조화 응답을 이해하기 위한 기초 용어](04-structured-output/01-format.md) | JSON, Java record, Integer의 의미를 알고, 구조화 응답이 무엇인지 설명할 수 있습니다. |
 | 2 | [응답을 record로 받기](04-structured-output/02-convert.md) | 문자열 응답과 객체 응답의 반환 타입과 사용 방법을 비교합니다. |
 | 3 | [형식 오류와 값 오류 관찰](04-structured-output/03-validate.md) | 변환 성공 후에도 Java 검증이 필요한 이유를 확인합니다. |
 
