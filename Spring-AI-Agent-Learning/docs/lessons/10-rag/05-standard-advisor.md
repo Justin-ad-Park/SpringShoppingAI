@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/10-rag-advisor](../../../labs/10-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분. 선수 지식: 08의 Advisor, 10-2의 직접 만든 RAG, 10-4의 문서 적재.
+선수 지식: 08의 Advisor, 10-2의 직접 만든 RAG, 10-4의 문서 적재.
 이번 목표는 **같은 검색·프롬프트 조립을 QuestionAnswerAdvisor로 연결**하는 것입니다.
 
 ## 어떤 일을 대신하는가?

@@ -2,8 +2,6 @@
 
 **실행 코드·설정·테스트:** [labs/04-structured-output](../../../labs/04-structured-output/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-30~45분을 기준으로 한 번에 한 가지 흐름만 읽습니다. 읽기와 실습을 합친 시간이며, 단원 전체 예상 시간에 포함됩니다.
-
 **이번 목표:** JSON, Java record, Integer의 의미를 알고, 구조화 응답이 무엇인지 설명할 수 있습니다.
 
 ## 해결할 문제

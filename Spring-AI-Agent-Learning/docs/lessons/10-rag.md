@@ -1,6 +1,6 @@
 # 10. RAG: 검색한 문서를 근거로 답하기
 
-예상 시간: 3시간. 선수 지식: 04의 구조화 응답, 08의 Advisor, 09의 검색.
+선수 지식: 04의 구조화 응답, 08의 Advisor, 09의 검색.
 먼저 **검색 → 문맥 조립 → 생성 → 검증**을 직접 따라갑니다.
 그다음 표준 API가 그중 어느 역할을 대신하는지 비교합니다.
 
@@ -12,7 +12,6 @@
 | 4 | [표준 Reader·Splitter로 적재](10-rag/04-standard-indexing.md) | `10-rag-advisor` | 읽기·분할·저장 역할 대응 |
 | 5 | [QuestionAnswerAdvisor로 연결](10-rag/05-standard-advisor.md) | `10-rag-advisor` | 문맥 전달 자동화와 업무 검증 구분 |
 
-01~03의 직접 구성 실습은 약 2시간, 표준 API 연결 실습은 약 1시간으로 나눠 학습합니다.
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 

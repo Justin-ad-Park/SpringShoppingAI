@@ -1,7 +1,7 @@
 # 04. 구조화 응답: 문장을 Java 객체로 받기
 
 
-예상 시간: 2시간. 선수 지식: 03장의 ChatClient, system/user 메시지, `.content()`.
+선수 지식: 03장의 ChatClient, system/user 메시지, `.content()`.
 이번에는 **응답 문자열을 Java 객체로 바꾸는 것**을 배웁니다.
 [그림 공통 기준](../diagram-guide.md)을 모든 단원에서 같은 방식으로 적용합니다.
 

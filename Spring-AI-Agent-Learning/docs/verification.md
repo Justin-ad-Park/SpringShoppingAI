@@ -208,7 +208,7 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 ## 03~12장 설명과 실습 흐름 정리 — 2026-11-04
 
 - 검토에서 찾은 19개 개선 항목을 반영했습니다. 생성자·필드·호출 관계, 호출 실행 시점, 로컬 테스트 선택, 수정 전후 비교·재시작, 호출 기록의 확인 경로, 메모리 저장 시점, RAG 오류 처리 범위, 사용량과 시간 측정 코드, 종합 검증의 한계를 정리했습니다.
-- 단원별 확인 질문으로 반복 문장을 대체하고, 제작 이력을 학습 안내로 바꿨습니다. 08장 예상 시간은 2시간, 전체 수업은 약 32시간으로 맞췄습니다.
+- 단원별 확인 질문으로 반복 문장을 대체하고, 제작 이력을 학습 안내로 바꿨습니다.
 - 08장에 `failedModelCallLeavesUserMessageInMemory`를 추가했습니다. 로컬 모델 API가 503으로 실패한 뒤 다음 요청에 이전 user 메시지가 전달되고, 실패한 호출의 assistant 메시지는 저장되지 않는 것을 검증했습니다. 애플리케이션의 기능 구현은 변경하지 않았습니다.
 - 검증 명령: `./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest :Spring-AI-Agent-Learning:labs:06-workflow-agent:test :Spring-AI-Agent-Learning:labs:08-advisors:test :Spring-AI-Agent-Learning:labs:10-rag:test :Spring-AI-Agent-Learning:labs:11-evaluation:test :Spring-AI-Agent-Learning:labs:12-shopping-agent:test :Spring-AI-Agent-Learning:labs:08-advisors:bootJar`.
 - 결과: 관련 6개 모듈의 테스트 결과 총 36개 통과 / 실패 0개 / 오류 0개 / 건너뜀 0개. 08장 5개는 이번에 실행했고, 나머지 31개는 Gradle의 up-to-date 통과 결과를 재사용했습니다. 08장 bootJar도 up-to-date 성공 결과를 재사용했습니다.
