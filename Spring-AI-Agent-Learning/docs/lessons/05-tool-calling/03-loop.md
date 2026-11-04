@@ -39,7 +39,7 @@ Product → Offer → ProductCatalog → ShoppingTools → ToolChatService → [
 명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test
+./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:bootRun
 ```
 
@@ -61,7 +61,7 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 ```
 
 실제 자연어 문장은 고정되지 않습니다. 상품 가격과 배송비가 각각 올바른지 확인하세요. 종료는 Ctrl+C입니다.
-실제 모델 호출 비용이 발생할 수 있습니다. 테스트는 실제 키 없이 로컬 서버만 사용합니다.
+실제 모델 호출 비용이 발생할 수 있습니다. 로컬 테스트는 실제 키 없이 고정 응답 서버를 사용합니다.
 
 ## 실험: 누가 결정하는가?
 
@@ -73,8 +73,8 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 | Java 배송비 기준 변경 | 모델 프롬프트 수정 없이 계산 결과가 달라짐. 실험 후 원복 |
 
 현재 `/api/tools/chat`은 답변 문자열만 반환합니다. 답변만 보고 도구 선택이나 모델 요청 횟수를 확정할 수는 없습니다.
-로컬 테스트의 `modelRequestsToolApplicationExecutesAndSendsResultBack`에서 `MODEL.requests`가 2개인지, 두 번째 요청에 도구 결과가 담겼는지 확인하세요.
-`greetingCanFinishWithoutToolCall`은 요청 1개를 확인합니다. 이는 고정 응답으로 만든 두 흐름의 비교이며 실제 모델의 선택을 측정한 값이 아닙니다.
+로컬 테스트의 `모델이_요청한_도구를_실행하고_결과를_다시_전달한다`에서 `MODEL.requests`가 2개인지, 두 번째 요청에 도구 결과가 담겼는지 확인하세요.
+`인사는_도구를_호출하지_않고_답할_수_있다`은 요청 1개를 확인합니다. 이는 고정 응답으로 만든 두 흐름의 비교이며 실제 모델의 선택을 측정한 값이 아닙니다.
 실제 모델의 도구 이름·결과·호출 횟수를 응답에서 비교하는 실습은 [06-3](../06-workflow-agent/03-hybrid.md#실행과-관찰)에서 진행합니다.
 코드를 바꾸는 실험은 서버를 종료한 뒤 다시 시작하고, 실험 후 원복한 코드로도 재시작합니다.
 

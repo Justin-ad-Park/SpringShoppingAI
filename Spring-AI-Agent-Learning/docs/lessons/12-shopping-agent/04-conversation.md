@@ -35,7 +35,7 @@ HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 
 먼저 API 키 없이 테스트합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:test :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:test --tests com.example.ailearning.l12shopping.ShoppingAgentContractTest :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootJar
 ```
 
 실제 실행은 저장소 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 준비한 뒤 실행합니다.
@@ -46,7 +46,7 @@ HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 
 ```
 
 실제 실행은 시작 시 정책 임베딩, 정책 검색 시 질문 임베딩, 상담 시 Chat 요청 비용이 발생할 수 있습니다.
-자동 테스트는 고정 응답 서버를 사용하며 실제 API 키를 사용하지 않습니다.
+로컬 테스트는 고정 응답 서버를 사용하며 실제 API 키를 사용하지 않습니다.
 
 다른 터미널에서 동일 쿠키 파일을 유지합니다.
 

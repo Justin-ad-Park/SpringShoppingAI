@@ -3,4 +3,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 }
 tasks.named('bootRun') { workingDir rootProject.projectDir }
-tasks.named('test') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class FirstChatLocalMockModelTest {
+    private String 테스트이름;
+
+    @BeforeEach
+    void 테스트_이름_준비(TestInfo info) {
+        테스트이름 = info.getTestMethod().orElseThrow().getName();
+    }
+
+    private void 결과출력(String 항목, Object 결과) {
+        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
+    }
+
     private static final ObjectMapper JSON = new ObjectMapper();
     // 가짜 서버의 처리 스레드와 테스트 스레드가 요청 기록을 공유합니다.
     private static final List<JsonNode> REQUESTS = new CopyOnWriteArrayList<>();
@@ -71,7 +83,7 @@ class FirstChatLocalMockModelTest {
     // 02장 핵심: 질문 전달과 고정 응답 반환을 확인합니다.
     @Test
     @DisplayName("로컬 MockModel에 질문을 전달하고 고정 응답을 반환한다")
-    void sendsUserMessageToLocalMockModelAndReturnsFixedText() throws Exception {
+    void 로컬_모델에_질문을_보내고_고정_응답을_받는다() throws Exception {
         HttpResponse<String> response = ask("스프링이 무엇인가요?");
         printResponse("LocalMockModel / 정상 호출 / 정상 질문", response);
 
@@ -94,7 +106,7 @@ class FirstChatLocalMockModelTest {
      */
     @Test
     @DisplayName("잘못된 입력은 로컬 MockModel 호출 전에 거부한다")
-    void rejectsInvalidInputsBeforeCallingLocalMockModel() throws Exception {
+    void 잘못된_입력은_로컬_모델_호출_전에_거부한다() throws Exception {
         HttpResponse<String> blankResponse = ask("   ");
         printResponse("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
         assertThat(blankResponse.statusCode()).isEqualTo(400);
@@ -109,7 +121,7 @@ class FirstChatLocalMockModelTest {
     // 실제 모델의 기억 능력을 평가하는 테스트는 아닙니다.
     @Test
     @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")
-    void doesNotSendPreviousRequestToLocalMockModelAutomatically() throws Exception {
+    void 다음_요청에_이전_대화를_자동으로_포함하지_않는다() throws Exception {
         HttpResponse<String> firstResponse = ask("제 이름은 민수입니다.");
         printResponse("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
         assertThat(firstResponse.statusCode()).isEqualTo(200);
@@ -137,9 +149,7 @@ class FirstChatLocalMockModelTest {
 
     // 각 테스트에서 테스트 이름과 요청 구분을 전달해 결과를 출력합니다.
     private void printResponse(String label, HttpResponse<String> response) {
-        System.out.println("=== " + label + " ===");
-        System.out.println("응답 상태 코드: " + response.statusCode());
-        System.out.println("응답 본문: " + response.body());
+        결과출력(label + " / HTTP " + response.statusCode(), response.body());
     }
 
     // 제공된 테스트 보조 코드입니다. 첫 실습에서는 내부 구현을 이해하거나 작성할 필요가 없습니다.

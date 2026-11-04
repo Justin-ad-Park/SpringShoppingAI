@@ -13,6 +13,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class MultipleProvidersContractTest {
+    private String 테스트이름;
+
+    @BeforeEach
+    void 테스트_이름_준비(TestInfo info) {
+        테스트이름 = info.getTestMethod().orElseThrow().getName();
+    }
+
+    private void 결과출력(String 항목, Object 결과) {
+        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
+    }
+
+    private HttpResponse<String> 응답출력(HttpResponse<String> response) {
+        결과출력("요청", response.request().method() + " " + response.uri().getPath());
+        결과출력("HTTP " + response.statusCode(), response.body());
+        return response;
+    }
+
     static final LocalProvidersServer PROVIDERS = new LocalProvidersServer();
     @Value("${local.server.port}") int port;
     @Autowired SameProviderModelsService sameProviderModels;
@@ -31,7 +48,7 @@ class MultipleProvidersContractTest {
     }
     @AfterAll static void stop() { PROVIDERS.close(); }
 
-    @Test void openAiQualifierUsesOnlyOpenAiAdapterAndCredentials() throws Exception {
+    @Test void OpenAI로_지정한_클라이언트는_OpenAI만_호출한다() throws Exception {
         var response = ask("openai");
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("OpenAI 로컬 고정 응답");
@@ -40,7 +57,7 @@ class MultipleProvidersContractTest {
         assertThat(PROVIDERS.openAiAuth).containsExactly("Bearer local-openai-key");
         assertThat(PROVIDERS.anthropicRequests).isEmpty();
     }
-    @Test void anthropicQualifierUsesOnlyAnthropicAdapterAndCredentials() throws Exception {
+    @Test void Anthropic으로_지정한_클라이언트는_Anthropic만_호출한다() throws Exception {
         var response = ask("anthropic");
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("Anthropic 로컬 고정 응답");
@@ -49,11 +66,12 @@ class MultipleProvidersContractTest {
         assertThat(PROVIDERS.anthropicAuth).containsExactly("local-anthropic-key");
         assertThat(PROVIDERS.openAiRequests).isEmpty();
     }
-    @Test void requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault() throws Exception {
-        sameProviderModels.ask("짧게 설명해줘", "openai-model-a");
-        sameProviderModels.ask("자세히 설명해줘", "openai-model-b");
+    @Test void 요청별_모델을_선택해도_기본_모델은_유지된다() throws Exception {
+        결과출력("모델 A 응답", sameProviderModels.ask("짧게 설명해줘", "openai-model-a"));
+        결과출력("모델 B 응답", sameProviderModels.ask("자세히 설명해줘", "openai-model-b"));
         ask("openai");
 
+        결과출력("요청별 모델", PROVIDERS.openAiRequests.stream().map(request -> request.path("model").asString()).toList());
         assertThat(PROVIDERS.openAiRequests)
                 .extracting(request -> request.path("model").asString())
                 .containsExactly("openai-model-a", "openai-model-b", "openai-test-model");
@@ -64,9 +82,9 @@ class MultipleProvidersContractTest {
 
     HttpResponse<String> ask(String provider) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            return http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/multi-chat/"+provider))
+            return 응답출력(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/multi-chat/"+provider))
                     .header("Content-Type", "text/plain; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString("DI를 설명해줘")).build(), HttpResponse.BodyHandlers.ofString());
+                    .POST(HttpRequest.BodyPublishers.ofString("DI를 설명해줘")).build(), HttpResponse.BodyHandlers.ofString()));
         }
     }
 }

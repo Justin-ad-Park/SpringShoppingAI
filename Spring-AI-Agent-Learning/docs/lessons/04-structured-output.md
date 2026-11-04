@@ -125,7 +125,7 @@ sequenceDiagram
 로컬 테스트에는 실제 키가 필요 없고, `bootRun`으로 호출하는 외부 모델에는 비용이 발생할 수 있습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test
+./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:bootRun
 ```
 
@@ -163,6 +163,16 @@ curl -sS http://127.0.0.1:8094/api/criteria \
 | 공백 질문 | Controller가 HTTP 400으로 거부, 모델 호출 없음 |
 
 서비스는 모델 호출·변환 실패도 502로 처리합니다. 실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다. 이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
+
+## 실제 OpenAI로 확인하기
+
+[StructuredOutputOpenAiLiveTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputOpenAiLiveTest.java)는 같은 질문을 문자열과 record로 받아 케이스 이름과 함께 출력합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
+```
+
+루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용하며 실제 API 사용량이 발생합니다. 로컬 테스트의 고정 응답과 달리 모델의 추출 결과도 검증합니다.
 
 ## 확인 질문
 

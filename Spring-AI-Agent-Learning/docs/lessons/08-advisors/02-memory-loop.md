@@ -81,7 +81,7 @@ flowchart TD
 | 이번 기본 메모리 Advisor | 이전 메시지 조회, 현재 user 저장 | 최종 assistant 저장 | 현재 user가 이미 저장되어 남을 수 있음 |
 
 따라서 07장의 코드를 Advisor로 바꾸면 성공한 대화의 재전달은 간단해지지만, 실패 시 저장 정책까지 같아지는 것은 아닙니다.
-[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)의 `failedModelCallLeavesUserMessageInMemory`가 실패 뒤 다음 요청의 메시지를 확인합니다.
+[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)의 `모델_호출에_실패해도_기본_Advisor에_사용자_질문이_남는다`가 실패 뒤 다음 요청의 메시지를 확인합니다.
 성공한 대화만 저장해야 하는 요구라면 07장 또는 12장처럼 저장 시점을 직접 제어할 수 있습니다.
 
 기본 메모리 Advisor는 도구 루프 밖에 있습니다. 이 구성은 user와 최종 assistant만 저장하며 tool 메시지는 저장하지 않습니다.

@@ -253,7 +253,7 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 ### 선택: 실제 OpenAI와 Anthropic에 연결하기
 
 같은 테스트 패키지의 [MultipleProvidersLiveTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
-서비스의 `askOpenAi()`와 `askAnthropic()`으로 실제 모델을 호출하는 테스트 두 개입니다.
+서비스의 `askOpenAi()`로 실제 OpenAI를 호출합니다. `askAnthropic()` 예제는 현재 주석 처리되어 있습니다.
 Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답이 비어 있지 않은지 검사합니다.
 
 루트 `.env`에 두 업체의 키와 모델 ID 네 값을 준비한 뒤, IntelliJ에서 클래스 또는 개별 메서드의 Run으로 실행합니다.
@@ -263,7 +263,7 @@ Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답�
 ./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
 ```
 
-태그나 실행 허용 변수는 없습니다. 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 Live 테스트 2개가 모두 실행됩니다.
+태그나 실행 허용 변수는 없습니다. 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 활성화된 OpenAI Live 테스트가 실행됩니다.
 Live 테스트는 실제 API 사용량이 발생하며, 로컬 테스트 통과가 실제 API 접근 권한이나 답변 품질을 보장하지는 않습니다.
 
 ## 8. 같은 업체의 모델 두 개를 쓴다면?
@@ -331,11 +331,11 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 
 ### 테스트에서 확인하기
 
-[MultipleProvidersContractTest의 `requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersContractTest.java)에서
+[MultipleProvidersContractTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersContractTest.java)에서
 `SameProviderModelsService`를 주입받아 실행합니다. IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersContractTest.requestOptionsSelectTwoOpenAiModelsWithoutChangingTheDefault'
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersContractTest.요청별_모델을_선택해도_기본_모델은_유지된다'
 ```
 
 로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.

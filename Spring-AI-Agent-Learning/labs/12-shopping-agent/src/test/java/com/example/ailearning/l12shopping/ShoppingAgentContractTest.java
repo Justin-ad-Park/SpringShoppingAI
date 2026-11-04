@@ -17,6 +17,23 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.config.import=",
         "learning.limits.max-tool-calls=4", "learning.limits.timeout-ms=1000"})
 class ShoppingAgentContractTest {
+    private String 테스트이름;
+
+    @BeforeEach
+    void 테스트_이름_준비(TestInfo info) {
+        테스트이름 = info.getTestMethod().orElseThrow().getName();
+    }
+
+    private void 결과출력(String 항목, Object 결과) {
+        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
+    }
+
+    private HttpResponse<String> 응답출력(HttpResponse<String> response) {
+        결과출력("요청", response.request().method() + " " + response.uri().getPath());
+        결과출력("HTTP " + response.statusCode(), response.body());
+        return response;
+    }
+
     static final ModelWireServer MODEL = start();
     @Value("${local.server.port}") int port;
     static ModelWireServer start() {
@@ -34,7 +51,7 @@ class ShoppingAgentContractTest {
     }
     @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void combinesProductQuotePolicyEvidenceAndDeterministicDisplay() throws Exception {
+    @Test void 상품과_배송비와_정책을_조회해_검증한_값으로_답한다() throws Exception {
         try (var alice = browser()) {
             var body = post(alice, "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘");
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
@@ -46,7 +63,7 @@ class ShoppingAgentContractTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void followsUpKeepsBudgetAndPersistsValidNoResultsCondition() throws Exception {
+    @Test void 후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다() throws Exception {
         try (var alice = browser()) {
             post(alice, "배송비 포함 30000원 음료 추천");
             var none = post(alice, "생활로만 바꿔");
@@ -58,7 +75,7 @@ class ShoppingAgentContractTest {
             assertThat(revised.path("storedMessages").asInt()).isEqualTo(6);
         }
     }
-    @Test void shippingCanMakeEverySearchedProductExceedBudget() throws Exception {
+    @Test void 배송비를_더하면_모든_상품이_예산을_초과할_수_있다() throws Exception {
         MODEL.responder = request -> {
             if (isIntent(request)) return intent("SHOPPING", "음료", "13000");
             int count = toolResults(request).size();
@@ -72,7 +89,7 @@ class ShoppingAgentContractTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void missingBudgetClarifiesBeforeToolUse() throws Exception {
+    @Test void 예산이_없으면_도구_사용_전에_추가_질문을_한다() throws Exception {
         try (var alice = browser()) {
             var body = post(alice, "선물 추천");
             assertThat(body.path("status").asString()).isEqualTo("NEEDS_INPUT");
@@ -80,7 +97,7 @@ class ShoppingAgentContractTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void policyRouteDoesNotExposeShoppingToolsAndUnknownPolicyIsNotInvented() throws Exception {
+    @Test void 정책_질문에는_상품_도구를_제공하지_않고_없는_근거는_만들지_않는다() throws Exception {
         try (var alice = browser()) {
             var body = post(alice, "미개봉 반품 기간");
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
@@ -89,7 +106,7 @@ class ShoppingAgentContractTest {
             assertThat(unknown.path("status").asString()).isEqualTo("NO_CONTEXT");
         }
     }
-    @Test void unverifiedIdsAndOverBudgetSelectionsAreRejectedWithoutSaving() throws Exception {
+    @Test void 확인하지_않은_ID와_예산_초과_선택은_거부하고_저장하지_않는다() throws Exception {
         try (var alice = browser()) {
             MODEL.responder = request -> {
                 if (isIntent(request)) return intent("SHOPPING", "음료", "30000");
@@ -103,7 +120,7 @@ class ShoppingAgentContractTest {
             assertThat(post(alice, "반품").path("status").asString()).isEqualTo("VERIFY_FAILED");
         }
     }
-    @Test void failureDoesNotOverwritePreviousConversationAndSessionsRemainIsolated() throws Exception {
+    @Test void 실패해도_기존_대화를_유지하고_사용자별로_격리한다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             post(alice, "30000원 음료 추천");
             post(bob, "선물 추천");
@@ -112,12 +129,12 @@ class ShoppingAgentContractTest {
             var failed = post(alice, "조건을 바꿔줘");
             assertThat(failed.path("status").asString()).isEqualTo("FAILED");
             assertThat(failed.path("storedMessages").asInt()).isEqualTo(2);
-            alice.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).DELETE().build(), HttpResponse.BodyHandlers.ofString());
+            응답출력(alice.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).DELETE().build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(history(alice).size()).isZero();
             assertThat(history(bob).size()).isEqualTo(2);
         }
     }
-    @Test void repeatedToolRequestsHitLimitAndDoNotSavePartialTurn() throws Exception {
+    @Test void 도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다() throws Exception {
         MODEL.responder = request -> isIntent(request) ? intent("SHOPPING", "음료", "30000")
                 : ModelWireServer.tool("repeat", "searchProducts", "{}");
         try (var alice = browser()) {
@@ -127,7 +144,7 @@ class ShoppingAgentContractTest {
             assertThat(body.path("storedMessages").asInt()).isZero();
         }
     }
-    @Test void timeoutDoesNotSaveLateResponse() throws Exception {
+    @Test void 시간_초과_뒤에_도착한_응답은_저장하지_않는다() throws Exception {
         MODEL.chatDelayMs = 1500;
         try (var alice = browser()) {
             var body = post(alice, "선물 추천");
@@ -182,12 +199,12 @@ class ShoppingAgentContractTest {
     HttpClient browser() { return HttpClient.newBuilder().cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL)).build(); }
     URI uri(String path) { return URI.create("http://127.0.0.1:"+port+path); }
     JsonNode post(HttpClient browser, String question) throws Exception {
-        var response = browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question)).build(), HttpResponse.BodyHandlers.ofString());
+        var response = 응답출력(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).header("Content-Type", "text/plain; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(question)).build(), HttpResponse.BodyHandlers.ofString()));
         assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
         return ModelWireServer.JSON.readTree(response.body());
     }
     JsonNode history(HttpClient browser) throws Exception {
-        return ModelWireServer.JSON.readTree(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).GET().build(),HttpResponse.BodyHandlers.ofString()).body());
+        return ModelWireServer.JSON.readTree(응답출력(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).GET().build(),HttpResponse.BodyHandlers.ofString())).body());
     }
 }

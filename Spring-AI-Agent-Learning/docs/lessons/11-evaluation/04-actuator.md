@@ -82,7 +82,7 @@ sequenceDiagram
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test
+./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootRun
 ```

@@ -57,7 +57,7 @@ SDK 재시도는 0회, 요청 타임아웃은 2초로 설정했습니다. 자동
 키·Chat 모델·임베딩 모델 설정은 [10장](../10-rag.md)과 같습니다. 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:test
+./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:test --tests com.example.ailearning.l11evaluation.EvaluationContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:bootRun
 curl -sS http://127.0.0.1:8101/api/evaluation/ask \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '미개봉 반품 기간은?'
@@ -74,9 +74,9 @@ curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
 
 | 테스트 메서드 | 확인할 것 |
 |---|---|
-| `rateLimitIsFailureNotSuccessfulFallbackAndSdkDoesNotRetry` | 429가 `RATE_LIMIT`으로 기록되고, 평가 전체 채팅 요청이 2회(각 생성 질문당 1회)이며 추가 재시도가 없는지 |
-| `slowModelIsRecordedAsTimeoutWithoutAutomaticRetry` | 느린 응답이 `TIMEOUT`으로 기록되고 자동 재시도가 없는지 |
-| `malformedOutputIsRecordedAsFailureWithoutLeakingExceptionMessage` | 형식 오류가 실패로 기록되고 내부 예외 원문이 API 결과에 노출되지 않는지 |
+| `호출_제한은_실패로_기록하고_자동으로_재시도하지_않는다` | 429가 `RATE_LIMIT`으로 기록되고, 평가 전체 채팅 요청이 2회(각 생성 질문당 1회)이며 추가 재시도가 없는지 |
+| `느린_응답은_시간_초과로_기록하고_자동으로_재시도하지_않는다` | 느린 응답이 `TIMEOUT`으로 기록되고 자동 재시도가 없는지 |
+| `형식_오류를_실패로_기록하고_내부_예외는_노출하지_않는다` | 형식 오류가 실패로 기록되고 내부 예외 원문이 API 결과에 노출되지 않는지 |
 
 먼저 원래 설정으로 테스트를 실행합니다. 그다음 테스트의 타임아웃 설정 위치와 요청 횟수 검증문을 찾아
 대기 시간과 재시도가 서로 다른 설정임을 설명해 보세요. 실제 서버의 정상 지연과 로컬 테스트의 인위적인 지연도 구분합니다.

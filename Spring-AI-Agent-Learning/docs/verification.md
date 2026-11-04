@@ -209,7 +209,7 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 
 - 검토에서 찾은 19개 개선 항목을 반영했습니다. 생성자·필드·호출 관계, 호출 실행 시점, 로컬 테스트 선택, 수정 전후 비교·재시작, 호출 기록의 확인 경로, 메모리 저장 시점, RAG 오류 처리 범위, 사용량과 시간 측정 코드, 종합 검증의 한계를 정리했습니다.
 - 단원별 확인 질문으로 반복 문장을 대체하고, 제작 이력을 학습 안내로 바꿨습니다.
-- 08장에 `failedModelCallLeavesUserMessageInMemory`를 추가했습니다. 로컬 모델 API가 503으로 실패한 뒤 다음 요청에 이전 user 메시지가 전달되고, 실패한 호출의 assistant 메시지는 저장되지 않는 것을 검증했습니다. 애플리케이션의 기능 구현은 변경하지 않았습니다.
+- 08장에 `모델_호출에_실패해도_기본_Advisor에_사용자_질문이_남는다`를 추가했습니다. 로컬 모델 API가 503으로 실패한 뒤 다음 요청에 이전 user 메시지가 전달되고, 실패한 호출의 assistant 메시지는 저장되지 않는 것을 검증했습니다. 애플리케이션의 기능 구현은 변경하지 않았습니다.
 - 검증 명령: `./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest :Spring-AI-Agent-Learning:labs:06-workflow-agent:test :Spring-AI-Agent-Learning:labs:08-advisors:test :Spring-AI-Agent-Learning:labs:10-rag:test :Spring-AI-Agent-Learning:labs:11-evaluation:test :Spring-AI-Agent-Learning:labs:12-shopping-agent:test :Spring-AI-Agent-Learning:labs:08-advisors:bootJar`.
 - 결과: 관련 6개 모듈의 테스트 결과 총 36개 통과 / 실패 0개 / 오류 0개 / 건너뜀 0개. 08장 5개는 이번에 실행했고, 나머지 31개는 Gradle의 up-to-date 통과 결과를 재사용했습니다. 08장 bootJar도 up-to-date 성공 결과를 재사용했습니다.
 - 문서 검사: docs 아래 로컬 파일·제목 앵커 링크 403개와 03~12장의 전체 Java 코드 블록 15개를 대조했습니다. Mermaid 23개는 jsdom·Mermaid 파서로 문법 검사했으며, 실제 그림 렌더링은 확인하지 않았습니다. `git diff --check` 통과.
@@ -223,3 +223,12 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 전체 Java 코드 블록 2개가 실제 `SearchCriteria.java`, `CriteriaService.java`와 일치하는지 대조했습니다. 실행 소스·설정·테스트는 변경하지 않았습니다.
 - 교재 로컬 링크·앵커 393개와 하네스 116개 검사에서 오류 0개, Mermaid 26개 문법 검사와 `git diff --check`를 통과했습니다.
 - 문서 통합이므로 애플리케이션 테스트·빌드·실제 외부 모델 호출은 재실행하지 않았습니다. Mermaid 화면 렌더링도 확인하지 않았습니다.
+
+## 한글 테스트명·결과 출력·Live 테스트 — 2026-11-04
+
+- 14개 실습 모듈의 테스트 메서드명을 한글로 바꾸고, 케이스 이름과 실제 HTTP 응답·조건 객체·검색 결과·평가 결과를 출력하도록 보완했습니다. 기존 assertion은 유지했습니다.
+- 기존 첫 호출·다중 모델 Live 클래스를 유지하고 04~12의 12개 모듈에 별도 OpenAI Live 클래스를 추가했습니다. 모든 Live는 루트 `.env`를 사용하며, 태그·실행 허용 변수·별도 태스크는 추가하지 않았습니다. 다중 모델의 Anthropic 예제는 기존 주석 상태를 유지했습니다.
+- 각 모듈의 로컬 클래스를 `--tests`로 지정해 test·bootJar를 실행했습니다. 14개 모듈의 로컬 테스트 71개 통과, 실패 0개·오류 0개·건너뜀 0개입니다. 모든 Live 테스트 소스도 컴파일됐습니다.
+- XML 보고서의 71개 케이스를 확인해 콘솔에 해당 테스트 이름과 실제 결과가 함께 나타나는지 대조했습니다. 중복 출력을 정리한 09장은 로컬 테스트 4개를 다시 실행해 통과했습니다.
+- 로컬/Live 선택 명령과 문서의 메서드 참조를 갱신했습니다. 교재 링크·앵커 394개와 하네스 117개에서 오류 0개, Mermaid 26개 문법 검사 및 공백 검사 통과입니다.
+- 자동 검증 명령에서는 Live API를 호출하지 않았습니다. 작업 중 별도로 생성된 04장 Live JUnit 보고서에서 1개 통과(실패 0개·오류 0개·건너뜀 0개)를 확인했습니다. 다른 Live 클래스는 컴파일만 검증했으며 실제 모델의 품질 보장으로 해석하지 않습니다. 하네스의 독립 세션 행동 평가와 그림 화면 렌더링도 수행하지 않았습니다.

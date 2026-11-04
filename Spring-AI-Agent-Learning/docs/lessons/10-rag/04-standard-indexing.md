@@ -43,7 +43,7 @@ flowchart LR
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.AdvisorRagContractTest
 ```
 
 `AdvisorRagContractTest`는 실제 Reader·Splitter·저장소·OpenAI 어댑터에 로컬 고정 응답 서버를 연결합니다.

@@ -87,7 +87,7 @@ Controller는 두 요청을 쉽게 비교하도록 같은 Candidate JSON을 받�
 먼저 로컬 고정 모델 테스트를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:test
+./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:test --tests com.example.ailearning.l11judge.EvaluationApiContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:bootJar
 ```
 

@@ -4,7 +4,7 @@
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test
+./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:bootRun
 ```
 
@@ -12,3 +12,16 @@
 POST `/api/tools/chat`은 모델이 도구를 선택하는 경로입니다. POST 본문은 text/plain입니다.
 bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 도구를 지원하는 모델을 선택하세요.
 이 모듈은 다른 실습·쇼핑 서비스와 컴파일 의존성이 없습니다.
+
+## 테스트 선택과 결과 확인
+
+- `ToolCallingContractTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `ToolCallingOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
+- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest
+```
+
+IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.

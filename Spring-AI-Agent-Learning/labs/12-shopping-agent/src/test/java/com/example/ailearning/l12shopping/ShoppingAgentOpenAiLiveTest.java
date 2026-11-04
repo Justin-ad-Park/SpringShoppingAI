@@ -1,0 +1,34 @@
+package com.example.ailearning.l12shopping;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.Timeout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+// 실제 OpenAI를 호출합니다. 저장소 루트 .env를 사용하며 API 사용량이 발생합니다.
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
+        "spring.ai.openai.base-url=https://api.openai.com/v1",
+        "learning.limits.timeout-ms=90000",
+        "spring.ai.openai.chat.timeout=30s",
+        "spring.ai.openai.embedding.timeout=30s"
+})
+class ShoppingAgentOpenAiLiveTest {
+    @Autowired CounselService service;
+
+    @Test
+    @Timeout(180)
+    void 실제_OpenAI가_도구를_선택하고_후속_대화의_조건을_사용한다(TestInfo info) {
+        CounselService.Reply first = service.chat("live-user", "counsel-demo", "배송비 포함 30000원 이하 음료를 추천해줘.");
+        String name = info.getTestMethod().orElseThrow().getName();
+        System.out.printf("[%s] 첫 상담과 도구 기록: %s%n", name, first);
+        assertThat(first.status()).isEqualTo("VERIFIED");
+        assertThat(first.offers()).isNotEmpty();
+        CounselService.Reply next = service.chat("live-user", "counsel-demo", "예산을 40000원으로 바꿔줘.");
+        System.out.printf("[%s] 후속 상담과 도구 기록: %s%n", name, next);
+        assertThat(next.status()).isEqualTo("VERIFIED");
+        assertThat(next.criteria().totalBudget()).isEqualTo(40000);
+    }
+}

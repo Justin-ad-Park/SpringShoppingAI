@@ -56,8 +56,10 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 
 로컬 Mock 테스트는 `.env` 읽기를 끄고 더미 키·모델 이름·로컬 서버 주소를 직접 설정합니다.
 고정 HTTP 응답으로 코드의 연결을 검증하며, 실제 모델의 답변 품질을 평가하는 테스트와 다릅니다.
-`02-first-chat`의 `FirstChatOpenAiLiveTest`와 `02-multiple-models`의 `MultipleProvidersLiveTest`는 실제 API를 호출하며, 각 모듈의 전체 test에도 포함됩니다.
-다중 모델 Live 테스트는 OpenAI와 Anthropic의 키·모델 설정이 모두 필요합니다. 이 두 Live 클래스를 제외한 자동 테스트에는 실제 키가 필요 없습니다. 실제 모델 호출은 각 모듈의 bootRun으로 확인합니다.
+각 모듈에는 로컬 테스트와 별도 OpenAI Live 테스트가 있습니다. Live 클래스는 모듈 README에서 확인합니다.
+한글 테스트 메서드명이 케이스 이름이며, 콘솔에 이름과 HTTP 상태·응답·조건 객체·검색 결과 등을 함께 출력합니다.
+Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`에도 포함됩니다. 로컬 검증은 반드시 아래처럼 클래스를 지정합니다.
+태그·실행 허용 변수·별도 Live 태스크는 없습니다. IntelliJ에서도 원하는 클래스나 메서드의 Run을 선택합니다.
 
 첫 실습에서 Mock 테스트만 실행하려면 클래스를 지정하세요.
 
@@ -72,3 +74,11 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 ```
 
 [학습 방법](learning-guide.md) · [교육 계획](curriculum.md)
+
+구조화 응답의 실제 OpenAI 연결을 확인하려면:
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
+```
+
+Live의 문장은 실행마다 달라질 수 있습니다. 실제 도구 선택·검색 품질·평가 결과는 출력으로 확인하며, 고정 응답 테스트의 결과와 구분합니다.

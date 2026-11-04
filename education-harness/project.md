@@ -37,18 +37,18 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 |---|---|---|---|
 | 01 준비·02 첫 호출·03 프롬프트 | `02-first-chat` | `com.example.ailearning.FirstChatLocalMockModelTest` | `com.example.ailearning.FirstChatOpenAiLiveTest` |
 | 02 보충 4 | `02-multiple-models` | `com.example.ailearning.l02multiple.MultipleProvidersContractTest` | `com.example.ailearning.l02multiple.MultipleProvidersLiveTest` |
-| 04 구조화 응답 | `04-structured-output` | `com.example.ailearning.l04structured.StructuredOutputContractTest` | 없음 |
-| 05 도구 호출 | `05-tool-calling` | `com.example.ailearning.l05tools.ToolCallingContractTest` | 없음 |
-| 06 Workflow·Agent | `06-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentContractTest` | 없음 |
-| 07 대화 메모리 | `07-chat-memory` | `com.example.ailearning.l07memory.MemoryContractTest` | 없음 |
-| 08 Advisor | `08-advisors` | `com.example.ailearning.l08advisors.AdvisorContractTest` | 없음 |
-| 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchContractTest` | 없음 |
-| 10 RAG | `10-rag` | `com.example.ailearning.l10rag.RagContractTest` | 없음 |
-| 10-4·10-5 표준 API | `10-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagContractTest` | 없음 |
-| 11 평가·실패 | `11-evaluation` | `com.example.ailearning.l11evaluation.EvaluationContractTest` | 없음 |
-| 11-2 모델 평가 | `11-model-evaluation` | `com.example.ailearning.l11judge.EvaluationApiContractTest` | 없음 |
-| 11-4 관측 | `11-observability` | `com.example.ailearning.l11observe.ObservationContractTest` | 없음 |
-| 12 상담 Agent | `12-shopping-agent` | `com.example.ailearning.l12shopping.ShoppingAgentContractTest` | 없음 |
+| 04 구조화 응답 | `04-structured-output` | `com.example.ailearning.l04structured.StructuredOutputContractTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
+| 05 도구 호출 | `05-tool-calling` | `com.example.ailearning.l05tools.ToolCallingContractTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
+| 06 Workflow·Agent | `06-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentContractTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
+| 07 대화 메모리 | `07-chat-memory` | `com.example.ailearning.l07memory.MemoryContractTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
+| 08 Advisor | `08-advisors` | `com.example.ailearning.l08advisors.AdvisorContractTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
+| 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchContractTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
+| 10 RAG | `10-rag` | `com.example.ailearning.l10rag.RagContractTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
+| 10-4·10-5 표준 API | `10-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagContractTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
+| 11 평가·실패 | `11-evaluation` | `com.example.ailearning.l11evaluation.EvaluationContractTest` | `com.example.ailearning.l11evaluation.EvaluationOpenAiLiveTest` |
+| 11-2 모델 평가 | `11-model-evaluation` | `com.example.ailearning.l11judge.EvaluationApiContractTest` | `com.example.ailearning.l11judge.EvaluationApiOpenAiLiveTest` |
+| 11-4 관측 | `11-observability` | `com.example.ailearning.l11observe.ObservationContractTest` | `com.example.ailearning.l11observe.ObservationOpenAiLiveTest` |
+| 12 상담 Agent | `12-shopping-agent` | `com.example.ailearning.l12shopping.ShoppingAgentContractTest` | `com.example.ailearning.l12shopping.ShoppingAgentOpenAiLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -60,8 +60,9 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
 - `bootRun`·`test`의 작업 디렉터리는 저장소 루트입니다. IntelliJ 직접 실행도 같은 Working directory를 사용합니다.
 - 로컬 테스트는 `.env` 읽기를 끄고 더미 설정과 로컬 고정 HTTP 서버를 사용합니다.
-- Live 테스트는 별도 클래스입니다. 태그·실행 허용 변수·별도 Live 태스크를 만들지 않습니다. 표의 두 모듈은 전체 `test`에 Live도 포함됩니다.
-- 테스트 출력이 필요한 경우 기존 `testLogging` 설정을 사용합니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
+- Live 테스트는 별도 클래스입니다. 태그·실행 허용 변수·별도 Live 태스크를 만들지 않습니다. 모든 학습 모듈은 전체 `test`에 Live도 포함됩니다.
+- 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다. 케이스 이름과 실제 결과를 콘솔에 출력하고 `assertThat` 검증도 유지합니다.
+- 기존 `testLogging { showStandardStreams = true }`로 Gradle 콘솔에서도 출력을 봅니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
 
 ## Spring AI 설명에서 확인할 동작
 

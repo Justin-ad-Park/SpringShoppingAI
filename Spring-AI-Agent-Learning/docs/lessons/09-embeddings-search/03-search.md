@@ -13,7 +13,7 @@
 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:test
+./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:test --tests com.example.ailearning.l09search.SearchContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:bootRun
 curl -sS http://127.0.0.1:8099/api/embedding \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비'
@@ -22,7 +22,7 @@ curl --get http://127.0.0.1:8099/api/search \
 ```
 
 bootRun은 **시작 시 문서 임베딩부터 실제 API를 호출**합니다. 검색 요청마다 질문 임베딩 호출이 추가됩니다.
-따라서 서버 재시작에도 사용량이 발생할 수 있습니다. 테스트는 실제 키 없이 로컬 임베딩 서버를 사용합니다.
+따라서 서버 재시작에도 사용량이 발생할 수 있습니다. 로컬 테스트는 실제 키 없이 고정 응답 임베딩 서버를 사용합니다.
 실제 결과 점수·배열 길이는 선택한 모델에 따라 다릅니다. 종료는 Ctrl+C입니다.
 
 ## 바꾸면서 확인하기

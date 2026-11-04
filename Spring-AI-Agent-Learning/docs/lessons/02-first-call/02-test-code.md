@@ -7,13 +7,13 @@
 테스트도 읽고 싶다면 [FirstChatLocalMockModelTest.java](../../../labs/02-first-chat/src/test/java/com/example/ailearning/FirstChatLocalMockModelTest.java)에서 다음 순서로 확인하세요.
 
 1. `modelProperties()`: 테스트용 연결 설정
-2. `sendsUserMessageToLocalMockModelAndReturnsFixedText()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
-3. `rejectsInvalidInputsBeforeCallingLocalMockModel()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
+2. `로컬_모델에_질문을_보내고_고정_응답을_받는다()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
+3. `잘못된_입력은_로컬_모델_호출_전에_거부한다()`: 입력 검증 보충. Spring MVC/Validation의 동작 확인
 
-`rejectsInvalidInputsBeforeCallingLocalMockModel()`는 `"가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1)`로
+`잘못된_입력은_로컬_모델_호출_전에_거부한다()`는 `"가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1)`로
 허용 길이보다 정확히 한 글자 긴 입력을 만듭니다. Controller와 같은 상수를 사용하며, HTTP 400과 모델 요청 0회를 확인합니다.
 
-`doesNotSendPreviousRequestToLocalMockModelAutomatically()`는 03장의 대화 기억 실험에서 읽습니다.
+`다음_요청에_이전_대화를_자동으로_포함하지_않는다()`는 03장의 대화 기억 실험에서 읽습니다.
 인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
 
 로컬 MockModel 테스트는 `spring.config.import=`로 루트 `.env` 읽기를 끕니다.

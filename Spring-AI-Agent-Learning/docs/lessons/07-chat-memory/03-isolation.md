@@ -19,11 +19,11 @@
 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test
+./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test --tests com.example.ailearning.l07memory.MemoryContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootRun
 ```
 
-테스트는 실제 키가 필요 없습니다. bootRun으로 실제 모델을 호출하면 비용이 발생할 수 있습니다.
+로컬 테스트는 실제 키가 필요 없습니다. bootRun으로 실제 모델을 호출하면 비용이 발생할 수 있습니다.
 다른 터미널에서 먼저 기억 없는 경로를 호출합니다.
 
 ```bash

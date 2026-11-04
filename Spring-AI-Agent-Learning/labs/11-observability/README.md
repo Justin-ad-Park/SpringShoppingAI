@@ -6,7 +6,7 @@
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test
+./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootRun
 ```
@@ -14,3 +14,16 @@
 test는 로컬 고정 모델 서버를 사용합니다. bootRun은 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL로 실제 호출합니다.
 포트 8105, POST /api/observed-chat (text/plain), GET /actuator/metrics. 종료는 Ctrl+C.
 메트릭만 조회하며 분산 추적 수집기나 대시보드는 구성하지 않습니다.
+
+## 테스트 선택과 결과 확인
+
+- `ObservationContractTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `ObservationOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
+- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationOpenAiLiveTest
+```
+
+IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.

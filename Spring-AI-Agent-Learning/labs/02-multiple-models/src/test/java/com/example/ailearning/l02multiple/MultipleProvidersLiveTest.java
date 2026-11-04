@@ -24,7 +24,8 @@ class MultipleProvidersLiveTest {
     @Test
     @Timeout(60)
     @DisplayName("실제 OpenAI에 질문하고 응답을 출력한다")
-    void callsRealOpenAiAndPrintsResponse() {
+    void 실제_OpenAI에_질문하고_응답을_출력한다(org.junit.jupiter.api.TestInfo info) {
+        System.out.println("[" + info.getTestMethod().orElseThrow().getName() + "]");
         String question = "Spring의 의존성 주입을 쉬운 한국어 한 문장으로 설명해줘.";
         String answer = service.askOpenAi(question);
 
@@ -37,7 +38,8 @@ class MultipleProvidersLiveTest {
 //    @Test
 //    @Timeout(60)
 //    @DisplayName("실제 Anthropic에 질문하고 응답을 출력한다")
-//    void callsRealAnthropicAndPrintsResponse() {
+//    void 실제_Anthropic에_질문하고_응답을_출력한다(org.junit.jupiter.api.TestInfo info) {
+//        System.out.println("[" + info.getTestMethod().orElseThrow().getName() + "]");
 //        String question = "Spring의 의존성 주입을 쉬운 한국어 한 문장으로 설명해줘.";
 //        String answer = service.askAnthropic(question);
 //

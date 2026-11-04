@@ -13,6 +13,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class MemoryContractTest {
+    private String 테스트이름;
+
+    @BeforeEach
+    void 테스트_이름_준비(TestInfo info) {
+        테스트이름 = info.getTestMethod().orElseThrow().getName();
+    }
+
+    private void 결과출력(String 항목, Object 결과) {
+        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
+    }
+
+    private HttpResponse<String> 응답출력(HttpResponse<String> response) {
+        결과출력("요청", response.request().method() + " " + response.uri().getPath());
+        결과출력("HTTP " + response.statusCode(), response.body());
+        return response;
+    }
+
     static final LocalModelServer MODEL = start();
     @Value("${local.server.port}") int port;
     static LocalModelServer start() {
@@ -29,7 +46,7 @@ class MemoryContractTest {
     }
     @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void replaysPreviousUserAndAssistantBeforeCurrentQuestion() throws Exception {
+    @Test void 이전_질문과_답변을_새_질문_앞에_전달한다() throws Exception {
         try (var alice = browser()) {
             post(alice, "/api/memory/demo", "예산은 3만원입니다.");
             var response = post(alice, "/api/memory/demo", "음료로 추천해줘.");
@@ -43,7 +60,7 @@ class MemoryContractTest {
             assertThat(json(response).path("storedMessages").asInt()).isEqualTo(4);
         }
     }
-    @Test void statelessDoesNotReplayPreviousRequest() throws Exception {
+    @Test void 메모리_없는_요청은_이전_대화를_전달하지_않는다() throws Exception {
         try (var alice = browser()) {
             post(alice, "/api/stateless", "제 이름은 민수입니다.");
             post(alice, "/api/stateless", "제 이름은?");
@@ -51,7 +68,7 @@ class MemoryContractTest {
             assertThat(MODEL.requests.get(1).path("messages").toString()).doesNotContain("민수");
         }
     }
-    @Test void sameConversationIdIsIsolatedBetweenCookieSessions() throws Exception {
+    @Test void 대화_ID가_같아도_사용자_세션이_다르면_분리된다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             post(alice, "/api/memory/demo", "Alice의 예산은 3만원");
             post(bob, "/api/memory/demo", "Bob의 예산은 1만원");
@@ -60,18 +77,18 @@ class MemoryContractTest {
             assertThat(get(alice, "/api/memory/demo").body()).contains("Alice").doesNotContain("Bob");
         }
     }
-    @Test void conversationsAndResetAreScopedToOwnerAndConversationId() throws Exception {
+    @Test void 대화_삭제는_해당_사용자의_지정한_대화에만_적용된다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             post(alice, "/api/memory/one", "Alice one");
             post(alice, "/api/memory/two", "Alice two");
             post(bob, "/api/memory/one", "Bob one");
-            alice.send(HttpRequest.newBuilder(uri("/api/memory/one")).DELETE().build(), HttpResponse.BodyHandlers.ofString());
+            응답출력(alice.send(HttpRequest.newBuilder(uri("/api/memory/one")).DELETE().build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(json(get(alice, "/api/memory/one")).size()).isZero();
             assertThat(get(alice, "/api/memory/two").body()).contains("Alice two");
             assertThat(get(bob, "/api/memory/one").body()).contains("Bob one");
         }
     }
-    @Test void windowRetainsSixMessagesAndSendsAtMostEightIncludingSystemAndNewQuestion() throws Exception {
+    @Test void 최근_메시지_여섯_개를_보관하고_전달할_메시지_수를_제한한다() throws Exception {
         try (var alice = browser()) {
             for (int turn = 1; turn <= 5; turn++) post(alice, "/api/memory/window", "질문" + turn);
             assertThat(json(get(alice, "/api/memory/window")).size()).isEqualTo(6);
@@ -80,7 +97,7 @@ class MemoryContractTest {
             assertThat(sent.toString()).doesNotContain("질문1").contains("질문2", "질문5");
         }
     }
-    @Test void failedOrBlankReplyDoesNotSavePartialTurn() throws Exception {
+    @Test void 실패하거나_빈_응답이면_이번_대화를_저장하지_않는다() throws Exception {
         try (var alice = browser()) {
             post(alice, "/api/memory/failure", "성공한 질문");
             MODEL.responder = request -> LocalModelServer.message("");
@@ -90,7 +107,7 @@ class MemoryContractTest {
             assertThat(history.body()).doesNotContain("실패한 질문");
         }
     }
-    @Test void invalidInputDoesNotCallModel() throws Exception {
+    @Test void 잘못된_입력은_모델을_호출하지_않는다() throws Exception {
         try (var alice = browser()) {
             assertThat(post(alice, "/api/memory/demo", " ").statusCode()).isEqualTo(400);
             assertThat(post(alice, "/api/memory/invalid%3Aid", "질문").statusCode()).isEqualTo(400);
@@ -100,11 +117,11 @@ class MemoryContractTest {
     HttpClient browser() { return HttpClient.newBuilder().cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL)).build(); }
     URI uri(String path) { return URI.create("http://127.0.0.1:" + port + path); }
     HttpResponse<String> post(HttpClient http, String path, String text) throws Exception {
-        return http.send(HttpRequest.newBuilder(uri(path)).header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(text)).build(), HttpResponse.BodyHandlers.ofString());
+        return 응답출력(http.send(HttpRequest.newBuilder(uri(path)).header("Content-Type", "text/plain; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(text)).build(), HttpResponse.BodyHandlers.ofString()));
     }
     HttpResponse<String> get(HttpClient http, String path) throws Exception {
-        return http.send(HttpRequest.newBuilder(uri(path)).GET().build(), HttpResponse.BodyHandlers.ofString());
+        return 응답출력(http.send(HttpRequest.newBuilder(uri(path)).GET().build(), HttpResponse.BodyHandlers.ofString()));
     }
     JsonNode json(HttpResponse<String> response) { return LocalModelServer.JSON.readTree(response.body()); }
 }

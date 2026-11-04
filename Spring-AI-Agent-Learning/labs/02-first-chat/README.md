@@ -56,3 +56,16 @@ curl -i http://127.0.0.1:8091/api/chat \
 학습용 외부 오류는 기본 500으로 나타날 수 있으며 서버 로그에서 원인을 확인합니다.
 
 [전체 코드와 실행 해설](../../docs/lessons/02-first-call.md) · [프롬프트 변경 실험](../../docs/lessons/03-chatclient-and-prompts.md)
+
+## 테스트 선택과 결과 확인
+
+- `FirstChatLocalMockModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `FirstChatOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
+- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
+```
+
+IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.

@@ -47,7 +47,7 @@ ANSWERED는 **모든 문장이 근거로 증명되었다는 뜻은 아닙니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test --tests com.example.ailearning.l10rag.RagContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootRun
 curl --get http://127.0.0.1:8100/api/rag/sources \
   --data-urlencode 'question=미개봉 상품 반품 기간은?'

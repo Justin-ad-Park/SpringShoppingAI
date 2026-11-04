@@ -21,7 +21,7 @@
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test --tests com.example.ailearning.l10rag.RagContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootRun
 ```

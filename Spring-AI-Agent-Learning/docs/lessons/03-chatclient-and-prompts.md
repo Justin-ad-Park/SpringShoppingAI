@@ -139,7 +139,7 @@ curl -sS http://127.0.0.1:8091/api/chat \
 [00장 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.
 지금 실행한 `ask()`는 매 요청의 `message`만 전달합니다. 두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.
 모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.
-[FirstChatLocalMockModelTest](../../labs/02-first-chat/src/test/java/com/example/ailearning/FirstChatLocalMockModelTest.java)의 `doesNotSendPreviousRequestToLocalMockModelAutomatically` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
+[FirstChatLocalMockModelTest](../../labs/02-first-chat/src/test/java/com/example/ailearning/FirstChatLocalMockModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
 [07장 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.
 
 ## 5. 이번 실습에서 프롬프트와 코드의 책임

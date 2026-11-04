@@ -13,7 +13,7 @@ PriceTools는 05에서 배운 @Tool 방식으로 가상 허브티 가격 12000�
 명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test
+./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test --tests com.example.ailearning.l08advisors.AdvisorContractTest
 ./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:bootRun
 curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
   http://127.0.0.1:8098/api/advisors/demo \

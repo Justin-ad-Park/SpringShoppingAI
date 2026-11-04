@@ -6,4 +6,7 @@ dependencies {
 
 // 저장소 루트의 .env를 읽도록 실행 위치를 맞춥니다.
 tasks.named('bootRun') { workingDir rootProject.projectDir }
-tasks.named('test') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}
