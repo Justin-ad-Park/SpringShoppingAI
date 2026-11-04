@@ -22,7 +22,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 ## 한 단원을 작은 수업으로 읽기
 
 [학습 방법](learning-guide.md)을 기준으로 각 단원의 목차에서 소수업에 들어갑니다.
-04~12는 33개 소수업으로 구성되어 있습니다. 각 단원의 목차에서 해당 실습 모듈과 읽을 순서를 확인합니다.
+04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다. 05~12는 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.
 보충 읽기는 기본 메서드를 이해한 뒤 선택합니다. 특히 06의 실행 상한 내부 구현은 Workflow/Agent 기본 비교와 분리했습니다.
 
 ## 학습 지도
@@ -53,7 +53,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 |---|---|---|
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
 | 02장 보충 4: 여러 모델 | `02-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
-| 04~12의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
+| 04장 본문·05~12의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
 | [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
 | [11-2 모델 평가](lessons/11-evaluation/02-model-judge.md) | `11-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
 | [11-4 관측](lessons/11-evaluation/04-actuator.md) | `11-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
