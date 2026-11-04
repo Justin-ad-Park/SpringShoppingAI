@@ -1,6 +1,8 @@
 package com.example.ailearning;
 
-import com.sun.net.httpserver.HttpServer;
+import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.OpenAiStubServer;
+import static com.example.ailearning.testsupport.OpenAiStubServer.text;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,43 +13,29 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 // 실제 Spring AI 어댑터를 사용하되 외부 모델 API만 로컬 HTTP 서버로 대체합니다.
-// 02장에서는 modelProperties와 정상 호출 테스트만 읽고, 서버 구현은 제공된 보조 코드로 사용하세요.
+// 02장에서는 modelProperties와 정상 호출 테스트만 읽고, 서버 구현은 공통 test-support 모듈이 제공합니다.
 // RANDOM_PORT는 테스트할 애플리케이션 서버에 사용 가능한 포트를 배정합니다.
 @DisplayName("첫 Chat 호출 — 로컬 MockModel 계약 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class FirstChatLocalMockModelTest {
-    private String 테스트이름;
+    private TestOutput output;
 
     @BeforeEach
     void 테스트_이름_준비(TestInfo info) {
-        테스트이름 = info.getTestMethod().orElseThrow().getName();
+        output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-    private void 결과출력(String 항목, Object 결과) {
-        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
-    }
-
-    private static final ObjectMapper JSON = new ObjectMapper();
-    // 가짜 서버의 처리 스레드와 테스트 스레드가 요청 기록을 공유합니다.
-    private static final List<JsonNode> REQUESTS = new CopyOnWriteArrayList<>();
-    private static final List<String> AUTH_HEADERS = new CopyOnWriteArrayList<>();
-    private static final HttpServer MODEL_SERVER = startModelServer();  // (1). static 변수를 담는 로직 자동 수행됨
+    private static final OpenAiStubServer MODEL_SERVER = new OpenAiStubServer().usage(10, 10);
 
     @Value("${local.server.port}")
     private int port;
@@ -61,23 +49,21 @@ class FirstChatLocalMockModelTest {
         registry.add("spring.ai.openai.chat.options.model", () -> "tutor-test-model");
         // 외부 제공 업체 대신 로컬 가짜 모델 서버로 요청을 보냅니다.
         registry.add("spring.ai.openai.base-url",
-                () -> "http://127.0.0.1:" + MODEL_SERVER.getAddress().getPort() + "/v1");
+                MODEL_SERVER::baseUrl);
     }
-
 
     // 각 테스트 전에 기록을 비워 다른 테스트의 요청이 섞이지 않게 합니다.
     @BeforeEach
     void resetRequests() {
-        REQUESTS.clear();
-        AUTH_HEADERS.clear();
-
+        MODEL_SERVER.resetChat();
+        MODEL_SERVER.respondWith(text("로컬 테스트 모델의 고정 응답입니다."));
 
     }
 
     // 모든 테스트가 끝나면 가짜 모델 서버를 종료합니다.
     @AfterAll
     static void stopModelServer() {
-        MODEL_SERVER.stop(0);
+        MODEL_SERVER.close();
     }
 
     // 02장 핵심: 질문 전달과 고정 응답 반환을 확인합니다.
@@ -85,18 +71,18 @@ class FirstChatLocalMockModelTest {
     @DisplayName("로컬 MockModel에 질문을 전달하고 고정 응답을 반환한다")
     void 로컬_모델에_질문을_보내고_고정_응답을_받는다() throws Exception {
         HttpResponse<String> response = ask("스프링이 무엇인가요?");
-        printResponse("LocalMockModel / 정상 호출 / 정상 질문", response);
+        output.response("LocalMockModel / 정상 호출 / 정상 질문", response);
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("로컬 테스트 모델의 고정 응답입니다.");
-        assertThat(REQUESTS).hasSize(1);
-        JsonNode request = REQUESTS.getFirst();
+        assertThat(MODEL_SERVER.chatRequests()).hasSize(1);
+        JsonNode request = MODEL_SERVER.chatRequests().getFirst();
         assertThat(request.path("model").asText()).isEqualTo("tutor-test-model");
         assertThat(request.path("messages").size()).isEqualTo(1);
         assertThat(request.at("/messages/0/role").asText()).isEqualTo("user");
         assertThat(request.at("/messages/0/content").asText()).isEqualTo("스프링이 무엇인가요?");
         // 선택 심화: 더미 키가 제공 업체 요청의 인증 헤더에 들어가는지도 확인합니다.
-        assertThat(AUTH_HEADERS).containsExactly("Bearer local-test-key");
+        assertThat(MODEL_SERVER.authorizationHeaders()).containsExactly("Bearer local-test-key");
     }
 
     /**
@@ -108,13 +94,13 @@ class FirstChatLocalMockModelTest {
     @DisplayName("잘못된 입력은 로컬 MockModel 호출 전에 거부한다")
     void 잘못된_입력은_로컬_모델_호출_전에_거부한다() throws Exception {
         HttpResponse<String> blankResponse = ask("   ");
-        printResponse("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
+        output.response("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
         assertThat(blankResponse.statusCode()).isEqualTo(400);
 
         HttpResponse<String> oversizedResponse = ask("가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1));
-        printResponse("LocalMockModel / 입력 검증 / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
+        output.response("LocalMockModel / 입력 검증 / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
         assertThat(oversizedResponse.statusCode()).isEqualTo(400);
-        assertThat(REQUESTS).isEmpty();
+        assertThat(MODEL_SERVER.chatRequests()).isEmpty();
     }
 
     // 03장에서 읽기: 두 번째 요청에 현재 질문만 담기는지 확인합니다.
@@ -123,15 +109,15 @@ class FirstChatLocalMockModelTest {
     @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")
     void 다음_요청에_이전_대화를_자동으로_포함하지_않는다() throws Exception {
         HttpResponse<String> firstResponse = ask("제 이름은 민수입니다.");
-        printResponse("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
+        output.response("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
         assertThat(firstResponse.statusCode()).isEqualTo(200);
 
         HttpResponse<String> secondResponse = ask("제 이름이 무엇인가요?");
-        printResponse("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
+        output.response("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
         assertThat(secondResponse.statusCode()).isEqualTo(200);
 
-        assertThat(REQUESTS).hasSize(2);
-        JsonNode second = REQUESTS.get(1);
+        assertThat(MODEL_SERVER.chatRequests()).hasSize(2);
+        JsonNode second = MODEL_SERVER.chatRequests().get(1);
         assertThat(second.path("messages").size()).isEqualTo(1);
         assertThat(second.at("/messages/0/content").asText()).isEqualTo("제 이름이 무엇인가요?");
     }
@@ -148,38 +134,5 @@ class FirstChatLocalMockModelTest {
     }
 
     // 각 테스트에서 테스트 이름과 요청 구분을 전달해 결과를 출력합니다.
-    private void printResponse(String label, HttpResponse<String> response) {
-        결과출력(label + " / HTTP " + response.statusCode(), response.body());
-    }
 
-    // 제공된 테스트 보조 코드입니다. 첫 실습에서는 내부 구현을 이해하거나 작성할 필요가 없습니다.
-    private static HttpServer startModelServer() {
-        try {
-            // 포트 0은 가짜 모델 서버에 사용 가능한 포트를 배정하도록 요청합니다.
-            // 위 RANDOM_PORT로 실행되는 애플리케이션 서버와는 별개의 서버입니다.
-            HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            server.createContext("/v1/chat/completions", exchange -> {
-                REQUESTS.add(JSON.readTree(exchange.getRequestBody()));
-                AUTH_HEADERS.add(exchange.getRequestHeaders().getFirst("Authorization"));
-                // Spring AI가 읽을 수 있도록 OpenAI 형식의 고정 JSON 응답을 반환합니다.
-                byte[] response = """
-                        {"id":"chatcmpl-local","object":"chat.completion","created":0,
-                         "model":"tutor-test-model","choices":[{"index":0,
-                         "message":{"role":"assistant","content":"로컬 테스트 모델의 고정 응답입니다."},
-                         "finish_reason":"stop"}],
-                         "usage":{"prompt_tokens":10,"completion_tokens":10,"total_tokens":20}}
-                        """.getBytes(StandardCharsets.UTF_8);
-                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                exchange.sendResponseHeaders(200, response.length);
-                try (var body = exchange.getResponseBody()) {
-                    body.write(response);
-                }
-                exchange.close();
-            });
-            server.start();
-            return server;
-        } catch (IOException e) {
-            throw new IllegalStateException("로컬 테스트 모델 서버를 시작하지 못했습니다.", e);
-        }
-    }
 }

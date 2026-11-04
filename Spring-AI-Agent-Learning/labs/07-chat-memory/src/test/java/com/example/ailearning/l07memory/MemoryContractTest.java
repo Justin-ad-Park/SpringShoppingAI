@@ -1,5 +1,8 @@
 package com.example.ailearning.l07memory;
 
+import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.OpenAiStubServer;
+import static com.example.ailearning.testsupport.OpenAiStubServer.text;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,36 +16,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class MemoryContractTest {
-    private String 테스트이름;
+    private TestOutput output;
 
     @BeforeEach
     void 테스트_이름_준비(TestInfo info) {
-        테스트이름 = info.getTestMethod().orElseThrow().getName();
+        output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-    private void 결과출력(String 항목, Object 결과) {
-        System.out.printf("[%s] %s: %s%n", 테스트이름, 항목, 결과);
-    }
 
-    private HttpResponse<String> 응답출력(HttpResponse<String> response) {
-        결과출력("요청", response.request().method() + " " + response.uri().getPath());
-        결과출력("HTTP " + response.statusCode(), response.body());
-        return response;
-    }
-
-    static final LocalModelServer MODEL = start();
+    static final OpenAiStubServer MODEL = new OpenAiStubServer();
     @Value("${local.server.port}") int port;
-    static LocalModelServer start() {
-        try { return new LocalModelServer(); } catch (Exception error) { throw new IllegalStateException(error); }
-    }
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
-        registry.add("spring.ai.openai.base-url", MODEL::url);
+        registry.add("spring.ai.openai.base-url", MODEL::baseUrl);
     }
     @BeforeEach void reset() {
-        MODEL.requests.clear();
-        MODEL.responder = request -> LocalModelServer.message("고정 응답");
+        MODEL.resetChat();
+        MODEL.respondWith(text("고정 응답"));
     }
     @AfterAll static void stop() { MODEL.close(); }
 
@@ -51,7 +42,7 @@ class MemoryContractTest {
             post(alice, "/api/memory/demo", "예산은 3만원입니다.");
             var response = post(alice, "/api/memory/demo", "음료로 추천해줘.");
             assertThat(response.statusCode()).isEqualTo(200);
-            JsonNode messages = MODEL.requests.get(1).path("messages");
+            JsonNode messages = MODEL.chatRequests().get(1).path("messages");
             assertThat(messages.size()).isEqualTo(4);
             assertThat(messages.get(0).path("role").asString()).isEqualTo("system");
             assertThat(messages.get(1).path("content").asString()).isEqualTo("예산은 3만원입니다.");
@@ -64,15 +55,15 @@ class MemoryContractTest {
         try (var alice = browser()) {
             post(alice, "/api/stateless", "제 이름은 민수입니다.");
             post(alice, "/api/stateless", "제 이름은?");
-            assertThat(MODEL.requests.get(1).path("messages").size()).isEqualTo(2);
-            assertThat(MODEL.requests.get(1).path("messages").toString()).doesNotContain("민수");
+            assertThat(MODEL.chatRequests().get(1).path("messages").size()).isEqualTo(2);
+            assertThat(MODEL.chatRequests().get(1).path("messages").toString()).doesNotContain("민수");
         }
     }
     @Test void 대화_ID가_같아도_사용자_세션이_다르면_분리된다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             post(alice, "/api/memory/demo", "Alice의 예산은 3만원");
             post(bob, "/api/memory/demo", "Bob의 예산은 1만원");
-            assertThat(MODEL.requests.get(1).path("messages").toString()).doesNotContain("Alice");
+            assertThat(MODEL.chatRequests().get(1).path("messages").toString()).doesNotContain("Alice");
             assertThat(get(bob, "/api/memory/demo").body()).doesNotContain("Alice");
             assertThat(get(alice, "/api/memory/demo").body()).contains("Alice").doesNotContain("Bob");
         }
@@ -82,7 +73,7 @@ class MemoryContractTest {
             post(alice, "/api/memory/one", "Alice one");
             post(alice, "/api/memory/two", "Alice two");
             post(bob, "/api/memory/one", "Bob one");
-            응답출력(alice.send(HttpRequest.newBuilder(uri("/api/memory/one")).DELETE().build(), HttpResponse.BodyHandlers.ofString()));
+            output.response(alice.send(HttpRequest.newBuilder(uri("/api/memory/one")).DELETE().build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(json(get(alice, "/api/memory/one")).size()).isZero();
             assertThat(get(alice, "/api/memory/two").body()).contains("Alice two");
             assertThat(get(bob, "/api/memory/one").body()).contains("Bob one");
@@ -92,7 +83,7 @@ class MemoryContractTest {
         try (var alice = browser()) {
             for (int turn = 1; turn <= 5; turn++) post(alice, "/api/memory/window", "질문" + turn);
             assertThat(json(get(alice, "/api/memory/window")).size()).isEqualTo(6);
-            JsonNode sent = MODEL.requests.get(4).path("messages");
+            JsonNode sent = MODEL.chatRequests().get(4).path("messages");
             assertThat(sent.size()).isEqualTo(8);
             assertThat(sent.toString()).doesNotContain("질문1").contains("질문2", "질문5");
         }
@@ -100,7 +91,7 @@ class MemoryContractTest {
     @Test void 실패하거나_빈_응답이면_이번_대화를_저장하지_않는다() throws Exception {
         try (var alice = browser()) {
             post(alice, "/api/memory/failure", "성공한 질문");
-            MODEL.responder = request -> LocalModelServer.message("");
+            MODEL.respondWith(text(""));
             assertThat(post(alice, "/api/memory/failure", "실패한 질문").statusCode()).isEqualTo(502);
             var history = get(alice, "/api/memory/failure");
             assertThat(json(history).size()).isEqualTo(2);
@@ -111,17 +102,17 @@ class MemoryContractTest {
         try (var alice = browser()) {
             assertThat(post(alice, "/api/memory/demo", " ").statusCode()).isEqualTo(400);
             assertThat(post(alice, "/api/memory/invalid%3Aid", "질문").statusCode()).isEqualTo(400);
-            assertThat(MODEL.requests).isEmpty();
+            assertThat(MODEL.chatRequests()).isEmpty();
         }
     }
     HttpClient browser() { return HttpClient.newBuilder().cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL)).build(); }
     URI uri(String path) { return URI.create("http://127.0.0.1:" + port + path); }
     HttpResponse<String> post(HttpClient http, String path, String text) throws Exception {
-        return 응답출력(http.send(HttpRequest.newBuilder(uri(path)).header("Content-Type", "text/plain; charset=UTF-8")
+        return output.response(http.send(HttpRequest.newBuilder(uri(path)).header("Content-Type", "text/plain; charset=UTF-8")
                 .POST(HttpRequest.BodyPublishers.ofString(text)).build(), HttpResponse.BodyHandlers.ofString()));
     }
     HttpResponse<String> get(HttpClient http, String path) throws Exception {
-        return 응답출력(http.send(HttpRequest.newBuilder(uri(path)).GET().build(), HttpResponse.BodyHandlers.ofString()));
+        return output.response(http.send(HttpRequest.newBuilder(uri(path)).GET().build(), HttpResponse.BodyHandlers.ofString()));
     }
-    JsonNode json(HttpResponse<String> response) { return LocalModelServer.JSON.readTree(response.body()); }
+    JsonNode json(HttpResponse<String> response) { return OpenAiStubServer.JSON.readTree(response.body()); }
 }

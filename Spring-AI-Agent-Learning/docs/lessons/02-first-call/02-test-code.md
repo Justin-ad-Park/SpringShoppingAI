@@ -14,7 +14,7 @@
 허용 길이보다 정확히 한 글자 긴 입력을 만듭니다. Controller와 같은 상수를 사용하며, HTTP 400과 모델 요청 0회를 확인합니다.
 
 `다음_요청에_이전_대화를_자동으로_포함하지_않는다()`는 03장의 대화 기억 실험에서 읽습니다.
-인증 헤더 검증은 선택 심화이며, `ask()`와 `startModelServer()`는 제공된 보조 코드입니다.
+인증 헤더 검증은 선택 심화입니다. `ask()`는 애플리케이션 요청을 보내며, 가짜 서버와 출력은 [공통 테스트 도구](../../../test-support/README.md)가 제공합니다.
 
 로컬 MockModel 테스트는 `spring.config.import=`로 루트 `.env` 읽기를 끕니다.
 `modelProperties()`의 설정은 `@DynamicPropertySource`를 통해 **테스트에서만** 적용됩니다.
@@ -36,15 +36,13 @@
   → 가짜 모델 서버의 /v1/chat/completions → 고정 JSON 응답 → 응답 텍스트 반환
 ```
 
-`RANDOM_PORT`는 애플리케이션 서버에, `InetSocketAddress("127.0.0.1", 0)`은 가짜 모델 서버에
-각각 사용 가능한 포트를 배정합니다. 테스트는 애플리케이션의 배정된 포트를 `@Value`로 받습니다.
+`RANDOM_PORT`는 애플리케이션 서버의 포트를 배정합니다. 공통 `OpenAiStubServer`도 별도 사용 가능한 포트로 시작하며, `baseUrl()`로 주소를 제공합니다. 테스트는 애플리케이션의 포트를 `@Value`로 받습니다.
 가짜 서버의 고정 JSON은 Spring AI가 읽을 수 있는 OpenAI 응답 형식을 흉내 낸 것이며 AI가 생성한 답변은 아닙니다.
 
 <details><summary>선택 참고: 가짜 서버의 종료와 요청 기록 공유</summary>
 
-`@BeforeEach`는 테스트마다 요청 기록을 비우고, `@AfterAll`은 모든 테스트 후 가짜 서버를 종료합니다.
-`CopyOnWriteArrayList`는 가짜 서버 처리 스레드와 테스트 스레드가 요청 기록을 공유하기 위해 사용합니다.
-이 서버와 스레드 관련 구현은 첫 실습에서 넘어가도 됩니다.
+`resetRequests()`는 테스트마다 `resetChat()`으로 기록과 이전 시나리오를 초기화한 뒤 고정 응답을 지정합니다.
+`@AfterAll`의 `close()`는 서버와 실행 작업을 정리합니다. HTTP 처리와 요청 기록은 공통 모듈이 담당하므로 첫 실습에서는 직접 작성하지 않아도 됩니다.
 
 </details>
 
