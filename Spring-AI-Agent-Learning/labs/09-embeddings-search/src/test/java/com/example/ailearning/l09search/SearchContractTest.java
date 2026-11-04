@@ -22,7 +22,7 @@ class SearchContractTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-    static final OpenAiStubServer MODEL = new OpenAiStubServer().embeddingUsing(text -> {
+    static final OpenAiStubServer MODEL = new OpenAiStubServer().setEmbeddingVectorFunction(text -> {
         if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
         if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
         return new float[]{0, 0, 1};
@@ -31,14 +31,14 @@ class SearchContractTest {
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.embedding.options.model", () -> "learning-embedding");
-        registry.add("spring.ai.openai.base-url", MODEL::baseUrl);
+        registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
     @AfterAll static void stop() { MODEL.close(); }
 
     @Test void 문서와_질문을_임베딩해_관련_문서를_찾는다() throws Exception {
         var body = json(search("배송", ""));
         assertThat(body.path("vectorHits").get(0).path("id").asString()).isEqualTo("shipping");
-        assertThat(MODEL.embeddingRequests().toString()).contains("미개봉", "배송", "learning-embedding");
+        assertThat(MODEL.getEmbeddingRequests().toString()).contains("미개봉", "배송", "learning-embedding");
     }
     @Test void 표현이_달라도_벡터_검색으로_관련_문서를_찾을_수_있다() throws Exception {
         var body = json(search("운송 요금", ""));
@@ -54,7 +54,7 @@ class SearchContractTest {
     }
     @Test void 벡터를_반환하고_잘못된_검색_조건은_거부한다() throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            var response = output.response(http.send(HttpRequest.newBuilder(uri("/api/embedding"))
+            var response = output.printHttpResponse(http.send(HttpRequest.newBuilder(uri("/api/embedding"))
                     .header("Content-Type", "text/plain; charset=UTF-8")
                     .POST(HttpRequest.BodyPublishers.ofString("배송")).build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(json(response).path("dimensions").asInt()).isEqualTo(3);
@@ -64,7 +64,7 @@ class SearchContractTest {
         assertThat(search("반품", "&category=unknown").statusCode()).isEqualTo(400);
     }
     HttpResponse<String> search(String query, String options) throws Exception {
-        try (var http = HttpClient.newHttpClient()) {return output.response(http.send(HttpRequest.newBuilder(uri("/api/search?query=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + options)).GET().build(), HttpResponse.BodyHandlers.ofString()));}
+        try (var http = HttpClient.newHttpClient()) {return output.printHttpResponse(http.send(HttpRequest.newBuilder(uri("/api/search?query=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + options)).GET().build(), HttpResponse.BodyHandlers.ofString()));}
     }
     URI uri(String path) { return URI.create("http://127.0.0.1:" + port + path); }
     tools.jackson.databind.JsonNode json(HttpResponse<String> response) { return OpenAiStubServer.JSON.readTree(response.body()); }

@@ -2,8 +2,8 @@ package com.example.ailearning.l06decisions;
 
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
-import static com.example.ailearning.testsupport.OpenAiStubServer.text;
-import static com.example.ailearning.testsupport.OpenAiStubServer.toolCall;
+import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantTextMessage;
+import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantToolCallMessage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,13 +31,13 @@ class WorkflowAgentContractTest {
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
-        registry.add("spring.ai.openai.base-url", MODEL::baseUrl);
+        registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL.resetChat(); }
+    @BeforeEach void reset() { MODEL.resetChatResponsesAndRequests(); }
     @AfterAll static void stop() { MODEL.close(); }
 
     @Test void Workflow는_검색과_배송비_계산과_필터링_순서를_정한다() throws Exception {
-        MODEL.respondUsing(request -> text(request.path("messages").toString().contains("TASK:EXTRACT")
+        MODEL.setChatResponseFunction(request -> createAssistantTextMessage(request.path("messages").toString().contains("TASK:EXTRACT")
                 ? "{\"category\":\"음료\",\"totalBudget\":30000}" : "허브티를 추천합니다."));
         JsonNode result = post("workflow", "배송비 포함 3만원 이하 음료");
         assertThat(result.path("status").asString()).isEqualTo("COMPLETED");
@@ -47,7 +47,7 @@ class WorkflowAgentContractTest {
         assertThat(result.path("modelCalls").asInt()).isEqualTo(2);
         assertThat(result.path("toolCalls").asInt()).isEqualTo(3);
         assertThat(result.path("steps").toString()).contains("searchProducts", "calculateShipping");
-        for (JsonNode request : MODEL.chatRequests()) assertThat(request.path("tools").isMissingNode() || request.path("tools").isEmpty()).isTrue();
+        for (JsonNode request : MODEL.getChatRequests()) assertThat(request.path("tools").isMissingNode() || request.path("tools").isEmpty()).isTrue();
     }
     @Test void Agent는_한_요청에서_도구를_선택하며_모델을_여러_번_호출한다() throws Exception {
         scriptedAgent();
@@ -57,7 +57,7 @@ class WorkflowAgentContractTest {
         assertThat(result.path("modelCalls").asInt()).isEqualTo(4);
         assertThat(result.path("toolCalls").asInt()).isEqualTo(3);
         assertThat(result.path("offers").toString()).contains("31000", "15000");
-        assertThat(MODEL.chatRequests().getFirst().path("tools").toString()).contains("searchProducts", "calculateShipping");
+        assertThat(MODEL.getChatRequests().getFirst().path("tools").toString()).contains("searchProducts", "calculateShipping");
     }
     @Test void 혼합_방식은_모델이_잘못_추천해도_예산_초과_상품을_제외한다() throws Exception {
         scriptedAgent();
@@ -68,67 +68,67 @@ class WorkflowAgentContractTest {
         assertThat(result.path("answer").asString()).contains("P01").doesNotContain("P02");
     }
     @Test void 예산이_없거나_검색_결과가_없으면_Workflow를_중단한다() throws Exception {
-        MODEL.respondWith(text("{\"category\":null,\"totalBudget\":null}"));
+        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":null,\"totalBudget\":null}"));
         assertThat(post("workflow", "선물 추천").path("status").asString()).isEqualTo("NEEDS_INPUT");
-        assertThat(MODEL.chatRequests()).hasSize(1);
-        MODEL.respondWith(text("{\"category\":\"음료\",\"totalBudget\":1000}"));
+        assertThat(MODEL.getChatRequests()).hasSize(1);
+        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":\"음료\",\"totalBudget\":1000}"));
         var empty = post("workflow", "천원 이하 음료");
         assertThat(empty.path("status").asString()).isEqualTo("NO_RESULTS");
         assertThat(empty.path("modelCalls").asInt()).isEqualTo(1);
     }
     @Test void 도구_없이_답할_수_있고_호출_기록은_요청별로_분리된다() throws Exception {
-        MODEL.respondWith(text("안녕하세요."));
+        MODEL.setChatResponseMessage(createAssistantTextMessage("안녕하세요."));
         assertThat(post("agent", "인사").path("toolCalls").asInt()).isZero();
         assertThat(post("agent", "다시 인사").path("modelCalls").asInt()).isEqualTo(1);
     }
     @Test void 도구를_반복_요청해도_Java의_실행_상한을_넘지_못한다() throws Exception {
-        MODEL.respondUsing(request -> toolCall("repeat", "searchProducts", "{\"category\":\"음료\"}"));
+        MODEL.setChatResponseFunction(request -> createAssistantToolCallMessage("repeat", "searchProducts", "{\"category\":\"음료\"}"));
         var result = post("agent", "계속 검색");
         assertThat(result.path("status").asString()).isEqualTo("TOOL_LIMIT");
         assertThat(result.path("toolCalls").asInt()).isEqualTo(3);
         assertThat(result.path("modelCalls").asInt()).isLessThanOrEqualTo(5);
     }
     @Test void 모델_호출_상한에_도달하면_다음_호출을_중단한다() {
-        MODEL.respondWith(text("{\"category\":\"음료\",\"totalBudget\":30000}"));
+        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":\"음료\",\"totalBudget\":30000}"));
         var service = new ComparisonService(model, new ProductCatalog(), 1, 3, 1000);
         var result = service.run("workflow", "배송비 포함 3만원 이하 음료");
-        output.value("호출 상한 결과", result);
+        output.printValue("호출 상한 결과", result);
         assertThat(result.status()).isEqualTo("MODEL_LIMIT");
         assertThat(result.modelCalls()).isEqualTo(1);
-        assertThat(MODEL.chatRequests()).hasSize(1);
+        assertThat(MODEL.getChatRequests()).hasSize(1);
     }
     @Test void 대기_시간을_초과한_뒤에는_도구를_실행하지_않는다() throws Exception {
-        MODEL.respondUsing(request -> {
+        MODEL.setChatResponseFunction(request -> {
             try { Thread.sleep(1600); } catch (InterruptedException error) { Thread.currentThread().interrupt(); }
-            return toolCall("late", "searchProducts", "{}");
+            return createAssistantToolCallMessage("late", "searchProducts", "{}");
         });
         long started = System.nanoTime();
         var result = post("agent", "느린 응답");
         long elapsedMs = (System.nanoTime() - started) / 1_000_000;
-        output.value("경과 시간(ms)", elapsedMs);
+        output.printValue("경과 시간(ms)", elapsedMs);
         assertThat(result.path("status").asString()).isEqualTo("TIMEOUT");
         assertThat(elapsedMs).isLessThan(1500);
         assertThat(result.path("toolCalls").asInt()).isZero();
         Thread.sleep(800); // 늦은 응답 이후에도 새 모델 요청/도구 실행을 시작하지 않음.
-        assertThat(MODEL.chatRequests()).hasSize(1);
+        assertThat(MODEL.getChatRequests()).hasSize(1);
     }
     void scriptedAgent() {
-        MODEL.respondUsing(request -> {
+        MODEL.setChatResponseFunction(request -> {
             String messages = request.path("messages").toString();
-            if (messages.contains("TASK:EXTRACT")) return text("{\"category\":\"음료\",\"totalBudget\":30000}");
+            if (messages.contains("TASK:EXTRACT")) return createAssistantTextMessage("{\"category\":\"음료\",\"totalBudget\":30000}");
             int results = 0;
             for (JsonNode message : request.path("messages")) if (message.path("role").asString().equals("tool")) results++;
             return switch (results) {
-                case 0 -> toolCall("search", "searchProducts", "{\"category\":\"음료\",\"maxPrice\":30000}");
-                case 1 -> toolCall("quote2", "calculateShipping", "{\"productId\":\"P02\"}");
-                case 2 -> toolCall("quote1", "calculateShipping", "{\"productId\":\"P01\"}");
-                default -> text("P02를 추천합니다. 이 문장은 Java가 검증해야 합니다.");
+                case 0 -> createAssistantToolCallMessage("search", "searchProducts", "{\"category\":\"음료\",\"maxPrice\":30000}");
+                case 1 -> createAssistantToolCallMessage("quote2", "calculateShipping", "{\"productId\":\"P02\"}");
+                case 2 -> createAssistantToolCallMessage("quote1", "calculateShipping", "{\"productId\":\"P01\"}");
+                default -> createAssistantTextMessage("P02를 추천합니다. 이 문장은 Java가 검증해야 합니다.");
             };
         });
     }
     JsonNode post(String mode, String question) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            var response = output.response(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/compare/" + mode))
+            var response = output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/compare/" + mode))
                     .header("Content-Type", "text/plain; charset=UTF-8")
                     .POST(HttpRequest.BodyPublishers.ofString(question)).build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(response.statusCode()).as(response.body()).isEqualTo(200);

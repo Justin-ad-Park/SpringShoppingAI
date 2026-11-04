@@ -2,7 +2,7 @@ package com.example.ailearning;
 
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
-import static com.example.ailearning.testsupport.OpenAiStubServer.text;
+import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantTextMessage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class FirstChatLocalMockModelTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-    private static final OpenAiStubServer MODEL_SERVER = new OpenAiStubServer().usage(10, 10);
+    private static final OpenAiStubServer MODEL_SERVER = new OpenAiStubServer().setChatTokenUsage(10, 10);
 
     @Value("${local.server.port}")
     private int port;
@@ -49,14 +49,14 @@ class FirstChatLocalMockModelTest {
         registry.add("spring.ai.openai.chat.options.model", () -> "tutor-test-model");
         // 외부 제공 업체 대신 로컬 가짜 모델 서버로 요청을 보냅니다.
         registry.add("spring.ai.openai.base-url",
-                MODEL_SERVER::baseUrl);
+                MODEL_SERVER::getBaseUrl);
     }
 
     // 각 테스트 전에 기록을 비워 다른 테스트의 요청이 섞이지 않게 합니다.
     @BeforeEach
     void resetRequests() {
-        MODEL_SERVER.resetChat();
-        MODEL_SERVER.respondWith(text("로컬 테스트 모델의 고정 응답입니다."));
+        MODEL_SERVER.resetChatResponsesAndRequests();
+        MODEL_SERVER.setChatResponseMessage(createAssistantTextMessage("로컬 테스트 모델의 고정 응답입니다."));
 
     }
 
@@ -71,18 +71,18 @@ class FirstChatLocalMockModelTest {
     @DisplayName("로컬 MockModel에 질문을 전달하고 고정 응답을 반환한다")
     void 로컬_모델에_질문을_보내고_고정_응답을_받는다() throws Exception {
         HttpResponse<String> response = ask("스프링이 무엇인가요?");
-        output.response("LocalMockModel / 정상 호출 / 정상 질문", response);
+        output.printHttpResponse("LocalMockModel / 정상 호출 / 정상 질문", response);
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("로컬 테스트 모델의 고정 응답입니다.");
-        assertThat(MODEL_SERVER.chatRequests()).hasSize(1);
-        JsonNode request = MODEL_SERVER.chatRequests().getFirst();
+        assertThat(MODEL_SERVER.getChatRequests()).hasSize(1);
+        JsonNode request = MODEL_SERVER.getChatRequests().getFirst();
         assertThat(request.path("model").asText()).isEqualTo("tutor-test-model");
         assertThat(request.path("messages").size()).isEqualTo(1);
         assertThat(request.at("/messages/0/role").asText()).isEqualTo("user");
         assertThat(request.at("/messages/0/content").asText()).isEqualTo("스프링이 무엇인가요?");
         // 선택 심화: 더미 키가 제공 업체 요청의 인증 헤더에 들어가는지도 확인합니다.
-        assertThat(MODEL_SERVER.authorizationHeaders()).containsExactly("Bearer local-test-key");
+        assertThat(MODEL_SERVER.getChatAuthorizationHeaders()).containsExactly("Bearer local-test-key");
     }
 
     /**
@@ -94,13 +94,13 @@ class FirstChatLocalMockModelTest {
     @DisplayName("잘못된 입력은 로컬 MockModel 호출 전에 거부한다")
     void 잘못된_입력은_로컬_모델_호출_전에_거부한다() throws Exception {
         HttpResponse<String> blankResponse = ask("   ");
-        output.response("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
+        output.printHttpResponse("LocalMockModel / 입력 검증 / 공백 입력", blankResponse);
         assertThat(blankResponse.statusCode()).isEqualTo(400);
 
         HttpResponse<String> oversizedResponse = ask("가".repeat(ChatController.MAX_MESSAGE_LENGTH + 1));
-        output.response("LocalMockModel / 입력 검증 / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
+        output.printHttpResponse("LocalMockModel / 입력 검증 / 최대 길이보다 한 글자 긴 입력", oversizedResponse);
         assertThat(oversizedResponse.statusCode()).isEqualTo(400);
-        assertThat(MODEL_SERVER.chatRequests()).isEmpty();
+        assertThat(MODEL_SERVER.getChatRequests()).isEmpty();
     }
 
     // 03장에서 읽기: 두 번째 요청에 현재 질문만 담기는지 확인합니다.
@@ -109,15 +109,15 @@ class FirstChatLocalMockModelTest {
     @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")
     void 다음_요청에_이전_대화를_자동으로_포함하지_않는다() throws Exception {
         HttpResponse<String> firstResponse = ask("제 이름은 민수입니다.");
-        output.response("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
+        output.printHttpResponse("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
         assertThat(firstResponse.statusCode()).isEqualTo(200);
 
         HttpResponse<String> secondResponse = ask("제 이름이 무엇인가요?");
-        output.response("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
+        output.printHttpResponse("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
         assertThat(secondResponse.statusCode()).isEqualTo(200);
 
-        assertThat(MODEL_SERVER.chatRequests()).hasSize(2);
-        JsonNode second = MODEL_SERVER.chatRequests().get(1);
+        assertThat(MODEL_SERVER.getChatRequests()).hasSize(2);
+        JsonNode second = MODEL_SERVER.getChatRequests().get(1);
         assertThat(second.path("messages").size()).isEqualTo(1);
         assertThat(second.at("/messages/0/content").asText()).isEqualTo("제 이름이 무엇인가요?");
     }

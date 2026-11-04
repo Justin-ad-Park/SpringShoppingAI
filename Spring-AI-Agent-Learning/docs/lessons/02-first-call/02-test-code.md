@@ -36,12 +36,12 @@
   → 가짜 모델 서버의 /v1/chat/completions → 고정 JSON 응답 → 응답 텍스트 반환
 ```
 
-`RANDOM_PORT`는 애플리케이션 서버의 포트를 배정합니다. 공통 `OpenAiStubServer`도 별도 사용 가능한 포트로 시작하며, `baseUrl()`로 주소를 제공합니다. 테스트는 애플리케이션의 포트를 `@Value`로 받습니다.
+`RANDOM_PORT`는 애플리케이션 서버의 포트를 배정합니다. 공통 `OpenAiStubServer`도 별도 사용 가능한 포트로 시작하며, `getBaseUrl()`로 주소를 제공합니다. 테스트는 애플리케이션의 포트를 `@Value`로 받습니다.
 가짜 서버의 고정 JSON은 Spring AI가 읽을 수 있는 OpenAI 응답 형식을 흉내 낸 것이며 AI가 생성한 답변은 아닙니다.
 
 <details><summary>선택 참고: 가짜 서버의 종료와 요청 기록 공유</summary>
 
-`resetRequests()`는 테스트마다 `resetChat()`으로 기록과 이전 시나리오를 초기화한 뒤 고정 응답을 지정합니다.
+`resetRequests()`는 테스트마다 `resetChatResponsesAndRequests()`로 기록과 이전 시나리오를 초기화한 뒤 고정 응답을 지정합니다.
 `@AfterAll`의 `close()`는 서버와 실행 작업을 정리합니다. HTTP 처리와 요청 기록은 공통 모듈이 담당하므로 첫 실습에서는 직접 작성하지 않아도 됩니다.
 
 </details>
