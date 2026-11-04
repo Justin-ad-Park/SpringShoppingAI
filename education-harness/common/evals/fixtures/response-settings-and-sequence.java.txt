@@ -1,0 +1,45 @@
+import java.util.List;
+
+// 검토용 코드. 공개 진입점은 간단하지만 설정과 순서 정책이 함께 들어 있다.
+class DemoModelServer implements AutoCloseable {
+    private List<String> replies = List.of();
+    private int nextReplyIndex;
+    private int httpStatus = 200;
+    private int inputTokens;
+    private int outputTokens;
+
+    DemoModelServer respondInOrder(String... replies) {
+        this.replies = List.of(replies);
+        nextReplyIndex = 0;
+        return this;
+    }
+
+    DemoModelServer status(int httpStatus) {
+        this.httpStatus = httpStatus;
+        return this;
+    }
+
+    DemoModelServer usage(int inputTokens, int outputTokens) {
+        this.inputTokens = inputTokens;
+        this.outputTokens = outputTokens;
+        return this;
+    }
+
+    Reply nextResponse() {
+        if (httpStatus != 200) return new Reply(httpStatus, "모델 오류", inputTokens + outputTokens);
+        if (nextReplyIndex >= replies.size()) throw new IllegalStateException("응답 소진");
+        return new Reply(200, replies.get(nextReplyIndex++), inputTokens + outputTokens);
+    }
+
+    // 응답·순서·오류만 초기화하고 사용량은 유지한다.
+    void resetResponses() {
+        replies = List.of();
+        nextReplyIndex = 0;
+        httpStatus = 200;
+    }
+
+    @Override
+    public void close() {}
+
+    record Reply(int status, String content, int totalTokens) {}
+}

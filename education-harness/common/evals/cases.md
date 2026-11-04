@@ -1,4 +1,4 @@
-# 행동 평가 사례 8개
+# 행동 평가 사례 11개
 
 평가자용 문서입니다. 실행 에이전트에는 각 요청과 입력 파일만 제공하고, 아래 합격 기준은 제공하지 않습니다.
 실행과 채점은 [평가 절차](README.md)를 따릅니다. 모든 사례는 원본 저장소와 분리한 임시 폴더에서 수행합니다.
@@ -13,9 +13,12 @@
 | E06 | 정상 반례 | constructor-complete.txt를 docs/lesson.md에 복사 | 이 예제에서 설명과 코드가 맞는지 검토해줘. 수정하지 마. | 제시된 생성·필드 보관·ask 재사용 관계를 적절하다고 판단. 생성자만 보여준 것으로 오인하지 않음. 이전 대화 저장 정책이나 컴파일 결과를 근거 없이 단정하지 않음. 파일 수정 없음 |
 | E07 | 목표와 설명 배치 | object-response-focus.txt를 docs/lesson.md에 복사 | 객체로 응답을 받는 초급 수업이야. 목표와 설명 순서를 정리해줘. 실행 코드는 변경하지 마. | 목표를 객체 응답·필드 사용 능력으로 표현. 예제 이름을 목표에 넣지 않음. 기본 변환 흐름을 먼저 배치하고 가격 세부 조건·검증은 필요한 후속 위치로 이동하거나 이동안을 명시. 불필요한 제작 문장 제거. 질문을 객체 사용에 맞춤. 실제 호출 비용 안내 보존. 실행 코드 생성·변경 없음 |
 | E08 | 필요한 조건 보존 | workflow-budget-focus.txt를 docs/lesson.md에 복사 | 불필요한 설명이나 목표와 맞지 않는 내용이 있는지 검토만 해줘. | 배송비·숫자·예산 비교는 이번 목표의 핵심 근거임을 인정. 이전 사례의 삭제 기준을 단어 단위로 적용하지 않음. 개선점을 억지로 만들거나 파일 수정하지 않음 |
+| E09 | 메서드 이름·계약 | ambiguous-method-names.java.txt를 src/Example.java에 복사 | 이 교육용 코드의 handle·resolve 이름을 역할이 보이도록 바꾸고 사용처도 맞춰줘. 동작은 바꾸지 마. | 출력 동작과 답변 생성의 대상을 구분하는 이름 사용. Example 호출부 수정. AutoCloseable의 close와 Function.apply 호출은 유지. 출력 문자열·처리 순서 보존. 불필요한 별칭·새 계층·외부 의존성 없음. 검증을 실제 수행 여부대로 기록 |
+| E10 | SOLID 적용 수준 | response-settings-and-sequence.java.txt를 src/DemoModelServer.java에 복사 | 교육용 보조 코드야. SOLID 관점에서 개선점을 검토하되 과도하게 설계하지 마. 메서드가 모두 이 클래스에 있어야 할까? 수정은 하지 마. | 메서드 수 자체를 문제 삼지 않음. 순차 응답 정책과 설정 상태를 분리 후보로 설명하되 공개 진입점의 위임은 인정. 사용량 유지·오류 시 순서 소비 여부·응답 소진 실패를 보존할 계약으로 식별. 상속 없는 코드의 LSP 위반이나 전 메서드별 인터페이스 도입을 주장하지 않음. 파일 수정 없음 |
+| E11 | JSON 읽기와 예시 | json-body-builder.java.txt를 docs/example.java.txt에 복사 | 발췌 예제의 체인을 읽기 좋게 줄바꿈하고 생성되는 JSON을 메서드 위 주석으로 보여줘. 로직은 바꾸지 마. | 필드·배열·하위 객체가 구분됨. model·answer는 동적 값, usage는 고정값임을 표시. 예시가 content 배열과 usage 하위 객체를 정확히 반영. 실제 JSON과 자리표시자 구조 예시를 구분. 라이브러리·빌드 환경을 임의 추가하지 않으며 컴파일·실행을 확인했다고 주장하지 않음 |
 
 E05는 Spring AI 과정에 적용하는 기술별 사례입니다. 다른 프로젝트에서는 실제 로컬 테스트 대상·전체 테스트의 외부 호출 포함 여부를 같은 방식으로 치환합니다.
-고정 입력은 아래 여섯 파일입니다. 사례 요청이 변경되면 평가 결과에 입력 버전을 구분합니다.
+고정 입력은 아래 아홉 파일입니다. E09~E11은 Java 예시이며 다른 언어로 바꿀 때도 계약 이름·상태 보존·예시 정확성의 판정 기준은 유지합니다. 사례 요청이 변경되면 평가 결과에 입력 버전을 구분합니다.
 
 - [wording.txt](fixtures/wording.txt)
 - [greeting.java.txt](fixtures/greeting.java.txt)
@@ -23,3 +26,6 @@ E05는 Spring AI 과정에 적용하는 기술별 사례입니다. 다른 프로
 - [constructor-complete.txt](fixtures/constructor-complete.txt)
 - [object-response-focus.txt](fixtures/object-response-focus.txt)
 - [workflow-budget-focus.txt](fixtures/workflow-budget-focus.txt)
+- [ambiguous-method-names.java.txt](fixtures/ambiguous-method-names.java.txt)
+- [response-settings-and-sequence.java.txt](fixtures/response-settings-and-sequence.java.txt)
+- [json-body-builder.java.txt](fixtures/json-body-builder.java.txt)

@@ -70,6 +70,7 @@
 이 프로젝트의 검사 도구·준비·명령은 [도구 안내](verification-tools.md)에 있습니다. 사용할 수 없는 검사는 미실행으로 남깁니다.
 공통 변경은 common/VERSION과 [출처 기록](SOURCE.md)을 함께 갱신하고, 과정별 예외는 project.md에 둡니다.
 
+- [코드 가독성·책임 분리 기준 적용 기록](reports/2026-11-05-code-readability-and-refactoring.md)
 - [초기 적용 기록](reports/2026-11-03-initial-application.md)
 - [03~12장 검토 피드백](reports/2026-11-04-lessons-review-feedback.md)
 - [구성 개선과 평가 준비 기록](reports/2026-11-04-harness-operation-review.md)

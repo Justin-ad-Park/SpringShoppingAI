@@ -1,0 +1,24 @@
+import java.util.function.Function;
+
+class DemoServer implements AutoCloseable {
+    private final Function<String, String> answerForQuestion = question -> "안내: " + question;
+
+    void handle(String question) {
+        System.out.println(resolve(question));
+    }
+
+    private String resolve(String question) {
+        return answerForQuestion.apply(question);
+    }
+
+    @Override
+    public void close() {}
+}
+
+class Example {
+    public static void main(String[] args) {
+        try (var server = new DemoServer()) {
+            server.handle("배송");
+        }
+    }
+}
