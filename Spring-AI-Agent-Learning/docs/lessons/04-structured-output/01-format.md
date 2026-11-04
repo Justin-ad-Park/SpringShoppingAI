@@ -18,39 +18,7 @@
 - `Integer`는 정수 또는 `null`을 담을 수 있는 Java 자료형입니다. `int`는 `null`을 담을 수 없습니다.
 - 구조화 응답은 모델의 결과를 정해진 자료형으로 사용하는 방식입니다. 형식이 맞아도 값이 맞는지는 별도 검증합니다.
 
-## 구조와 변환 순서
-
-클래스 그림은 현재 읽을 두 타입만 표시합니다.
-
-```mermaid
-classDiagram
-    class CriteriaService {
-        +text(question) String
-        +extract(question) SearchCriteria
-    }
-    class SearchCriteria {
-        +String category
-        +Integer maxPrice
-    }
-    CriteriaService --> SearchCriteria : 응답을 객체로 받기
-```
-
-시퀀스 그림은 정상 변환 흐름을 보여 줍니다. 형식 지시 추가와 변환은 `.entity()`가 돕고, 값 검증과 오류 처리는 04-3에서 읽습니다.
-
-```mermaid
-sequenceDiagram
-    actor User as 사용자
-    participant Service as Java CriteriaService
-    participant AI as Spring AI ChatClient
-    participant Model as 외부 모델
-    User->>Service: 음료 15000원 이하
-    Service->>AI: entity(SearchCriteria.class)
-    AI->>Model: system과 user 및 응답 형식 지시
-    Model-->>AI: JSON 형태의 응답 텍스트
-    AI-->>Service: SearchCriteria 객체
-    Service-->>User: 추출한 조건 객체 반환
-```
-
+실제 호출 코드는 [04-2](02-convert.md)에서 읽고, 코드와 객체의 관계는 [04-3의 구조와 변환 순서](03-validate.md#구조와-변환-순서)에서 그림으로 정리합니다.
 
 ## 여기서 멈춰 확인하기
 

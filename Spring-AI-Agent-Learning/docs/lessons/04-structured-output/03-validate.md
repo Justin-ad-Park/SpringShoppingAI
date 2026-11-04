@@ -71,6 +71,42 @@ public record SearchCriteria(String category, Integer maxPrice) {
 `try/catch`는 실패를 HTTP 상태로 연결하는 Java/Spring 코드입니다. 모델 호출·형식 변환 문제는 502,
 변환은 됐지만 허용되지 않는 값이면 422로 구분합니다. 이 실습은 형식 오류를 모델에 다시 고치게 하는 재시도나 제공 업체의 별도 구조 강제 설정을 추가하지 않습니다.
 
+## 구조와 변환 순서
+
+앞에서 읽은 `SearchCriteria`와 `CriteriaService.extract()`의 관계를 정리한 그림입니다.
+
+```mermaid
+classDiagram
+    class CriteriaService {
+        +text(question) String
+        +extract(question) SearchCriteria
+    }
+    class SearchCriteria {
+        +String category
+        +Integer maxPrice
+        +validate() void
+    }
+    CriteriaService --> SearchCriteria : 응답 변환 후 값 검사
+```
+
+시퀀스 그림은 변환과 값 검증이 모두 성공한 흐름입니다. `.entity()`로 객체를 받은 뒤 Java 코드가 `validate()`를 호출합니다. 실패한 경우는 앞의 코드처럼 502 또는 422로 처리합니다.
+
+```mermaid
+sequenceDiagram
+    actor User as 사용자
+    participant Service as Java CriteriaService
+    participant AI as Spring AI ChatClient
+    participant Model as 외부 모델
+    User->>Service: 음료 15000원 이하
+    Service->>AI: entity(SearchCriteria.class)
+    AI->>Model: system과 user 및 응답 형식 지시
+    Model-->>AI: JSON 형태의 응답 텍스트
+    AI-->>Service: SearchCriteria 객체
+    Service->>Service: criteria.validate()로 값 검사
+    Service-->>User: 검사한 조건 객체 반환
+```
+
+
 ## 실행
 
 명령은 모두 **SpringShoppingAI 저장소 루트**에서 실행합니다.
@@ -111,7 +147,7 @@ curl -i http://127.0.0.1:8094/api/criteria \
 | 공백 질문 | Controller에서 400, 모델 호출 없음 |
 
 실제 모델에게 잘못된 JSON을 요청해도 실패를 항상 재현할 수는 없습니다.
-[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 실제 Spring AI와 로컬 모델 API를 연결해 정상·누락·형식 오류·허용 범위를 벗어난 값를 확정적으로 재현합니다.
+[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 실제 Spring AI와 로컬 모델 API를 연결해 정상·누락·형식 오류·허용 범위를 벗어난 값을 확정적으로 재현합니다.
 이는 자연어 이해 성능 평가가 아닙니다. 잘못 추출한 **양수** 예산은 값 검증을 통과할 수 있으므로 사용자 의도와 맞는지도 확인해야 합니다.
 
 ## 확인 질문
