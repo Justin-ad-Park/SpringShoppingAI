@@ -28,7 +28,6 @@ class ShoppingAgentContractTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-
     static final OpenAiStubServer MODEL = new OpenAiStubServer().embeddingUsing(text -> {
         if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
         if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};

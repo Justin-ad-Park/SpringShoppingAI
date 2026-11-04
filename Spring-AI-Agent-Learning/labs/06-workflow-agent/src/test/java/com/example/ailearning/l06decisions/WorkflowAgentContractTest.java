@@ -25,7 +25,6 @@ class WorkflowAgentContractTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
     @Value("${local.server.port}") int port;
     @org.springframework.beans.factory.annotation.Autowired org.springframework.ai.chat.model.ChatModel model;

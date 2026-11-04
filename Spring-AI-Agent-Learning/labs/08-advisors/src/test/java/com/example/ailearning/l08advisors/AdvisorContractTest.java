@@ -24,7 +24,6 @@ class AdvisorContractTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
     @Value("${local.server.port}") int port;
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -34,7 +33,7 @@ class AdvisorContractTest {
     }
     @BeforeEach void reset() {
         MODEL.resetChat();
-       
+
         MODEL.respondWith(text("고정 응답"));
     }
     @AfterAll static void stop() { MODEL.close(); }

@@ -11,6 +11,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
 MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 구현하지 않았습니다.
+로컬 테스트의 서버와 결과 출력은 [공통 테스트 도구](test-support/README.md)를 사용합니다. 단원별 테스트에서는 응답·도구 순서·벡터 값과 검증 내용을 읽습니다.
 
 ## 한 수업씩 읽는 방법
 
@@ -103,6 +104,7 @@ docs/
   verification.md        실제 검증 범위와 결과
   lessons/00~12          순서대로 읽는 한국어 교재
   diagram-guide.md       그림의 종류·기호·읽는 순서
+test-support/           공통 Mock 서버·결과 출력 (테스트 전용)
 labs/
   02-first-chat/         02장 기본 호출과 03장 프롬프트 실험
   02-multiple-models/    02장 선택 보충: OpenAI·Anthropic 모델 선택

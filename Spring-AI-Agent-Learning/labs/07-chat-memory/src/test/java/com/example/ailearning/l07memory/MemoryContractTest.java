@@ -23,7 +23,6 @@ class MemoryContractTest {
         output = new TestOutput(info.getTestMethod().orElseThrow().getName());
     }
 
-
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
     @Value("${local.server.port}") int port;
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {

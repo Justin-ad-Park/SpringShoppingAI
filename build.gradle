@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7' apply false
 }
 // 자료 폴더와 labs 컨테이너에는 애플리케이션 플러그인을 적용하지 않는다.
+// test-support는 일반 Java 라이브러리로 별도 설정한다.
 configure(subprojects.findAll { it.childProjects.isEmpty() && it.path != ':Spring-AI-Agent-Learning:test-support' }) {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'

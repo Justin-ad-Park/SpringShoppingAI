@@ -60,7 +60,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.
-단원마다 test와 bootJar 검증 후 커밋합니다. 실습용 가짜 HTTP 모델은 제공된 테스트 보조 도구입니다.
+단원마다 test와 bootJar 검증 후 커밋합니다. 실습용 가짜 HTTP 모델은 [공통 test-support](../test-support/README.md)가 제공합니다. 실습은 테스트 의존성으로만 사용하며 다른 단원의 실행 코드를 가져오지 않습니다.
 
 Workflow와 Agent는 같은 상품 검색·배송비 조회 도구로 비교합니다.
 비교 요청, 프롬프트, 실습 순서와 완료 질문은 [06장 Workflow와 Agent](lessons/06-workflow-agent.md#workflow와-agent-비교-수업)에서 확인하세요.
