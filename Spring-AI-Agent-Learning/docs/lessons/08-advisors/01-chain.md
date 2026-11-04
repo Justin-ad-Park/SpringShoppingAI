@@ -17,7 +17,6 @@
 - `CallAdvisor`: 동기 호출 전후 처리를 구현하는 인터페이스.
 - `chain.nextCall(request)`: 다음 처리로 요청을 넘기고 결과를 받습니다.
 - `getOrder()`: 작은 숫자가 먼저 들어가고, 응답은 반대 순서로 돌아옵니다.
-- `MessageChatMemoryAdvisor`: 07에서 직접 연결한 메모리 작업을 제공하는 기본 구현입니다.
 
 ## 먼저 A와 B의 순서만 관찰하기
 

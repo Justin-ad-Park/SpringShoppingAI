@@ -10,6 +10,9 @@
 
 ## 메모리를 연결하고 도구 루프 안팎 비교하기
 
+`MessageChatMemoryAdvisor`는 이전 대화를 조회해 요청에 포함하고, 현재 질문과 모델 응답을 저장하는 Spring AI의 메모리 Advisor입니다.
+07장에서 직접 작성한 메시지 조회·전달·저장을 이 Advisor에 연결해 보겠습니다.
+
 [AdvisorChatService.java](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)의 전체 코드입니다.
 
 ```java
