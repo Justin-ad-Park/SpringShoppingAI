@@ -1,4 +1,5 @@
 dependencies {
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
     implementation 'org.springframework.ai:spring-ai-vector-store-advisor'
