@@ -1,0 +1,20 @@
+# 클라이언트 생성과 사용
+
+다음은 필드·생성자·호출 메서드를 함께 발췌한 코드입니다. package·import·Spring 애너테이션은 생략했습니다.
+
+```java
+public class ChatService {
+    private final ChatClient chatClient;
+
+    public ChatService(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
+
+    public String ask(String message) {
+        return chatClient.prompt().user(message).call().content();
+    }
+}
+```
+
+생성자가 클라이언트를 만들어 필드에 보관하고 ask()는 그 필드를 사용합니다.
+이 발췌는 생성·보관·사용 관계를 설명합니다. 외부 설정과 이전 대화 저장 정책 전체를 검증한 예제는 아닙니다.

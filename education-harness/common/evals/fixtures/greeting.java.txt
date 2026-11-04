@@ -1,0 +1,5 @@
+public class GreetingService {
+    public String greet() {
+        return "반갑습니다";
+    }
+}
