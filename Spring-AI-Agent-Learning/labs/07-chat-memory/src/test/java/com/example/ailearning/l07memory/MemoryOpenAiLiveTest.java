@@ -19,16 +19,21 @@ class MemoryOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI에_이전_대화와_새_질문을_함께_전달한다(TestInfo info) {
+        // Given: 첫 대화로 이름이 담긴 질문과 모델 답변 저장
         MemoryReply first = service.chat("live-user", "memory-demo", "내 이름은 민수야.");
         System.out.printf("[%s] 첫 대화: %s%n", info
                         .getTestMethod()
                         .orElseThrow()
                         .getName(), first);
+
+        // When: 같은 사용자·대화 ID로 후속 질문 전달
         MemoryReply next = service.chat("live-user", "memory-demo", "내 이름이 뭐야?");
         System.out.printf("[%s] 후속 대화와 전달 메시지: %s%n", info
                         .getTestMethod()
                         .orElseThrow()
                         .getName(), next);
+
+        // Then: 응답과 이전 대화 전달·저장 메시지 수 검증
         assertThat(first.answer()).isNotBlank();
         assertThat(next.answer()).isNotBlank();
         assertThat(next.sentMessages()).hasSize(4);

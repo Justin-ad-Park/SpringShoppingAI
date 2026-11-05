@@ -42,10 +42,15 @@ class RagLocalModelTest {
     @AfterAll static void stop() { MODEL.close(); }
 
     @Test void 문서를_나누어_검색한_근거를_모델에_전달한다() throws Exception {
+        // Given: 근거 ID를 포함한 가짜 모델 답변 설정
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("{\"answerable\":true,\"answer\":\"미개봉은 7일 이내입니다.\",\"sourceIds\":[\"return-sealed\"]}"));
+
+        // When: 검색과 답변 생성을 수행하는 RAG API 호출
         var response = post("미개봉 반품 기간");
+
+        // Then: 검색한 문서의 출처와 내용이 모델 요청에 들어갔는지 검증
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
         assertThat(body.path("status").asString()).isEqualTo("ANSWERED");
@@ -65,26 +70,51 @@ class RagLocalModelTest {
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
     @Test void 검색하지_않은_출처나_출처_누락은_답변으로_채택하지_않는다() throws Exception {
+        // Given: 검색하지 않은 출처를 인용하는 모델 응답 설정
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("{\"answerable\":true,\"answer\":\"아무 주장\",\"sourceIds\":[\"invented\"]}"));
-        assertThat(OpenAiStubServer.JSON.readTree(post("반품").body()).path("status").asString()).isEqualTo("INVALID_CITATION");
+
+        // When: 준비한 모델 응답으로 RAG API 실행
+        var unknownSource = post("반품");
+
+        // Then: 검색하지 않은 출처 ID을 근거로 채택하지 않는지 검증
+        assertThat(OpenAiStubServer.JSON.readTree(unknownSource.body()).path("status").asString()).isEqualTo("INVALID_CITATION");
+
+        // Given: 출처를 누락한 모델 응답으로 변경
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("{\"answerable\":true,\"answer\":\"아무 주장\",\"sourceIds\":[]}"));
-        assertThat(OpenAiStubServer.JSON.readTree(post("반품").body()).path("status").asString()).isEqualTo("INVALID_CITATION");
+
+        // When: 준비한 모델 응답으로 RAG API 실행
+        var missingSource = post("반품");
+
+        // Then: 출처 ID가 비어 있는 응답을 근거로 채택하지 않는지 검증
+        assertThat(OpenAiStubServer.JSON.readTree(missingSource.body()).path("status").asString()).isEqualTo("INVALID_CITATION");
     }
     @Test void 문서를_찾았어도_근거가_부족하면_답변을_보류한다() throws Exception {
+        // Given: 검색 후 답할 수 없다는 가짜 모델 응답 설정
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("{\"answerable\":false,\"answer\":\"모릅니다\",\"sourceIds\":[]}"));
-        assertThat(OpenAiStubServer.JSON.readTree(post("반품 담당자 이름").body()).path("status").asString()).isEqualTo("NO_ANSWER");
+
+        // When: API를 호출해 준비한 모델 응답 처리
+        var response = post("반품 담당자 이름");
+
+        // Then: 근거 부족 상태로 답변을 보류하는지 검증
+        assertThat(OpenAiStubServer.JSON.readTree(response.body()).path("status").asString()).isEqualTo("NO_ANSWER");
     }
     @Test void 답변_형식이_잘못되면_변환_실패로_처리한다() throws Exception {
+        // Given: JSON이 아닌 가짜 모델 응답 설정
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("형식 오류"));
-        assertThat(post("반품").statusCode()).isEqualTo(500);
+
+        // When: API를 호출해 준비한 모델 응답 처리
+        var response = post("반품");
+
+        // Then: 모델 응답 변환 실패를 HTTP 500으로 처리하는지 검증
+        assertThat(response.statusCode()).isEqualTo(500);
     }
     @Test void 공백_질문은_답변_모델을_호출하지_않는다() throws Exception {
         assertThat(post(" ").statusCode()).isEqualTo(400);

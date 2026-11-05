@@ -121,14 +121,17 @@ class FirstChatLocalModelTest {
     @Test
     @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")
     void 다음_요청에_이전_대화를_자동으로_포함하지_않는다() throws Exception {
+        // Given: 이름을 알리는 첫 요청 실행
         HttpResponse<String> firstResponse = ask("제 이름은 민수입니다.");
         output.printHttpResponse("LocalMockModel / 대화 전달 / 첫 번째 요청", firstResponse);
         assertThat(firstResponse.statusCode()).isEqualTo(200);
 
+        // When: 이름을 묻는 다음 요청 실행
         HttpResponse<String> secondResponse = ask("제 이름이 무엇인가요?");
         output.printHttpResponse("LocalMockModel / 대화 전달 / 두 번째 요청", secondResponse);
-        assertThat(secondResponse.statusCode()).isEqualTo(200);
 
+        // Then: 후속 응답과 현재 질문만 담긴 두 번째 모델 요청 검증
+        assertThat(secondResponse.statusCode()).isEqualTo(200);
         assertThat(MODEL_SERVER.chat().getRequests()).hasSize(2);
         JsonNode second = MODEL_SERVER
                 .chat()

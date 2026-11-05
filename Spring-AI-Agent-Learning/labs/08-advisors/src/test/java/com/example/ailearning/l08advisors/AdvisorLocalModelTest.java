@@ -54,8 +54,13 @@ class AdvisorLocalModelTest {
     }
     @Test void 메모리_Advisor는_이전_대화를_중복_저장_없이_전달한다() throws Exception {
         try (var browser = browser()) {
+            // Given: 첫 요청으로 메모리 Advisor에 이전 대화 저장
             post(browser, "/api/advisors/demo", "예산은 3만원");
+
+            // When: 같은 세션에서 후속 질문 전달
             var response = post(browser, "/api/advisors/demo", "내 예산은?");
+
+            // Then: 이전 대화가 한 번씩 전달·저장됐는지 검증
             assertThat(json(response).path("storedMessages").asInt()).isEqualTo(4);
             assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).contains("예산은 3만원");
             assertThat(MODEL.chat().getRequests().get(1).path("messages").size()).isEqualTo(4);
@@ -63,16 +68,26 @@ class AdvisorLocalModelTest {
     }
     @Test void 모델_호출에_실패해도_기본_Advisor에_사용자_질문이_남는다() throws Exception {
         try (var browser = browser()) {
+            // Given: 가짜 모델이 HTTP 503을 반환하도록 설정
             MODEL
                     .chat()
                     .setHttpStatus(503);
+
+            // When: 실패할 첫 질문 전달
             var failed = post(browser, "/api/advisors/demo", "실패한 요청의 예산은 3만원");
+
+            // Then: 첫 요청의 실패 응답 확인
             assertThat(failed.statusCode()).isEqualTo(500);
 
+            // Given: 다음 요청은 성공하도록 모델 상태 복구
             MODEL
                     .chat()
                     .setHttpStatus(200);
+
+            // When: 같은 세션에서 후속 질문 전달
             var next = post(browser, "/api/advisors/demo", "이전 질문이 남아 있나요?");
+
+            // Then: 실패한 요청의 사용자 질문도 메모리에 남았는지 검증
             assertThat(next.statusCode()).isEqualTo(200);
             var messages = MODEL
                     .chat()
@@ -85,11 +100,15 @@ class AdvisorLocalModelTest {
         }
     }
     @Test void 도구_루프_안쪽과_바깥쪽_Advisor의_실행_횟수가_다르다() throws Exception {
+        // Given: 도구 호출 요청과 최종 답변을 순서대로 반환하도록 설정
         MODEL
                 .chat()
                 .setResponseSequence(createAssistantToolCallMessage("price", "getTeaPrice", "{}"), createAssistantTextMessage("허브티 12000원"));
         try (var browser = browser()) {
+            // When: 도구가 등록된 Advisor API 호출
             var response = post(browser, "/api/advisors/tool?tools=true", "허브티 가격");
+
+            // Then: Advisor 실행 순서·도구 결과 전달·메모리 저장 범위 검증
             assertThat(response.statusCode()).isEqualTo(200);
             assertThat(json(response).path("steps").toString()).isEqualTo( "[\"A:before\",\"B:before\",\"B:after\",\"B:before\",\"B:after\",\"A:after\"]");
             assertThat(MODEL.chat().getRequests()).hasSize(2);
@@ -100,14 +119,27 @@ class AdvisorLocalModelTest {
     }
     @Test void 메모리_삭제는_다른_사용자_세션에_영향을_주지_않는다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
+            // Given: 서로 다른 세션에 이전 대화 저장
             post(alice, "/api/advisors/demo", "Alice의 질문");
             post(bob, "/api/advisors/demo", "Bob의 질문");
             assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).doesNotContain("Alice");
+
+            // When: Alice 대화만 삭제
             output.printHttpResponse(alice.send(HttpRequest.newBuilder(uri("/api/advisors/demo"))
                                     .DELETE()
                                     .build(), HttpResponse.BodyHandlers.ofString()));
-            assertThat(json(post(alice, "/api/advisors/demo", "새 질문")).path("storedMessages").asInt()).isEqualTo(2);
-            assertThat(json(post(bob, "/api/advisors/demo", "후속 질문")).path("storedMessages").asInt()).isEqualTo(4);
+
+            // When: 삭제한 Alice 세션에서 새 질문 전달
+            var aliceResponse = post(alice, "/api/advisors/demo", "새 질문");
+
+            // Then: Alice는 새 대화만 저장됐는지 확인
+            assertThat(json(aliceResponse).path("storedMessages").asInt()).isEqualTo(2);
+
+            // When: Bob 세션에서 후속 질문 전달
+            var bobResponse = post(bob, "/api/advisors/demo", "후속 질문");
+
+            // Then: Bob의 이전 대화가 유지됐는지 검증
+            assertThat(json(bobResponse).path("storedMessages").asInt()).isEqualTo(4);
         }
     }
     HttpClient browser() { return HttpClient.newBuilder()

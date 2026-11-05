@@ -50,11 +50,16 @@ class ToolCallingOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI가_상품_검색_결과로_배송비를_조회한다(TestInfo testInfo) {
-        String answer = service.ask("""
+        // Given: 검색과 배송비 조회가 필요한 사용자 질문 준비
+        String question = """
                 상품 검색 도구로 음료 카테고리에서 상품 가격이 15000원 이하인 상품을 찾아줘.
                 상품명, 상품 가격, 배송비, 배송비 포함 총액을 알려줘.
-                """);
+                """;
 
+        // When: 실제 모델이 도구를 선택하도록 질문 전달
+        String answer = service.ask(question);
+
+        // Then: 답변과 Spy에 남은 실제 도구 호출 순서·인자 검증
         System.out.printf("[%s] 답변: %s%n", testInfo.getDisplayName(), answer);
         assertThat(answer).isNotBlank();
 

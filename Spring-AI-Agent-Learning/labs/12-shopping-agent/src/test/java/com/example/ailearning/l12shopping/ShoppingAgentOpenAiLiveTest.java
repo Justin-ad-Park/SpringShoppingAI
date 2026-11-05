@@ -21,6 +21,7 @@ class ShoppingAgentOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI가_도구를_선택하고_후속_대화의_조건을_사용한다(TestInfo info) {
+        // Given: 예산이 있는 첫 상담을 수행해 이전 대화 준비
         CounselService.Reply first = service.chat("live-user", "counsel-demo", "배송비 포함 30000원 이하 음료를 추천해줘.");
         String name = info
                 .getTestMethod()
@@ -29,7 +30,11 @@ class ShoppingAgentOpenAiLiveTest {
         System.out.printf("[%s] 첫 상담과 도구 기록: %s%n", name, first);
         assertThat(first.status()).isEqualTo("VERIFIED");
         assertThat(first.offers()).isNotEmpty();
+
+        // When: 같은 대화에서 예산 변경 요청
         CounselService.Reply next = service.chat("live-user", "counsel-demo", "예산을 40000원으로 바꿔줘.");
+
+        // Then: 후속 응답과 변경된 예산 검증
         System.out.printf("[%s] 후속 상담과 도구 기록: %s%n", name, next);
         assertThat(next.status()).isEqualTo("VERIFIED");
         assertThat(next.criteria().totalBudget()).isEqualTo(40000);

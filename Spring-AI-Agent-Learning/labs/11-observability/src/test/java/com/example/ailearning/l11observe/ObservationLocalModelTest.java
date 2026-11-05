@@ -43,15 +43,27 @@ class ObservationLocalModelTest {
     @AfterAll static void stop() { MODEL.close(); }
 
     @Test void 직접_계측하지_않아도_모델_호출_횟수와_시간을_조회한다() throws Exception {
+        // Given: 요청 전 모델 호출 횟수 조회
         double before = measurement("gen_ai.client.operation", "COUNT");
-        assertThat(ask().body()).isEqualTo("로컬 안내 응답");
+
+        // When: 모델을 호출하는 챗 API 실행
+        var response = ask();
+
+        // Then: 응답과 호출 전후 횟수·시간 증가 검증
+        assertThat(response.body()).isEqualTo("로컬 안내 응답");
         assertThat(measurement("gen_ai.client.operation", "COUNT")).isEqualTo(before + 1);
         assertThat(measurement("gen_ai.client.operation", "TOTAL_TIME")).isPositive();
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
     @Test void 추가_모델_호출_없이_응답의_토큰_사용량을_집계한다() throws Exception {
+        // Given: 요청 전 누적 토큰 수 조회
         double before = measurement("gen_ai.client.token.usage?tag=gen_ai.token.type:total", "COUNT");
-        assertThat(ask().statusCode()).isEqualTo(200);
+
+        // When: 모델을 호출하는 챗 API 실행
+        var response = ask();
+
+        // Then: 응답에 담긴 토큰 사용량만 집계하고 모델은 한 번 호출했는지 검증
+        assertThat(response.statusCode()).isEqualTo(200);
         // 고정 서버의 usage: 입력 10 + 출력 5. 모델을 다시 호출하지 않고 집계합니다.
         assertThat(measurement("gen_ai.client.token.usage?tag=gen_ai.token.type:total", "COUNT")).isEqualTo(before + 15);
         assertThat(MODEL.chat().getRequests()).hasSize(1);

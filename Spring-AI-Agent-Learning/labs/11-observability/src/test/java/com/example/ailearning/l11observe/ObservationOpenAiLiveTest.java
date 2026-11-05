@@ -20,13 +20,18 @@ class ObservationOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI_응답과_호출_지표를_함께_출력한다(TestInfo info) {
+        // Given: 호출 전 모델 요청 횟수 조회
         long before = registry
                 .find("gen_ai.client.operation")
                 .timers()
                 .stream()
                 .mapToLong(timer -> timer.count())
                 .sum();
+
+        // When: 실제 OpenAI로 질문 전달
         String answer = service.ask("Spring의 의존성 주입을 한 문장으로 설명해줘.");
+
+        // Then: 응답·호출 후 지표를 출력하고 호출 횟수 증가 검증
         String name = info
                 .getTestMethod()
                 .orElseThrow()

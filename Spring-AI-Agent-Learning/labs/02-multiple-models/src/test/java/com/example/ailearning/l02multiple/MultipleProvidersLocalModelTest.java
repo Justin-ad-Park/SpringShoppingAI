@@ -74,10 +74,14 @@ class MultipleProvidersLocalModelTest {
         assertThat(OPENAI.chat().getRequests()).isEmpty();
     }
     @Test void 요청별_모델을_선택해도_기본_모델은_유지된다() throws Exception {
+        // Given: 같은 제공 업체에 서로 다른 모델을 지정한 두 요청 실행
         output.printValue("모델 A 응답", sameProviderModels.ask("짧게 설명해줘", "openai-model-a"));
         output.printValue("모델 B 응답", sameProviderModels.ask("자세히 설명해줘", "openai-model-b"));
+
+        // When: 모델을 따로 지정하지 않은 기본 클라이언트 호출
         ask("openai");
 
+        // Then: 각 요청의 모델과 기본 모델 설정 유지 여부 검증
         output.printValue("요청별 모델", OPENAI
                         .chat()
                         .getRequests()

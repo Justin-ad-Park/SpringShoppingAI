@@ -33,24 +33,38 @@ class ToolCallingLocalModelTest {
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL
+
+    @BeforeEach
+    void reset() { MODEL
             .chat()
-            .resetResponsesAndRequests(); }
-    @AfterAll static void stop() { MODEL.close(); }
+            .resetResponsesAndRequests();
+    }
+
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
 
     @Test void Java로_직접_상품을_검색하면_모델을_호출하지_않는다() throws Exception {
-        var response = get("/direct?category=%EC%9D%8C%EB%A3%8C&maxPrice=15000");
+        var response = get("/direct?category=음료&maxPrice=15000");
+
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).contains("P01").doesNotContain("P02");
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
+
     @Test void 모델이_요청한_도구를_실행하고_결과를_다시_전달한다() throws Exception {
+        // Given: 가짜 모델이 도구 호출 요청, 최종 답변 순서로 응답하도록 설정
         MODEL
                 .chat()
                 .setResponseSequence(
-                createAssistantToolCallMessage("search-1", "searchProducts", "{\"category\":\"음료\",\"maxPrice\":15000}"),
-                createAssistantTextMessage("허브티 12000원입니다."));
+                        createAssistantToolCallMessage("search-1", "searchProducts", "{\"category\":\"음료\",\"maxPrice\":15000}"),
+                        createAssistantTextMessage("허브티 12000원입니다."));
+
+        // When: 챗 API를 호출해 실제 Spring AI 도구 루프 실행
         var response = post("15000원 이하 음료");
+
+        // Then: 모델에 보낸 도구 설명과 두 번째 요청의 실제 검색 결과 검증
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(MODEL.chat().getRequests()).hasSize(2);
         assertThat(MODEL.chat().getRequests().getFirst().path("tools").toString()).contains("searchProducts", "calculateShipping");
@@ -64,25 +78,39 @@ class ToolCallingLocalModelTest {
     }
 
     @Test void 배송비는_상품_목록의_실제_가격으로_계산한다() throws Exception {
+        // Given: 가짜 모델이 배송비 도구 호출 요청 후 답변하도록 설정
         MODEL
                 .chat()
                 .setResponseSequence(
-                createAssistantToolCallMessage("shipping-1", "calculateShipping", "{\"productId\":\"P02\"}"),
-                createAssistantTextMessage("총 31000원입니다."));
-        assertThat(post("커피 배송비 포함 가격").statusCode()).isEqualTo(200);
+                        createAssistantToolCallMessage("shipping-1", "calculateShipping", "{\"productId\":\"P02\"}"),
+                        createAssistantTextMessage("총 31000원입니다."));
+
+        // When: 챗 API로 배송비 포함 가격 질문
+        var response = post("커피 배송비 포함 가격");
+
+        // Then: 실제 상품 가격으로 계산한 배송비와 총액이 모델에 전달됐는지 검증
+        assertThat(response.statusCode()).isEqualTo(200);
         assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).contains("31000", "3000");
     }
 
     @Test void 인사는_도구를_호출하지_않고_답할_수_있다() throws Exception {
+        // Given: 가짜 모델이 도구 호출 요청 없이 인사만 반환하도록 설정
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("안녕하세요."));
-        assertThat(post("안녕").body()).isEqualTo("안녕하세요.");
+
+        // When: 챗 API로 인사 전달
+        var response = post("안녕");
+
+        // Then: 준비한 인사 응답과 모델 요청이 한 번뿐인지 검증
+        assertThat(response.body()).isEqualTo("안녕하세요.");
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
     @Test void 공백_질문은_모델을_호출하지_않는다() throws Exception {
-        assertThat(post(" ").statusCode()).isEqualTo(400);
+        var response = post(" ");
+
+        assertThat(response.statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
 
