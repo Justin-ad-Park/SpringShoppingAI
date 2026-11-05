@@ -19,11 +19,16 @@ public final class PolicyLoader {
         var documents = new ArrayList<Document>();
         String[] sections = markdown.split("(?m)^## ");
         for (int i = 1; i < sections.length; i++) {
-            String[] parts = sections[i].strip().split("\n", 2);
+            String[] parts = sections[i]
+                    .strip()
+                    .split("\n", 2);
             if (parts.length != 2 || parts[1].isBlank()) throw new IllegalStateException("정책 절이 비었습니다.");
             String id = parts[0].strip();
-            documents.add(Document.builder().id(id).text(parts[1].strip())
-                    .metadata(Map.of("source", "policies.md#" + id)).build());
+            documents.add(Document.builder()
+                            .id(id)
+                            .text(parts[1].strip())
+                            .metadata(Map.of("source", "policies.md#" + id))
+                            .build());
         }
         return List.copyOf(documents);
     }

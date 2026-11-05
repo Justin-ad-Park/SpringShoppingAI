@@ -26,7 +26,8 @@ import java.util.Set;
 /** null은 사용자가 조건을 말하지 않았다는 뜻이다. 0이나 기본 예산으로 채우지 않는다. */
 public record SearchCriteria(String category, Integer maxPrice) {
     public void validate() {
-        if (category != null && !Set.of("음료", "생활").contains(category)) {
+        if (category != null && !Set.of("음료", "생활")
+                .contains(category)) {
             throw new IllegalArgumentException("category는 음료/생활 또는 null이어야 합니다.");
         }
         if (maxPrice != null && maxPrice < 0) {
@@ -54,7 +55,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CriteriaService {
-    static final String INSTRUCTION = """
+    static final String SYSTEM_INSTRUCTION = """
             사용자 요청에서 상품 카테고리(category)와 상품 가격 상한(maxPrice)을 추출하세요.
             category는 음료/생활 중 사용자가 명시한 것만 쓰세요.
             가격은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
@@ -67,15 +68,24 @@ public class CriteriaService {
     }
 
     public String text(String question) {
-        return client.prompt().system(INSTRUCTION).user(question).call().content();
+        return client
+                .prompt()
+                .system(SYSTEM_INSTRUCTION)
+                .user(question)
+                .call()
+                .content();
     }
 
     public SearchCriteria extract(String question) {
         SearchCriteria criteria;
         try {
             // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
-            criteria = client.prompt().system(INSTRUCTION).user(question)
-                    .call().entity(SearchCriteria.class);
+            criteria = client
+                    .prompt()
+                    .system(SYSTEM_INSTRUCTION)
+                    .user(question)
+                    .call()
+                    .entity(SearchCriteria.class);
         } catch (RuntimeException error) {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                     "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
@@ -151,6 +161,18 @@ curl -sS http://127.0.0.1:8094/api/criteria \
 서버 종료는 Ctrl+C입니다.
 
 ## 5. 실패는 테스트로 확인하기
+
+로컬 테스트의 `MODEL`은 가짜 OpenAI 서버입니다. `MODEL.chat()`에서 채팅 응답을 지정합니다.
+다음은 테스트 설정의 발췌이며, 모델이 반환할 문자열을 정하는 코드입니다.
+
+```java
+MODEL
+        .chat()
+        .setResponseText("{\"category\":\"음료\",\"maxPrice\":15000}");
+```
+
+테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.
+테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04장에서-먼저-읽을-코드)에 있습니다.
 
 [StructuredOutputContractTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
 

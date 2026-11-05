@@ -12,12 +12,17 @@
 이 Spring AI 타입은 변환한 객체와 원래 ChatResponse를 함께 담습니다. Spring MVC의 HTTP ResponseEntity와는 다른 타입입니다.
 
 ```java
-var response = client.prompt()
+var response = client
+        .prompt()
         .system("제공한 정책 근거 안에서만 답하세요.")
         .user(questionAndContext)
-        .call().responseEntity(DraftAnswer.class);
+        .call()
+        .responseEntity(DraftAnswer.class);
 DraftAnswer draft = response.entity();
-var usage = response.response().getMetadata().getUsage();
+var usage = response
+        .response()
+        .getMetadata()
+        .getUsage();
 ```
 
 위 코드는 새 API를 설명하기 위한 부분 예제입니다. 질문과 근거를 조립하는 실제 실행 코드는 [RagService.answerInternal()](../../../labs/11-evaluation/src/main/java/com/example/ailearning/l11evaluation/RagService.java)에 있습니다. 실제 소스는 `questionAndContext` 변수 대신 문자열을 직접 조립합니다.

@@ -38,9 +38,13 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
 
 ```java
 private Draft agent(String question, RunState run, GiftCriteria fixed) {
-        String answer = client(run).prompt().system(AGENT_GOAL)
+        String answer = client(run)
+                .prompt()
+                .system(AGENT_GOAL)
                 .user(question + (fixed == null ? "" : "\nJava 확정 조건: " + fixed))
-                .tools(new TracedShoppingTools(catalog, run, fixed)).call().content();
+                .tools(new TracedShoppingTools(catalog, run, fixed))
+                .call()
+                .content();
         // Agent의 자연어가 정확하다는 보장은 없다. offers는 실제 조회한 가격 기록이다.
         return new Draft("COMPLETED", answer, run.quotes());
     }

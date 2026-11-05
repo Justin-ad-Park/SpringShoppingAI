@@ -43,13 +43,24 @@ private Draft hybrid(String question, RunState run) {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         agent(question, run, criteria); // 어떤 상품을 조회할지는 모델이 선택한다.
-        List<Offer> eligible = run.quotes().stream()
-                .filter(offer -> criteria.category() == null || offer.product().category().equals(criteria.category()))
-                .filter(offer -> offer.total() <= criteria.totalBudget()).toList();
+        List<Offer> eligible = run
+                .quotes()
+                .stream()
+                .filter(offer -> criteria.category() == null || offer
+                        .product()
+                        .category()
+                        .equals(criteria.category()))
+                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
         return new Draft(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
-                        : "Java 검증 후보: " + eligible.stream().map(offer -> offer.product().id()).toList(), eligible);
+                        : "Java 검증 후보: " + eligible
+                .stream()
+                .map(offer -> offer
+                        .product()
+                        .id())
+                .toList(), eligible);
     }
 ```
 

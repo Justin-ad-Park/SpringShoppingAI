@@ -2,8 +2,8 @@ package com.example.ailearning.l12shopping;
 
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
-import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantTextMessage;
-import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantToolCallMessage;
+import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
+import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,14 +25,13 @@ class ShoppingAgentContractTest {
 
     @BeforeEach
     void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info.getTestMethod().orElseThrow().getName());
+        output = new TestOutput(info
+                .getTestMethod()
+                .orElseThrow()
+                .getName());
     }
 
-    static final OpenAiStubServer MODEL = new OpenAiStubServer().setEmbeddingVectorFunction(text -> {
-        if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
-        if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
-        return new float[]{0, 0, 1};
-    }).setChatTokenUsage(10, 5);
+    static final OpenAiStubServer MODEL = createModelServer();
     @Value("${local.server.port}") int port;
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
@@ -41,8 +40,12 @@ class ShoppingAgentContractTest {
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
     @BeforeEach void reset() {
-        MODEL.resetChatResponsesAndRequests();
-        MODEL.setChatResponseFunction(this::script);
+        MODEL
+                .chat()
+                .resetResponsesAndRequests();
+        MODEL
+                .chat()
+                .setResponseFunction(this::script);
     }
     @AfterAll static void stop() { MODEL.close(); }
 
@@ -71,13 +74,16 @@ class ShoppingAgentContractTest {
         }
     }
     @Test void 배송비를_더하면_모든_상품이_예산을_초과할_수_있다() throws Exception {
-        MODEL.setChatResponseFunction(request -> {
-            if (isIntent(request)) return intent("SHOPPING", "음료", "13000");
-            int count = toolResults(request).size();
-            if (count == 0) return createAssistantToolCallMessage("s", "searchProducts", "{}");
-            if (count == 1) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P01\"}");
-            return selection(List.of(), List.of());
-        });
+        MODEL
+                .chat()
+                .setResponseFunction(request -> {
+                    if (isIntent(request)) return intent("SHOPPING", "음료", "13000");
+                    int count = toolResults(request)
+                            .size();
+                    if (count == 0) return createAssistantToolCallMessage("s", "searchProducts", "{}");
+                    if (count == 1) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P01\"}");
+                    return selection(List.of(), List.of());
+                });
         try (var alice = browser()) {
             var body = post(alice, "배송비 포함 13000원 음료 추천");
             assertThat(body.path("status").asString()).isEqualTo("NO_RESULTS");
@@ -96,22 +102,27 @@ class ShoppingAgentContractTest {
         try (var alice = browser()) {
             var body = post(alice, "미개봉 반품 기간");
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
-            assertThat(MODEL.getChatRequests().get(1).path("tools").toString()).contains("searchPolicy").doesNotContain("searchProducts");
+            assertThat(MODEL.chat().getRequests().get(1).path("tools").toString()).contains("searchPolicy").doesNotContain("searchProducts");
             var unknown = post(alice, "우주 여행 정책");
             assertThat(unknown.path("status").asString()).isEqualTo("NO_CONTEXT");
         }
     }
     @Test void 확인하지_않은_ID와_예산_초과_선택은_거부하고_저장하지_않는다() throws Exception {
         try (var alice = browser()) {
-            MODEL.setChatResponseFunction(request -> {
-                if (isIntent(request)) return intent("SHOPPING", "음료", "30000");
-                if (toolResults(request).isEmpty()) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P02\"}");
-                return selection(List.of("P02"), List.of());
-            });
+            MODEL
+                    .chat()
+                    .setResponseFunction(request -> {
+                        if (isIntent(request)) return intent("SHOPPING", "음료", "30000");
+                        if (toolResults(request)
+                                .isEmpty()) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P02\"}");
+                        return selection(List.of("P02"), List.of());
+                    });
             var expensive = post(alice, "30000원 음료 추천");
             assertThat(expensive.path("status").asString()).isEqualTo("VERIFY_FAILED");
             assertThat(expensive.path("storedMessages").asInt()).isZero();
-            MODEL.setChatResponseFunction(request -> isIntent(request) ? intent("POLICY", null, "null") : selection(List.of(), List.of("invented")));
+            MODEL
+                    .chat()
+                    .setResponseFunction(request -> isIntent(request) ? intent("POLICY", null, "null") : selection(List.of(), List.of("invented")));
             assertThat(post(alice, "반품").path("status").asString()).isEqualTo("VERIFY_FAILED");
         }
     }
@@ -119,18 +130,24 @@ class ShoppingAgentContractTest {
         try (var alice = browser(); var bob = browser()) {
             post(alice, "30000원 음료 추천");
             post(bob, "선물 추천");
-            assertThat(MODEL.getChatRequests().get(MODEL.getChatRequests().size()-1).path("messages").toString()).doesNotContain("30000원");
-            MODEL.setChatHttpStatus(429);
+            assertThat(MODEL.chat().getRequests().get(MODEL.chat().getRequests().size()-1).path("messages").toString()).doesNotContain("30000원");
+            MODEL
+                    .chat()
+                    .setHttpStatus(429);
             var failed = post(alice, "조건을 바꿔줘");
             assertThat(failed.path("status").asString()).isEqualTo("FAILED");
             assertThat(failed.path("storedMessages").asInt()).isEqualTo(2);
-            output.printHttpResponse(alice.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).DELETE().build(), HttpResponse.BodyHandlers.ofString()));
+            output.printHttpResponse(alice.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                                    .DELETE()
+                                    .build(), HttpResponse.BodyHandlers.ofString()));
             assertThat(history(alice).size()).isZero();
             assertThat(history(bob).size()).isEqualTo(2);
         }
     }
     @Test void 도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다() throws Exception {
-        MODEL.setChatResponseFunction(request -> isIntent(request) ? intent("SHOPPING", "음료", "30000")
+        MODEL
+                .chat()
+                .setResponseFunction(request -> isIntent(request) ? intent("SHOPPING", "음료", "30000")
                 : createAssistantToolCallMessage("repeat", "searchProducts", "{}"));
         try (var alice = browser()) {
             var body = post(alice, "30000원 음료 추천");
@@ -140,22 +157,32 @@ class ShoppingAgentContractTest {
         }
     }
     @Test void 시간_초과_뒤에_도착한_응답은_저장하지_않는다() throws Exception {
-        MODEL.setChatResponseDelay(java.time.Duration.ofMillis(1500));
+        MODEL
+                .chat()
+                .setResponseDelay(java.time.Duration.ofMillis(1500));
         try (var alice = browser()) {
             var body = post(alice, "선물 추천");
             assertThat(body.path("status").asString()).isEqualTo("TIMEOUT");
             Thread.sleep(800);
             assertThat(history(alice).size()).isZero();
-            assertThat(MODEL.getChatRequests()).hasSize(1);
+            assertThat(MODEL.chat().getRequests()).hasSize(1);
         }
     }
 
     // 고정 시나리오만 처리하는 테스트 대역이다. 한국어 이해 성능을 평가하지 않는다.
     ObjectNode script(JsonNode request) {
         List<JsonNode> users = new ArrayList<>();
-        for (JsonNode message : request.path("messages")) if (message.path("role").asString().equals("user")) users.add(message);
-        String latest = users.get(users.size()-1).path("content").asString();
-        String all = request.path("messages").toString();
+        for (JsonNode message : request.path("messages")) if (message
+                .path("role")
+                .asString()
+                .equals("user")) users.add(message);
+        String latest = users
+                .get(users.size()-1)
+                .path("content")
+                .asString();
+        String all = request
+                .path("messages")
+                .toString();
         if (isIntent(request)) {
             String task = latest.contains("반품") && !latest.contains("추천") || latest.contains("우주") ? "POLICY" : "SHOPPING";
             String category = latest.contains("생활") || all.contains("생활로만") ? "생활" : all.contains("음료") ? "음료" : null;
@@ -165,7 +192,9 @@ class ShoppingAgentContractTest {
         boolean policyOnly = latest.contains("task=POLICY");
         if (policyOnly) {
             if (results.isEmpty()) return createAssistantToolCallMessage("p", "searchPolicy", all.contains("우주") ? "{\"question\":\"우주 여행\"}" : "{\"question\":\"미개봉 반품\"}");
-            return selection(List.of(), results.getLast().contains("return-sealed") ? List.of("return-sealed") : List.of());
+            return selection(List.of(), results
+                            .getLast()
+                            .contains("return-sealed") ? List.of("return-sealed") : List.of());
         }
         if (results.isEmpty()) return createAssistantToolCallMessage("s", "searchProducts", "{}");
         String searchResult = results.getFirst();
@@ -176,10 +205,20 @@ class ShoppingAgentContractTest {
         if (policy && results.size()==2) return createAssistantToolCallMessage("p", "searchPolicy", "{\"question\":\"미개봉 반품\"}");
         return selection(List.of(product), policy ? List.of("return-sealed") : List.of());
     }
-    boolean isIntent(JsonNode request) { return request.path("messages").get(0).path("content").asString().contains("TASK:INTENT"); }
+    boolean isIntent(JsonNode request) { return request
+            .path("messages")
+            .get(0)
+            .path("content")
+            .asString()
+            .contains("TASK:INTENT"); }
     List<String> toolResults(JsonNode request) {
         var results = new ArrayList<String>();
-        for (var message : request.path("messages")) if (message.path("role").asString().equals("tool")) results.add(message.path("content").asString());
+        for (var message : request.path("messages")) if (message
+                .path("role")
+                .asString()
+                .equals("tool")) results.add(message
+                                .path("content")
+                                .asString());
         return results;
     }
     ObjectNode intent(String task, String category, String budget) {
@@ -191,15 +230,38 @@ class ShoppingAgentContractTest {
         var sourceIds = object.putArray("sourceIds"); sources.forEach(sourceIds::add);
         return createAssistantTextMessage(object.toString());
     }
-    HttpClient browser() { return HttpClient.newBuilder().cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL)).build(); }
+    HttpClient browser() { return HttpClient.newBuilder()
+            .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+            .build(); }
     URI uri(String path) { return URI.create("http://127.0.0.1:"+port+path); }
     JsonNode post(HttpClient browser, String question) throws Exception {
-        var response = output.printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question)).build(), HttpResponse.BodyHandlers.ofString()));
+        var response = output.printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                                .header("Content-Type", "text/plain; charset=UTF-8")
+                                .POST(HttpRequest.BodyPublishers.ofString(question))
+                                .build(), HttpResponse.BodyHandlers.ofString()));
         assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
         return OpenAiStubServer.JSON.readTree(response.body());
     }
     JsonNode history(HttpClient browser) throws Exception {
-        return OpenAiStubServer.JSON.readTree(output.printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo")).GET().build(),HttpResponse.BodyHandlers.ofString())).body());
+        return OpenAiStubServer.JSON.readTree(output
+                        .printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                                        .GET()
+                                        .build(),HttpResponse.BodyHandlers.ofString()))
+                        .body());
+    }
+
+    private static OpenAiStubServer createModelServer() {
+        var server = new OpenAiStubServer();
+        server
+                .embeddings()
+                .setVectorFunction(text -> {
+                    if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
+                    if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
+                    return new float[]{0, 0, 1};
+                });
+        server
+                .chat()
+                .setTokenUsage(10, 5);
+        return server;
     }
 }

@@ -20,18 +20,36 @@ class ObservationOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI_응답과_호출_지표를_함께_출력한다(TestInfo info) {
-        long before = registry.find("gen_ai.client.operation").timers().stream().mapToLong(timer -> timer.count()).sum();
+        long before = registry
+                .find("gen_ai.client.operation")
+                .timers()
+                .stream()
+                .mapToLong(timer -> timer.count())
+                .sum();
         String answer = service.ask("Spring의 의존성 주입을 한 문장으로 설명해줘.");
-        String name = info.getTestMethod().orElseThrow().getName();
+        String name = info
+                .getTestMethod()
+                .orElseThrow()
+                .getName();
         System.out.printf("[%s] 답변: %s%n", name, answer);
         for (var meter : registry.getMeters()) {
-            if (meter.getId().getName().startsWith("gen_ai.client.")) {
+            if (meter
+                    .getId()
+                    .getName()
+                    .startsWith("gen_ai.client.")) {
                 for (var value : meter.measure()) {
-                    System.out.printf("[%s] %s / %s: %s%n", name, meter.getId().getName(), value.getStatistic(), value.getValue());
+                    System.out.printf("[%s] %s / %s: %s%n", name, meter
+                                    .getId()
+                                    .getName(), value.getStatistic(), value.getValue());
                 }
             }
         }
-        long after = registry.find("gen_ai.client.operation").timers().stream().mapToLong(timer -> timer.count()).sum();
+        long after = registry
+                .find("gen_ai.client.operation")
+                .timers()
+                .stream()
+                .mapToLong(timer -> timer.count())
+                .sum();
         assertThat(answer).isNotBlank();
         assertThat(after).isGreaterThan(before);
     }

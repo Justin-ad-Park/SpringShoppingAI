@@ -9,11 +9,19 @@ import java.util.List;
 public class PolicySearch {
     private final SimpleVectorStore store;
     public PolicySearch(EmbeddingModel embedding) throws IOException {
-        store = SimpleVectorStore.builder(embedding).build();
+        store = SimpleVectorStore.builder(embedding)
+                .build();
         store.add(PolicyLoader.load());
     }
     public List<Source> search(String question) {
-        return store.similaritySearch(SearchRequest.builder().query(question).topK(2)
-                .similarityThreshold(0.65).build()).stream().map(Source::from).toList();
+        return store
+                .similaritySearch(SearchRequest.builder()
+                        .query(question)
+                        .topK(2)
+                        .similarityThreshold(0.65)
+                        .build())
+                .stream()
+                .map(Source::from)
+                .toList();
     }
 }

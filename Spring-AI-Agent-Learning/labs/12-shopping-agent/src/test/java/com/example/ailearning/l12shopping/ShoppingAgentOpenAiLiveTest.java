@@ -22,7 +22,10 @@ class ShoppingAgentOpenAiLiveTest {
     @Timeout(180)
     void 실제_OpenAI가_도구를_선택하고_후속_대화의_조건을_사용한다(TestInfo info) {
         CounselService.Reply first = service.chat("live-user", "counsel-demo", "배송비 포함 30000원 이하 음료를 추천해줘.");
-        String name = info.getTestMethod().orElseThrow().getName();
+        String name = info
+                .getTestMethod()
+                .orElseThrow()
+                .getName();
         System.out.printf("[%s] 첫 상담과 도구 기록: %s%n", name, first);
         assertThat(first.status()).isEqualTo("VERIFIED");
         assertThat(first.offers()).isNotEmpty();

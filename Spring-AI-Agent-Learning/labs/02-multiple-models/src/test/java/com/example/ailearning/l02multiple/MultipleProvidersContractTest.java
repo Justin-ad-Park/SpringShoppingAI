@@ -3,7 +3,7 @@ package com.example.ailearning.l02multiple;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.testsupport.AnthropicStubServer;
-import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantTextMessage;
+import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,13 @@ class MultipleProvidersContractTest {
 
     @BeforeEach
     void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info.getTestMethod().orElseThrow().getName());
+        output = new TestOutput(info
+                .getTestMethod()
+                .orElseThrow()
+                .getName());
     }
 
-    static final OpenAiStubServer OPENAI = new OpenAiStubServer().setChatTokenUsage(10, 5);
+    static final OpenAiStubServer OPENAI = new OpenAiStubServer();
     static final AnthropicStubServer ANTHROPIC = new AnthropicStubServer();
     @Value("${local.server.port}") int port;
     @Autowired SameProviderModelsService sameProviderModels;
@@ -38,8 +41,15 @@ class MultipleProvidersContractTest {
         registry.add("spring.ai.anthropic.base-url", ANTHROPIC::getBaseUrl);
     }
     @BeforeEach void reset() {
-        OPENAI.resetChatResponsesAndRequests();
-        OPENAI.setChatResponseMessage(createAssistantTextMessage("OpenAI 로컬 고정 응답"));
+        OPENAI
+                .chat()
+                .resetResponsesAndRequests();
+        OPENAI
+                .chat()
+                .setTokenUsage(10, 5);
+        OPENAI
+                .chat()
+                .setResponseMessage(createAssistantTextMessage("OpenAI 로컬 고정 응답"));
         ANTHROPIC.resetMessageResponseAndRequests();
         ANTHROPIC.setMessageResponseText("Anthropic 로컬 고정 응답");
     }
@@ -49,9 +59,9 @@ class MultipleProvidersContractTest {
         var response = ask("openai");
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("OpenAI 로컬 고정 응답");
-        assertThat(OPENAI.getChatRequests()).hasSize(1);
-        assertThat(OPENAI.getChatRequests().getFirst().path("model").asString()).isEqualTo("openai-test-model");
-        assertThat(OPENAI.getChatAuthorizationHeaders()).containsExactly("Bearer local-openai-key");
+        assertThat(OPENAI.chat().getRequests()).hasSize(1);
+        assertThat(OPENAI.chat().getRequests().getFirst().path("model").asString()).isEqualTo("openai-test-model");
+        assertThat(OPENAI.chat().getAuthorizationHeaders()).containsExactly("Bearer local-openai-key");
         assertThat(ANTHROPIC.getMessageRequests()).isEmpty();
     }
     @Test void Anthropic으로_지정한_클라이언트는_Anthropic만_호출한다() throws Exception {
@@ -61,27 +71,38 @@ class MultipleProvidersContractTest {
         assertThat(ANTHROPIC.getMessageRequests()).hasSize(1);
         assertThat(ANTHROPIC.getMessageRequests().getFirst().path("model").asString()).isEqualTo("anthropic-test-model");
         assertThat(ANTHROPIC.getMessageApiKeyHeaders()).containsExactly("local-anthropic-key");
-        assertThat(OPENAI.getChatRequests()).isEmpty();
+        assertThat(OPENAI.chat().getRequests()).isEmpty();
     }
     @Test void 요청별_모델을_선택해도_기본_모델은_유지된다() throws Exception {
         output.printValue("모델 A 응답", sameProviderModels.ask("짧게 설명해줘", "openai-model-a"));
         output.printValue("모델 B 응답", sameProviderModels.ask("자세히 설명해줘", "openai-model-b"));
         ask("openai");
 
-        output.printValue("요청별 모델", OPENAI.getChatRequests().stream().map(request -> request.path("model").asString()).toList());
-        assertThat(OPENAI.getChatRequests())
-                .extracting(request -> request.path("model").asString())
+        output.printValue("요청별 모델", OPENAI
+                        .chat()
+                        .getRequests()
+                        .stream()
+                        .map(request -> request
+                                .path("model")
+                                .asString())
+                        .toList());
+        assertThat(OPENAI
+                        .chat()
+                        .getRequests())
+                .extracting(request -> request
+                        .path("model")
+                        .asString())
                 .containsExactly("openai-model-a", "openai-model-b", "openai-test-model");
-        assertThat(OPENAI.getChatAuthorizationHeaders())
-                .containsExactly("Bearer local-openai-key", "Bearer local-openai-key", "Bearer local-openai-key");
+        assertThat(OPENAI.chat().getAuthorizationHeaders()).containsExactly("Bearer local-openai-key", "Bearer local-openai-key", "Bearer local-openai-key");
         assertThat(ANTHROPIC.getMessageRequests()).isEmpty();
     }
 
     HttpResponse<String> ask(String provider) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
             return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/multi-chat/"+provider))
-                    .header("Content-Type", "text/plain; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString("DI를 설명해줘")).build(), HttpResponse.BodyHandlers.ofString()));
+                                    .header("Content-Type", "text/plain; charset=UTF-8")
+                                    .POST(HttpRequest.BodyPublishers.ofString("DI를 설명해줘"))
+                                    .build(), HttpResponse.BodyHandlers.ofString()));
         }
     }
 }

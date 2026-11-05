@@ -41,7 +41,7 @@
 
 <details><summary>선택 참고: 가짜 서버의 종료와 요청 기록 공유</summary>
 
-`resetRequests()`는 테스트마다 `resetChatResponsesAndRequests()`로 기록과 이전 시나리오를 초기화한 뒤 고정 응답을 지정합니다.
+`resetRequests()`는 테스트마다 `MODEL_SERVER.chat().resetResponsesAndRequests()`로 기록과 이전 시나리오를 초기화한 뒤 고정 응답을 지정합니다.
 `@AfterAll`의 `close()`는 서버와 실행 작업을 정리합니다. HTTP 처리와 요청 기록은 공통 모듈이 담당하므로 첫 실습에서는 직접 작성하지 않아도 됩니다.
 
 </details>

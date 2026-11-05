@@ -40,8 +40,12 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 ```java
 private GiftCriteria extract(String question, RunState run) {
-        GiftCriteria criteria = client(run).prompt().system(EXTRACT).user(question)
-                .call().entity(GiftCriteria.class);
+        GiftCriteria criteria = client(run)
+                .prompt()
+                .system(EXTRACT)
+                .user(question)
+                .call()
+                .entity(GiftCriteria.class);
         if (criteria == null) throw new IllegalStateException("조건이 비었습니다.");
         criteria.validate();
         return criteria;
@@ -53,15 +57,23 @@ private Draft workflow(String question, RunState run) {
         run.startTool("searchProducts", "Java가 순서를 지정");
         List<Product> products = catalog.search(criteria.category(), criteria.totalBudget());
         run.recordToolResult("searchProducts", products);
-        List<Offer> offers = products.stream().map(product -> {
-            run.startTool("calculateShipping", product.id());
-            Offer offer = catalog.quote(product.id());
-            run.recordToolResult("calculateShipping", offer);
-            return offer;
-        }).filter(offer -> offer.total() <= criteria.totalBudget()).toList();
+        List<Offer> offers = products
+                .stream()
+                .map(product -> {
+                    run.startTool("calculateShipping", product.id());
+                    Offer offer = catalog.quote(product.id());
+                    run.recordToolResult("calculateShipping", offer);
+                    return offer;
+                })
+                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .toList();
         if (offers.isEmpty()) return new Draft("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
-        String answer = client(run).prompt().system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
-                .user("質問: " + question + "\n확정 후보: " + offers).call().content();
+        String answer = client(run)
+                .prompt()
+                .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
+                .user("質問: " + question + "\n확정 후보: " + offers)
+                .call()
+                .content();
         return new Draft("COMPLETED", answer, offers);
     }
 ```

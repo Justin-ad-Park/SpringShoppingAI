@@ -22,7 +22,10 @@ class WorkflowAgentOpenAiLiveTest {
     void 실제_OpenAI로_Workflow와_Agent와_혼합_방식을_비교한다(TestInfo info) {
         for (String mode : java.util.List.of("workflow", "agent", "hybrid")) {
             RunResult result = service.run(mode, "배송비 포함 30000원 이하 음료 선물을 추천해줘.");
-            System.out.printf("[%s] %s 결과: %s%n", info.getTestMethod().orElseThrow().getName(), mode, result);
+            System.out.printf("[%s] %s 결과: %s%n", info
+                            .getTestMethod()
+                            .orElseThrow()
+                            .getName(), mode, result);
             assertThat(result.status()).isEqualTo("COMPLETED");
             assertThat(result.answer()).isNotBlank();
             assertThat(result.modelCalls()).isPositive();

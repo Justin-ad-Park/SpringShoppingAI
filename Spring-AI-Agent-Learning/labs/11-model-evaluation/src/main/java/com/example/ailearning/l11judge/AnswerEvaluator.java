@@ -15,16 +15,21 @@ public class AnswerEvaluator {
 
     public AnswerEvaluator(ChatClient.Builder builder) {
         relevance = new RelevancyEvaluator(builder.clone());
-        facts = FactCheckingEvaluator.builder(builder.clone()).build();
+        facts = FactCheckingEvaluator.builder(builder.clone())
+                .build();
     }
 
     public boolean relevance(String question, String context, String answer) {
         var request = new EvaluationRequest(question, List.of(new Document(context)), answer);
-        return relevance.evaluate(request).isPass();
+        return relevance
+                .evaluate(request)
+                .isPass();
     }
 
     public boolean facts(String context, String answer) {
         var request = new EvaluationRequest(List.of(new Document(context)), answer);
-        return facts.evaluate(request).isPass();
+        return facts
+                .evaluate(request)
+                .isPass();
     }
 }

@@ -20,7 +20,8 @@ final class OpenAiResponseBody {
      * }</pre>
      */
     static ObjectNode createAssistantTextMessage(String content) {
-        return StubHttpServer.JSON.createObjectNode()
+        return StubHttpServer.JSON
+                .createObjectNode()
                 .put("role", "assistant")
                 .put("content", content);
     }
@@ -45,14 +46,17 @@ final class OpenAiResponseBody {
      * }</pre>
      */
     static ObjectNode createAssistantToolCallMessage(String id, String name, String arguments) {
-        var message = StubHttpServer.JSON.createObjectNode()
+        var message = StubHttpServer.JSON
+                .createObjectNode()
                 .put("role", "assistant")
                 .putNull("content");
-        var call = message.putArray("tool_calls")
+        var call = message
+                .putArray("tool_calls")
                 .addObject()
                 .put("id", id)
                 .put("type", "function");
-        call.putObject("function")
+        call
+                .putObject("function")
                 .put("name", name)
                 .put("arguments", arguments);
         return message;
@@ -87,18 +91,23 @@ final class OpenAiResponseBody {
      * }</pre>
      */
     static ObjectNode createChatResponseBody(JsonNode request, ObjectNode message, TokenUsage usage) {
-        var body = StubHttpServer.JSON.createObjectNode()
+        var body = StubHttpServer.JSON
+                .createObjectNode()
                 .put("id", "local")
                 .put("object", "chat.completion")
                 .put("created", 1)
-                .put("model", request.path("model").asString());
+                .put("model", request
+                        .path("model")
+                        .asString());
         if (usage != null) {
-            body.putObject("usage")
+            body
+                    .putObject("usage")
                     .put("prompt_tokens", usage.input())
                     .put("completion_tokens", usage.output())
                     .put("total_tokens", usage.input() + usage.output());
         }
-        var choice = body.putArray("choices")
+        var choice = body
+                .putArray("choices")
                 .addObject()
                 .put("index", 0);
         choice.set("message", message.deepCopy());
@@ -138,15 +147,20 @@ final class OpenAiResponseBody {
      * }</pre>
      */
     static ObjectNode createEmbeddingResponseBody(JsonNode request, List<float[]> vectors) {
-        var body = StubHttpServer.JSON.createObjectNode()
+        var body = StubHttpServer.JSON
+                .createObjectNode()
                 .put("object", "list")
-                .put("model", request.path("model").asString());
-        body.putObject("usage")
+                .put("model", request
+                        .path("model")
+                        .asString());
+        body
+                .putObject("usage")
                 .put("prompt_tokens", 3)
                 .put("total_tokens", 3);
         var data = body.putArray("data");
         for (int index = 0; index < vectors.size(); index++) {
-            var vector = data.addObject()
+            var vector = data
+                    .addObject()
                     .put("object", "embedding")
                     .put("index", index)
                     .putArray("embedding");

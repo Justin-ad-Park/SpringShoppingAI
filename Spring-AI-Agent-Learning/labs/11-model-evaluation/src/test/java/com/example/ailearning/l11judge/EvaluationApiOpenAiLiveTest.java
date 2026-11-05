@@ -21,7 +21,10 @@ class EvaluationApiOpenAiLiveTest {
     void 실제_OpenAI_평가_모델에_질문과_근거와_답변을_전달한다(TestInfo info) {
         boolean relevance = service.relevance("미개봉 반품 기간은?", "미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.", "수령 후 7일 이내입니다.");
         boolean facts = service.facts("미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.", "미개봉 상품의 반품 기간은 7일입니다.");
-        System.out.printf("[%s] 관련성: %s, 근거 일치: %s%n", info.getTestMethod().orElseThrow().getName(), relevance, facts);
+        System.out.printf("[%s] 관련성: %s, 근거 일치: %s%n", info
+                        .getTestMethod()
+                        .orElseThrow()
+                        .getName(), relevance, facts);
         assertThat(relevance).isTrue();
         assertThat(facts).isTrue();
     }

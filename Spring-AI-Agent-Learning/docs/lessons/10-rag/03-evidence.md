@@ -15,12 +15,28 @@
 if (draft != null && Boolean.FALSE.equals(draft.answerable())) {
     return new Reply("NO_ANSWER", "검색된 근거로는 답할 수 없습니다.", List.of());
 }
-if (draft == null || !Boolean.TRUE.equals(draft.answerable()) || draft.answer() == null || draft.answer().isBlank() || draft.sourceIds() == null
-        || draft.sourceIds().isEmpty()
-        || draft.sourceIds().stream().anyMatch(id -> sources.stream().noneMatch(source -> source.id().equals(id)))) {
+if (draft == null || !Boolean.TRUE.equals(draft.answerable()) || draft.answer() == null || draft
+        .answer()
+        .isBlank() || draft.sourceIds() == null
+        || draft
+        .sourceIds()
+        .isEmpty()
+        || draft
+        .sourceIds()
+        .stream()
+        .anyMatch(id -> sources
+                .stream()
+                .noneMatch(source -> source
+                        .id()
+                        .equals(id)))) {
     return new Reply("INVALID_CITATION", "모델 답변의 출처를 확인할 수 없습니다.", List.of());
 }
-List<Source> cited = sources.stream().filter(source -> draft.sourceIds().contains(source.id())).toList();
+List<Source> cited = sources
+        .stream()
+        .filter(source -> draft
+                .sourceIds()
+                .contains(source.id()))
+        .toList();
 return new Reply("ANSWERED", draft.answer(), cited);
 ```
 

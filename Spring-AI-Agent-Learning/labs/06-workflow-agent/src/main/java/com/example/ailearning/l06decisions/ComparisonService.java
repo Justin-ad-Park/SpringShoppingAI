@@ -57,7 +57,8 @@ public class ComparisonService {
             task.cancel(true);
             return state.result(mode, "TIMEOUT", "요청 대기 시간 상한에 도달했습니다.", List.of());
         } catch (InterruptedException error) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread()
+                    .interrupt();
             state.stop("CANCELLED");
             task.cancel(true);
             return state.result(mode, "CANCELLED", "요청이 중단되었습니다.", List.of());
@@ -71,8 +72,12 @@ public class ComparisonService {
     }
 
     private GiftCriteria extract(String question, RunState run) {
-        GiftCriteria criteria = client(run).prompt().system(EXTRACT).user(question)
-                .call().entity(GiftCriteria.class);
+        GiftCriteria criteria = client(run)
+                .prompt()
+                .system(EXTRACT)
+                .user(question)
+                .call()
+                .entity(GiftCriteria.class);
         if (criteria == null) throw new IllegalStateException("조건이 비었습니다.");
         criteria.validate();
         return criteria;
@@ -84,22 +89,34 @@ public class ComparisonService {
         run.startTool("searchProducts", "Java가 순서를 지정");
         List<Product> products = catalog.search(criteria.category(), criteria.totalBudget());
         run.recordToolResult("searchProducts", products);
-        List<Offer> offers = products.stream().map(product -> {
-            run.startTool("calculateShipping", product.id());
-            Offer offer = catalog.quote(product.id());
-            run.recordToolResult("calculateShipping", offer);
-            return offer;
-        }).filter(offer -> offer.total() <= criteria.totalBudget()).toList();
+        List<Offer> offers = products
+                .stream()
+                .map(product -> {
+                    run.startTool("calculateShipping", product.id());
+                    Offer offer = catalog.quote(product.id());
+                    run.recordToolResult("calculateShipping", offer);
+                    return offer;
+                })
+                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .toList();
         if (offers.isEmpty()) return new Draft("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
-        String answer = client(run).prompt().system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
-                .user("質問: " + question + "\n확정 후보: " + offers).call().content();
+        String answer = client(run)
+                .prompt()
+                .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
+                .user("質問: " + question + "\n확정 후보: " + offers)
+                .call()
+                .content();
         return new Draft("COMPLETED", answer, offers);
     }
 
     private Draft agent(String question, RunState run, GiftCriteria fixed) {
-        String answer = client(run).prompt().system(AGENT_GOAL)
+        String answer = client(run)
+                .prompt()
+                .system(AGENT_GOAL)
                 .user(question + (fixed == null ? "" : "\nJava 확정 조건: " + fixed))
-                .tools(new TracedShoppingTools(catalog, run, fixed)).call().content();
+                .tools(new TracedShoppingTools(catalog, run, fixed))
+                .call()
+                .content();
         // Agent의 자연어가 정확하다는 보장은 없다. offers는 실제 조회한 가격 기록이다.
         return new Draft("COMPLETED", answer, run.quotes());
     }
@@ -108,13 +125,24 @@ public class ComparisonService {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         agent(question, run, criteria); // 어떤 상품을 조회할지는 모델이 선택한다.
-        List<Offer> eligible = run.quotes().stream()
-                .filter(offer -> criteria.category() == null || offer.product().category().equals(criteria.category()))
-                .filter(offer -> offer.total() <= criteria.totalBudget()).toList();
+        List<Offer> eligible = run
+                .quotes()
+                .stream()
+                .filter(offer -> criteria.category() == null || offer
+                        .product()
+                        .category()
+                        .equals(criteria.category()))
+                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
         return new Draft(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
-                        : "Java 검증 후보: " + eligible.stream().map(offer -> offer.product().id()).toList(), eligible);
+                        : "Java 검증 후보: " + eligible
+                .stream()
+                .map(offer -> offer
+                        .product()
+                        .id())
+                .toList(), eligible);
     }
 
     private Draft needsBudget() { return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }

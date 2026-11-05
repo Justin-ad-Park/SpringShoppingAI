@@ -54,19 +54,30 @@ public class AdvisorRagService {
     public AdvisorRagService(ChatClient.Builder builder, EmbeddingModel embeddingModel) {
         // 시작 시: 읽기 → 분할 → 저장. 작은 파일은 한 조각일 수도 있습니다.
         var reader = new TextReader(new ClassPathResource("return-policy.txt"));
-        var splitter = TokenTextSplitter.builder().build();
-        var store = SimpleVectorStore.builder(embeddingModel).build();
+        var splitter = TokenTextSplitter.builder()
+                .build();
+        var store = SimpleVectorStore.builder(embeddingModel)
+                .build();
         store.add(splitter.apply(reader.get()));
 
         // 질문 시: Advisor가 검색 결과를 프롬프트에 추가합니다.
         var advisor = QuestionAnswerAdvisor.builder(store)
-                .searchRequest(SearchRequest.builder().topK(1).similarityThreshold(0.7).build())
+                .searchRequest(SearchRequest.builder()
+                        .topK(1)
+                        .similarityThreshold(0.7)
+                        .build())
                 .build();
-        client = builder.defaultAdvisors(advisor).build();
+        client = builder
+                .defaultAdvisors(advisor)
+                .build();
     }
 
     public String answer(String question) {
-        return client.prompt().user(question).call().content();
+        return client
+                .prompt()
+                .user(question)
+                .call()
+                .content();
     }
 }
 ```

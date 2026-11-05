@@ -20,7 +20,10 @@ class AdvisorOpenAiLiveTest {
     @Timeout(180)
     void 실제_OpenAI_요청에서_Advisor_순서와_메모리를_확인한다(TestInfo info) {
         AdvisorChatService.Reply result = service.chat("live-user", "advisor-demo", "도구로 허브티 가격을 확인해줘.", true);
-        System.out.printf("[%s] 답변과_Advisor_순서: %s%n", info.getTestMethod().orElseThrow().getName(), result);
+        System.out.printf("[%s] 답변과_Advisor_순서: %s%n", info
+                        .getTestMethod()
+                        .orElseThrow()
+                        .getName(), result);
         assertThat(result.answer()).isNotBlank();
         assertThat(result.steps()).startsWith("A:before").endsWith("A:after");
         assertThat(result.storedMessages()).isEqualTo(2);

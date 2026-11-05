@@ -8,6 +8,10 @@ public class ObservedChatService {
     public ObservedChatService(ChatClient.Builder builder) { client = builder.build(); }
 
     public String ask(String question) {
-        return client.prompt().user(question).call().content();
+        return client
+                .prompt()
+                .user(question)
+                .call()
+                .content();
     }
 }

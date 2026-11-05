@@ -14,7 +14,8 @@ public class ToolChatService {
     }
 
     public String ask(String question) {
-        return client.prompt()
+        return client
+                .prompt()
                 .system("""
                         가상 상품 상담을 합니다. 가격과 배송비는 도구 결과만 사용하세요.
                         필요에 따라 상품 검색과 배송비 조회 도구를 선택하세요.
@@ -23,6 +24,7 @@ public class ToolChatService {
                         """)
                 .user(question)
                 .tools(tools)
-                .call().content();
+                .call()
+                .content();
     }
 }

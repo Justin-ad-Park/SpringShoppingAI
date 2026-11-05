@@ -15,9 +15,11 @@ public class SameProviderModelsService {
     }
 
     public String ask(String question, String modelId) {
-        return openAi.prompt()
+        return openAi
+                .prompt()
                 .user(question)
-                .options(OpenAiChatOptions.builder().model(modelId))
+                .options(OpenAiChatOptions.builder()
+                        .model(modelId))
                 .call()
                 .content();
     }

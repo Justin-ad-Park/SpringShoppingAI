@@ -2,29 +2,34 @@ package com.example.ailearning.l04structured;
 
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
-import static com.example.ailearning.testsupport.OpenAiStubServer.createAssistantTextMessage;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+
 import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class StructuredOutputContractTest {
+
+    // 테스트들이 공유하는 로컬 가짜 OpenAI 서버다.
+    private static final OpenAiStubServer MODEL = new OpenAiStubServer();
+
+    @Value("${local.server.port}")
+    private int port;
+
+    @Autowired
+    private CriteriaService service;
+
     private TestOutput output;
-
-    @BeforeEach
-    void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info.getTestMethod().orElseThrow().getName());
-    }
-
-    static final OpenAiStubServer MODEL = new OpenAiStubServer();
-    @Value("${local.server.port}") int port;
-    @org.springframework.beans.factory.annotation.Autowired CriteriaService service;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -32,44 +37,90 @@ class StructuredOutputContractTest {
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL.resetChatResponsesAndRequests(); }
-    @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void JSON_응답을_record로_변환하고_형식_지시를_전달한다() throws Exception {
-        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":\"음료\",\"maxPrice\":15000}"));
-        var response = post("음료 15000원 이하");
+    @BeforeEach
+    void 테스트_준비(TestInfo testInfo) {
+        // 이전 테스트의 응답 설정과 요청 기록이 다음 테스트에 영향을 주지 않게 한다.
+        MODEL
+                .chat()
+                .resetResponsesAndRequests();
+        output = new TestOutput(testInfo.getDisplayName());
+    }
+
+    @AfterAll
+    static void 테스트_종료() {
+        MODEL.close();
+    }
+
+    @Test
+    void JSON_응답을_record로_변환하고_형식_지시를_전달한다() throws Exception {
+        MODEL
+                .chat()
+                .setResponseText("{\"category\":\"음료\",\"maxPrice\":15000}");
+
+        var response = postQuestion("음료 15000원 이하");
+
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
         assertThat(body.path("category").asString()).isEqualTo("음료");
         assertThat(body.path("maxPrice").asInt()).isEqualTo(15000);
-        assertThat(MODEL.getChatRequests().getFirst().path("messages").toString()).contains("category", "maxPrice");
+        assertThat(MODEL.chat().getRequests().getFirst().path("messages").toString()).contains("category", "maxPrice");
     }
-    @Test void 사용자가_말하지_않은_조건은_null로_유지한다() throws Exception {
-        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":null,\"maxPrice\":null}"));
+
+    @Test
+    void 사용자가_말하지_않은_조건은_null로_유지한다() throws Exception {
+        MODEL
+                .chat()
+                .setResponseText("{\"category\":null,\"maxPrice\":null}");
+
         SearchCriteria criteria = service.extract("선물 추천");
         output.printValue("조건 객체", criteria);
+
         assertThat(criteria.category()).isNull();
         assertThat(criteria.maxPrice()).isNull();
     }
-    @Test void 잘못된_JSON_응답은_변환_실패로_처리한다() throws Exception {
-        MODEL.setChatResponseMessage(createAssistantTextMessage("이것은 JSON이 아닙니다."));
-        assertThat(post("음료 추천").statusCode()).isEqualTo(502);
+
+    /** 모델 응답을 JSON으로 변환할 수 없으면 모델 응답 처리 실패를 뜻하는 502를 반환한다. */
+    @Test
+    void 잘못된_JSON_응답은_변환_실패로_처리한다() throws Exception {
+        MODEL
+                .chat()
+                .setResponseText("이것은 JSON이 아닙니다.");
+
+        assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(502);
     }
-    @Test void 변환에_성공해도_허용되지_않는_값은_거부한다() throws Exception {
-        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":\"음료\",\"maxPrice\":-1}"));
-        assertThat(post("음료 추천").statusCode()).isEqualTo(422);
-        MODEL.setChatResponseMessage(createAssistantTextMessage("{\"category\":\"전자\",\"maxPrice\":1000}"));
-        assertThat(post("추천").statusCode()).isEqualTo(422);
+
+    /** JSON 변환 후에도 음수 가격이나 허용하지 않는 카테고리이면 값 검증에 실패해 422를 반환한다. */
+    @Test
+    void 변환에_성공해도_허용되지_않는_값은_거부한다() throws Exception {
+        MODEL
+                .chat()
+                .setResponseText("{\"category\":\"음료\",\"maxPrice\":-1}");
+        assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(422);
+
+        MODEL
+                .chat()
+                .setResponseText("{\"category\":\"전자\",\"maxPrice\":1000}");
+        assertThat(postQuestion("추천").statusCode()).isEqualTo(422);
     }
-    @Test void 공백_질문은_모델_호출_전에_거부한다() throws Exception {
-        assertThat(post("   ").statusCode()).isEqualTo(400);
-        assertThat(MODEL.getChatRequests()).isEmpty();
+
+    @Test
+    void 공백_질문은_모델_호출_전에_거부한다() throws Exception {
+        assertThat(postQuestion("   ").statusCode()).isEqualTo(400);
+        assertThat(MODEL.chat().getRequests()).isEmpty();
     }
-    HttpResponse<String> post(String question) throws Exception {
+
+    private HttpResponse<String> postQuestion(String question) throws Exception {
+        var request = HttpRequest.newBuilder(
+                        URI.create("http://127.0.0.1:" + port + "/api/criteria"))
+                .header("Content-Type", "text/plain; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(question))
+                .build();
+
         try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/criteria"))
-                    .header("Content-Type", "text/plain; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString(question)).build(), HttpResponse.BodyHandlers.ofString()));
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            output.printHttpResponse(response);
+            return response;
         }
     }
 }

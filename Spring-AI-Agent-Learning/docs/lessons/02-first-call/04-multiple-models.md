@@ -163,11 +163,19 @@ public class MultipleModelsService {
     }
 
     public String askOpenAi(String question) {
-        return openAi.prompt().user(question).call().content();
+        return openAi
+                .prompt()
+                .user(question)
+                .call()
+                .content();
     }
 
     public String askAnthropic(String question) {
-        return anthropic.prompt().user(question).call().content();
+        return anthropic
+                .prompt()
+                .user(question)
+                .call()
+                .content();
     }
 }
 ```
@@ -297,9 +305,11 @@ public class SameProviderModelsService {
     }
 
     public String ask(String question, String modelId) {
-        return openAi.prompt()
+        return openAi
+                .prompt()
                 .user(question)
-                .options(OpenAiChatOptions.builder().model(modelId))
+                .options(OpenAiChatOptions.builder()
+                        .model(modelId))
                 .call()
                 .content();
     }

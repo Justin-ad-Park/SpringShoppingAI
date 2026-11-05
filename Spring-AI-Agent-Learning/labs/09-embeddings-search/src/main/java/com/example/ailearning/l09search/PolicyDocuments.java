@@ -14,6 +14,10 @@ public final class PolicyDocuments {
                 document("return-opened", "returns", "개봉한 상품은 단순 변심 반품이 불가합니다. 불량은 별도로 확인합니다."));
     }
     private static Document document(String id, String category, String text) {
-        return Document.builder().id(id).text(text).metadata(Map.of("category", category)).build();
+        return Document.builder()
+                .id(id)
+                .text(text)
+                .metadata(Map.of("category", category))
+                .build();
     }
 }

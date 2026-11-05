@@ -68,7 +68,8 @@ ChatClient 생성 코드는 생략했으며, 도구 호출 예제는 메시지 �
 `chatClient`가 이미 준비되어 있다면 다음처럼 호출합니다.
 
 ```java
-String answer = chatClient.prompt()
+String answer = chatClient
+        .prompt()
         .user("Spring의 의존성 주입을 설명해줘.")
         .call()
         .content();
@@ -91,7 +92,8 @@ System.out.println(answer);
 `chatClient`가 이미 준비되어 있다면, 메시지 객체를 직접 만들지 않고 다음처럼 작성할 수 있습니다.
 
 ```java
-String answer = chatClient.prompt()
+String answer = chatClient
+        .prompt()
         .user("Spring의 의존성 주입을 설명해줘.")
         .system("Spring 입문자에게 쉬운 한국어로 설명하세요.")
         .call()
@@ -148,7 +150,8 @@ sequenceDiagram
 
 ```java
 String firstQuestion = "내 이름은 민수야.";
-String firstAnswer = chatClient.prompt()
+String firstAnswer = chatClient
+        .prompt()
         .system("쉬운 한국어로 짧게 답하세요.")
         .user(firstQuestion)
         .call()
@@ -168,7 +171,8 @@ System.out.println(firstAnswer);
 
 ```java
 String secondQuestion = "내 이름이 뭐야?";
-String secondAnswer = chatClient.prompt()
+String secondAnswer = chatClient
+        .prompt()
         .messages(
                 new SystemMessage("쉬운 한국어로 짧게 답하세요."),
                 new UserMessage(firstQuestion),       // 이전 질문
@@ -276,7 +280,8 @@ var toolMessage = ToolResponseMessage.builder()
                 "call-1", "getStock", "P100 상품의 현재 재고는 3개입니다.")))
         .build();
 
-String answer = chatClient.prompt()
+String answer = chatClient
+        .prompt()
         .messages(
                 new SystemMessage("재고는 조회 결과를 근거로 짧게 답하세요."),
                 new UserMessage("P100 상품의 재고가 지금 몇 개야?"),

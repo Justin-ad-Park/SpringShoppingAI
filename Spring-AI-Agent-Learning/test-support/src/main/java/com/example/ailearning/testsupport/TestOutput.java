@@ -23,8 +23,12 @@ public final class TestOutput {
     }
 
     public HttpResponse<String> printHttpResponse(HttpResponse<String> response) {
-        printValue("요청", response.request().method() + " " + response.uri().getPath());
-        printValue("HTTP " + response.statusCode(), response.body());
+        printValue("요청", response
+                        .request()
+                        .method() + " " + response
+                        .uri()
+                        .getPath());
+        printValue("응답 HTTP " + response.statusCode(), response.body());
         return response;
     }
 

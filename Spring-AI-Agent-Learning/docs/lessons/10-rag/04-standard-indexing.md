@@ -27,8 +27,10 @@ flowchart LR
 
 ```java
         var reader = new TextReader(new ClassPathResource("return-policy.txt"));
-        var splitter = TokenTextSplitter.builder().build();
-        var store = SimpleVectorStore.builder(embeddingModel).build();
+        var splitter = TokenTextSplitter.builder()
+                .build();
+        var store = SimpleVectorStore.builder(embeddingModel)
+                .build();
         store.add(splitter.apply(reader.get()));
 ```
 

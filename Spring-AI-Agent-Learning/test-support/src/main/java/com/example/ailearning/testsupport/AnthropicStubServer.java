@@ -41,20 +41,25 @@ public final class AnthropicStubServer implements AutoCloseable {
         String content = answer;
         if (content == null) throw new IllegalStateException("응답을 지정하세요.");
 
-        var body = StubHttpServer.JSON.createObjectNode()
+        var body = StubHttpServer.JSON
+                .createObjectNode()
                 .put("id", "msg-local")
                 .put("type", "message")
                 .put("role", "assistant")
-                .put("model", request.path("model").asString())
+                .put("model", request
+                        .path("model")
+                        .asString())
                 .put("stop_reason", "end_turn")
                 .putNull("stop_sequence");
 
-        body.putArray("content")
+        body
+                .putArray("content")
                 .addObject()
                 .put("type", "text")
                 .put("text", content);
 
-        body.putObject("usage")
+        body
+                .putObject("usage")
                 .put("input_tokens", 10)
                 .put("output_tokens", 5);
 

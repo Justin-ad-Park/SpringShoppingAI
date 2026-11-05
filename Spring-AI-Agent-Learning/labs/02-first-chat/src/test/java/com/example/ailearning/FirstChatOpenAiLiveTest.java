@@ -23,7 +23,10 @@ class FirstChatOpenAiLiveTest {
     @Timeout(60)
     @DisplayName("실제 OpenAI에 질문하고 응답을 출력한다")
     void 실제_OpenAI에_질문하고_응답을_출력한다(org.junit.jupiter.api.TestInfo info) {
-        System.out.println("[" + info.getTestMethod().orElseThrow().getName() + "]");
+        System.out.println("[" + info
+                        .getTestMethod()
+                        .orElseThrow()
+                        .getName() + "]");
         String question = "내 이름은 Justin이야. 내 이름이 뭐야?";
         String answer = chatService.ask(question);
 

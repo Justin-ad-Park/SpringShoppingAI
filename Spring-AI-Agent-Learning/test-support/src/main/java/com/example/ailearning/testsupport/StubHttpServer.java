@@ -42,26 +42,40 @@ final class StubHttpServer implements AutoCloseable {
 
     private void processRequestAndSendResponse(HttpExchange exchange) {
         try (exchange) {
-            String path = exchange.getRequestURI().getPath();
+            String path = exchange
+                    .getRequestURI()
+                    .getPath();
             Request request = readJsonRequest(exchange);
-            recorded.computeIfAbsent(path, ignored -> new CopyOnWriteArrayList<>()).add(request);
+            recorded
+                    .computeIfAbsent(path, ignored -> new CopyOnWriteArrayList<>())
+                    .add(request);
             // 응답을 먼저 확정한다. 지연 중 설정이 바뀌어도 현재 응답은 유지한다.
             Response response = createResponseForRequestPath(path, request.body());
             Thread.sleep(response.delayMs());
             sendJsonResponse(exchange, response);
         } catch (InterruptedException error) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread()
+                    .interrupt();
         } catch (IOException ignored) {
             // 타임아웃 테스트에서 클라이언트가 먼저 연결을 닫을 수 있다.
         }
     }
 
     private Request readJsonRequest(HttpExchange exchange) throws IOException {
-        byte[] input = exchange.getRequestBody().readAllBytes();
+        byte[] input = exchange
+                .getRequestBody()
+                .readAllBytes();
         JsonNode body = input.length == 0 ? JSON.createObjectNode() : JSON.readTree(input);
-        var headers = exchange.getRequestHeaders().entrySet().stream()
+        var headers = exchange
+                .getRequestHeaders()
+                .entrySet()
+                .stream()
                 .collect(Collectors.toMap(
-                entry -> entry.getKey().toLowerCase(Locale.ROOT), entry -> entry.getValue().getFirst()));
+                entry -> entry
+                                .getKey()
+                                .toLowerCase(Locale.ROOT), entry -> entry
+                                .getValue()
+                                .getFirst()));
         return new Request(body, Map.copyOf(headers));
     }
 
@@ -77,10 +91,17 @@ final class StubHttpServer implements AutoCloseable {
     }
 
     private void sendJsonResponse(HttpExchange exchange, Response response) throws IOException {
-        byte[] bytes = response.body().toString().getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        byte[] bytes = response
+                .body()
+                .toString()
+                .getBytes(StandardCharsets.UTF_8);
+        exchange
+                .getResponseHeaders()
+                .set("Content-Type", "application/json; charset=UTF-8");
         exchange.sendResponseHeaders(response.status(), bytes.length);
-        exchange.getResponseBody().write(bytes);
+        exchange
+                .getResponseBody()
+                .write(bytes);
     }
 
     /**
@@ -97,7 +118,8 @@ final class StubHttpServer implements AutoCloseable {
      */
     static JsonNode createErrorResponseBody(String code) {
         var body = JSON.createObjectNode();
-        body.putObject("error")
+        body
+                .putObject("error")
                 .put("message", code)
                 .put("type", "api_error")
                 .put("code", code);
@@ -109,19 +131,27 @@ final class StubHttpServer implements AutoCloseable {
     }
 
     String getBaseUrl() {
-        return "http://127.0.0.1:" + server.getAddress().getPort();
+        return "http://127.0.0.1:" + server
+                .getAddress()
+                .getPort();
     }
 
     List<JsonNode> getRequestBodies(String path) {
-        return recorded.getOrDefault(path, List.of()).stream()
+        return recorded
+                .getOrDefault(path, List.of())
+                .stream()
                 .map(Request::body)
                 .toList();
     }
 
     List<String> getRequestHeaderValues(String path, String name) {
         String headerName = name.toLowerCase(Locale.ROOT);
-        return recorded.getOrDefault(path, List.of()).stream()
-                .map(request -> request.headers().get(headerName))
+        return recorded
+                .getOrDefault(path, List.of())
+                .stream()
+                .map(request -> request
+                        .headers()
+                        .get(headerName))
                 .toList();
     }
 

@@ -24,10 +24,13 @@ Advisor 클래스를 작성하는 것만으로는 호출에 참여하지 않습�
 
 ```java
 var steps = new java.util.ArrayList<String>();
-String answer = client.prompt().user("안녕하세요.")
+String answer = client
+        .prompt()
+        .user("안녕하세요.")
         .advisors(new TraceAdvisor("A", 0, steps),
                 new TraceAdvisor("B", 10, steps))
-        .call().content();
+        .call()
+        .content();
 System.out.println(steps); // [A:before, B:before, B:after, A:after]
 ```
 

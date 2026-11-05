@@ -17,7 +17,9 @@ public class MemoryChatService {
             제공된 정보가 없으면 모른다고 말하세요. 실제 상품 조회 기능은 없습니다.
             """;
     private final ChatClient client;
-    private final ChatMemory memory = MessageWindowChatMemory.builder().maxMessages(6).build();
+    private final ChatMemory memory = MessageWindowChatMemory.builder()
+            .maxMessages(6)
+            .build();
 
     public MemoryChatService(ChatClient.Builder builder) { client = builder.build(); }
 
@@ -30,22 +32,40 @@ public class MemoryChatService {
         messages.addAll(memory.get(key)); // 1. 이전 질문·응답 조회
         messages.add(current);            // 2. 새 질문 추가
 
-        String answer = client.prompt().messages(messages).call().content(); // 3. 함께 전달
+        String answer = client
+                .prompt()
+                .messages(messages)
+                .call()
+                .content(); // 3. 함께 전달
         if (answer == null || answer.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "빈 모델 응답은 저장하지 않습니다.");
         }
         // 4. 성공한 질문·응답만 저장. 이 다음 호출에서 재사용한다.
         memory.add(key, List.of(current, new AssistantMessage(answer)));
-        return new MemoryReply(answer, messages.stream().map(MessageView::from).toList(), memory.get(key).size());
+        return new MemoryReply(answer, messages
+                .stream()
+                .map(MessageView::from)
+                .toList(), memory
+                .get(key)
+                .size());
     }
 
     public String stateless(String question) {
         // 메모리 없는 비교 경로: 이전 요청을 조회하거나 저장하지 않는다.
-        return client.prompt().system(SYSTEM).user(question).call().content();
+        return client
+                .prompt()
+                .system(SYSTEM)
+                .user(question)
+                .call()
+                .content();
     }
 
     public synchronized List<MessageView> history(String owner, String conversationId) {
-        return memory.get(key(owner, conversationId)).stream().map(MessageView::from).toList();
+        return memory
+                .get(key(owner, conversationId))
+                .stream()
+                .map(MessageView::from)
+                .toList();
     }
 
     public synchronized void clear(String owner, String conversationId) {

@@ -21,7 +21,10 @@ class RagOpenAiLiveTest {
     @Timeout(180)
     void 실제_OpenAI로_검색한_정책을_근거로_답한다(TestInfo info) {
         RagService.Reply result = service.answer("미개봉 상품의 반품 기간은 며칠인가요?");
-        System.out.printf("[%s] 답변과 출처: %s%n", info.getTestMethod().orElseThrow().getName(), result);
+        System.out.printf("[%s] 답변과 출처: %s%n", info
+                        .getTestMethod()
+                        .orElseThrow()
+                        .getName(), result);
         assertThat(result.status()).isEqualTo("ANSWERED");
         assertThat(result.answer()).isNotBlank();
         assertThat(result.sources()).isNotEmpty();

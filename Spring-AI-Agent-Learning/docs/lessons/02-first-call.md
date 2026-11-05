@@ -110,7 +110,8 @@ public class ChatService {
     }
 
     public String ask(String message) {
-        return chatClient.prompt()
+        return chatClient
+                .prompt()
                 .user(message)
                 .call()
                 .content();
