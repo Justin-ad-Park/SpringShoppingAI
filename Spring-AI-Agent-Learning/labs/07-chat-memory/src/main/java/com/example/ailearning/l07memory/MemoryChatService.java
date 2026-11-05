@@ -38,7 +38,7 @@ public class MemoryChatService {
                 .call()
                 .content(); // 3. 함께 전달
         if (answer == null || answer.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "빈 모델 응답은 저장하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "빈 모델 응답은 저장하지 않습니다.");
         }
         // 4. 성공한 질문·응답만 저장. 이 다음 호출에서 재사용한다.
         memory.add(key, List.of(current, new AssistantMessage(answer)));

@@ -87,11 +87,11 @@ public class CriteriaService {
                     .call()
                     .entity(SearchCriteria.class);
         } catch (RuntimeException error) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
         }
         if (criteria == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "모델 응답이 비었습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 응답이 비었습니다.");
         }
         try {
             // Java 객체로 바뀌었어도 업무 규칙은 별도로 검사한다.
@@ -180,7 +180,7 @@ MODEL
 |---|---|
 | 정상 JSON 응답 | record 변환과 응답 형식 지시 전달 확인 |
 | 사용자가 조건을 말하지 않음 | 필드를 `null`로 유지 |
-| JSON 형식이 잘못됨 | 변환 실패, HTTP 502 |
+| JSON 형식이 잘못됨 | 변환 실패, HTTP 500 |
 | 음수 가격 또는 허용하지 않는 카테고리 | 값 검증 실패, HTTP 422 |
 | 공백 질문 | Spring MVC가 Controller 본문 실행 전에 HTTP 400으로 거부, 모델 호출 없음 |
 
@@ -192,11 +192,11 @@ MODEL
 
 | 보충 문서 | 실패한 단계 | HTTP 상태를 정하는 곳 |
 |---|---|---|
-| [1. entity() 변환 실패와 502](04-structured-output/01-entity-conversion-502.md) | 모델 응답 문자열을 객체로 변환 | 서비스의 `catch`에서 `BAD_GATEWAY` 지정 |
+| [1. entity() 변환 실패와 500](04-structured-output/01-entity-conversion-500.md) | 모델 응답 문자열을 객체로 변환 | 서비스의 `catch`에서 `INTERNAL_SERVER_ERROR` 지정 |
 | [2. validate() 값 검증 실패와 422](04-structured-output/02-value-validation-422.md) | 변환된 객체의 값 검사 | 서비스의 `catch`에서 `UNPROCESSABLE_ENTITY` 지정 |
 | [3. @NotBlank 입력 검증 실패와 400](04-structured-output/03-input-validation-400.md) | Controller 본문 실행 전 질문 검사 | Spring MVC의 기본 입력 검증 처리 |
 
-502·422는 이 API에서 개발자가 선택한 상태입니다. `entity()`나 `IllegalArgumentException`이 숫자를 자동으로 결정하는 것은 아닙니다. 현재 기본 구성에서 Spring MVC는 예외에 담긴 상태를 HTTP 응답에 적용합니다.
+500·422는 이 API에서 개발자가 선택한 상태입니다. `entity()`나 `IllegalArgumentException`이 숫자를 자동으로 결정하는 것은 아닙니다. 현재 기본 구성에서 Spring MVC는 예외에 담긴 상태를 HTTP 응답에 적용합니다.
 
 각 보충 문서는 실패 재현, 관련 실습 코드, 상태 지정, 테스트 결과 순서로 읽습니다. 라이브러리 내부 코드와 디버깅 절차는 문서 끝의 **선택 보충**에 있습니다.
 

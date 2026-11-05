@@ -39,9 +39,9 @@ return criteria;
 
 **422**는 요청 내용의 형식과 문법은 이해했지만, 그 내용에 담긴 지시를 처리할 수 없는 경우를 나타냅니다. 현재 HTTP 표준의 이름은 **Unprocessable Content**이며, 실습 코드의 `UNPROCESSABLE_ENTITY`도 같은 숫자 422를 나타냅니다. [HTTP 표준의 422 설명](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.21)
 
-이 실습은 **변환된 검색 조건의 값 검증 실패**를 별도로 구분하기 위해 422를 선택했습니다. 예를 들어 `{"category":"음료","maxPrice":-1}`은 JSON으로 읽을 수 있어 record 생성에는 성공하지만, 음수 가격은 `validate()`의 규칙을 만족하지 못합니다. 502로 처리하는 JSON 변환 실패와 구분하여, ‘객체는 만들었지만 이 조건으로 처리를 진행할 수 없다’는 결과를 표현합니다.
+이 실습은 **변환된 검색 조건의 값 검증 실패**를 별도로 구분하기 위해 422를 선택했습니다. 예를 들어 `{"category":"음료","maxPrice":-1}`은 JSON으로 읽을 수 있어 record 생성에는 성공하지만, 음수 가격은 `validate()`의 규칙을 만족하지 못합니다. 500으로 처리하는 JSON 변환 실패와 구분하여, ‘객체는 만들었지만 이 조건으로 처리를 진행할 수 없다’는 결과를 표현합니다.
 
-다만 HTTP 표준의 422는 **요청 내용**에 관한 상태이고, 이 실습에서 검증하는 값은 **모델이 생성한 결과**입니다. 따라서 이 매핑은 학습용 API의 선택이며, 모델이 잘못 생성한 값까지 사용자 요청 오류로 보아야 한다는 뜻은 아닙니다. 실제 API에서는 실패가 사용자 조건 때문인지 모델 응답 때문인지에 따라 422 또는 502 등의 정책을 정해야 합니다. `IllegalArgumentException` 자체가 422를 결정하지는 않습니다.
+다만 HTTP 표준의 422는 **요청 내용**에 관한 상태이고, 이 실습에서 검증하는 값은 **모델이 생성한 결과**입니다. 따라서 이 매핑은 학습용 API의 선택이며, 모델이 잘못 생성한 값까지 사용자 요청 오류로 보아야 한다는 뜻은 아닙니다. 실제 API에서는 실패가 사용자 조건 때문인지 모델 응답 때문인지에 따라 422 또는 500 등의 정책을 정해야 합니다. `IllegalArgumentException` 자체가 422를 결정하지는 않습니다.
 
 `criteria.validate()`는 모델 호출·변환을 감싼 첫 번째 `try` 바깥에 있습니다. 따라서 여기서 발생한 예외는 변환 실패를 처리하는 첫 번째 `catch`가 아니라, 위의 별도 `catch`에서 422로 바뀝니다.
 
@@ -67,7 +67,7 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(422);
 
 현재 코드의 이름을 그대로 설명했으며, Spring Framework 7에서는 같은 422를 나타내는 `UNPROCESSABLE_CONTENT`가 권장 이름입니다.
 
-현재 생성자는 원래 예외의 `getMessage()`를 이유로 전달합니다. 502 처리 코드와 달리 원래 예외 객체를 세 번째 인자로 넘기지는 않습니다. 예외 메시지의 내용이 상태 숫자를 결정하는 것도 아닙니다. **첫 번째 인자의 `HttpStatus`가 상태를 결정합니다.**
+현재 생성자는 원래 예외의 `getMessage()`를 이유로 전달합니다. 500 처리 코드와 달리 원래 예외 객체를 세 번째 인자로 넘기지는 않습니다. 예외 메시지의 내용이 상태 숫자를 결정하는 것도 아닙니다. **첫 번째 인자의 `HttpStatus`가 상태를 결정합니다.**
 
 서비스가 던진 `ResponseStatusException`은 Controller를 지나 `DispatcherServlet`으로 전파됩니다. 현재 실습의 기본 MVC 예외 처리에서 `ResponseStatusExceptionResolver.resolveResponseStatusException()`이 `exception.getStatusCode().value()`를 읽습니다.
 
@@ -75,4 +75,4 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(422);
 
 </details>
 
-[이전: entity() 변환 실패와 502](01-entity-conversion-502.md) · [다음: 입력 검증 실패와 400](03-input-validation-400.md) · [04장 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)
+[이전: entity() 변환 실패와 500](01-entity-conversion-500.md) · [다음: 입력 검증 실패와 400](03-input-validation-400.md) · [04장 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)

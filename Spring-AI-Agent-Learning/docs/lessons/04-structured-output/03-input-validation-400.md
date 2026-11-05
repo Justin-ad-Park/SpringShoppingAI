@@ -28,7 +28,7 @@ public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String qu
 | 숫자와의 관계 | `HttpStatus.BAD_REQUEST`에 정의된 값이 400 |
 | 응답 처리 | MVC 오류 처리가 예외에 저장된 상태를 HTTP 응답에 적용 |
 
-`@NotBlank` 자체에 숫자 400이 들어 있는 것은 아닙니다. **입력 규칙은 애너테이션으로 선언하고, 위반 시 HTTP 400으로 응답하는 처리는 현재 MVC 기본 동작을 사용**합니다. 반면 502·422는 서비스에서 직접 `ResponseStatusException`을 만들어 지정했습니다.
+`@NotBlank` 자체에 숫자 400이 들어 있는 것은 아닙니다. **입력 규칙은 애너테이션으로 선언하고, 위반 시 HTTP 400으로 응답하는 처리는 현재 MVC 기본 동작을 사용**합니다. 반면 500·422는 서비스에서 직접 `ResponseStatusException`을 만들어 지정했습니다.
 
 ## 3. HTTP 응답과 모델 요청 기록 확인하기
 
@@ -108,7 +108,7 @@ BAD_REQUEST(400, Series.CLIENT_ERROR, "Bad Request")
 
 따라서 `HttpStatus.BAD_REQUEST.value()`를 호출하면 **400**이 나옵니다. 개발자는 숫자 `400` 대신 의미를 읽기 쉬운 이름인 `BAD_REQUEST`를 코드에 사용합니다.
 
-정리하면 **`initHttpStatus()`가 `BAD_REQUEST`를 선택하고 → 생성자가 그 상태를 예외 객체에 저장하고 → 나중에 MVC 예외 처리기가 그 안의 숫자 400을 읽습니다.** 502·422는 서비스 코드가 상태를 지정하지만, 이번 400은 Spring MVC의 예외 생성 코드가 지정합니다.
+정리하면 **`initHttpStatus()`가 `BAD_REQUEST`를 선택하고 → 생성자가 그 상태를 예외 객체에 저장하고 → 나중에 MVC 예외 처리기가 그 안의 숫자 400을 읽습니다.** 500·422는 서비스 코드가 상태를 지정하지만, 이번 400은 Spring MVC의 예외 생성 코드가 지정합니다.
 
 다른 형태의 Controller에서는 `MethodArgumentNotValidException` 등 다른 검증 예외가 발생할 수도 있습니다. 여기서는 현재 코드의 **매개변수에 직접 선언한 제약에 대한 메서드 검증 경로**를 설명합니다.
 

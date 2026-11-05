@@ -84,7 +84,7 @@ class RagContractTest {
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("형식 오류"));
-        assertThat(post("반품").statusCode()).isEqualTo(502);
+        assertThat(post("반품").statusCode()).isEqualTo(500);
     }
     @Test void 공백_질문은_답변_모델을_호출하지_않는다() throws Exception {
         assertThat(post(" ").statusCode()).isEqualTo(400);

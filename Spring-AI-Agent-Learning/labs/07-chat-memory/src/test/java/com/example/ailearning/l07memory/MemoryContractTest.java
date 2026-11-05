@@ -110,7 +110,7 @@ class MemoryContractTest {
             MODEL
                     .chat()
                     .setResponseMessage(createAssistantTextMessage(""));
-            assertThat(post(alice, "/api/memory/failure", "실패한 질문").statusCode()).isEqualTo(502);
+            assertThat(post(alice, "/api/memory/failure", "실패한 질문").statusCode()).isEqualTo(500);
             var history = get(alice, "/api/memory/failure");
             assertThat(json(history).size()).isEqualTo(2);
             assertThat(history.body()).doesNotContain("실패한 질문");

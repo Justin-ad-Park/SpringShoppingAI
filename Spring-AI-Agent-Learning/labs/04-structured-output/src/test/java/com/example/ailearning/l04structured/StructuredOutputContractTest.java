@@ -80,14 +80,14 @@ class StructuredOutputContractTest {
         assertThat(criteria.maxPrice()).isNull();
     }
 
-    /** entity() 변환 예외를 서비스에서 ResponseStatusException으로 바꾸고 502를 지정하는 경로다. */
+    /** entity() 변환 예외를 서비스에서 ResponseStatusException으로 바꾸고 500를 지정하는 경로다. */
     @Test
     void 잘못된_JSON_응답은_변환_실패로_처리한다() throws Exception {
         MODEL
                 .chat()
                 .setResponseText("이것은 JSON이 아닙니다.");
 
-        assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(502);
+        assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(500);
     }
 
     /** criteria.validate()의 IllegalArgumentException을 서비스에서 ResponseStatusException으로 바꾸고 422를 지정하는 경로다. */

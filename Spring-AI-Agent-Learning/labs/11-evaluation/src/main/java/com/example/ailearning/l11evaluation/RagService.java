@@ -92,7 +92,7 @@ public class RagService {
                 stats.output = usage.getCompletionTokens();
             }
         } catch (RuntimeException error) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "모델 호출/응답 변환 실패", error);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 호출/응답 변환 실패", error);
         }
         if (draft != null && Boolean.FALSE.equals(draft.answerable())) {
             return new Reply("NO_ANSWER", "검색된 근거로는 답할 수 없습니다.", List.of());

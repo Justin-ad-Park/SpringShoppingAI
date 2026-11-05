@@ -39,11 +39,11 @@ public class CriteriaService {
                     .call()
                     .entity(SearchCriteria.class);
         } catch (RuntimeException error) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
         }
         if (criteria == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "모델 응답이 비었습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 응답이 비었습니다.");
         }
         try {
             // Java 객체로 바뀌었어도 업무 규칙은 별도로 검사한다.
