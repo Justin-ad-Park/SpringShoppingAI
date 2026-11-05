@@ -80,7 +80,7 @@ class StructuredOutputContractTest {
         assertThat(criteria.maxPrice()).isNull();
     }
 
-    /** 모델 응답을 JSON으로 변환할 수 없으면 모델 응답 처리 실패를 뜻하는 502를 반환한다. */
+    /** entity() 변환 예외를 서비스에서 ResponseStatusException으로 바꾸고 502를 지정하는 경로다. */
     @Test
     void 잘못된_JSON_응답은_변환_실패로_처리한다() throws Exception {
         MODEL
@@ -90,7 +90,7 @@ class StructuredOutputContractTest {
         assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(502);
     }
 
-    /** JSON 변환 후에도 음수 가격이나 허용하지 않는 카테고리이면 값 검증에 실패해 422를 반환한다. */
+    /** criteria.validate()의 IllegalArgumentException을 서비스에서 ResponseStatusException으로 바꾸고 422를 지정하는 경로다. */
     @Test
     void 변환에_성공해도_허용되지_않는_값은_거부한다() throws Exception {
         MODEL
@@ -104,6 +104,7 @@ class StructuredOutputContractTest {
         assertThat(postQuestion("추천").statusCode()).isEqualTo(422);
     }
 
+    /** 질문의 @NotBlank 위반은 Spring MVC가 400으로 처리하므로 서비스·모델은 호출되지 않는다. */
     @Test
     void 공백_질문은_모델_호출_전에_거부한다() throws Exception {
         assertThat(postQuestion("   ").statusCode()).isEqualTo(400);

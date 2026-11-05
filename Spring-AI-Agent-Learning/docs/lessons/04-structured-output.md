@@ -182,9 +182,23 @@ MODEL
 | 사용자가 조건을 말하지 않음 | 필드를 `null`로 유지 |
 | JSON 형식이 잘못됨 | 변환 실패, HTTP 502 |
 | 음수 가격 또는 허용하지 않는 카테고리 | 값 검증 실패, HTTP 422 |
-| 공백 질문 | Controller가 HTTP 400으로 거부, 모델 호출 없음 |
+| 공백 질문 | Spring MVC가 Controller 본문 실행 전에 HTTP 400으로 거부, 모델 호출 없음 |
 
-서비스는 모델 호출·변환 실패도 502로 처리합니다. 실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다. 이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
+실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다. 이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
+
+### 5.1. 예외는 어디에서 발생하고 HTTP 상태는 누가 정할까?
+
+먼저 **입력 검사 → 모델 응답 변환 → 변환된 값 검사** 중 어느 단계에서 실패했는지 구분합니다. 웹 서버와 Controller의 역할이 낯설면 [0. 웹 요청의 기본 흐름](04-structured-output/00-web-request-basics.md)을 먼저 읽으세요.
+
+| 보충 문서 | 실패한 단계 | HTTP 상태를 정하는 곳 |
+|---|---|---|
+| [1. entity() 변환 실패와 502](04-structured-output/01-entity-conversion-502.md) | 모델 응답 문자열을 객체로 변환 | 서비스의 `catch`에서 `BAD_GATEWAY` 지정 |
+| [2. validate() 값 검증 실패와 422](04-structured-output/02-value-validation-422.md) | 변환된 객체의 값 검사 | 서비스의 `catch`에서 `UNPROCESSABLE_ENTITY` 지정 |
+| [3. @NotBlank 입력 검증 실패와 400](04-structured-output/03-input-validation-400.md) | Controller 본문 실행 전 질문 검사 | Spring MVC의 기본 입력 검증 처리 |
+
+502·422는 이 API에서 개발자가 선택한 상태입니다. `entity()`나 `IllegalArgumentException`이 숫자를 자동으로 결정하는 것은 아닙니다. 현재 기본 구성에서 Spring MVC는 예외에 담긴 상태를 HTTP 응답에 적용합니다.
+
+각 보충 문서는 실패 재현, 관련 실습 코드, 상태 지정, 테스트 결과 순서로 읽습니다. 라이브러리 내부 코드와 디버깅 절차는 문서 끝의 **선택 보충**에 있습니다.
 
 ## 실제 OpenAI로 확인하기
 
