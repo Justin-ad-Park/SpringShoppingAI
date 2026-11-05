@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
-class MemoryContractTest {
+class MemoryLocalModelTest {
     private TestOutput output;
 
     @BeforeEach

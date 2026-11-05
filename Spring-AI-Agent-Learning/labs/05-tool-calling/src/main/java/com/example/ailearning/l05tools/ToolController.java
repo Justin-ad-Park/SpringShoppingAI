@@ -9,11 +9,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tools")
 public class ToolController {
-    private final ProductCatalog catalog;
+    private final ProductCatalog productCatalog;
     private final ToolChatService service;
 
-    public ToolController(ProductCatalog catalog, ToolChatService service) {
-        this.catalog = catalog;
+    public ToolController(ProductCatalog productCatalog, ToolChatService service) {
+        this.productCatalog = productCatalog;
         this.service = service;
     }
 
@@ -21,11 +21,11 @@ public class ToolController {
     @GetMapping("/direct")
     public List<Product> direct(@RequestParam(required = false) String category,
             @RequestParam(required = false) Integer maxPrice) {
-        return catalog.search(category, maxPrice);
+        return productCatalog.search(category, maxPrice);
     }
 
     @GetMapping("/shipping/{productId}")
-    public Offer shipping(@PathVariable String productId) { return catalog.quote(productId); }
+    public ProductPriceDetails shipping(@PathVariable String productId) { return productCatalog.calculatePriceDetails(productId); }
 
     @PostMapping(value = "/chat", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)

@@ -54,6 +54,16 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 
 ## 3. 테스트 결과를 읽기
 
+클래스 이름으로 테스트의 범위를 구분합니다.
+
+| 이름 | 검증 대상 | 실제 외부 모델 호출 |
+|---|---|---|
+| `객체명UnitTest` | 객체 하나의 기능. Spring·HTTP 서버 없이 실행 | 없음 |
+| `주제LocalModelTest` | 로컬 고정 응답 HTTP 서버를 사용한 모델·도구·웹 연결 | 없음 |
+| `주제OpenAiLiveTest` / `주제ProvidersLiveTest` | 실제 OpenAI 또는 여러 제공 업체와의 연결 | 있음 |
+
+`LocalModelTest`는 로컬 LLM 실행을 뜻하지 않습니다. 외부 API 대신 고정 응답 서버를 사용하는 통합 테스트입니다. 객체별 단위 테스트를 제공하는 모듈에서는 README의 로컬 명령이 단위·통합 클래스를 함께 선택합니다.
+
 로컬 Mock 테스트는 `.env` 읽기를 끄고 더미 키·모델 이름·로컬 서버 주소를 직접 설정합니다.
 서버의 HTTP 처리와 결과 출력은 [공통 테스트 도구](../test-support/README.md)가 제공하며, 단원별 응답과 시나리오는 각 테스트에 남아 있습니다.
 고정 HTTP 응답으로 코드의 연결을 검증하며, 실제 모델의 답변 품질을 평가하는 테스트와 다릅니다.
@@ -65,13 +75,13 @@ Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`�
 첫 실습에서 Mock 테스트만 실행하려면 클래스를 지정하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 다중 모델 실습에서도 로컬 테스트만 실행하려면 클래스를 지정합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
 ```
 
 [학습 방법](learning-guide.md) · [교육 계획](curriculum.md)

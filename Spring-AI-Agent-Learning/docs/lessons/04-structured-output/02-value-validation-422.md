@@ -49,7 +49,7 @@ return criteria;
 
 현재 기본 구성에서 Spring MVC가 `ResponseStatusException`에 담긴 422를 HTTP 응답에 적용합니다. **record 생성 성공 → validate() 실패 → 서비스가 422 지정 → MVC가 HTTP 422 응답 처리**의 순서입니다.
 
-[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)의 `변환에_성공해도_허용되지_않는_값은_거부한다()`에서 확인하는 첫 번째 사례입니다. 실제 테스트 코드 발췌입니다.
+[StructuredOutputLocalModelTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `변환에_성공해도_허용되지_않는_값은_거부한다()`에서 확인하는 첫 번째 사례입니다. 실제 테스트 코드 발췌입니다.
 
 ```java
 MODEL

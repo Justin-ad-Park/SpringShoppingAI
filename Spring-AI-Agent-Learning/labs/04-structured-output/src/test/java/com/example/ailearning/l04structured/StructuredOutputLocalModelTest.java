@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
-class StructuredOutputContractTest {
+class StructuredOutputLocalModelTest {
 
     // 테스트들이 공유하는 로컬 가짜 OpenAI 서버다.
     private static final OpenAiStubServer MODEL = new OpenAiStubServer();

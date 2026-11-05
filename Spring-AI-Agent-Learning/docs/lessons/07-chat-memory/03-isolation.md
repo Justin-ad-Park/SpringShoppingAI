@@ -19,7 +19,7 @@
 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test --tests com.example.ailearning.l07memory.MemoryContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootRun
 ```
 
@@ -83,7 +83,7 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 메시지 하나가 길면 토큰도 많아질 수 있습니다. 메시지 수 제한은 토큰 예산 제한과 같지 않습니다.
 이 단원은 토큰 계산·요약·장기 기억을 추가하지 않습니다. 오래된 정보가 창 밖으로 사라지는 현상을 먼저 확인합니다.
 
-[MemoryContractTest](../../../labs/07-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryContractTest.java)는 이전 user/assistant 재전달, stateless 비교, 쿠키별 격리, 대화별 삭제, 6개 창, 빈 응답 저장 방지, 입력 검증을 확인합니다.
+[MemoryLocalModelTest](../../../labs/07-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryLocalModelTest.java)는 이전 user/assistant 재전달, stateless 비교, 쿠키별 격리, 대화별 삭제, 6개 창, 빈 응답 저장 방지, 입력 검증을 확인합니다.
 테스트는 서버가 보낸 실제 모델 API 메시지를 검사하며 고정 응답의 언어 이해 능력을 평가하지 않습니다.
 
 ## 확인 질문

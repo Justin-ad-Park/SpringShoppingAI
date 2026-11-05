@@ -13,7 +13,7 @@ PriceTools는 05에서 배운 @Tool 방식으로 가상 허브티 가격 12000�
 명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test --tests com.example.ailearning.l08advisors.AdvisorContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test --tests com.example.ailearning.l08advisors.AdvisorLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:bootRun
 curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
   http://127.0.0.1:8098/api/advisors/demo \
@@ -41,7 +41,7 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 - `.defaultAdvisors(...)`를 빼면 이전 대화가 자동으로 전달되지 않습니다.
 - `memory.add()`를 중복 추가하지 않고 저장 메시지 수를 확인합니다.
 
-[AdvisorContractTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorContractTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
+[AdvisorLocalModelTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorLocalModelTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
 Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 장기 저장하는 것은 아닙니다.
 
 ## 확인 질문

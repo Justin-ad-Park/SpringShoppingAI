@@ -57,7 +57,7 @@ SDK 재시도는 0회, 요청 타임아웃은 2초로 설정했습니다. 자동
 키·Chat 모델·임베딩 모델 설정은 [10장](../10-rag.md)과 같습니다. 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:test --tests com.example.ailearning.l11evaluation.EvaluationContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:test --tests com.example.ailearning.l11evaluation.EvaluationLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-evaluation:bootRun
 curl -sS http://127.0.0.1:8101/api/evaluation/ask \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '미개봉 반품 기간은?'
@@ -81,7 +81,7 @@ curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
 먼저 원래 설정으로 테스트를 실행합니다. 그다음 테스트의 타임아웃 설정 위치와 요청 횟수 검증문을 찾아
 대기 시간과 재시도가 서로 다른 설정임을 설명해 보세요. 실제 서버의 정상 지연과 로컬 테스트의 인위적인 지연도 구분합니다.
 
-[EvaluationContractTest](../../../labs/11-evaluation/src/test/java/com/example/ailearning/l11evaluation/EvaluationContractTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.
+[EvaluationLocalModelTest](../../../labs/11-evaluation/src/test/java/com/example/ailearning/l11evaluation/EvaluationLocalModelTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.
 usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니다. 실제 비용이나 품질로 표시하지 않습니다.
 2초 설정과 별개로 시간 초과 테스트만 500ms로 줄여 빠르게 검증합니다.
 

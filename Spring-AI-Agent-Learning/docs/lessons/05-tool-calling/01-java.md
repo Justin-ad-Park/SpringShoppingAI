@@ -30,14 +30,14 @@ classDiagram
     class ToolController
     class ProductCatalog {
         +search(category, maxPrice) List
-        +quote(productId) Offer
+        +calculatePriceDetails(productId) ProductPriceDetails
     }
     class Product
-    class Offer
+    class ProductPriceDetails
     ToolController --> ProductCatalog : 직접 호출 경로
     ProductCatalog --> Product : 상품 조회
-    ProductCatalog --> Offer : 배송비 포함 총액 반환
-    Offer --> Product : 상품 정보 포함
+    ProductCatalog --> ProductPriceDetails : 배송비 포함 총액 반환
+    ProductPriceDetails --> Product : 상품 정보 포함
 ```
 
 [ProductCatalog.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 전체 코드입니다.
@@ -71,7 +71,7 @@ public class ProductCatalog {
                 .toList();
     }
 
-    public Offer quote(String productId) {
+    public ProductPriceDetails calculatePriceDetails(String productId) {
         Product product = products
                 .stream()
                 .filter(item -> item
@@ -79,15 +79,25 @@ public class ProductCatalog {
                         .equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-        int fee = product.price() >= 30000 ? 0 : 3000;
-        return new Offer(product, fee, Math.addExact(product.price(), fee));
+        int shippingFee = product.price() >= 30000 ? 0 : 3000;
+        return new ProductPriceDetails(product, shippingFee, Math.addExact(product.price(), shippingFee));
     }
 }
 ```
 
-`search()`는 일반 Java 필터입니다. `quote()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
-[Product](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/Product.java)와 [Offer](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/Offer.java)는 04장에서 배운 record입니다.
+`search()`는 일반 Java 필터입니다. `calculatePriceDetails()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
+[Product](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/Product.java)와 [ProductPriceDetails](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductPriceDetails.java)는 04장에서 배운 record입니다.
 
+
+## 상품 기능만 테스트하기
+
+[ProductCatalogUnitTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ProductCatalogUnitTest.java)는 `new ProductCatalog()`로 객체를 만들고 검색 조건·상품 ID 검증과 무료 배송을 검사합니다. Spring이나 모델 서버를 띄울 필요가 없습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
+```
+
+도구 호출과 HTTP 연결은 별도의 `ToolCallingLocalModelTest`에서 확인합니다.
 
 ## 여기서 멈춰 확인하기
 

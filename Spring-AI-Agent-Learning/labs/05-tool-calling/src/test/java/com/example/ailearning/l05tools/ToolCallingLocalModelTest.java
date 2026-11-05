@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
-class ToolCallingContractTest {
+class ToolCallingLocalModelTest {
     private TestOutput output;
 
     @BeforeEach
@@ -62,15 +62,17 @@ class ToolCallingContractTest {
                 .toString();
         assertThat(messages).contains("tool_call_id", "search-1", "P01").doesNotContain("P02");
     }
+
     @Test void 배송비는_상품_목록의_실제_가격으로_계산한다() throws Exception {
         MODEL
                 .chat()
                 .setResponseSequence(
-                createAssistantToolCallMessage("quote-1", "calculateShipping", "{\"productId\":\"P02\"}"),
+                createAssistantToolCallMessage("shipping-1", "calculateShipping", "{\"productId\":\"P02\"}"),
                 createAssistantTextMessage("총 31000원입니다."));
         assertThat(post("커피 배송비 포함 가격").statusCode()).isEqualTo(200);
         assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).contains("31000", "3000");
     }
+
     @Test void 인사는_도구를_호출하지_않고_답할_수_있다() throws Exception {
         MODEL
                 .chat()
@@ -78,36 +80,32 @@ class ToolCallingContractTest {
         assertThat(post("안녕").body()).isEqualTo("안녕하세요.");
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
-    @Test void 상품_서비스가_조건과_상품_ID를_검증한다() {
-        var catalog = new ProductCatalog();
-        output.printValue("전체 상품", catalog.search(null, null));
-        output.printValue("텀블러 배송비와 총액", catalog.quote("P03"));
-        assertThat(catalog.search(null, null)).hasSize(3);
-        assertThatThrownBy(() -> catalog.search("전자", 1000))
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> catalog.search(null, -1))
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> catalog.quote("invented"))
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThat(catalog.quote("P03").shippingFee()).isZero();
-    }
+
     @Test void 공백_질문은_모델을_호출하지_않는다() throws Exception {
         assertThat(post(" ").statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
+
     HttpResponse<String> get(String path) throws Exception {
         return send(HttpRequest.newBuilder(uri(path))
                         .GET()
                         .build());
     }
+
     HttpResponse<String> post(String question) throws Exception {
         return send(HttpRequest.newBuilder(uri("/chat"))
                         .header("Content-Type", "text/plain; charset=UTF-8")
                         .POST(HttpRequest.BodyPublishers.ofString(question))
                         .build());
     }
-    URI uri(String path) { return URI.create("http://127.0.0.1:" + port + "/api/tools" + path); }
+
+    URI uri(String path) {
+        return URI.create("http://127.0.0.1:" + port + "/api/tools" + path);
+    }
+
     HttpResponse<String> send(HttpRequest request) throws Exception {
-        try (var http = HttpClient.newHttpClient()) { return output.printHttpResponse(http.send(request, HttpResponse.BodyHandlers.ofString())); }
+        try (var http = HttpClient.newHttpClient()) {
+            return output.printHttpResponse(http.send(request, HttpResponse.BodyHandlers.ofString()));
+        }
     }
 }

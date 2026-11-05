@@ -71,7 +71,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 성공 시 마지막에 `BUILD SUCCESSFUL`이 나옵니다.
@@ -85,7 +85,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 ```
 
 이 Mock 테스트는 더미 키와 가짜 모델 이름을 자체 설정합니다. 실제 계정이나 `.env`를 읽지 않습니다.
-`FirstChatLocalMockModelTest.modelProperties()`의 `@DynamicPropertySource`가 테스트 실행에만 설정을 등록합니다.
+`FirstChatLocalModelTest.modelProperties()`의 `@DynamicPropertySource`가 테스트 실행에만 설정을 등록합니다.
 `application.yml`의 같은 설정보다 우선 적용되므로 환경 변수에 실제 키와 모델 이름을 넣지 않아도 됩니다.
 `base-url`도 로컬 가짜 모델 서버 주소로 지정해 외부 제공 업체로 요청하지 않습니다.
 확인하는 내용은 ① 모델에 전달되는 질문·모델 이름·인증 헤더 ② 빈 입력·과도한 입력 거부 ③ 이전 요청이 자동 전달되지 않음입니다.
@@ -159,7 +159,7 @@ spring:
 
 이 장에서는 3절의 Mock 테스트까지 통과하면 됩니다.
 실제 API 호출은 [02-3. 실제 모델 호출](02-first-call/03-live-model-call.md)에서 서버 실행과 Live 테스트 중 원하는 경로로 진행합니다.
-`FirstChatLocalMockModelTest`는 로컬 가짜 모델에, `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결합니다.
+`FirstChatLocalModelTest`는 로컬 가짜 모델에, `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결합니다.
 두 클래스에는 태그나 별도 실행 조건이 없습니다. **필터 없이 이 모듈의 `test`를 실행하면 둘 다 실행되므로 실제 API 사용량이 발생할 수 있습니다.**
 
 후속 학습 모듈도 루트 `.env`와 `OPENAI_MODEL`을 사용합니다.

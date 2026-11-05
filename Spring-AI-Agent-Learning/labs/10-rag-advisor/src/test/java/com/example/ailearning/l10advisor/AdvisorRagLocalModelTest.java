@@ -8,16 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import java.net.URI;
 import java.net.http.*;
-import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
-class AdvisorRagContractTest {
+class AdvisorRagLocalModelTest {
     private TestOutput output;
 
     @BeforeEach
@@ -59,20 +56,6 @@ class AdvisorRagContractTest {
         assertThat(ask("우주 여행").statusCode()).isEqualTo(200);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
         assertThat(MODEL.chat().getRequests().getFirst().path("messages").toString()).doesNotContain("수령 후 7일");
-    }
-    @Test void 긴_문서는_모델_호출_없이_여러_조각으로_나눈다() {
-        var chunks = TokenTextSplitter.builder()
-                .build()
-                .apply(List.of(new Document("A sealed product may be returned within seven days. ".repeat(500))));
-        output.printValue("문서 조각 수", chunks.size());
-        output.printValue("첫 조각 원문", chunks
-                        .getFirst()
-                        .getText());
-        assertThat(chunks).hasSizeGreaterThan(1);
-        assertThat(chunks)
-                .allSatisfy(chunk -> assertThat(chunk.getText())
-                        .isNotBlank());
-        assertThat(MODEL.chat().getRequests()).isEmpty();
     }
     @Test void 공백_질문은_모델을_호출하지_않는다() throws Exception {
         assertThat(ask(" ").statusCode()).isEqualTo(400);

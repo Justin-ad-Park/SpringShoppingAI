@@ -73,7 +73,7 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 상위 SpringShoppingAI 저장소 루트에서 실행합니다. 첫 실행은 인터넷으로 Gradle과 라이브러리를 받습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 위 명령은 외부 모델을 호출하지 않습니다. 실제 Spring AI가 **로컬 가짜 모델 HTTP 서버**에 보낸 요청을 검증합니다.

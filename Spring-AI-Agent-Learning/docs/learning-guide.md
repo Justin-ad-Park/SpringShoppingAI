@@ -71,7 +71,7 @@ Mock 테스트는 프롬프트 구성·도구 실행·값 검증 같은 Java 코
 고정 응답으로 통과했다고 모델이 한국어를 이해하거나 적절한 도구를 선택한다고 결론 내리지 않습니다.
 실제 모델 실습에서는 답변·도구 선택·근거 사용을 따로 관찰합니다.
 
-첫 실습은 단순한 두 클래스입니다. `FirstChatLocalMockModelTest`는 MockServer,
+첫 실습은 단순한 두 클래스입니다. `FirstChatLocalModelTest`는 MockServer,
 `FirstChatOpenAiLiveTest`는 실제 OpenAI에 접속합니다. IntelliJ에서는 원하는 클래스의 Run을 누릅니다.
 첫 모듈의 전체 test에는 두 클래스가 포함됩니다. Mock만 원하면 클래스 필터를 사용합니다.
 태그·실행 허용 변수·별도 Live 태스크를 도입하지 않습니다.

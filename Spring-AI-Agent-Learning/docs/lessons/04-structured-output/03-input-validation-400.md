@@ -32,7 +32,7 @@ public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String qu
 
 ## 3. HTTP 응답과 모델 요청 기록 확인하기
 
-[StructuredOutputContractTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)의 `공백_질문은_모델_호출_전에_거부한다()`에서 다음을 확인합니다. 실제 코드 발췌입니다.
+[StructuredOutputLocalModelTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `공백_질문은_모델_호출_전에_거부한다()`에서 다음을 확인합니다. 실제 코드 발췌입니다.
 
 ```java
 assertThat(postQuestion("   ").statusCode()).isEqualTo(400);
@@ -141,7 +141,7 @@ BAD_REQUEST(400, Series.CLIENT_ERROR, "Bad Request")
    ```
 
 3. **Caught exception**을 체크합니다. 이 예외는 Spring MVC가 잡아서 HTTP 오류 응답으로 처리합니다. 따라서 잡히는 예외에서도 멈추도록 설정해야 합니다.
-4. `StructuredOutputContractTest`의 `공백_질문은_모델_호출_전에_거부한다()`를 **Debug**로 실행합니다. 일반 **Run**으로 실행하면 디버거의 중단점에서 멈추지 않습니다.
+4. `StructuredOutputLocalModelTest`의 `공백_질문은_모델_호출_전에_거부한다()`를 **Debug**로 실행합니다. 일반 **Run**으로 실행하면 디버거의 중단점에서 멈추지 않습니다.
 
 멈추면 디버거의 **Frames / Call Stack**에서 `HandlerMethodValidator.applyArgumentValidation()`을 선택합니다. 이곳의 `throw new HandlerMethodValidationException(...)`이 입력 검증 실패를 예외로 전달하는 지점입니다.
 

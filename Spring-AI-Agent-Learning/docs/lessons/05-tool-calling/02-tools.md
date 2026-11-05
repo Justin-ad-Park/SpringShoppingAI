@@ -23,19 +23,19 @@ import java.util.List;
 
 @Component
 public class ShoppingTools {
-    private final ProductCatalog catalog;
+    private final ProductCatalog productCatalog;
 
-    public ShoppingTools(ProductCatalog catalog) { this.catalog = catalog; }
+    public ShoppingTools(ProductCatalog productCatalog) { this.productCatalog = productCatalog; }
 
     @Tool(description = "가상 상품을 검색합니다. category는 음료/생활, maxPrice는 상품 가격 상한입니다. 생략하면 해당 조건은 적용하지 않습니다.")
     public List<Product> searchProducts(
             @ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
-        return catalog.search(category, maxPrice);
+        return productCatalog.search(category, maxPrice);
     }
 
     @Tool(description = "존재하는 상품 ID의 국내 기본 배송비와 총액을 조회합니다. 가격을 직접 입력하지 말고 검색 결과의 상품 ID를 사용하세요.")
-    public Offer calculateShipping(String productId) { return catalog.quote(productId); }
+    public ProductPriceDetails calculateShipping(String productId) { return productCatalog.calculatePriceDetails(productId); }
 }
 ```
 
@@ -70,7 +70,7 @@ public class ToolChatService {
                         가상 상품 상담을 합니다. 가격과 배송비는 도구 결과만 사용하세요.
                         필요에 따라 상품 검색과 배송비 조회 도구를 선택하세요.
                         배송비를 물으면 상품 가격과 구분해서 설명하세요.
-                        상품 조회가 필요 없는 인사에는 도구 없이 답할 수 있습니다.
+                        상품 조회가 필요 없는 요청에는 도구 없이 답할 수 있습니다.
                         """)
                 .user(question)
                 .tools(tools)

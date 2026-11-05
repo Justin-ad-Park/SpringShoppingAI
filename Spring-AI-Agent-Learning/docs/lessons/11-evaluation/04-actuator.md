@@ -86,7 +86,7 @@ sequenceDiagram
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:11-observability:test --tests com.example.ailearning.l11observe.ObservationLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:11-observability:bootRun
 ```
@@ -124,7 +124,7 @@ curl -sS 'http://127.0.0.1:8105/actuator/metrics/gen_ai.client.token.usage?tag=g
 
 ## 테스트와 확인 질문
 
-`ObservationContractTest`의 2개 테스트는 실제 Boot·Spring AI·Micrometer·Actuator와 로컬 모델 HTTP 서버를 사용합니다.
+`ObservationLocalModelTest`의 2개 테스트는 실제 Boot·Spring AI·Micrometer·Actuator와 로컬 모델 HTTP 서버를 사용합니다.
 기본 모델 타이머 증가, 고정 usage의 입력 10+출력 5=15 토큰 증가, 지표 조회에 추가 모델 호출이 없음을 확인합니다.
 이 수치는 가짜 서버의 고정 검증 값이며 실제 모델 사용량 예측치가 아닙니다.
 

@@ -45,12 +45,22 @@ flowchart LR
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.AdvisorRagContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.AdvisorRagLocalModelTest
 ```
 
-`AdvisorRagContractTest`는 실제 Reader·Splitter·저장소·OpenAI 어댑터에 로컬 고정 응답 서버를 연결합니다.
+`AdvisorRagLocalModelTest`는 실제 Reader·Splitter·저장소·OpenAI 어댑터에 로컬 고정 응답 서버를 연결합니다.
 문서 원문이 임베딩 요청에 포함되고, 질문 검색 뒤 모델 프롬프트에 들어가는지 확인합니다.
-긴 문서 분할은 Chat 호출 없이 검사합니다. 테스트 서버 구현은 제공된 보조 코드입니다.
+통합 테스트 서버 구현은 제공된 보조 코드입니다.
+
+## 문서 분할만 테스트하기
+
+[TokenTextSplitterUnitTest](../../../labs/10-rag-advisor/src/test/java/com/example/ailearning/l10advisor/TokenTextSplitterUnitTest.java)는 긴 문서를 여러 조각으로 나누는 객체 기능만 검사합니다. Spring·임베딩·채팅 모델은 사용하지 않습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.TokenTextSplitterUnitTest
+```
+
+Reader·Splitter·저장소·Advisor가 함께 동작하는지는 `AdvisorRagLocalModelTest`에서 확인합니다.
 
 확인 질문: 문서 내용이 바뀌면 어느 단계를 다시 수행해야 할까요?
 

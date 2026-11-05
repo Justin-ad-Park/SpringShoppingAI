@@ -243,12 +243,12 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 
 ## 7. 테스트는 무엇을 확인할까?
 
-[MultipleProvidersContractTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersContractTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
+[MultipleProvidersLocalModelTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
 외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/AnthropicStubServer.java)로 바꿉니다. 각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.
 실제 키 대신 테스트용 값을 지정하며 저장소의 `.env`를 읽지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
 ```
 
 - OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다. Anthropic 요청은 발생하지 않아야 합니다.
@@ -341,18 +341,18 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 
 ### 테스트에서 확인하기
 
-[MultipleProvidersContractTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersContractTest.java)에서
+[MultipleProvidersLocalModelTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)에서
 `SameProviderModelsService`를 주입받아 실행합니다. IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersContractTest.요청별_모델을_선택해도_기본_모델은_유지된다'
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersLocalModelTest.요청별_모델을_선택해도_기본_모델은_유지된다'
 ```
 
 로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.
 이 이름은 로컬 서버가 받는 테스트용 문자열이므로 실제 API에서 사용할 수 있는 모델 이름이라는 뜻은 아닙니다.
 
 테스트는 OpenAI 요청의 `model` 값이 순서대로 A → B → 기본 모델인지, 세 요청이 같은 OpenAI 인증 정보를 사용하는지 확인합니다.
-Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행하는 명령은 7절과 같고, `MultipleProvidersContractTest`의 테스트는 총 3개입니다.
+Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행하는 명령은 7절과 같고, `MultipleProvidersLocalModelTest`의 테스트는 총 3개입니다.
 
 ## 확인 질문
 

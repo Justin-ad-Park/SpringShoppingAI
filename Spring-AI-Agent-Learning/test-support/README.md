@@ -6,7 +6,7 @@
 
 ## 04장에서 먼저 읽을 코드
 
-[04장 로컬 테스트](../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)의 `MODEL`은 테스트들이 공유하는 서버입니다.
+[04장 로컬 테스트](../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `MODEL`은 테스트들이 공유하는 서버입니다.
 
 ```java
 private static final OpenAiStubServer MODEL = new OpenAiStubServer();

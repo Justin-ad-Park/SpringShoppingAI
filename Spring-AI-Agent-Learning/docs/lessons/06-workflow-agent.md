@@ -3,7 +3,7 @@
 
 선수 지식: 04의 조건 추출, 05의 상품 서비스와 도구 호출.
 새 라이브러리는 추가하지 않습니다. **같은 요구와 데이터에서 판단 주체만 바꿔 비교**합니다.
-05의 Product·Offer·ProductCatalog를 이 단원의 패키지에 복사했습니다. 05 프로젝트를 import하지 않습니다.
+05에서 다룬 상품 정보·배송비 포함 가격 계산을 이 단원의 패키지에 별도로 구현했습니다. 이 단원에서는 가격 계산 결과에 `Offer`라는 이름을 사용하며, 05 프로젝트를 import하지 않습니다.
 [공통 다이어그램 기준](../diagram-guide.md)에 따라 흐름의 판단 주체를 노드에 표시합니다.
 
 
@@ -93,7 +93,7 @@ Agent의 프롬프트:
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootRun
 ```

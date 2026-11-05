@@ -74,7 +74,7 @@ private Draft hybrid(String question, RunState run) {
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootRun
 ```
 

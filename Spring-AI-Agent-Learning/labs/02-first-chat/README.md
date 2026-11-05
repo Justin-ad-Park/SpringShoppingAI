@@ -4,7 +4,7 @@
 아래 명령은 모두 **저장소 루트**에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
@@ -16,7 +16,7 @@ Gradle의 `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 고�
 
 테스트는 연결 대상에 따라 두 클래스로 나뉩니다.
 
-- `FirstChatLocalMockModelTest`: 로컬 MockServer의 고정 응답을 사용합니다. 실제 키가 필요 없습니다.
+- `FirstChatLocalModelTest`: 로컬 MockServer의 고정 응답을 사용합니다. 실제 키가 필요 없습니다.
 - `FirstChatOpenAiLiveTest`: 루트 `.env`로 실제 OpenAI에 접속하고 응답을 출력합니다.
 
 IntelliJ에서는 원하는 클래스 또는 메서드의 Run을 누르면 됩니다. 별도 실행 허용 변수나 태그 설정은 없습니다.
@@ -61,12 +61,12 @@ curl -i http://127.0.0.1:8091/api/chat \
 
 서버와 결과 출력은 [공통 test-support](../../test-support/README.md)를 사용합니다. 이 의존성은 테스트에만 적용됩니다. 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
 
-- `FirstChatLocalMockModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `FirstChatLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
 - `FirstChatOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 - 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest
 ```
 

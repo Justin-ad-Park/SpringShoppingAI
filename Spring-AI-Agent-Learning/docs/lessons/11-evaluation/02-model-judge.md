@@ -92,7 +92,7 @@ Controller는 두 요청을 쉽게 비교하도록 같은 Candidate JSON을 받�
 먼저 로컬 고정 모델 테스트를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:test --tests com.example.ailearning.l11judge.EvaluationApiContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:test --tests com.example.ailearning.l11judge.EvaluationApiLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:11-model-evaluation:bootJar
 ```
 
@@ -120,7 +120,7 @@ curl -sS http://127.0.0.1:8104/api/evaluate/facts \
 
 ## 테스트가 확인한 범위
 
-`EvaluationApiContractTest`의 4개 테스트는 로컬 HTTP 서버가 YES·NO·예상 밖 문자열을 돌려줍니다.
+`EvaluationApiLocalModelTest`의 4개 테스트는 로컬 HTTP 서버가 YES·NO·예상 밖 문자열을 돌려줍니다.
 질문·근거·주장이 실제 Spring AI 평가 프롬프트에 포함되는지, 응답이 true/false로 변환되는지,
 빈 입력이 모델 호출 전에 거부되는지 확인합니다. 평가 모델의 판단 정확도를 검증하는 테스트는 아닙니다.
 

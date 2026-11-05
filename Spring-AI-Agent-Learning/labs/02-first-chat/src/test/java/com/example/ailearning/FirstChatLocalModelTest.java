@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("첫 Chat 호출 — 로컬 MockModel 계약 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
-class FirstChatLocalMockModelTest {
+class FirstChatLocalModelTest {
     private TestOutput output;
 
     @BeforeEach

@@ -135,7 +135,7 @@ sequenceDiagram
 로컬 테스트에는 실제 키가 필요 없고, `bootRun`으로 호출하는 외부 모델에는 비용이 발생할 수 있습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:bootRun
 ```
 
@@ -174,7 +174,7 @@ MODEL
 테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.
 테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04장에서-먼저-읽을-코드)에 있습니다.
 
-[StructuredOutputContractTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputContractTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
+[StructuredOutputLocalModelTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
 
 | 경우 | 결과 |
 |---|---|

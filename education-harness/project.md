@@ -35,20 +35,20 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 | 연결 단원 | 실행 모듈 | 로컬 테스트 클래스의 전체 이름 | 별도 Live 클래스 |
 |---|---|---|---|
-| 01 준비·02 첫 호출·03 프롬프트 | `02-first-chat` | `com.example.ailearning.FirstChatLocalMockModelTest` | `com.example.ailearning.FirstChatOpenAiLiveTest` |
-| 02 보충 4 | `02-multiple-models` | `com.example.ailearning.l02multiple.MultipleProvidersContractTest` | `com.example.ailearning.l02multiple.MultipleProvidersLiveTest` |
-| 04 구조화 응답 | `04-structured-output` | `com.example.ailearning.l04structured.StructuredOutputContractTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
-| 05 도구 호출 | `05-tool-calling` | `com.example.ailearning.l05tools.ToolCallingContractTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
-| 06 Workflow·Agent | `06-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentContractTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
-| 07 대화 메모리 | `07-chat-memory` | `com.example.ailearning.l07memory.MemoryContractTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
-| 08 Advisor | `08-advisors` | `com.example.ailearning.l08advisors.AdvisorContractTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
-| 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchContractTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
-| 10 RAG | `10-rag` | `com.example.ailearning.l10rag.RagContractTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
-| 10-4·10-5 표준 API | `10-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagContractTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
-| 11 평가·실패 | `11-evaluation` | `com.example.ailearning.l11evaluation.EvaluationContractTest` | `com.example.ailearning.l11evaluation.EvaluationOpenAiLiveTest` |
-| 11-2 모델 평가 | `11-model-evaluation` | `com.example.ailearning.l11judge.EvaluationApiContractTest` | `com.example.ailearning.l11judge.EvaluationApiOpenAiLiveTest` |
-| 11-4 관측 | `11-observability` | `com.example.ailearning.l11observe.ObservationContractTest` | `com.example.ailearning.l11observe.ObservationOpenAiLiveTest` |
-| 12 상담 Agent | `12-shopping-agent` | `com.example.ailearning.l12shopping.ShoppingAgentContractTest` | `com.example.ailearning.l12shopping.ShoppingAgentOpenAiLiveTest` |
+| 01 준비·02 첫 호출·03 프롬프트 | `02-first-chat` | `com.example.ailearning.FirstChatLocalModelTest` | `com.example.ailearning.FirstChatOpenAiLiveTest` |
+| 02 보충 4 | `02-multiple-models` | `com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest` | `com.example.ailearning.l02multiple.MultipleProvidersLiveTest` |
+| 04 구조화 응답 | `04-structured-output` | `com.example.ailearning.l04structured.StructuredOutputLocalModelTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
+| 05 도구 호출 | `05-tool-calling` | `com.example.ailearning.l05tools.ToolCallingLocalModelTest`<br>`com.example.ailearning.l05tools.ProductCatalogUnitTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
+| 06 Workflow·Agent | `06-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
+| 07 대화 메모리 | `07-chat-memory` | `com.example.ailearning.l07memory.MemoryLocalModelTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
+| 08 Advisor | `08-advisors` | `com.example.ailearning.l08advisors.AdvisorLocalModelTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
+| 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
+| 10 RAG | `10-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
+| 10-4·10-5 표준 API | `10-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
+| 11 평가·실패 | `11-evaluation` | `com.example.ailearning.l11evaluation.EvaluationLocalModelTest` | `com.example.ailearning.l11evaluation.EvaluationOpenAiLiveTest` |
+| 11-2 모델 평가 | `11-model-evaluation` | `com.example.ailearning.l11judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l11judge.EvaluationApiOpenAiLiveTest` |
+| 11-4 관측 | `11-observability` | `com.example.ailearning.l11observe.ObservationLocalModelTest` | `com.example.ailearning.l11observe.ObservationOpenAiLiveTest` |
+| 12 상담 Agent | `12-shopping-agent` | `com.example.ailearning.l12shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l12shopping.ShoppingAgentOpenAiLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -60,10 +60,21 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - 실제 실행은 저장소 루트 `.env`를 properties 설정 파일로 읽습니다. 파일 자체나 키 값을 출력하지 않습니다.
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
 - `bootRun`·`test`의 작업 디렉터리는 저장소 루트입니다. IntelliJ 직접 실행도 같은 Working directory를 사용합니다.
-- 로컬 테스트는 `.env` 읽기를 끄고 더미 설정과 로컬 고정 HTTP 서버를 사용합니다.
+- 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 로컬 고정 HTTP 서버를 사용합니다. 객체별 단위 테스트는 Spring·HTTP 서버 없이 실행하며 위 표의 단위 테스트 클래스도 함께 선택합니다.
 - Live 테스트는 별도 클래스입니다. 태그·실행 허용 변수·별도 Live 태스크를 만들지 않습니다. 모든 학습 모듈은 전체 `test`에 Live도 포함됩니다.
 - 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다. 케이스 이름과 실제 결과를 콘솔에 출력하고 `assertThat` 검증도 유지합니다.
 - 기존 `testLogging { showStandardStreams = true }`로 Gradle 콘솔에서도 출력을 봅니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
+
+## 테스트 클래스 이름과 분리 기준
+
+| 구분 | 클래스 이름 | 실행 대상 |
+|---|---|---|
+| 객체별 단위 테스트 | `<객체명>UnitTest` | 예: ProductCatalogUnitTest. 직접 만든 객체의 기능을 Spring·HTTP·모델 없이 검증 |
+| 로컬 모델 통합 테스트 | `<주제>LocalModelTest` | 예: ToolCallingLocalModelTest. 로컬 고정 HTTP 응답으로 Spring AI·Controller·도구 연결 검증 |
+| 실제 모델 연결 테스트 | `<주제>OpenAiLiveTest` 또는 `<주제>ProvidersLiveTest` | 실제 OpenAI 또는 여러 제공 업체 API 호출 |
+
+`LocalModelTest`의 모델은 실제 로컬 LLM이 아니라 고정 응답 HTTP 대역입니다. 단위 테스트는 위 대응표와 모듈 README에 별도로 기재하고 로컬 검증 시 함께 선택합니다. 메서드를 직접 호출하더라도 실제 모델 어댑터·로컬 모델 서버·도구 루프가 필요하면 통합 테스트에 둡니다.
+현재 과정의 실행 코드·학습 문서에는 이 이름을 적용하고, 과거 검증 기록의 옛 클래스명은 이력으로 보존합니다.
 
 ## Spring AI 설명에서 확인할 동작
 
@@ -77,11 +88,11 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 아래 명령은 저장소 루트에서 실행합니다. 예시는 표의 로컬 클래스만 실행하며 실제 API를 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalMockModelTest :Spring-AI-Agent-Learning:labs:02-first-chat:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest :Spring-AI-Agent-Learning:labs:02-first-chat:bootJar
 ```
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
 ```
 
 다른 단원도 표의 모듈과 로컬 테스트 클래스 이름을 사용해 같은 형식으로 실행합니다.
@@ -101,7 +112,7 @@ E05는 이 과정의 실행 설정을 확인하는 선택 사례입니다. 검�
 | ID·유형 | E05 · 외부 서비스 없는 로컬 검증 방법 선택 |
 | 입력 준비 | 이 파일의 단원·실행 설정·검증 명령 절과 첫 호출 모듈의 build.gradle을 필요한 부분만 발췌해 제공. 이 평가 절·키·실제 서버는 제공하지 않음 |
 | 사용자 요청 | 첫 호출 실습을 외부 서비스에 연결하지 않고 검증하는 테스트 명령을 알려줘. 실행하지는 마. |
-| 필수 합격 기준 | 제공한 설정에서 저장소 루트와 `02-first-chat`의 `FirstChatLocalMockModelTest` 클래스 필터를 확인해 명령 제시. Live가 포함된 전체 test를 권장하거나 실제 실행하지 않음. 설정·소스 수정 없음 |
+| 필수 합격 기준 | 제공한 설정에서 저장소 루트와 `02-first-chat`의 `FirstChatLocalModelTest` 클래스 필터를 확인해 명령 제시. Live가 포함된 전체 test를 권장하거나 실제 실행하지 않음. 설정·소스 수정 없음 |
 
 실제 명령·전체 클래스 이름의 기준은 위 검증 명령과 대응표입니다. 이 사례를 다른 과정에 가져갈 때 해당 과정의 설정으로 교체합니다.
 

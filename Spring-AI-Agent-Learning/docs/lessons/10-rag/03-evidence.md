@@ -63,7 +63,7 @@ ANSWERED는 **모든 문장이 근거로 증명되었다는 뜻은 아닙니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test --tests com.example.ailearning.l10rag.RagContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test --tests com.example.ailearning.l10rag.RagLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootRun
 curl --get http://127.0.0.1:8100/api/rag/sources \
   --data-urlencode 'question=미개봉 상품 반품 기간은?'
@@ -87,7 +87,7 @@ curl -sS http://127.0.0.1:8100/api/rag \
 3. `policies.md`의 7일을 10일로 바꾼 뒤 **재시작해 재적재**합니다. 답변이 근거 변경을 반영하는지 확인하고 원복합니다.
 4. 청크를 너무 잘게 나누면 “7일”만 남고 무엇의 기간인지 사라질 수 있습니다. 문맥 보존과 검색 정밀도의 균형을 생각합니다.
 
-[RagContractTest](../../../labs/10-rag/src/test/java/com/example/ailearning/l10rag/RagContractTest.java)는 실제 임베딩/채팅 어댑터를 로컬 고정 서버로 연결해 6개 경로를 검증합니다.
+[RagLocalModelTest](../../../labs/10-rag/src/test/java/com/example/ailearning/l10rag/RagLocalModelTest.java)는 실제 임베딩/채팅 어댑터를 로컬 고정 서버로 연결해 6개 경로를 검증합니다.
 정상 근거 전달, 생성 생략, 잘못된 출처, 답변 보류, 형식 오류, 입력 검증을 재현하며 실제 답변 품질 평가는 아닙니다.
 다음 단원에서 고정 질문 세트와 실행 기록을 이용해 개선 여부를 비교합니다.
 

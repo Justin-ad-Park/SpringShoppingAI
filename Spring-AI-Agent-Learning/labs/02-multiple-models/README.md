@@ -8,7 +8,7 @@ OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하
 저장소 루트에서 로컬 서버를 사용하는 테스트만 선택해 실행하고 JAR을 빌드합니다:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest :Spring-AI-Agent-Learning:labs:02-multiple-models:bootJar
 ```
 
 실제 호출은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`을 사용합니다.
@@ -19,7 +19,7 @@ OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하
 ```
 
 POST `/api/multi-chat/openai` 또는 `/api/multi-chat/anthropic`에 `Content-Type: text/plain`으로 질문을 보내세요.
-`MultipleProvidersContractTest`는 두 외부 API를 로컬 고정 응답 서버로 대체하며 실제 키나 외부 네트워크 호출이 필요하지 않습니다.
+`MultipleProvidersLocalModelTest`는 두 외부 API를 로컬 고정 응답 서버로 대체하며 실제 키나 외부 네트워크 호출이 필요하지 않습니다.
 
 ## 실제 모델 Live 테스트
 
@@ -50,12 +50,12 @@ Gradle로 Live 클래스만 실행하려면 다음 명령을 사용합니다.
 
 서버와 결과 출력은 [공통 test-support](../../test-support/README.md)를 사용합니다. 이 의존성은 테스트에만 적용됩니다. 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
 
-- `MultipleProvidersContractTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `MultipleProvidersLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
 - `MultipleProvidersLiveTest`: 실제 OpenAI(Anthropic 예제는 현재 주석 처리되어 있습니다)에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 - 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersContractTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest
 ```
 

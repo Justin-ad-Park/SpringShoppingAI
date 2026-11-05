@@ -35,7 +35,7 @@ HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 
 먼저 API 키 없이 테스트합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:test --tests com.example.ailearning.l12shopping.ShoppingAgentContractTest :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:12-shopping-agent:test --tests com.example.ailearning.l12shopping.ShoppingAgentLocalModelTest :Spring-AI-Agent-Learning:labs:12-shopping-agent:bootJar
 ```
 
 실제 실행은 저장소 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 준비한 뒤 실행합니다.
@@ -80,7 +80,7 @@ curl -s -X DELETE -b /tmp/learning12.cookies http://127.0.0.1:8102/api/counsel/d
 
 ## 6. 테스트와 한 가지씩 바꾸는 실험
 
-[ShoppingAgentContractTest](../../../labs/12-shopping-agent/src/test/java/com/example/ailearning/l12shopping/ShoppingAgentContractTest.java)의 9개 테스트는
+[ShoppingAgentLocalModelTest](../../../labs/12-shopping-agent/src/test/java/com/example/ailearning/l12shopping/ShoppingAgentLocalModelTest.java)의 9개 테스트는
 실제 MVC·Spring AI 어댑터·벡터 저장소에 로컬 가짜 Chat/Embedding HTTP 서버를 연결합니다.
 
 - 상품·배송비·반품 근거 결합과 Java의 최종 표시.

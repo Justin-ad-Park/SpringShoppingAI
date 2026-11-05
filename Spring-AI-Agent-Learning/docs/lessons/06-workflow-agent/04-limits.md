@@ -19,7 +19,7 @@
 이 보조 코드는 비교 결과를 재현하기 위한 장치입니다. 먼저 `extract → workflow → agent → hybrid`를 읽고 필요할 때 support를 읽으세요.
 Thread/Future의 상세 학습을 Spring AI 입문의 선수 지식으로 요구하지 않습니다.
 
-[WorkflowAgentContractTest](../../../labs/06-workflow-agent/src/test/java/com/example/ailearning/l06decisions/WorkflowAgentContractTest.java)에서 반복 도구 선택·모델 요청 상한·느린 응답을 고정 서버로 재현합니다.
+[WorkflowAgentLocalModelTest](../../../labs/06-workflow-agent/src/test/java/com/example/ailearning/l06decisions/WorkflowAgentLocalModelTest.java)에서 반복 도구 선택·모델 요청 상한·느린 응답을 고정 서버로 재현합니다.
 상한을 넘기면 HTTP 통신 자체는 200이고 본문의 status가 TOOL_LIMIT/MODEL_LIMIT/TIMEOUT입니다. COMPLETED와 구분하세요.
 빈 질문은 Controller에서 400입니다. 이 실습에는 이전 대화 기억이 없으며 요청마다 기록과 한도가 초기화됩니다.
 
