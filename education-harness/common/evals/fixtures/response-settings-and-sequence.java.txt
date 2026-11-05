@@ -1,6 +1,5 @@
 import java.util.List;
 
-// 검토용 코드. 공개 진입점은 간단하지만 설정과 순서 정책이 함께 들어 있다.
 class DemoModelServer implements AutoCloseable {
     private List<String> replies = List.of();
     private int nextReplyIndex;
