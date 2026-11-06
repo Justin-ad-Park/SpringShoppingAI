@@ -37,7 +37,7 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
 위 프롬프트는 **목표와 행동 기준**을 지시합니다. 단어만 바꾼 것이 아니라 실행 구조도 다릅니다.
 
 ```java
-private Draft agent(String question, RunState run, GiftCriteria fixed) {
+private ExecutionResult agent(String question, RunState run, GiftCriteria fixed) {
         String answer = client(run)
                 .prompt()
                 .system(AGENT_GOAL)
@@ -46,7 +46,7 @@ private Draft agent(String question, RunState run, GiftCriteria fixed) {
                 .call()
                 .content();
         // Agent의 자연어가 정확하다는 보장은 없다. offers는 실제 조회한 가격 기록이다.
-        return new Draft("COMPLETED", answer, run.quotes());
+        return new ExecutionResult("COMPLETED", answer, run.quotes());
     }
 ```
 

@@ -54,7 +54,8 @@ Spring Academy의 **배경 개념 → Spring AI 구현 → 실습** 구성을 �
 |---|---|
 | Service의 프롬프트·도구 등록·검색 호출 | 직접 읽고 한 줄씩 설명 |
 | Controller·입력 검증 | 익숙한 Spring 연결로 확인 |
-| `support/RunState`, `CountedChatModel`, Executor·Future | 제공된 보조 코드. 06의 기본 비교 뒤 보충 수업에서 읽기 |
+| Executor·Future | 06의 기본 비교 뒤 [06-4](lessons/06-workflow-agent/04-future.md)에서 작업 제출·대기·취소 이해 |
+| `support/RunState`, `CountedChatModel` | 제공된 보조 코드. [06-5](lessons/06-workflow-agent/05-limits.md)에서 호출 상한과 기록 연결 |
 | `test-support`의 Mock 서버·결과 출력 | 공통 검증 도구. 단원에서는 지정한 응답·실제 결과·assertion부터 읽기 |
 | 통합 단원의 여러 도구·메모리 조합 | 각 기능을 따로 실행한 뒤 책임 지도로 확인 |
 

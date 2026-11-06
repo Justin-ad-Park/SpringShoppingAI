@@ -1,10 +1,10 @@
-# 06-4. 보충: 호출 상한과 실패 처리
+# 06-5. 보충: 호출 상한과 실패 처리
 
 **실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 무한 반복과 긴 대기를 막는 코드의 위치를 확인합니다.
 
-**코드 읽기 안내:** 처음에는 설정과 중단 상태만 관찰하세요. Future·Executor·CountedChatModel의 내부 구현은 Java 동시성 보충 읽기입니다. 기본 비교의 선수 지식이 아닙니다.
+**코드 읽기 안내:** [06-4의 Future와 시간 제한](04-future.md)을 읽은 뒤, 횟수·시간 상한과 중단 상태가 연결되는 위치를 확인합니다. RunState·CountedChatModel은 제공되는 보조 코드입니다.
 
 ## 실행 상한은 코드로 강제한다
 
@@ -17,7 +17,6 @@
 - 취소가 외부 모델 서버의 계산·과금 중단까지 보장하지는 않습니다. 요청별 SDK 타임아웃도 5초로 설정했습니다. 이 단원의 도구는 빠른 로컬 읽기 전용 기능입니다.
 
 이 보조 코드는 비교 결과를 재현하기 위한 장치입니다. 먼저 `extract → workflow → agent → hybrid`를 읽고 필요할 때 support를 읽으세요.
-Thread/Future의 상세 학습을 Spring AI 입문의 선수 지식으로 요구하지 않습니다.
 
 [WorkflowAgentLocalModelTest](../../../labs/06-workflow-agent/src/test/java/com/example/ailearning/l06decisions/WorkflowAgentLocalModelTest.java)에서 반복 도구 선택·모델 요청 상한·느린 응답을 고정 서버로 재현합니다.
 상한을 넘기면 HTTP 통신 자체는 200이고 본문의 status가 TOOL_LIMIT/MODEL_LIMIT/TIMEOUT입니다. COMPLETED와 구분하세요.
@@ -57,4 +56,4 @@ HTTP 상태와 별개로 본문의 `MODEL_LIMIT`, `TOOL_LIMIT`, `TIMEOUT`을 확
 
 모델 요청 상한·도구 실행 상한·시간 제한을 각각 어디서 검사하는지 연결해 보세요.
 
-[이전](03-hybrid.md) · [다음](../06-workflow-agent.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)
+[이전](04-future.md) · [다음](../06-workflow-agent.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

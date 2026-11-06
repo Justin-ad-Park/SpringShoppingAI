@@ -39,7 +39,7 @@ sequenceDiagram
 [hybrid 메서드](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)는 아래처럼 구현되어 있습니다.
 
 ```java
-private Draft hybrid(String question, RunState run) {
+private ExecutionResult hybrid(String question, RunState run) {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         agent(question, run, criteria); // 어떤 상품을 조회할지는 모델이 선택한다.
@@ -53,7 +53,7 @@ private Draft hybrid(String question, RunState run) {
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
-        return new Draft(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
+        return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
                         : "Java 검증 후보: " + eligible
                 .stream()
@@ -114,4 +114,4 @@ curl -sS http://127.0.0.1:8096/api/compare/workflow \
 
 모델이 조회한 커피의 총액이 31000원이면, 3만원 예산에서 누가 제외하나요?
 
-[이전](02-agent.md) · [다음](04-limits.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)
+[이전](02-agent.md) · [다음](04-future.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

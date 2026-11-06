@@ -16,7 +16,8 @@
 | 1 | [Java가 순서를 정하는 Workflow](06-workflow-agent/01-workflow.md) | 조건 추출 뒤의 검색·배송비 순서가 Java 코드임을 찾습니다. |
 | 2 | [모델이 다음 도구를 고르는 Agent](06-workflow-agent/02-agent.md) | 단계 지시 프롬프트와 목표·행동 기준 프롬프트를 비교합니다. |
 | 3 | [모델의 선택을 Java로 검증하기](06-workflow-agent/03-hybrid.md) | 선택과 금액 검증의 책임을 나눕니다. |
-| 4 | [보충: 호출 상한과 실패 처리](06-workflow-agent/04-limits.md) | 무한 반복과 긴 대기를 막는 코드의 위치를 확인합니다. |
+| 4 | [보충: Future로 작업 결과 기다리기](06-workflow-agent/04-future.md) | 작업 제출·결과 대기·취소 요청을 구분합니다. |
+| 5 | [보충: 호출 상한과 실패 처리](06-workflow-agent/05-limits.md) | 무한 반복과 긴 대기를 막는 코드의 위치를 확인합니다. |
 
 각 소수업은 이 단원의 실습 모듈을 함께 사용합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)

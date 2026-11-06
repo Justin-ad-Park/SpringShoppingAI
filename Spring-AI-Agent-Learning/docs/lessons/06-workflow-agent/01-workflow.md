@@ -35,14 +35,14 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 [ComparisonService.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
 
-`client(run)`은 호출 기록을 붙인 ChatClient를 준비하는 보조 메서드입니다. [06-4의 보충 설명](04-limits.md#호출-기록용-클라이언트-보충)에서 구현을 확인할 수 있습니다.
+`client(run)`은 호출 기록을 붙인 ChatClient를 준비하는 보조 메서드입니다. [06-5의 보충 설명](05-limits.md#호출-기록용-클라이언트-보충)에서 구현을 확인할 수 있습니다.
 아래에서는 `catalog` 호출과 예산 필터를 중심으로 따라갑니다.
 
 ```java
 private GiftCriteria extract(String question, RunState run) {
         GiftCriteria criteria = client(run)
                 .prompt()
-                .system(EXTRACT)
+                .system(EXTRACT_CATEGORY_BUDGET)
                 .user(question)
                 .call()
                 .entity(GiftCriteria.class);
@@ -51,7 +51,7 @@ private GiftCriteria extract(String question, RunState run) {
         return criteria;
     }
 
-private Draft workflow(String question, RunState run) {
+private ExecutionResult workflow(String question, RunState run) {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         run.startTool("searchProducts", "Java가 순서를 지정");
@@ -67,14 +67,14 @@ private Draft workflow(String question, RunState run) {
                 })
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
-        if (offers.isEmpty()) return new Draft("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
+        if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
         String answer = client(run)
                 .prompt()
                 .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
                 .user("質問: " + question + "\n확정 후보: " + offers)
                 .call()
                 .content();
-        return new Draft("COMPLETED", answer, offers);
+        return new ExecutionResult("COMPLETED", answer, offers);
     }
 ```
 

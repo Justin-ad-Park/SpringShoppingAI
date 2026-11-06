@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 @Service
 public class ComparisonService {
-    static final String EXTRACT = """
+    static final String EXTRACT_CATEGORY_BUDGET = """
             TASK:EXTRACT
             명시한 상품 카테고리(category: 음료/생활)와 배송비 포함 총예산(totalBudget)을 추출하세요.
             예산은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
@@ -42,14 +42,14 @@ public class ComparisonService {
         var state = new RunState(maxModelCalls, maxToolCalls, timeoutMs);
         // 시간 제한을 위한 보조 코드. 학습은 아래 workflow / agent 메서드부터 시작한다.
         ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-        Future<Draft> task = executor.submit(() -> switch (mode) {
+        Future<ExecutionResult> task = executor.submit(() -> switch (mode) {
             case "workflow" -> workflow(question, state);
             case "agent" -> agent(question, state, null);
             case "hybrid" -> hybrid(question, state);
             default -> throw new IllegalArgumentException("mode는 workflow/agent/hybrid입니다.");
         });
         try {
-            Draft result = task.get(timeoutMs, TimeUnit.MILLISECONDS);
+            ExecutionResult result = task.get(timeoutMs, TimeUnit.MILLISECONDS);
             String status = state.stopped() == null ? result.status() : state.stopped();
             return state.result(mode, status, result.answer(), result.offers());
         } catch (TimeoutException error) {
@@ -74,7 +74,7 @@ public class ComparisonService {
     private GiftCriteria extract(String question, RunState run) {
         GiftCriteria criteria = client(run)
                 .prompt()
-                .system(EXTRACT)
+                .system(EXTRACT_CATEGORY_BUDGET)
                 .user(question)
                 .call()
                 .entity(GiftCriteria.class);
@@ -83,7 +83,7 @@ public class ComparisonService {
         return criteria;
     }
 
-    private Draft workflow(String question, RunState run) {
+    private ExecutionResult workflow(String question, RunState run) {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         run.startTool("searchProducts", "Java가 순서를 지정");
@@ -99,17 +99,17 @@ public class ComparisonService {
                 })
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
-        if (offers.isEmpty()) return new Draft("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
+        if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
         String answer = client(run)
                 .prompt()
                 .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
                 .user("質問: " + question + "\n확정 후보: " + offers)
                 .call()
                 .content();
-        return new Draft("COMPLETED", answer, offers);
+        return new ExecutionResult("COMPLETED", answer, offers);
     }
 
-    private Draft agent(String question, RunState run, GiftCriteria fixed) {
+    private ExecutionResult agent(String question, RunState run, GiftCriteria fixed) {
         String answer = client(run)
                 .prompt()
                 .system(AGENT_GOAL)
@@ -118,10 +118,10 @@ public class ComparisonService {
                 .call()
                 .content();
         // Agent의 자연어가 정확하다는 보장은 없다. offers는 실제 조회한 가격 기록이다.
-        return new Draft("COMPLETED", answer, run.quotes());
+        return new ExecutionResult("COMPLETED", answer, run.quotes());
     }
 
-    private Draft hybrid(String question, RunState run) {
+    private ExecutionResult hybrid(String question, RunState run) {
         GiftCriteria criteria = extract(question, run);
         if (criteria.totalBudget() == null) return needsBudget();
         agent(question, run, criteria); // 어떤 상품을 조회할지는 모델이 선택한다.
@@ -135,7 +135,7 @@ public class ComparisonService {
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
-        return new Draft(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
+        return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
                         : "Java 검증 후보: " + eligible
                 .stream()
@@ -145,12 +145,12 @@ public class ComparisonService {
                 .toList(), eligible);
     }
 
-    private Draft needsBudget() { return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }
+    private ExecutionResult needsBudget() { return new ExecutionResult("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }
 
     private ChatClient client(RunState run) {
         run.startClient();
         return ChatClient.create(new CountedChatModel(model, run));
     }
 
-    private record Draft(String status, String answer, List<Offer> offers) {}
+    private record ExecutionResult(String status, String answer, List<Offer> offers) {}
 }
