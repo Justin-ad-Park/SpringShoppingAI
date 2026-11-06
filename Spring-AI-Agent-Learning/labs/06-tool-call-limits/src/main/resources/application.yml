@@ -1,0 +1,24 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8110}
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: 06-tool-call-limits
+  ai:
+    model:
+      embedding: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      timeout: 30s
+      max-retries: 0
+      chat:
+        options:
+          model: ${OPENAI_MODEL}
+    tools:
+      limits:
+        max-calls-per-tool-default: 2
+        max-total-tool-calls: 3
+        on-limit-exceeded: THROW

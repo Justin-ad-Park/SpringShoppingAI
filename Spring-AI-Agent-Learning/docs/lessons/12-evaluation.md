@@ -10,7 +10,7 @@
 | 2 | [Evaluator로 모델 응답 평가](12-evaluation/02-model-judge.md) | `12-model-evaluation` | 규칙 검사와 평가 모델의 판정 구분 |
 | 3 | [같은 응답에서 사용량 읽기](12-evaluation/03-usage.md) | `12-evaluation` | 응답에서 입력·출력 토큰 사용량 읽기 |
 | 4 | [Actuator로 기본 메트릭 조회](12-evaluation/04-actuator.md) | `12-observability` | 호출 횟수·시간·토큰 지표 관찰 |
-| 5 | [실패·지연·재시도 관찰](12-evaluation/05-failures.md) | `12-evaluation` | 잘못된 답변과 요청 실패 구분 |
+| 5 | [실패·지연·재시도 관찰](12-evaluation/05-failures.md) | `12-evaluation` | 잘못된 답변과 요청 실패 구분, 06 확장 테스트로 제약·재시도 결과 비교 |
 
 실행 명령과 실제 모델/로컬 테스트 구분은 각 수업과 모듈 README에 있습니다.
 

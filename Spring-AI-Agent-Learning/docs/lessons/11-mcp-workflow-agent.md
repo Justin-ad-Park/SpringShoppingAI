@@ -6,7 +6,7 @@
 | 순서 | 소수업 | 완료 기준 |
 |---|---|---|
 | 1 | [MCP는 무엇을 연결할까?](11-mcp-workflow-agent/01-connection.md) | 모델·클라이언트·서버의 역할과 실행 위치 구분 |
-| 2 | [모델 없이 MCP 도구 호출](11-mcp-workflow-agent/02-direct-call.md) | 도구 목록과 배송 정책을 실제 서버에서 조회 |
+| 2 | [모델 없이 MCP 도구 호출](11-mcp-workflow-agent/02-direct-call.md) | MCP 도구 목록을 조회하고 지정한 도구로 배송 정책 받기 |
 | 3 | [Workflow: Java가 순서를 정하기](11-mcp-workflow-agent/03-workflow.md) | 검색 결과 전체의 ID를 계산 도구에 전달 |
 | 4 | [Agent: 모델이 도구 선택하기](11-mcp-workflow-agent/04-agent.md) | 도구 설명·입력 스키마와 실제 호출 기록 연결 |
 | 5 | [하이브리드: Java의 검증 결합](11-mcp-workflow-agent/05-hybrid.md) | 검색 조건·전체 상품 계산·총예산 검증 |

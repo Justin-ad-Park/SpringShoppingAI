@@ -2,9 +2,9 @@
 
 **실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-**이번 목표:** 조건 추출 뒤의 검색·배송비 순서가 Java 코드임을 찾습니다.
+**이번 목표:** 모델로 요청 조건을 추출하고, 상품 검색·배송비 계산·예산 검증·답변 생성을 정해진 순서로 연결하는 Workflow를 구현합니다.
 
-**코드 읽기 안내:** RunState는 제공된 실행 기록 보조 코드입니다. 이번에는 catalog 호출과 filter만 따라가세요.
+**코드 읽기 안내:** 조건 추출 → 상품 검색 → 배송비 계산 → 예산 검증 → 답변 생성 순서로 읽습니다.
 
 ## Java가 처리할 질문과 가격 조건
 
@@ -35,12 +35,9 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 [ComparisonService.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
 
-`client(run)`은 호출 기록을 붙인 ChatClient를 준비하는 보조 메서드입니다. [06-5의 보충 설명](05-limits.md#호출-기록용-클라이언트-보충)에서 구현을 확인할 수 있습니다.
-아래에서는 `catalog` 호출과 예산 필터를 중심으로 따라갑니다.
-
 ```java
-private GiftCriteria extract(String question, RunState run) {
-        GiftCriteria criteria = client(run)
+    private GiftCriteria extract(String question) {
+        GiftCriteria criteria = chatClient
                 .prompt()
                 .system(EXTRACT_CATEGORY_BUDGET)
                 .user(question)
@@ -51,27 +48,20 @@ private GiftCriteria extract(String question, RunState run) {
         return criteria;
     }
 
-private ExecutionResult workflow(String question, RunState run) {
-        GiftCriteria criteria = extract(question, run);
+    private ExecutionResult workflow(String question) {
+        GiftCriteria criteria = extract(question);
         if (criteria.totalBudget() == null) return needsBudget();
-        run.startTool("searchProducts", "Java가 순서를 지정");
-        List<Product> products = catalog.search(criteria.category(), criteria.totalBudget());
-        run.recordToolResult("searchProducts", products);
+        List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
         List<Offer> offers = products
                 .stream()
-                .map(product -> {
-                    run.startTool("calculateShipping", product.id());
-                    Offer offer = catalog.calculatePriceDetails(product.id());
-                    run.recordToolResult("calculateShipping", offer);
-                    return offer;
-                })
+                .map(product -> productCatalog.calculatePriceDetails(product.id()))
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
         if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
-        String answer = client(run)
+        String answer = chatClient
                 .prompt()
                 .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
-                .user("質問: " + question + "\n확정 후보: " + offers)
+                .user("질문: " + question + "\n확정 후보: " + offers)
                 .call()
                 .content();
         return new ExecutionResult("COMPLETED", answer, offers);
@@ -80,11 +70,11 @@ private ExecutionResult workflow(String question, RunState run) {
 
 `products.stream().map(...)`은 후보 각각에 배송비를 계산하는 Java 반복이고, `filter`는 총액을 비교합니다.
 모델은 `.tools()`를 받지 않으므로 여기서 실제 Java 검색을 요청하지 않습니다. Controller가 도구를 대신 실행하는 것도 아닙니다.
-서비스 코드가 ProductCatalog를 직접 호출합니다. 기록에서는 비교 편의를 위해 이 업무 기능 실행도 `TOOL`로 표시합니다.
+서비스 코드가 `ProductCatalog`를 직접 호출합니다. 모델이 도구를 선택하는 다음 수업과 다른 점입니다.
 
 
 ## 여기서 멈춰 확인하기
 
-조건 추출 뒤 검색·배송비 계산·예산 필터의 순서를 정하는 Java 코드를 찾아보세요.
+모델에는 조건 추출과 답변 생성을 맡기고, 검색·배송비 계산·예산 검증은 정해진 순서로 연결하려면 Workflow를 어떻게 구성해야 하나요?
 
 [이전](../06-workflow-agent.md) · [다음](02-agent.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

@@ -50,6 +50,8 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 | 수업 | 모듈 | 실행 후 확인할 것 |
 |---|---|---|
+| [06 확장 1](docs/lessons/06-workflow-agent/04-tool-call-limits.md) | `labs/06-tool-call-limits` | 도구별·전체 호출 상한과 finishReason |
+| [06 확장 2](docs/lessons/06-workflow-agent/05-model-timeout-retry.md) | `labs/06-model-timeout-retry` | 지연·오류 응답과 실제 HTTP 재시도 횟수 |
 | [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
 | [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
 | [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |

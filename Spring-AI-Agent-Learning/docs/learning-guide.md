@@ -54,12 +54,12 @@ Spring Academy의 **배경 개념 → Spring AI 구현 → 실습** 구성을 �
 |---|---|
 | Service의 프롬프트·도구 등록·검색 호출 | 직접 읽고 한 줄씩 설명 |
 | Controller·입력 검증 | 익숙한 Spring 연결로 확인 |
-| Executor·Future | 06의 기본 비교 뒤 [06-4](lessons/06-workflow-agent/04-future.md)에서 작업 제출·대기·취소 이해 |
-| `support/RunState`, `CountedChatModel` | 제공된 보조 코드. [06-5](lessons/06-workflow-agent/05-limits.md)에서 호출 상한과 기록 연결 |
+| Spring AI 도구 호출 상한 | [06 확장 1](lessons/06-workflow-agent/04-tool-call-limits.md)에서 설정과 제한 초과 응답 확인 |
+| 모델 연결 타임아웃·재시도 | [06 확장 2](lessons/06-workflow-agent/05-model-timeout-retry.md)에서 설정 변경과 실제 HTTP 요청 수 확인. 12장에서 실패 분석에 재활용 |
 | `test-support`의 Mock 서버·결과 출력 | 공통 검증 도구. 단원에서는 지정한 응답·실제 결과·assertion부터 읽기 |
 | 통합 단원의 여러 도구·메모리 조합 | 각 기능을 따로 실행한 뒤 책임 지도로 확인 |
 
-보조 코드가 없는 것처럼 기능을 설명하지는 않습니다. 실행 제한·격리 등의 실제 동작과 한계는 보충 수업에 남깁니다.
+보조 코드가 없는 것처럼 기능을 설명하지는 않습니다. 실행 제한은 별도 확장 모듈에서 학습하며, 격리 등 각 예제의 동작과 한계는 해당 수업에서 확인합니다.
 처음부터 모든 클래스를 위에서 아래로 읽는 대신, 핵심 흐름을 이해한 뒤 호출되는 보조 코드로 확장합니다.
 
 설정 이름과 루트 `.env` 작성 방법은 [실행 설정 안내](run-guide.md)에 모았습니다.

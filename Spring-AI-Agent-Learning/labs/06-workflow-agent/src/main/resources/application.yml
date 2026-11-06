@@ -17,9 +17,3 @@ spring:
         timeout: 5s
         options:
           model: ${OPENAI_MODEL}
-
-learning:
-  limits:
-    max-model-calls: 8
-    max-tool-calls: 4
-    timeout-ms: 10000

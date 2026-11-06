@@ -34,7 +34,7 @@ public class ProductCatalog {
                         .equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-        int fee = product.price() >= 30000 ? 0 : 3000;
-        return new Offer(product, fee, Math.addExact(product.price(), fee));
+        int shippingFee = product.price() >= 30000 ? 0 : 3000;
+        return new Offer(product, shippingFee, Math.addExact(product.price(), shippingFee));
     }
 }

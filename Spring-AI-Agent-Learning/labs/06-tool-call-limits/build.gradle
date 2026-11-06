@@ -1,0 +1,13 @@
+// 공통 버전과 테스트 의존성은 저장소 루트에서 관리합니다.
+dependencies {
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+}
+
+// 저장소 루트의 .env를 읽도록 실행 위치를 맞춥니다.
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

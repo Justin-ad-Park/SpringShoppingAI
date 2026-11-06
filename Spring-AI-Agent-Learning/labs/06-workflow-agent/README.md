@@ -1,32 +1,34 @@
-# 실습 06: Workflow / Agent / Hybrid
+# 06 Workflow·Agent·혼합 방식
 
-[학습 문서](../../docs/lessons/06-workflow-agent.md)를 먼저 읽으세요.
-05의 상품 데이터와 업무 코드를 이 모듈에 복사했으며 다른 실습을 import하지 않습니다.
-읽는 순서: Product/Offer/ProductCatalog 복습 → GiftCriteria → ComparisonService의 extract/workflow/agent/hybrid → TracedShoppingTools → 필요 시 support.
-모든 명령은 저장소 루트에서 실행합니다.
+[06장 교육 문서](../../docs/lessons/06-workflow-agent.md)를 따라 같은 쇼핑 요청의 처리 방식을 비교합니다.
+기본 모듈은 직접 만든 횟수 계수·시간 제한·스레드 실행 코드를 사용하지 않습니다. 금액·카테고리 검증과 결과 없음 처리는 업무 요구사항으로 유지합니다.
+
+## 로컬 검증
+
+저장소 루트에서 실행합니다. 실제 외부 API를 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests '*WorkflowAgentLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootJar
+```
+
+## 실제 모델 연결
+
+루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. API 사용량이 발생합니다. IntelliJ의 Working directory도 저장소 루트로 설정합니다.
+
+```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootRun
+curl http://127.0.0.1:8096/api/compare/workflow \
+  -H 'Content-Type: text/plain; charset=UTF-8' \
+  --data-raw '배송비 포함 3만원 이하 음료를 추천해줘.'
+./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests '*WorkflowAgentOpenAiLiveTest'
 ```
 
-포트 8096. POST `/api/compare/workflow`, `/api/compare/agent`, `/api/compare/hybrid`는 text/plain 질문을 받습니다.
-응답의 status와 steps, clientCalls/modelCalls/toolCalls를 비교하세요.
-bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 로컬 테스트에는 실제 키가 필요 없습니다.
-SDK 호출 타임아웃과 전체 요청 대기 상한은 교재에 설명되어 있습니다. 실제 모델에 따라 TIMEOUT이 날 수 있으며 성공처럼 취급하지 않습니다.
+경로의 `workflow`를 `agent`, `hybrid`로 바꿔 비교합니다. 응답은 `mode`, `status`, `answer`, `offers`입니다. Agent의 offers는 실제 조회한 금액이며 최종 예산 준수는 보장하지 않습니다. 혼합 방식은 조회 사실을 다시 검증해 확정한 후보만 반환합니다.
 
-## 테스트 선택과 결과 확인
+모델 호출 수는 로컬 테스트 서버의 요청 목록으로 확인합니다. 자체 RunState나 CountedChatModel은 사용하지 않습니다.
 
-서버와 결과 출력은 [공통 test-support](../../test-support/README.md)를 사용합니다. 이 의존성은 테스트에만 적용됩니다. 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
+확장 실습은 각각 별도 모듈입니다.
 
-- `WorkflowAgentLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
-- `WorkflowAgentOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
-- 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest
-```
-
-IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
-Live 예제는 실제 응답을 기다릴 수 있도록 테스트 클래스에서 채팅 요청 대기를 30초로 설정합니다. 06·12의 전체 실행 대기는 90초입니다. 로컬 실패 테스트와 애플리케이션 기본 한도는 그대로 유지합니다.
+- [도구 호출 횟수 제한](../06-tool-call-limits/README.md)
+- [모델 요청 타임아웃과 재시도](../06-model-timeout-retry/README.md)

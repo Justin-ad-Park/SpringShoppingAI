@@ -2,7 +2,7 @@
 
 **실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-**이번 목표:** 단계 지시 프롬프트와 목표·행동 기준 프롬프트를 비교합니다.
+**이번 목표:** 모델에 목표와 도구를 제공하고, 모델이 필요한 도구와 인자를 선택해 요청을 처리하는 Agent를 구현합니다.
 
 **코드 읽기 안내:** agent()의 .tools(...)가 핵심입니다. 다음 메서드를 코드가 직접 호출하는지 모델의 요청을 기다리는지 구분합니다.
 
@@ -16,11 +16,9 @@ flowchart TD
     A1 --> A2{모델: 도구가 필요한가}
     A2 -->|아니오| A3[모델: 답변 또는 추가 질문]
     A2 -->|예| A4[모델: 도구 이름과 인자 요청]
-    A4 --> A5{Java: 한도와 인자가 유효한가}
-    A5 -->|유효| A6[Java: 도구 실행과 사실 조회]
+    A4 --> A6[Spring AI와 Java: 도구 실행과 사실 조회]
     A6 --> A7[Spring AI: 실행 결과를 다시 전달]
     A7 --> A1
-    A5 -->|한도 초과| A8[Java: 중단 상태 반환]
     A3 --> A9[Java: 응답 반환]
 ```
 
@@ -37,20 +35,60 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
 위 프롬프트는 **목표와 행동 기준**을 지시합니다. 단어만 바꾼 것이 아니라 실행 구조도 다릅니다.
 
 ```java
-private ExecutionResult agent(String question, RunState run, GiftCriteria fixed) {
-        String answer = client(run)
+    private ExecutionResult agent(String question) {
+        ShoppingTools shoppingTools = new ShoppingTools(productCatalog);
+        String answer = chatClient
                 .prompt()
                 .system(AGENT_GOAL)
-                .user(question + (fixed == null ? "" : "\nJava 확정 조건: " + fixed))
-                .tools(new TracedShoppingTools(catalog, run, fixed))
+                .user(question)
+                .tools(shoppingTools)
                 .call()
                 .content();
-        // Agent의 자연어가 정확하다는 보장은 없다. offers는 실제 조회한 가격 기록이다.
-        return new ExecutionResult("COMPLETED", answer, run.quotes());
+        // 실제 조회한 금액이다. 모델의 추천 문장이나 예산 준수를 검증한 결과는 아니다.
+        return new ExecutionResult("COMPLETED", answer, shoppingTools.getPriceDetails());
     }
 ```
 
-`TracedShoppingTools`가 같은 ProductCatalog를 호출합니다. 한 요청마다 새 도구 객체와 기록을 만들어 다른 요청과 섞이지 않게 합니다.
+`ShoppingTools`가 같은 `ProductCatalog`를 호출합니다. 도구 객체는 요청마다 새로 만들고, 조회한 금액을 `priceDetails`에 보관합니다. 이 목록은 모델이 실제로 조회한 값이며, 예산 검증을 통과한 최종 추천 목록은 아닙니다.
+
+[ShoppingTools.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingTools.java)의 전체 코드입니다.
+
+```java
+package com.example.ailearning.l06decisions;
+
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+import java.util.ArrayList;
+import java.util.List;
+
+/** 요청마다 새로 만든다. 조회한 금액이 다른 요청에 섞이지 않게 한다. */
+public class ShoppingTools {
+    private final ProductCatalog productCatalog;
+    private final List<Offer> priceDetails = new ArrayList<>();
+
+    public ShoppingTools(ProductCatalog productCatalog) {
+        this.productCatalog = productCatalog;
+    }
+
+    @Tool(description = "상품 검색. category는 음료/생활, maxPrice는 상품 가격 상한. 배송비는 별도로 조회하세요.")
+    public List<Product> searchProducts(@ToolParam(required = false) String category,
+            @ToolParam(required = false) Integer maxPrice) {
+        return productCatalog.search(category, maxPrice);
+    }
+
+    @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
+    public Offer calculateShipping(String productId) {
+        Offer offer = productCatalog.calculatePriceDetails(productId);
+        priceDetails.add(offer);
+        return offer;
+    }
+
+    /** 이번 요청에서 실제 조회한 금액을 반환한다. 최종 후보 검증에 사용한다. */
+    public List<Offer> getPriceDetails() {
+        return List.copyOf(priceDetails);
+    }
+}
+```
 모델이 도구를 요청하지 않으면 `.tools()`를 등록했어도 조회가 발생하지 않습니다.
 `.call().content()` 한 번에서 모델 요청은 여러 번 발생할 수 있습니다.
 

@@ -19,7 +19,7 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 
 | 실행 모듈 | 루트 .env에서 사용하는 값 |
 |---|---|
-| `02-first-chat`, `04`~`08`, `11-mcp-workflow-agent`, `12-model-evaluation`, `12-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
+| `02-first-chat`, `04`~`08`(06 확장 모듈 포함), `11-mcp-workflow-agent`, `12-model-evaluation`, `12-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
 | `09-embeddings-search` | `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL` — 채팅 모델은 사용하지 않음 |
 | `10-rag`, `10-rag-advisor`, `12-evaluation`, `13-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
@@ -98,3 +98,14 @@ Live의 문장은 실행마다 달라질 수 있습니다. 실제 도구 선택�
 
 [실행 안내](../labs/11-mcp-workflow-agent/README.md)를 따릅니다. 수동 실행은 shopping-mcp(기본 8082)와 학습 앱(기본 8106)을 각각 시작합니다.
 로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다. 실제 외부 모델 테스트는 별도 OpenAiLiveTest 클래스입니다.
+
+## 06장의 별도 확장 실습
+
+기본 Workflow 모듈과 각각 독립 실행합니다. 두 모듈 모두 루트 `.env`의 채팅 키·모델만 사용합니다.
+
+| 문서 | 모듈 | 포트 |
+|---|---|---|
+| [확장 1: 도구 호출 횟수 제한](lessons/06-workflow-agent/04-tool-call-limits.md) | [06-tool-call-limits](../labs/06-tool-call-limits/README.md) | 8110 |
+| [확장 2: 타임아웃·재시도](lessons/06-workflow-agent/05-model-timeout-retry.md) | [06-model-timeout-retry](../labs/06-model-timeout-retry/README.md) | 8111 |
+
+12장의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다. 요청 횟수는 고정 HTTP 서버가 받은 기록으로 확인하며, 실제 모델 연결은 각 모듈의 Live 클래스로 구분합니다.

@@ -23,7 +23,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 [학습 방법](learning-guide.md)을 기준으로 각 단원의 목차에서 소수업에 들어갑니다.
 04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다. 05~13은 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.
-보충 읽기는 기본 메서드를 이해한 뒤 선택합니다. 특히 06의 실행 상한 내부 구현은 Workflow/Agent 기본 비교와 분리했습니다.
+06장의 기본 비교 뒤 확장 1(도구 호출 횟수 제한)과 확장 2(모델 요청 타임아웃·재시도)를 별도 모듈로 실행합니다. 12장에서는 같은 테스트와 결과를 실패 평가·관측에 다시 활용합니다.
 
 ## 학습 지도
 
@@ -35,14 +35,15 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 기초 | 03 ChatClient와 프롬프트 | Builder·메시지 역할, system 추가 실험 | 각 호출 메서드와 기억 부재 설명 | 교재·수정 실험 완성 |
 | 응답 | 04 구조화 응답 | record 설명 → 문자열과 객체 비교 → 상품 조건 추출 | 형식 성공과 값의 정확성 구분·검증 | [교재·실습 완성](lessons/04-structured-output.md) |
 | 도구 | 05 Tool Calling | 일반 Java 상품 서비스 → @Tool → 호출 결과 | 모델은 요청, 애플리케이션은 실행함을 설명 | [교재·실습 완성](lessons/05-tool-calling.md) |
-| 판단 | 06 Workflow와 Agent | 같은 도구로 고정 흐름과 모델 선택 비교 | 코드·프롬프트·실행 기록에서 판단 주체 식별 | [교재·실습 완성](lessons/06-workflow-agent.md) |
+| 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·혼합 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
+| 확장 | [06 확장 1·2](lessons/06-workflow-agent.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
 | 문맥 | 07 대화 메모리 | 이전 사용자 질문·모델 응답 저장 → 대화 ID로 조회 → 새 질문과 함께 다음 프롬프트에 다시 포함, 사용자별 대화 격리 | 이전 대화가 포함된 프롬프트로 후속 질문 처리, 대화 분리와 전달 메시지 수 제한 확인 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 호출 전후 처리, 체인과 순서, 메모리 연결 | 도구 루프와 함께 동작하는 위치 설명 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
 | 연결 | 11 MCP Workflow·Agent·하이브리드 | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
 | 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
-| 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 새 핵심 개념 추가 없음 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
+| 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 
 
 ## 설명 수업과 실행 모듈의 대응
@@ -55,6 +56,8 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
 | 02장 보충 4: 여러 모델 | `02-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
 | 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
+| [06 확장 1](lessons/06-workflow-agent/04-tool-call-limits.md) | `06-tool-call-limits` | 반복 도구 요청·전체 상한·요청별 초기화 검증, 별도 Live 테스트 |
+| [06 확장 2](lessons/06-workflow-agent/05-model-timeout-retry.md) | `06-model-timeout-retry` | 정상·지연·429·500·400 응답과 재시도 횟수 검증, 별도 Live 테스트 |
 | [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
 | [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
 | [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
