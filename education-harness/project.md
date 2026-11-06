@@ -10,6 +10,7 @@
 |---|---|
 | 대상 과정 | Spring-AI-Agent-Learning |
 | 독자 | Controller·Service·생성자 주입을 사용하는 Spring 개발자. AI·Spring AI는 처음 |
+| 개념 도입의 독자 | AI 기능을 기획하는 비개발자도 함께 읽음. 04~13장 메인 문서에는 정의·역할·쇼핑 예시를 코드 없이 설명하고, 구현은 기존 실습·소수업으로 연결 |
 | 선수 지식으로 가정하지 않는 것 | Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 |
 | 언어 | 쉬운 한국어. 새 용어와 문법을 먼저 설명 |
 | 교육 문서 | `Spring-AI-Agent-Learning/docs/` |
