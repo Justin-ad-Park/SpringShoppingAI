@@ -40,6 +40,8 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 04 구조화 응답 | `04-structured-output` | `com.example.ailearning.l04structured.StructuredOutputLocalModelTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
 | 05 도구 호출 | `05-tool-calling` | `com.example.ailearning.l05tools.ToolCallingLocalModelTest`<br>`com.example.ailearning.l05tools.ProductCatalogUnitTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
 | 06 Workflow·Agent | `06-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
+| 06 확장 1 도구 제한 | `06-tool-call-limits` | `com.example.ailearning.l06limits.ToolLimitLocalModelTest` | `com.example.ailearning.l06limits.ToolLimitOpenAiLiveTest` |
+| 06 확장 2 타임아웃·재시도 | `06-model-timeout-retry` | `com.example.ailearning.l06requests.TimeoutNoRetryLocalModelTest`<br>`com.example.ailearning.l06requests.RetryLocalModelTest` | `com.example.ailearning.l06requests.ModelRequestOpenAiLiveTest` |
 | 07 대화 메모리 | `07-chat-memory` | `com.example.ailearning.l07memory.MemoryLocalModelTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
 | 08 Advisor | `08-advisors` | `com.example.ailearning.l08advisors.AdvisorLocalModelTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
 | 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
@@ -58,6 +60,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - Java 코드는 실습별 패키지와 모듈로 격리합니다. 미래 단원의 클래스나 다른 서비스를 선행 의존성으로 끌어오지 않습니다.
 - 공통 Mock 서버·프로토콜 응답·결과 출력은 `Spring-AI-Agent-Learning/test-support`를 `testImplementation`으로만 참조합니다. 이 일반 Java 라이브러리는 Boot 애플리케이션 플러그인 적용 대상에서 제외합니다. `OpenAiStubServer`는 주소·수명과 `chat()`·`embeddings()` 연결을 담당하고 두 대역이 각 설정·기록을 관리합니다. 단원별 응답·도구 순서·벡터 값·assertion은 실습 테스트에 둡니다.
 - 11장은 기존 shopping-mcp를 원격 서버로 사용합니다. 테스트에서만 서버 프로젝트를 의존하며, 운영 코드에서 서버 클래스를 import하지 않습니다.
+- 06의 기본 Workflow·Agent·혼합 흐름은 자체 제한 보조 코드 없이 실행합니다. 확장 1·2는 06의 별도 모듈로 제공하며 12장에서 같은 테스트를 재활용합니다. 전체 Workflow 시간 제한·모델 호출 예산은 현재 확장 범위에 넣지 않습니다.
 - 같은 기능의 설명을 나눈 소수업은 한 실행 모듈을 공유할 수 있습니다. 번호를 맞추기 위해 모듈을 불필요하게 복제하지 않습니다.
 - 실제 실행은 저장소 루트 `.env`를 properties 설정 파일로 읽습니다. 파일 자체나 키 값을 출력하지 않습니다.
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
