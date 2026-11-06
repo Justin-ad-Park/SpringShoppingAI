@@ -45,10 +45,11 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 09 임베딩·검색 | `09-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
 | 10 RAG | `10-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
 | 10-4·10-5 표준 API | `10-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
-| 11 평가·실패 | `11-evaluation` | `com.example.ailearning.l11evaluation.EvaluationLocalModelTest` | `com.example.ailearning.l11evaluation.EvaluationOpenAiLiveTest` |
-| 11-2 모델 평가 | `11-model-evaluation` | `com.example.ailearning.l11judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l11judge.EvaluationApiOpenAiLiveTest` |
-| 11-4 관측 | `11-observability` | `com.example.ailearning.l11observe.ObservationLocalModelTest` | `com.example.ailearning.l11observe.ObservationOpenAiLiveTest` |
-| 12 상담 Agent | `12-shopping-agent` | `com.example.ailearning.l12shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l12shopping.ShoppingAgentOpenAiLiveTest` |
+| 11 MCP 세 실행 방식 | `11-mcp-workflow-agent` | `com.example.ailearning.l11mcp.McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.McpComparisonOpenAiLiveTest` |
+| 12 평가·실패 | `12-evaluation` | `com.example.ailearning.l12evaluation.EvaluationLocalModelTest` | `com.example.ailearning.l12evaluation.EvaluationOpenAiLiveTest` |
+| 12-2 모델 평가 | `12-model-evaluation` | `com.example.ailearning.l12judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest` |
+| 12-4 관측 | `12-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
+| 13 상담 Agent | `13-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -56,6 +57,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 - Java 코드는 실습별 패키지와 모듈로 격리합니다. 미래 단원의 클래스나 다른 서비스를 선행 의존성으로 끌어오지 않습니다.
 - 공통 Mock 서버·프로토콜 응답·결과 출력은 `Spring-AI-Agent-Learning/test-support`를 `testImplementation`으로만 참조합니다. 이 일반 Java 라이브러리는 Boot 애플리케이션 플러그인 적용 대상에서 제외합니다. `OpenAiStubServer`는 주소·수명과 `chat()`·`embeddings()` 연결을 담당하고 두 대역이 각 설정·기록을 관리합니다. 단원별 응답·도구 순서·벡터 값·assertion은 실습 테스트에 둡니다.
+- 11장은 기존 shopping-mcp를 원격 서버로 사용합니다. 테스트에서만 서버 프로젝트를 의존하며, 운영 코드에서 서버 클래스를 import하지 않습니다.
 - 같은 기능의 설명을 나눈 소수업은 한 실행 모듈을 공유할 수 있습니다. 번호를 맞추기 위해 모듈을 불필요하게 복제하지 않습니다.
 - 실제 실행은 저장소 루트 `.env`를 properties 설정 파일로 읽습니다. 파일 자체나 키 값을 출력하지 않습니다.
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
@@ -101,7 +103,7 @@ return client
 
 이 절은 현재 과정의 테스트 실행 정책과 명령의 기준입니다.
 
-- 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 고정 응답 HTTP 서버를 사용합니다. 로컬 검증 시 위 대응표의 `UnitTest`와 `LocalModelTest`를 함께 선택합니다.
+- 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 고정 응답 HTTP 서버를 사용합니다. 11장만 MCP 서버를 테스트 안에서 실제 실행하며 OpenAI 응답은 고정합니다. 로컬 검증 시 위 대응표의 `UnitTest`와 `LocalModelTest`를 함께 선택합니다.
 - Live는 별도 클래스에서 실제 제공 업체 API를 호출합니다. 태그·실행 허용 변수·별도 Live 태스크를 추가하지 않습니다.
 - 학습 모듈의 전체 `test`에는 Live도 포함됩니다. 로컬 검증은 반드시 `--tests`로 대상을 선택하고, 전체 저장소의 `./gradlew test`를 기본 명령으로 사용하지 않습니다.
 

@@ -3,20 +3,20 @@
 Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음인 개발자를 위한 한국어 교재입니다.
 목표는 **한 번의 모델 호출을 이해하는 것부터 시작해, 도구를 선택하는 작은 Agent로 확장하는 것**입니다.
 
-이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다. 기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 이후 선택 MCP 수업에서는 shopping-mcp와 연결할 수 있습니다. 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
+이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다. 기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 11장에서는 shopping-mcp에 연결해 세 실행 방식을 비교합니다. 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
 
 ## 이번에 작성한 범위
 
-기초 00~03과 04~12 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → 평가 → 통합 상담 순으로 확장합니다.
+기초 00~03과 04~13 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.
 각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
-MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 구현하지 않았습니다.
+11장 MCP 실습은 기존 shopping-mcp 서버를 사용합니다. 로컬 테스트가 서버를 자동 실행하며, 수동 실행에서는 두 애플리케이션을 실행합니다.
 로컬 테스트의 서버와 결과 출력은 [공통 테스트 도구](test-support/README.md)를 사용합니다. 단원별 테스트에서는 응답·도구 순서·벡터 값과 검증 내용을 읽습니다.
 
 ## 한 수업씩 읽는 방법
 
 [초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요. 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.
-04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다. 05~12는 각 단원의 목차에서 소수업으로 나누어 학습합니다.
+04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다. 05~13은 각 단원의 목차에서 소수업으로 나누어 학습합니다.
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -34,12 +34,13 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 | 9 | [08. Advisor](docs/lessons/08-advisors.md) | 호출 전후 순서·메모리 자동 연결·도구 루프 |
 | 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
 | 11 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
-| 12 | [11. 평가와 운영 기초](docs/lessons/11-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
-| 13 | [12. 작은 쇼핑 상담 Agent](docs/lessons/12-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
+| 12 | [11. MCP Workflow·Agent·하이브리드](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
+| 13 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
+| 14 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
-처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 12까지 번호 순으로 읽으세요.
+처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 13까지 번호 순으로 읽으세요.
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
 
 ## 추가한 독립 실행 실습
@@ -50,12 +51,12 @@ MCP는 필수 과정 이후의 선택 확장이며 아직 교육 실습으로 �
 | 수업 | 모듈 | 실행 후 확인할 것 |
 |---|---|---|
 | [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
-| [11-2 모델 평가](docs/lessons/11-evaluation/02-model-judge.md) | `labs/11-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
-| [11-4 관측](docs/lessons/11-evaluation/04-actuator.md) | `labs/11-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
+| [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
+| [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
 
 각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.
 새 모듈은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
-기존 04~12의 설정·실행 경로와 첫 모듈의 단순한 Mock/Live 클래스는 그대로 유지했습니다.
+첫 호출 모듈의 설정·실행 방식은 유지합니다. 평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
 
 ## 실습 환경
 
@@ -102,7 +103,7 @@ docs/
   curriculum.md          전체 순서와 다음 제작 범위
   references.md          자료별 장점·주의점·읽을 부분
   verification.md        실제 검증 범위와 결과
-  lessons/00~12          순서대로 읽는 한국어 교재
+  lessons/00~13          순서대로 읽는 한국어 교재
   diagram-guide.md       그림의 종류·기호·읽는 순서
 test-support/           공통 Mock 서버·결과 출력 (테스트 전용)
 labs/
@@ -116,10 +117,11 @@ labs/
   09-embeddings-search/  임베딩·유사도·필터
   10-rag/                문서 분할·검색·근거 확인
   10-rag-advisor/        표준 Reader·Splitter·RAG Advisor
-  11-evaluation/         고정 사례 평가·사용량·실패 처리
-  11-model-evaluation/   Spring AI Evaluator
-  11-observability/      기본 메트릭·Actuator
-  12-shopping-agent/     상품·정책·후속 질문 통합
+  11-mcp-workflow-agent/ MCP 도구를 사용하는 세 실행 방식
+  12-evaluation/         고정 사례 평가·사용량·실패 처리
+  12-model-evaluation/   Spring AI Evaluator
+  12-observability/      기본 메트릭·Actuator
+  13-shopping-agent/     상품·정책·후속 질문 통합
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
 

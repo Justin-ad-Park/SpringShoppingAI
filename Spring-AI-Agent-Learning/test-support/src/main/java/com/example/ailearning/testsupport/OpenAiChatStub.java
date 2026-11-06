@@ -23,7 +23,7 @@ public final class OpenAiChatStub {
 
     /**
      * 요청 시작 시 설정을 읽고 오류 응답 또는 OpenAI 형식의 채팅 응답을 만든다.
-     * <p>사용 단원: 채팅 요청을 보내는 02·04~08·10~12장. HTTP 서버가 내부적으로 호출한다.
+     * <p>사용 단원: 채팅 요청을 보내는 02·04~08·10~13장. HTTP 서버가 내부적으로 호출한다.
      */
     private StubHttpServer.Response createChatHttpResponse(JsonNode request) {
         ChatResponseSettings.Snapshot settingsForRequest = chatResponseSettings.createSnapshot();
@@ -51,7 +51,7 @@ public final class OpenAiChatStub {
 
     /**
      * 문자열을 content에 담은 assistant 메시지 JSON을 만든다. 전체 HTTP 본문은 아직 만들지 않는다.
-     * <p>사용 단원: 02·05~08·10~12장. 분기·순차 응답 안에서 메시지를 조립할 때 사용한다.
+     * <p>사용 단원: 02·05~08·10~13장. 분기·순차 응답 안에서 메시지를 조립할 때 사용한다.
      */
     public static ObjectNode createAssistantTextMessage(String content) {
         return OpenAiResponseBody.createAssistantTextMessage(content);
@@ -59,7 +59,7 @@ public final class OpenAiChatStub {
 
     /**
      * 도구 이름·인자·호출 ID를 포함하는 assistant 메시지 JSON을 만든다. 실제 도구를 실행하지 않는다.
-     * <p>사용 단원: 05 도구 호출, 06 Workflow·Agent, 08 Advisor, 12 종합 실습.
+     * <p>사용 단원: 05 도구 호출, 06 Workflow·Agent, 08 Advisor, 13 종합 실습.
      */
     public static ObjectNode createAssistantToolCallMessage(String id, String name, String arguments) {
         return OpenAiResponseBody.createAssistantToolCallMessage(id, name, arguments);
@@ -67,7 +67,7 @@ public final class OpenAiChatStub {
 
     /**
      * 미리 만든 assistant 메시지를 복사해 고정 응답으로 지정한다.
-     * <p>사용 단원: 02·05~08·10~11장. 텍스트나 도구 호출 메시지를 직접 지정할 때 사용한다.
+     * <p>사용 단원: 02·05~08·10~12장. 텍스트나 도구 호출 메시지를 직접 지정할 때 사용한다.
      */
     public OpenAiChatStub setResponseMessage(ObjectNode assistantMessage) {
         ObjectNode fixedAssistantMessage = assistantMessage.deepCopy();
@@ -76,7 +76,7 @@ public final class OpenAiChatStub {
 
     /**
      * 요청 JSON을 받아 assistant 메시지를 만드는 함수를 등록한다. 분기 로직은 단원 테스트에 둔다.
-     * <p>사용 단원: 06 Workflow·Agent, 11-evaluation, 12 종합 실습.
+     * <p>사용 단원: 06 Workflow·Agent, 12-evaluation, 13 종합 실습.
      */
     public OpenAiChatStub setResponseFunction(Function<JsonNode, ObjectNode> assistantMessageForRequest) {
         chatResponseSettings.setAssistantMessageFunction(assistantMessageForRequest);
@@ -93,7 +93,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 요청에 반환할 HTTP 상태를 지정한다. 200이 아니면 정상 응답 함수 대신 오류 본문을 반환한다.
-     * <p>사용 단원: 08 Advisor, 11-evaluation, 12 종합 실습의 모델 연결 실패 사례.
+     * <p>사용 단원: 08 Advisor, 12-evaluation, 13 종합 실습의 모델 연결 실패 사례.
      */
     public OpenAiChatStub setHttpStatus(int httpStatus) {
         chatResponseSettings.setHttpStatus(httpStatus);
@@ -102,7 +102,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 응답을 전송하기 전 대기할 시간을 지정한다. 응답 내용은 대기 전에 확정한다.
-     * <p>사용 단원: 11-evaluation, 12 종합 실습의 시간 초과 사례.
+     * <p>사용 단원: 12-evaluation, 13 종합 실습의 시간 초과 사례.
      */
     public OpenAiChatStub setResponseDelay(Duration responseDelay) {
         chatResponseSettings.setResponseDelay(responseDelay);
@@ -111,7 +111,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 응답에 넣을 입력·출력 토큰 수를 지정한다. 실제 사용량을 계산하지 않는다.
-     * <p>사용 단원: 02 첫 호출·다중 모델, 10-rag-advisor, 11장 실습, 12 종합 실습.
+     * <p>사용 단원: 02 첫 호출·다중 모델, 10-rag-advisor, 12장 실습, 13 종합 실습.
      */
     public OpenAiChatStub setTokenUsage(int inputTokens, int outputTokens) {
         chatResponseSettings.setTokenUsage(inputTokens, outputTokens);
@@ -120,7 +120,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 요청 기록·응답 함수·순서·오류·지연을 초기화한다. 토큰 사용량과 임베딩 설정·기록은 유지한다.
-     * <p>사용 단원: 02·04~08·10~12장의 테스트 준비. 공유 서버의 이전 테스트 상태를 비운다.
+     * <p>사용 단원: 02·04~08·10~13장의 테스트 준비. 공유 서버의 이전 테스트 상태를 비운다.
      */
     public synchronized void resetResponsesAndRequests() {
         httpServer.clearRecordedRequests(PATH);
@@ -129,7 +129,7 @@ public final class OpenAiChatStub {
 
     /**
      * 이 서버가 받은 채팅 요청 JSON 목록을 조회한다.
-     * <p>사용 단원: 02·04~08·10~12장. 전송 메시지·도구 정의·모델 호출 횟수 등을 검증한다.
+     * <p>사용 단원: 02·04~08·10~13장. 전송 메시지·도구 정의·모델 호출 횟수 등을 검증한다.
      */
     public List<JsonNode> getRequests() {
         return httpServer.getRequestBodies(PATH);

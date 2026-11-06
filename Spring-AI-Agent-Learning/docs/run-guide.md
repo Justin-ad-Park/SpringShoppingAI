@@ -19,9 +19,9 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 
 | 실행 모듈 | 루트 .env에서 사용하는 값 |
 |---|---|
-| `02-first-chat`, `04`~`08`, `11-model-evaluation`, `11-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
+| `02-first-chat`, `04`~`08`, `11-mcp-workflow-agent`, `12-model-evaluation`, `12-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
 | `09-embeddings-search` | `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL` — 채팅 모델은 사용하지 않음 |
-| `10-rag`, `10-rag-advisor`, `11-evaluation`, `12-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
+| `10-rag`, `10-rag-advisor`, `12-evaluation`, `13-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
 두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.
@@ -93,3 +93,8 @@ Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`�
 ```
 
 Live의 문장은 실행마다 달라질 수 있습니다. 실제 도구 선택·검색 품질·평가 결과는 출력으로 확인하며, 고정 응답 테스트의 결과와 구분합니다.
+
+## 11장 MCP 실습
+
+[실행 안내](../labs/11-mcp-workflow-agent/README.md)를 따릅니다. 수동 실행은 shopping-mcp(기본 8082)와 학습 앱(기본 8106)을 각각 시작합니다.
+로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다. 실제 외부 모델 테스트는 별도 OpenAiLiveTest 클래스입니다.

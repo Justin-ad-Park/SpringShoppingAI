@@ -34,7 +34,7 @@ public class TracedShoppingTools {
     @Tool(description = "존재하는 상품 ID의 국내 기본 배송비와 총액 조회. 검색한 상품 ID를 사용하세요.")
     public Offer calculateShipping(String productId) {
         run.startTool("calculateShipping", productId);
-        Offer offer = catalog.quote(productId);
+        Offer offer = catalog.calculatePriceDetails(productId);
         run.recordQuote(offer);
         run.recordToolResult("calculateShipping", offer);
         return offer;

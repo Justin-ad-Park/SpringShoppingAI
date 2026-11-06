@@ -22,7 +22,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 ## 한 단원을 작은 수업으로 읽기
 
 [학습 방법](learning-guide.md)을 기준으로 각 단원의 목차에서 소수업에 들어갑니다.
-04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다. 05~12는 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.
+04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다. 05~13은 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.
 보충 읽기는 기본 메서드를 이해한 뒤 선택합니다. 특히 06의 실행 상한 내부 구현은 Workflow/Agent 기본 비교와 분리했습니다.
 
 ## 학습 지도
@@ -40,8 +40,9 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 문맥 | 08 Advisor | 호출 전후 처리, 체인과 순서, 메모리 연결 | 도구 루프와 함께 동작하는 위치 설명 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
-| 검증 | 11 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/11-evaluation.md) |
-| 통합 | 12 작은 상담 Agent | 이전 실습을 연결, 새 핵심 개념 추가 없음 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/12-shopping-agent.md) |
+| 연결 | 11 MCP Workflow·Agent·하이브리드 | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
+| 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
+| 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 새 핵심 개념 추가 없음 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 
 
 ## 설명 수업과 실행 모듈의 대응
@@ -53,10 +54,11 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 |---|---|---|
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
 | 02장 보충 4: 여러 모델 | `02-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
-| 04장 본문·05~12의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
+| 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
 | [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
-| [11-2 모델 평가](lessons/11-evaluation/02-model-judge.md) | `11-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
-| [11-4 관측](lessons/11-evaluation/04-actuator.md) | `11-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
+| [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
+| [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
+| [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.
@@ -67,11 +69,11 @@ Workflow와 Agent는 같은 상품 검색·배송비 조회 도구로 비교합�
 
 ## 구현 범위와 선택 심화
 
-04~12는 각각 독립 실행 가능한 모듈로 구현했습니다. 07은 이전 메시지를 직접 조립하며 아직 Advisor를 사용하지 않습니다.
-08 Advisor → 09 임베딩과 검색 → 10 RAG → 11 평가 → 12 통합 순서로 확장합니다.
+04~13은 각각 독립 실행 가능한 모듈로 구현했습니다. 07은 이전 메시지를 직접 조립하며 아직 Advisor를 사용하지 않습니다.
+08 Advisor → 09 임베딩과 검색 → 10 RAG → 11 MCP → 12 평가 → 13 통합 순서로 확장합니다.
 단원마다 구현·테스트·커밋을 마친 뒤 다음으로 넘어갔습니다.
 그림은 [다이어그램 공통 기준](diagram-guide.md)을 적용하고, 앞으로 배울 코드에 의존하지 않습니다.
 
-MCP는 로컬 도구를 원격 도구로 교체하는 선택 수업으로 둡니다.
+11장은 기존 shopping-mcp를 사용해 원격 도구 연결을 학습합니다. 기초 실습은 이전처럼 다른 서비스를 실행하지 않고 학습할 수 있으며, 11장 로컬 테스트는 MCP 서버를 자동 실행합니다.
 멀티 에이전트·Skills·A2A, 외부 Vector DB, 스트리밍 UI, 이미지/음성은 필수 과정 이후로 미룹니다.
 RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.

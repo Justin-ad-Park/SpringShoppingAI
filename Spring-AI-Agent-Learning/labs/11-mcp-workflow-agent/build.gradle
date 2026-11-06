@@ -1,0 +1,14 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+    // 테스트에서 실제 MCP 서버를 임의 포트로 실행한다. 운영 코드에서는 참조하지 않는다.
+    testImplementation project(':shopping-mcp')
+}
+
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

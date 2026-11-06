@@ -1,0 +1,31 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8106}
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: mcp-workflow-agent
+  ai:
+    model:
+      embedding: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        max-retries: 0
+        timeout: 15s
+        options:
+          model: ${OPENAI_MODEL}
+    mcp:
+      client:
+        name: learning-mcp-client
+        type: SYNC
+        request-timeout: 3s
+        streamable-http:
+          connections:
+            shopping:
+              url: ${LEARNING_MCP_URL:http://127.0.0.1:8082}
+              endpoint: /mcp
+learning:
+  mcp:
+    max-tool-calls: 6

@@ -25,7 +25,7 @@
 | 08 | [Spring 공식 블로그: Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) | 도구 루프와 Advisor 관계의 설명이 좋음. 처음에는 앞부분만 읽고 고급 확장은 생략 |
 | 09~10 | [Retrieval Augmented Generation](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html) | 검색과 답변 생성을 연결하는 기준. 임베딩·검색 개념을 배운 후 읽기 |
 | 11 | [Evaluation Testing](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html) | 품질 평가와 호출 관측을 분리해서 학습. LLM 평가자의 점수도 절대적인 정답 판정은 아님 |
-| 선택 | [MCP Overview](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html) | 로컬 @Tool 실습 후 원격 도구 연결 문제를 이해할 때 읽기 |
+| 11장 | [MCP Overview](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html) | 11장 연결·직접 호출을 학습할 때 원격 도구의 역할 확인 |
 
 ## 블로그·강좌·예제 검토
 

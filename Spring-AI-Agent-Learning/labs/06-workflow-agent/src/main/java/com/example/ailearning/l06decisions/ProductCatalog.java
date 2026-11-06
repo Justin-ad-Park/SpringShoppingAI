@@ -26,7 +26,7 @@ public class ProductCatalog {
                 .toList();
     }
 
-    public Offer quote(String productId) {
+    public Offer calculatePriceDetails(String productId) {
         Product product = products
                 .stream()
                 .filter(item -> item

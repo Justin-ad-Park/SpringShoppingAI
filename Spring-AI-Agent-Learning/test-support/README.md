@@ -65,8 +65,8 @@ classDiagram
 | `MODEL.chat().setResponseText(...)` | 고정 문장·JSON 문자열 지정. 04장 |
 | `MODEL.chat().setResponseMessage(...)` | assistant 메시지 직접 지정. 채팅 실습 |
 | `MODEL.chat().setResponseSequence(...)` | 요청마다 다음 메시지 반환. 소진되면 실패. 05·08장 |
-| `MODEL.chat().setResponseFunction(request -> ...)` | 요청에 따른 분기. 06·11·12장 |
-| `MODEL.chat().setHttpStatus(...)`, `setResponseDelay(...)` | 오류·시간 초과 재현. 08·11·12장 |
+| `MODEL.chat().setResponseFunction(request -> ...)` | 요청에 따른 분기. 06·11·12·13장 |
+| `MODEL.chat().setHttpStatus(...)`, `setResponseDelay(...)` | 오류·시간 초과 재현. 08·12·13장 |
 | `MODEL.chat().setTokenUsage(input, output)` | 채팅 사용량 고정값 지정 |
 | `MODEL.chat().getRequests()` | 채팅 요청·메시지·호출 횟수 확인 |
 | `MODEL.embeddings().setVectorFunction(text -> ...)` | 테스트용 벡터 함수 지정. 09장 이후 관련 실습 |

@@ -61,7 +61,7 @@ private Draft workflow(String question, RunState run) {
                 .stream()
                 .map(product -> {
                     run.startTool("calculateShipping", product.id());
-                    Offer offer = catalog.quote(product.id());
+                    Offer offer = catalog.calculatePriceDetails(product.id());
                     run.recordToolResult("calculateShipping", offer);
                     return offer;
                 })
