@@ -8,17 +8,22 @@ import java.util.List;
 public class ShoppingTools {
     public record Product(String productId, String name, int price) {}
 
-    @Tool(description = "음료 상품을 검색합니다. 조회 후 같은 조건으로 반복 검색할 필요는 없습니다.")
+    @Tool(description = "음료, 생활, 간식 중 한 카테고리의 상품을 검색합니다. 한 번에 카테고리 하나만 전달하세요.")
     public List<Product> searchProducts(String category) {
-        return "음료".equals(category)
-                ? List.of(new Product("P01", "허브티", 12000)) : List.of();
+        if (category == null) return List.of();
+        return switch (category) {
+            case "음료" -> List.of(new Product("P01", "허브티", 12000));
+            case "생활" -> List.of(new Product("P03", "텀블러", 35000));
+            case "간식" -> List.of(new Product("P04", "쿠키", 5000));
+            default -> List.of();
+        };
     }
 
     @Tool(description = "검색한 상품 ID의 배송비를 원 단위로 조회합니다.")
     public int calculateShipping(String productId) {
-        if (!"P01".equals(productId)) {
+        if (productId == null || !List.of("P01", "P03", "P04").contains(productId)) {
             throw new IllegalArgumentException("검색한 상품 ID를 사용하세요.");
         }
-        return 3000;
+        return "P03".equals(productId) ? 0 : 3000;
     }
 }

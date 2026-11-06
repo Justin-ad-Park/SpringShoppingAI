@@ -57,6 +57,30 @@ class ToolLimitLocalModelTest {
     }
 
     @Test
+    void 세_카테고리의_검색을_요청해도_두_카테고리까지만_검색한다() {
+        // Given: 카테고리마다 검색 도구를 요청하는 모델 응답
+        MODEL
+                .chat()
+                .setResponseSequence(
+                        createAssistantToolCallMessage("s1", "searchProducts", "{\"category\":\"음료\"}"),
+                        createAssistantToolCallMessage("s2", "searchProducts", "{\"category\":\"생활\"}"),
+                        createAssistantToolCallMessage("s3", "searchProducts", "{\"category\":\"간식\"}"));
+
+        // When: 같은 도구로 세 카테고리 검색을 시도
+        var reply = toolLimitService.ask("음료, 생활, 간식을 각각 검색해서 정리해줘.");
+        System.out.println("카테고리 검색 결과: " + reply);
+        ToolCallPrinter.printToolCalls(shoppingTools);
+
+        // Then: 세 번째 도구 실행은 차단. 앞서 검색한 카테고리는 실제 실행 기록으로 확인
+        assertThat(reply.status()).isEqualTo("TOOL_LIMIT");
+        assertThat(reply.finishReason()).isEqualTo("toolCallLimitExceeded");
+        verify(shoppingTools).searchProducts("음료");
+        verify(shoppingTools).searchProducts("생활");
+        verify(shoppingTools, never()).searchProducts("간식");
+        assertThat(MODEL.chat().getRequests()).hasSize(3);
+    }
+
+    @Test
     void 전체_도구_호출_허용_횟수를_초과하면_다음_실행을_차단한다() {
         MODEL
                 .chat()

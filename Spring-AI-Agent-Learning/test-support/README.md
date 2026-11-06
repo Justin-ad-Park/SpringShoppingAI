@@ -50,6 +50,7 @@ classDiagram
 | `AnthropicStubServer` | 다중 제공 업체 실습의 Anthropic 응답·기록 |
 | `TestNamePrinter` | 테스트 시작 시 빈 줄과 이름을 한 번 출력 |
 | `TestOutput` | 이름을 반복하지 않고 실제 결과 출력 |
+| `ToolCallPrinter` | `printToolCalls(spy)`로 실행 횟수·이름·인자를 순서대로 출력하고, `printMockitoDetails(spy)`로 Mockito 상세 내역 출력 |
 
 채팅과 임베딩은 같은 서버 주소를 사용하지만 설정과 기록은 각 객체에서 관리합니다.
 채팅 요청은 시작 시 설정을 스냅샷으로 읽어 응답 생성·지연 중 설정 변경의 영향을 받지 않습니다.

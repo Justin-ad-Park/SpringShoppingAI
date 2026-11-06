@@ -1,6 +1,7 @@
 package com.example.ailearning.l05tools;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.ToolCallPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -89,30 +90,10 @@ class ToolCallingOpenAiLiveTest {
         System.out.printf("확인한 도구 호출: searchProducts(음료, 15000) → calculateShipping(P01)%n");
 
         // Mock 상세 내역 출력
-        printMockingDetails(shoppingTools);
+        ToolCallPrinter.printMockitoDetails(shoppingTools);
 
         // Mock 커스텀 내역 출력
-        printCustomForMockingDetails(shoppingTools);
+        ToolCallPrinter.printToolCalls(shoppingTools);
     }
 
-    // 호출 기록은 InOrder 검증 객체가 아니라 실제 Mock 또는 Spy에서 읽는다.
-    void printMockingDetails(Object spy) {
-        System.out.println("  ==shoppingTools 호출 내역 출력==");
-        System.out.println(
-                org.mockito.Mockito.mockingDetails(spy).printInvocations());
-    }
-
-    void printCustomForMockingDetails(Object spy) {
-        System.out.println("  ==shoppingTools 호출 내역 커스텀 출력==");
-        org.mockito.Mockito.mockingDetails(spy)
-                .getInvocations()
-                .stream()
-                .sorted(java.util.Comparator.comparingInt(
-                        org.mockito.invocation.Invocation::getSequenceNumber))  //스트림을 호출순서대로 정렬
-                .forEach(invocation -> System.out.printf(
-                        "도구 호출: %s %s%n",
-                        invocation.getMethod().getName(),
-                        java.util.Arrays.toString(invocation.getArguments())));
-
-    }
 }

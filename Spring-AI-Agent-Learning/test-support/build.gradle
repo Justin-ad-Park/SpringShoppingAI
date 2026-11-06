@@ -8,6 +8,7 @@ dependencies {
     api platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
     api 'tools.jackson.core:jackson-databind'
     api 'org.junit.jupiter:junit-jupiter-api'
+    implementation 'org.mockito:mockito-core'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

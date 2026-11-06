@@ -150,6 +150,16 @@ verifyNoInteractions(shoppingTools);
 
 빈 줄과 `===== [ 테스트 메서드명 ] ======`이 한 번 출력된 뒤 모델 답변이 출력되고, 조합 테스트는 호출 순서 검증을 통과한 뒤 확인한 도구 호출을 출력합니다. 인사 테스트는 도구 미호출 검증을 통과한 뒤 호출 횟수 0을 출력합니다.
 
+호출 내역 출력은 [공통 ToolCallPrinter](../../../test-support/src/main/java/com/example/ailearning/testsupport/ToolCallPrinter.java)를 사용합니다. 출력과 `verify()` 검증은 같은 Spy에 남은 실행 기록을 읽으며, 도구를 다시 실행하지 않습니다.
+
+```java
+ToolCallPrinter.printMockitoDetails(shoppingTools); // 호출 위치·스텁 설정을 포함한 Mockito 상세 내역
+ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 이름·인자를 실행 순서대로 출력
+```
+
+06장 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
+
+
 1. `@MockitoSpyBean`을 제거하고 `@Autowired`만 쓰면 `verify()`를 사용할 수 있을까요?
 2. `toolCallOrder.verify(...).searchProducts(...)`는 검색을 다시 실행할까요?
 3. InOrder 검증을 통과하면 답변의 모든 가격까지 정확하다고 볼 수 있을까요?
