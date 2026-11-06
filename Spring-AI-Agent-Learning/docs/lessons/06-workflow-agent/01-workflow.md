@@ -11,7 +11,7 @@
 요청: “배송비 포함 3만원 이하인 음료 선물을 추천해줘.”
 가상 상품은 05와 같습니다. 허브티 총 15000원, 커피 총 31000원, 텀블러 총 35000원입니다.
 **커피는 상품 가격 28000원이지만 배송비를 더하면 예산을 초과**합니다.
-이번 `GiftCriteria.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
+이번 `ProductSelectionCriteria.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
 배송 정책은 국내 기본 배송으로 고정하며 지역/주소는 입력받지 않습니다.
 
 ## Workflow: 코드가 순서를 보장한다
@@ -36,26 +36,26 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 [ComparisonService.java](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
 
 ```java
-    private GiftCriteria extract(String question) {
-        GiftCriteria criteria = chatClient
+    private ProductSelectionCriteria extractProductSelectionCriteria(String question) {
+        ProductSelectionCriteria criteria = chatClient
                 .prompt()
                 .system(EXTRACT_CATEGORY_BUDGET)
                 .user(question)
                 .call()
-                .entity(GiftCriteria.class);
+                .entity(ProductSelectionCriteria.class);
         if (criteria == null) throw new IllegalStateException("조건이 비었습니다.");
         criteria.validate();
         return criteria;
     }
 
     private ExecutionResult workflow(String question) {
-        GiftCriteria criteria = extract(question);
+        ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
         if (criteria.totalBudget() == null) return needsBudget();
         List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
-        List<Offer> offers = products
+        List<ProductPriceDetails> offers = products
                 .stream()
                 .map(product -> productCatalog.calculatePriceDetails(product.id()))
-                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
                 .toList();
         if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
         String answer = chatClient

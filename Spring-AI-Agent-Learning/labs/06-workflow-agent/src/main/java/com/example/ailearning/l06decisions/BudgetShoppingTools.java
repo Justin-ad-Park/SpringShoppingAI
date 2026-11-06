@@ -7,9 +7,9 @@ import java.util.List;
 /** 06-3에서 추가하는 도구. 검색 조건은 코드로 고정하고 조회 선택은 모델에 맡긴다. */
 public class BudgetShoppingTools {
     private final ShoppingTools shoppingTools;
-    private final GiftCriteria criteria;
+    private final ProductSelectionCriteria criteria;
 
-    public BudgetShoppingTools(ProductCatalog productCatalog, GiftCriteria criteria) {
+    public BudgetShoppingTools(ProductCatalog productCatalog, ProductSelectionCriteria criteria) {
         this.shoppingTools = new ShoppingTools(productCatalog);
         this.criteria = criteria;
     }
@@ -21,11 +21,11 @@ public class BudgetShoppingTools {
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public Offer calculateShipping(String productId) {
+    public ProductPriceDetails calculateShipping(String productId) {
         return shoppingTools.calculateShipping(productId);
     }
 
-    public List<Offer> getPriceDetails() {
+    public List<ProductPriceDetails> getPriceDetails() {
         return shoppingTools.getPriceDetails();
     }
 }

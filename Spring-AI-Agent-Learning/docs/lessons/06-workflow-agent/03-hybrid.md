@@ -19,7 +19,7 @@ sequenceDiagram
     App->>AI: 조건 추출 요청
     AI->>Model: 추출 프롬프트
     Model-->>AI: 카테고리와 총예산
-    AI-->>App: GiftCriteria
+    AI-->>App: ProductSelectionCriteria
     App->>App: 조건 검증
     App->>AI: 목표와 Java 확정 조건 및 도구 등록
     loop 모델이 필요한 도구를 선택하는 동안
@@ -40,7 +40,7 @@ sequenceDiagram
 
 ```java
     private ExecutionResult hybrid(String question) {
-        GiftCriteria criteria = extract(question);
+        ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
         if (criteria.totalBudget() == null) return needsBudget();
         BudgetShoppingTools shoppingTools = new BudgetShoppingTools(productCatalog, criteria);
         chatClient
@@ -50,21 +50,21 @@ sequenceDiagram
                 .tools(shoppingTools)
                 .call()
                 .content();
-        List<Offer> eligible = shoppingTools
+        List<ProductPriceDetails> eligible = shoppingTools
                 .getPriceDetails()
                 .stream()
-                .filter(offer -> criteria.category() == null || offer
+                .filter(productPriceDetails -> criteria.category() == null || productPriceDetails
                         .product()
                         .category()
                         .equals(criteria.category()))
-                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
                 .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
         return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
                         : "Java 검증 후보: " + eligible
                 .stream()
-                .map(offer -> offer
+                .map(productPriceDetails -> productPriceDetails
                         .product()
                         .id())
                 .toList(), eligible);
@@ -84,9 +84,9 @@ import java.util.List;
 /** 06-3에서 추가하는 도구. 검색 조건은 코드로 고정하고 조회 선택은 모델에 맡긴다. */
 public class BudgetShoppingTools {
     private final ShoppingTools shoppingTools;
-    private final GiftCriteria criteria;
+    private final ProductSelectionCriteria criteria;
 
-    public BudgetShoppingTools(ProductCatalog productCatalog, GiftCriteria criteria) {
+    public BudgetShoppingTools(ProductCatalog productCatalog, ProductSelectionCriteria criteria) {
         this.shoppingTools = new ShoppingTools(productCatalog);
         this.criteria = criteria;
     }
@@ -98,11 +98,11 @@ public class BudgetShoppingTools {
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public Offer calculateShipping(String productId) {
+    public ProductPriceDetails calculateShipping(String productId) {
         return shoppingTools.calculateShipping(productId);
     }
 
-    public List<Offer> getPriceDetails() {
+    public List<ProductPriceDetails> getPriceDetails() {
         return shoppingTools.getPriceDetails();
     }
 }

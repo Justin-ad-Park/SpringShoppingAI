@@ -57,7 +57,7 @@ class ToolLimitLocalModelTest {
     }
 
     @Test
-    void 서로_다른_도구도_전체_상한을_합쳐서_계산한다() {
+    void 전체_도구_호출_허용_횟수를_초과하면_다음_실행을_차단한다() {
         MODEL
                 .chat()
                 .setResponseSequence(

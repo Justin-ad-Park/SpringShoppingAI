@@ -40,26 +40,26 @@ public class ComparisonService {
         }
     }
 
-    private GiftCriteria extract(String question) {
-        GiftCriteria criteria = chatClient
+    private ProductSelectionCriteria extractProductSelectionCriteria(String question) {
+        ProductSelectionCriteria criteria = chatClient
                 .prompt()
                 .system(EXTRACT_CATEGORY_BUDGET)
                 .user(question)
                 .call()
-                .entity(GiftCriteria.class);
+                .entity(ProductSelectionCriteria.class);
         if (criteria == null) throw new IllegalStateException("조건이 비었습니다.");
         criteria.validate();
         return criteria;
     }
 
     private ExecutionResult workflow(String question) {
-        GiftCriteria criteria = extract(question);
+        ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
         if (criteria.totalBudget() == null) return needsBudget();
         List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
-        List<Offer> offers = products
+        List<ProductPriceDetails> offers = products
                 .stream()
                 .map(product -> productCatalog.calculatePriceDetails(product.id()))
-                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
                 .toList();
         if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
         String answer = chatClient
@@ -85,7 +85,7 @@ public class ComparisonService {
     }
 
     private ExecutionResult hybrid(String question) {
-        GiftCriteria criteria = extract(question);
+        ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
         if (criteria.totalBudget() == null) return needsBudget();
         BudgetShoppingTools shoppingTools = new BudgetShoppingTools(productCatalog, criteria);
         chatClient
@@ -95,21 +95,21 @@ public class ComparisonService {
                 .tools(shoppingTools)
                 .call()
                 .content();
-        List<Offer> eligible = shoppingTools
+        List<ProductPriceDetails> eligible = shoppingTools
                 .getPriceDetails()
                 .stream()
-                .filter(offer -> criteria.category() == null || offer
+                .filter(productPriceDetails -> criteria.category() == null || productPriceDetails
                         .product()
                         .category()
                         .equals(criteria.category()))
-                .filter(offer -> offer.total() <= criteria.totalBudget())
+                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
                 .toList();
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
         return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
                 eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
                         : "Java 검증 후보: " + eligible
                 .stream()
-                .map(offer -> offer
+                .map(productPriceDetails -> productPriceDetails
                         .product()
                         .id())
                 .toList(), eligible);
@@ -117,5 +117,5 @@ public class ComparisonService {
 
     private ExecutionResult needsBudget() { return new ExecutionResult("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }
 
-    private record ExecutionResult(String status, String answer, List<Offer> offers) {}
+    private record ExecutionResult(String status, String answer, List<ProductPriceDetails> offers) {}
 }
