@@ -1,5 +1,6 @@
 package com.example.ailearning;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -28,14 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class FirstChatLocalModelTest {
-    private TestOutput output;
+    private final TestOutput output = new TestOutput();
 
     @BeforeEach
-    void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info
-                .getTestMethod()
-                .orElseThrow()
-                .getName());
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
     }
 
     private static final OpenAiStubServer MODEL_SERVER = new OpenAiStubServer();

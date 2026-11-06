@@ -1,5 +1,6 @@
 package com.example.ailearning.l05tools;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,11 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 // Spring이나 모델 서버 없이 ProductCatalog의 검색·검증·가격 계산을 확인한다.
 class ProductCatalogUnitTest {
     private final ProductCatalog productCatalog = new ProductCatalog();
-    private TestOutput output;
+    private final TestOutput output = new TestOutput();
 
     @BeforeEach
-    void 테스트_이름_준비(TestInfo testInfo) {
-        output = new TestOutput(testInfo.getDisplayName());
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
     }
 
     @Test

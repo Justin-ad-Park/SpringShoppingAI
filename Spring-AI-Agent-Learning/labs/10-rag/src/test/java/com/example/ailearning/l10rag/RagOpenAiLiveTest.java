@@ -1,5 +1,7 @@
 package com.example.ailearning.l10rag;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
@@ -15,16 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.ai.openai.embedding.timeout=30s"
 })
 class RagOpenAiLiveTest {
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
+
     @Autowired RagService service;
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI로_검색한_정책을_근거로_답한다(TestInfo info) {
+    void 실제_OpenAI로_검색한_정책을_근거로_답한다() {
         RagService.Reply result = service.answer("미개봉 상품의 반품 기간은 며칠인가요?");
-        System.out.printf("[%s] 답변과 출처: %s%n", info
-                        .getTestMethod()
-                        .orElseThrow()
-                        .getName(), result);
+        System.out.printf("답변과 출처: %s%n", result);
         assertThat(result.status()).isEqualTo("ANSWERED");
         assertThat(result.answer()).isNotBlank();
         assertThat(result.sources()).isNotEmpty();

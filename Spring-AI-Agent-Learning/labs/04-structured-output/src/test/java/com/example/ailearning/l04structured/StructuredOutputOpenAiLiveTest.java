@@ -1,5 +1,7 @@
 package com.example.ailearning.l04structured;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
@@ -14,23 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.ai.openai.chat.timeout=30s"
 })
 class StructuredOutputOpenAiLiveTest {
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
+
     @Autowired CriteriaService service;
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI_응답을_문자열과_record로_받고_검증한다(TestInfo info) {
+    void 실제_OpenAI_응답을_문자열과_record로_받고_검증한다() {
         String question = "음료 중 15000원 이하 선물을 찾아줘.";
         String text = service.text(question);
-        System.out.printf("[%s] 문자열 응답: %s%n", info
-                        .getTestMethod()
-                        .orElseThrow()
-                        .getName(), text);
+        System.out.printf("문자열 응답: %s%n", text);
 
         SearchCriteria criteria = service.extract(question);
-        System.out.printf("[%s] 검증된 조건: %s%n", info
-                        .getTestMethod()
-                        .orElseThrow()
-                        .getName(), criteria);
+        System.out.printf("검증된 조건: %s%n", criteria);
 
         assertThat(text).isNotBlank();
         assertThat(criteria.category()).isEqualTo("음료");

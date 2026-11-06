@@ -1,5 +1,6 @@
 package com.example.ailearning.l09search;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import org.junit.jupiter.api.*;
@@ -15,14 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class SearchLocalModelTest {
-    private TestOutput output;
+    private final TestOutput output = new TestOutput();
 
     @BeforeEach
-    void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info
-                .getTestMethod()
-                .orElseThrow()
-                .getName());
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
     }
 
     static final OpenAiStubServer MODEL = createModelServer();

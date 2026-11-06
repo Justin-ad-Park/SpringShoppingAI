@@ -48,7 +48,8 @@ classDiagram
 | `SequentialChatResponder` | 응답 순서·소진 시 실패 처리 |
 | `OpenAiResponseBody` | OpenAI 응답 JSON 생성 |
 | `AnthropicStubServer` | 다중 제공 업체 실습의 Anthropic 응답·기록 |
-| `TestOutput` | 테스트 이름과 실제 결과 출력 |
+| `TestNamePrinter` | 테스트 시작 시 빈 줄과 이름을 한 번 출력 |
+| `TestOutput` | 이름을 반복하지 않고 실제 결과 출력 |
 
 채팅과 임베딩은 같은 서버 주소를 사용하지만 설정과 기록은 각 객체에서 관리합니다.
 채팅 요청은 시작 시 설정을 스냅샷으로 읽어 응답 생성·지연 중 설정 변경의 영향을 받지 않습니다.
@@ -79,7 +80,25 @@ classDiagram
 
 `getBaseUrl()`은 OpenAI에는 `/v1`을 포함하고 Anthropic에는 서버 주소만 반환합니다.
 각 테스트 클래스는 공유 서버를 준비하고 `@AfterAll`에서 닫습니다. 인증 헤더는 검증용으로 조회할 수 있지만 출력하지 않습니다.
-`TestOutput`은 테스트 이름·실제 결과를 함께 출력하며 assertion을 대신하지 않습니다. 출력 검증에는 별도 `PrintStream`을 주입할 수 있습니다.
+[TestNamePrinter](src/main/java/com/example/ailearning/testsupport/TestNamePrinter.java)의 `printTestName(TestInfo)` 한 곳에서 이름 선택과 제목 형식을 관리합니다. 각 클래스의 `@BeforeEach`에서 한 번 호출하며, JUnit이 전달한 `TestInfo`에서 메서드명을 읽습니다. `@DisplayName` 대신 실제 Java 메서드명을 출력합니다.
+
+```java
+@BeforeEach
+void 테스트_이름_출력(TestInfo testInfo) {
+    TestNamePrinter.printTestName(testInfo);
+}
+```
+
+출력 형식은 다음과 같습니다. 제목 앞에는 빈 줄이 있습니다.
+
+```text
+
+===== [ 상품을_검색한다 ] ======
+요청: GET /api/tools/direct
+응답 HTTP 200: ...
+```
+
+[TestOutput](src/main/java/com/example/ailearning/testsupport/TestOutput.java)은 `new TestOutput()`으로 준비하고 이름 없이 결과만 출력합니다. 결과 출력에 테스트 이름·TestInfo를 전달하지 않습니다. 출력 검증에는 `new TestOutput(printStream)`으로 별도 스트림을 주입할 수 있으며 assertion을 대신하지 않습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:test-support:test

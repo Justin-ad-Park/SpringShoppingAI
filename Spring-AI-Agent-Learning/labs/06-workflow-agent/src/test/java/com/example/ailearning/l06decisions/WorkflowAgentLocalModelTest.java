@@ -1,5 +1,6 @@
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
@@ -18,14 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.config.import=",
         "learning.limits.max-model-calls=5", "learning.limits.max-tool-calls=3", "learning.limits.timeout-ms=1000"})
 class WorkflowAgentLocalModelTest {
-    private TestOutput output;
+    private final TestOutput output = new TestOutput();
 
     @BeforeEach
-    void 테스트_이름_준비(TestInfo info) {
-        output = new TestOutput(info
-                .getTestMethod()
-                .orElseThrow()
-                .getName());
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
     }
 
     static final OpenAiStubServer MODEL = new OpenAiStubServer();

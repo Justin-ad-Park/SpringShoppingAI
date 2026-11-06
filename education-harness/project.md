@@ -62,7 +62,8 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - `bootRun`·`test`의 작업 디렉터리는 저장소 루트입니다. IntelliJ 직접 실행도 같은 Working directory를 사용합니다.
 - 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 로컬 고정 HTTP 서버를 사용합니다. 객체별 단위 테스트는 Spring·HTTP 서버 없이 실행하며 위 표의 단위 테스트 클래스도 함께 선택합니다.
 - Live 테스트는 별도 클래스입니다. 태그·실행 허용 변수·별도 Live 태스크를 만들지 않습니다. 모든 학습 모듈은 전체 `test`에 Live도 포함됩니다.
-- 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다. 케이스 이름과 실제 결과를 콘솔에 출력하고 `assertThat` 검증도 유지합니다.
+- 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다.
+- 이 과정의 테스트 출력은 각 클래스의 `@BeforeEach`에서 `TestNamePrinter.printTestName(testInfo)`를 한 번 호출하는 방식으로 통일합니다. 이 메서드가 실제 메서드명과 `\n===== [ 테스트명 ] ======\n` 형식을 관리하고, 이후 `TestOutput`·`System.out`은 결과만 출력합니다.
 - 기존 `testLogging { showStandardStreams = true }`로 Gradle 콘솔에서도 출력을 봅니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
 
 ## 테스트 클래스 이름과 분리 기준

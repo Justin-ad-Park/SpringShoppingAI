@@ -15,11 +15,11 @@ import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantT
 import static org.junit.jupiter.api.Assertions.*;
 
 class StubServerTest {
-    private TestOutput output;
-    @BeforeEach void 이름_준비(TestInfo info) { output = new TestOutput(info
-            .getTestMethod()
-            .orElseThrow()
-            .getName()); }
+    private final TestOutput output = new TestOutput();
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
 
     @Test void 텍스트와_usage와_인증_기록을_제공한다() throws Exception {
         try (var model = new OpenAiStubServer()) {
@@ -278,20 +278,21 @@ class StubServerTest {
         }
     }
 
-    @Test void 지정한_출력에_테스트명과_결과를_쓰고_인증_헤더는_포함하지_않는다() throws Exception {
+    @Test void 지정한_출력에_결과를_쓰고_인증_헤더는_포함하지_않는다() throws Exception {
         var bytes = new java.io.ByteArrayOutputStream();
         try (var stream = new java.io.PrintStream(bytes, true, java.nio.charset.StandardCharsets.UTF_8);
              var model = new OpenAiStubServer()) {
             model
                     .chat()
                     .setResponseMessage(createAssistantTextMessage("출력할 응답"));
-            var captured = new TestOutput("출력 확인", stream);
+            var captured = new TestOutput(stream);
             var response = post(model.getBaseUrl() + "/chat/completions", "{}");
             assertSame(response, captured.printHttpResponse(response));
             assertSame(response, captured.printHttpResponse("두 번째 표시", response));
             String printed = bytes.toString(java.nio.charset.StandardCharsets.UTF_8);
             output.printValue("캡처한 출력", printed);
-            assertTrue(printed.contains("[출력 확인] 요청: POST /v1/chat/completions"));
+            assertTrue(printed.startsWith("요청: POST /v1/chat/completions"));
+            assertFalse(printed.contains("===== ["));
             assertTrue(printed.contains("두 번째 표시 / HTTP 200"));
             assertTrue(printed.contains("출력할 응답"));
             assertFalse(printed.contains("local-secret"));

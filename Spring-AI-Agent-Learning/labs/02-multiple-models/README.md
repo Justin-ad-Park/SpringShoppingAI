@@ -52,7 +52,7 @@ Gradle로 Live 클래스만 실행하려면 다음 명령을 사용합니다.
 
 - `MultipleProvidersLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
 - `MultipleProvidersLiveTest`: 실제 OpenAI(Anthropic 예제는 현재 주석 처리되어 있습니다)에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
-- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+- 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest

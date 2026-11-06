@@ -20,7 +20,7 @@ bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 도�
 - `ProductCatalogUnitTest`: 상품 검색 조건·상품 ID 검증과 무료 배송 계산을 확인하는 단위 테스트입니다. Spring·HTTP 서버·외부 모델 없이 실행합니다.
 - `ToolCallingLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
 - `ToolCallingOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
-- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+- 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
@@ -28,3 +28,5 @@ bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 도�
 ```
 
 IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
+
+Spy 생성 조건과 실제 도구 호출 순서·인자 검증은 [05-4 선택 보충](../../docs/lessons/05-tool-calling/04-spy-and-inorder.md)에서 설명합니다.

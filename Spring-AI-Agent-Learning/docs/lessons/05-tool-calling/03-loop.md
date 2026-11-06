@@ -83,54 +83,9 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 가짜 모델은 언어를 이해하지 않습니다. 실제 모델의 도구 선택 품질을 입증하는 테스트는 아닙니다.
 잘못된 인자·존재하지 않는 상품은 Java가 거부합니다. 이 입문 실습은 외부 오류의 상세 업무 응답 변환을 추가하지 않아 일반 500으로 보일 수 있습니다.
 
-## Live 테스트의 verify()는 무엇을 확인할까?
+## 선택: 실제 도구 호출 기록 검증하기
 
-[ToolCallingOpenAiLiveTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingOpenAiLiveTest.java)의 `실제_OpenAI가_상품_검색_결과로_배송비를_조회한다()`는 실제 모델에 상품 검색과 배송비를 질문합니다. 그 뒤 모델의 답변과 별도로 **실제 Java 도구가 호출되었는지** 확인합니다.
-
-### 실제 실행과 호출 기록 검증을 구분하기
-
-테스트의 다음 선언은 실제 `ShoppingTools`를 사용하면서 메서드 호출 기록을 남기게 합니다. 테스트 코드 발췌입니다.
-
-```java
-@MockitoSpyBean ShoppingTools shoppingTools;
-```
-
-Spy는 실제 객체의 동작을 관찰하는 테스트 도구입니다. 이 테스트는 도구의 반환값을 가짜 값으로 바꾸지 않습니다. `service.ask(...)` 실행 중 모델이 도구 호출을 요청하면, Spring AI가 실제 상품 검색·배송비 계산 메서드를 실행하고 Spy가 그 호출을 기록합니다.
-
-질문 처리가 끝난 **뒤에** 다음 검증 코드를 실행합니다. 실제 테스트의 발췌입니다.
-
-```java
-InOrder toolCallOrder = inOrder(shoppingTools);
-toolCallOrder
-        .verify(shoppingTools)
-        .searchProducts("음료", 15000);
-toolCallOrder
-        .verify(shoppingTools)
-        .calculateShipping("P01");
-```
-
-| 코드 | 의미 |
-|---|---|
-| `inOrder(shoppingTools)` | 이 객체의 호출 기록을 순서대로 검사할 검증 객체 생성 |
-| `.verify(shoppingTools).searchProducts("음료", 15000)` | 해당 인자로 검색한 호출이 기록되어 있는지 확인 |
-| 이어지는 `.verify(shoppingTools).calculateShipping("P01")` | 위에서 확인한 검색 호출 이후 해당 상품의 배송비 조회가 기록되어 있는지 확인 |
-
-**`verify()` 뒤의 메서드 표현은 ‘이렇게 호출했는가?’라는 검증 조건입니다.** Java 메서드 호출과 모양은 비슷하지만, 여기서는 상품을 다시 검색하거나 배송비를 다시 계산하지 않습니다. 기록이 조건과 맞지 않으면 테스트가 실패합니다.
-
-이 코드가 모델에게 검색 다음 배송비 조회를 하도록 명령하는 것도 아닙니다. 실제 도구 선택은 앞선 `service.ask(...)` 실행 중에 끝났으며, `InOrder`는 그 결과로 남은 실행 순서를 확인합니다.
-
-### verify()에서 검색 결과를 받을 수 있을까?
-
-이 검증은 과거 호출의 **인자와 순서**를 확인합니다. 실제 검색 결과를 다시 반환받는 용도로 사용하지 않습니다.
-
-여기서 `"P01"`은 현재 상품 데이터와 검색 조건을 보고 테스트에 지정한 기대값입니다. 앞선 `verify().searchProducts(...)`에서 얻은 상품 ID가 아닙니다. 따라서 이 테스트는 지정한 검색·배송비 호출이 순서대로 있었는지 확인하지만, 검색 반환값의 모든 상품을 처리했는지까지 검증하지는 않습니다.
-
-| 검증 방식 | 이 테스트에서 확인하는 것 |
-|---|---|
-| `assertThat(answer).isNotBlank()` | 최종 답변이 비어 있지 않음 |
-| `InOrder`와 `verify()` | 지정한 인자의 실제 도구 호출이 기대한 순서로 기록되어 있음 |
-
-답변 문장이 비어 있지 않다는 사실만으로는 도구 사용을 증명할 수 없으므로 두 검증을 함께 사용합니다. 이 검증만으로 답변의 모든 가격·설명이 정확하다는 것까지 보장하지는 않습니다.
+[05-4. Spy로 실제 도구 호출 순서와 인자 검증하기](04-spy-and-inorder.md)에서 `@MockitoSpyBean`의 준비 조건, `InOrder`·`toolCallOrder`의 역할, 인사할 때의 도구 미사용 검증을 설명합니다. `verify()`는 도구를 다시 실행하는 코드가 아니라 질문 처리 후 남은 호출 기록을 검사하는 코드입니다.
 
 ## 확인 질문
 
@@ -151,4 +106,4 @@ toolCallOrder
 
 검색 도구를 한 번 사용한 그림에서 외부 모델 요청이 두 번 필요한 이유를 설명해 보세요.
 
-[이전](02-tools.md) · [다음](../05-tool-calling.md) · [단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)
+[이전](02-tools.md) · [다음: 선택 보충](04-spy-and-inorder.md) · [단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

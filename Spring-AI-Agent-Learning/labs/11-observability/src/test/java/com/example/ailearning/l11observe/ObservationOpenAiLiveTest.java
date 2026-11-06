@@ -1,5 +1,7 @@
 package com.example.ailearning.l11observe;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
@@ -14,12 +16,17 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.ai.openai.chat.timeout=30s"
 })
 class ObservationOpenAiLiveTest {
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
+
     @Autowired ObservedChatService service;
     @Autowired io.micrometer.core.instrument.MeterRegistry registry;
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI_응답과_호출_지표를_함께_출력한다(TestInfo info) {
+    void 실제_OpenAI_응답과_호출_지표를_함께_출력한다() {
         // Given: 호출 전 모델 요청 횟수 조회
         long before = registry
                 .find("gen_ai.client.operation")
@@ -32,18 +39,15 @@ class ObservationOpenAiLiveTest {
         String answer = service.ask("Spring의 의존성 주입을 한 문장으로 설명해줘.");
 
         // Then: 응답·호출 후 지표를 출력하고 호출 횟수 증가 검증
-        String name = info
-                .getTestMethod()
-                .orElseThrow()
-                .getName();
-        System.out.printf("[%s] 답변: %s%n", name, answer);
+
+        System.out.printf("답변: %s%n", answer);
         for (var meter : registry.getMeters()) {
             if (meter
                     .getId()
                     .getName()
                     .startsWith("gen_ai.client.")) {
                 for (var value : meter.measure()) {
-                    System.out.printf("[%s] %s / %s: %s%n", name, meter
+                    System.out.printf("%s / %s: %s%n", meter
                                     .getId()
                                     .getName(), value.getStatistic(), value.getValue());
                 }

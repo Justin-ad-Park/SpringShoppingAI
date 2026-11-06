@@ -4,22 +4,20 @@ import java.net.http.HttpResponse;
 import java.io.PrintStream;
 import java.util.Objects;
 
-/** 테스트 이름과 실제 결과를 출력한다. 인증 헤더는 출력하지 않는다. */
+/** 테스트 결과를 출력한다. 테스트 이름은 TestNamePrinter에서 별도로 출력한다. */
 public final class TestOutput {
-    private final String name;
     private final PrintStream out;
 
-    public TestOutput(String name) {
-        this(name, System.out);
+    public TestOutput() {
+        this(System.out);
     }
 
-    public TestOutput(String name, PrintStream out) {
-        this.name = Objects.requireNonNull(name);
+    public TestOutput(PrintStream out) {
         this.out = Objects.requireNonNull(out);
     }
 
     public void printValue(String label, Object result) {
-        out.printf("[%s] %s: %s%n", name, label, result);
+        out.printf("%s: %s%n", label, result);
     }
 
     public HttpResponse<String> printHttpResponse(HttpResponse<String> response) {

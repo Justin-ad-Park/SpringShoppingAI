@@ -1,5 +1,7 @@
 package com.example.ailearning.l09search;
 
+import com.example.ailearning.testsupport.TestNamePrinter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
@@ -14,20 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.ai.openai.embedding.timeout=30s"
 })
 class SearchOpenAiLiveTest {
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
+
     @Autowired SearchService service;
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI로_텍스트를_임베딩하고_문서를_검색한다(TestInfo info) {
+    void 실제_OpenAI로_텍스트를_임베딩하고_문서를_검색한다() {
         SearchService.Vector vector = service.embed("배송비는 얼마인가요?");
-        String name = info
-                .getTestMethod()
-                .orElseThrow()
-                .getName();
-        System.out.printf("[%s] 벡터 차원: %d, 앞 8개 값: %s%n", name, vector.dimensions(),
+
+        System.out.printf("벡터 차원: %d, 앞 8개 값: %s%n", vector.dimensions(),
                 java.util.Arrays.toString(java.util.Arrays.copyOf(vector.values(), Math.min(8, vector.dimensions()))));
         SearchService.Comparison result = service.search("배송비는 얼마인가요?", 2, 0.0, null);
-        System.out.printf("[%s] 문자열 검색과 벡터 검색: %s%n", name, result);
+        System.out.printf("문자열 검색과 벡터 검색: %s%n", result);
         assertThat(vector.dimensions()).isPositive();
         assertThat(result.vectorHits()).isNotEmpty();
     }

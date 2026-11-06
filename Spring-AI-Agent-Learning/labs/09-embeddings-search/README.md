@@ -17,7 +17,7 @@
 
 - `SearchLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
 - `SearchOpenAiLiveTest`: 실제 OpenAI에 연결합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
-- 콘솔에서 `[한글 테스트 메서드명]`과 응답·검증 대상 값을 함께 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
+- 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:test --tests com.example.ailearning.l09search.SearchLocalModelTest
