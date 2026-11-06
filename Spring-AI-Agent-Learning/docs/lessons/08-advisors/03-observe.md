@@ -1,6 +1,6 @@
 # 08-3. 순서와 호출 횟수 실험
 
-**실행 코드·설정·테스트:** [labs/08-advisors](../../../labs/08-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/08-00-advisors](../../../labs/08-00-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** Advisor의 위치에 따라 실행 순서와 반복 횟수가 달라지는 이유를 설명하고, 대화가 중복 저장되지 않는지 확인합니다.
 
@@ -8,13 +8,13 @@
 
 ## 실행
 
-파일 읽기: TraceAdvisor → AdvisorChatService → [PriceTools](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/PriceTools.java) → [AdvisorController](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorController.java).
+파일 읽기: TraceAdvisor → AdvisorChatService → [PriceTools](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/PriceTools.java) → [AdvisorController](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorController.java).
 PriceTools는 05에서 배운 @Tool 방식으로 가상 허브티 가격 12000원을 조회하는 작은 도구입니다.
 명령은 저장소 루트에서 실행합니다. bootRun 전 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:test --tests com.example.ailearning.l08advisors.AdvisorLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:08-advisors:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests com.example.ailearning.l08advisors.AdvisorLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:bootRun
 curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
   http://127.0.0.1:8098/api/advisors/demo \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '예산은 3만원이야.'
@@ -41,7 +41,7 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 - `.defaultAdvisors(...)`를 빼면 이전 대화가 자동으로 전달되지 않습니다.
 - `memory.add()`를 중복 추가하지 않고 저장 메시지 수를 확인합니다.
 
-[AdvisorLocalModelTest](../../../labs/08-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorLocalModelTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
+[AdvisorLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorLocalModelTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
 Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 장기 저장하는 것은 아닙니다.
 
 ## 확인 질문

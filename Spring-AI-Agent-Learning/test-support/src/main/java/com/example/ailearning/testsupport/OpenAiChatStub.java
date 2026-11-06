@@ -76,7 +76,7 @@ public final class OpenAiChatStub {
 
     /**
      * 요청 JSON을 받아 assistant 메시지를 만드는 함수를 등록한다. 분기 로직은 단원 테스트에 둔다.
-     * <p>사용 단원: 06 Workflow·Agent, 12-evaluation, 13 종합 실습.
+     * <p>사용 단원: 06 Workflow·Agent, 12-00-evaluation, 13 종합 실습.
      */
     public OpenAiChatStub setResponseFunction(Function<JsonNode, ObjectNode> assistantMessageForRequest) {
         chatResponseSettings.setAssistantMessageFunction(assistantMessageForRequest);
@@ -93,7 +93,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 요청에 반환할 HTTP 상태를 지정한다. 200이 아니면 정상 응답 함수 대신 오류 본문을 반환한다.
-     * <p>사용 단원: 08 Advisor, 12-evaluation, 13 종합 실습의 모델 연결 실패 사례.
+     * <p>사용 단원: 08 Advisor, 12-00-evaluation, 13 종합 실습의 모델 연결 실패 사례.
      */
     public OpenAiChatStub setHttpStatus(int httpStatus) {
         chatResponseSettings.setHttpStatus(httpStatus);
@@ -102,7 +102,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 응답을 전송하기 전 대기할 시간을 지정한다. 응답 내용은 대기 전에 확정한다.
-     * <p>사용 단원: 12-evaluation, 13 종합 실습의 시간 초과 사례.
+     * <p>사용 단원: 12-00-evaluation, 13 종합 실습의 시간 초과 사례.
      */
     public OpenAiChatStub setResponseDelay(Duration responseDelay) {
         chatResponseSettings.setResponseDelay(responseDelay);
@@ -111,7 +111,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 응답에 넣을 입력·출력 토큰 수를 지정한다. 실제 사용량을 계산하지 않는다.
-     * <p>사용 단원: 02 첫 호출·다중 모델, 10-rag-advisor, 12장 실습, 13 종합 실습.
+     * <p>사용 단원: 02 첫 호출·다중 모델, 10-04-rag-advisor, 12장 실습, 13 종합 실습.
      */
     public OpenAiChatStub setTokenUsage(int inputTokens, int outputTokens) {
         chatResponseSettings.setTokenUsage(inputTokens, outputTokens);

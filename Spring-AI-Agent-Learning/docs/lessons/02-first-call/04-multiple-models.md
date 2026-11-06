@@ -2,7 +2,7 @@
 
 [생성자 주입 설명](01-constructor-injection.md)에서 배운 연결 과정을 두 모델로 확장합니다.
 이 문서는 선택 학습입니다. 이후 기본 수업을 진행하기 위한 필수 조건은 아닙니다.
-실행 예제는 기존 첫 호출 실습과 분리한 [02-multiple-models](../../../labs/02-multiple-models/README.md)에 있습니다.
+실행 예제는 기존 첫 호출 실습과 분리한 [02-04-multiple-models](../../../labs/02-04-multiple-models/README.md)에 있습니다.
 
 ### 권장 학습 순서
 
@@ -223,7 +223,7 @@ public class MultipleModelsController {
 두 API 키와 모델 ID를 준비한 뒤 저장소 루트에서 실행하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:bootRun
 ```
 
 다른 터미널에서 원하는 제공 업체를 호출합니다.
@@ -243,12 +243,12 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 
 ## 7. 테스트는 무엇을 확인할까?
 
-[MultipleProvidersLocalModelTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
+[MultipleProvidersLocalModelTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
 외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/AnthropicStubServer.java)로 바꿉니다. 각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.
 실제 키 대신 테스트용 값을 지정하며 저장소의 `.env`를 읽지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
 ```
 
 - OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다. Anthropic 요청은 발생하지 않아야 합니다.
@@ -260,7 +260,7 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 
 ### 선택: 실제 OpenAI와 Anthropic에 연결하기
 
-같은 테스트 패키지의 [MultipleProvidersLiveTest](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
+같은 테스트 패키지의 [MultipleProvidersLiveTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
 서비스의 `askOpenAi()`로 실제 OpenAI를 호출합니다. `askAnthropic()` 예제는 현재 주석 처리되어 있습니다.
 Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답이 비어 있지 않은지 검사합니다.
 
@@ -268,7 +268,7 @@ Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답�
 애플리케이션이 두 클라이언트를 함께 준비하므로 메서드 하나만 실행할 때도 네 설정값이 필요합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
+./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
 ```
 
 태그나 실행 허용 변수는 없습니다. 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 활성화된 OpenAI Live 테스트가 실행됩니다.
@@ -284,7 +284,7 @@ OpenAI 호출 구현을 공유하고 요청 옵션으로 모델 ID를 바꾸거�
 ### 요청마다 모델 이름 지정하기
 
 먼저 가장 간단한 방식으로, 이미 준비한 `openAiChatClient` 하나를 공유하고 **이번 요청의 옵션**에 모델 ID를 지정해 보겠습니다.
-아래 클래스는 별도 예시 문구가 아니라 [실습에 포함된 실행 코드](../../../labs/02-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)입니다.
+아래 클래스는 별도 예시 문구가 아니라 [실습에 포함된 실행 코드](../../../labs/02-04-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)입니다.
 기존 서비스는 그대로 두고 같은 패키지에 추가했습니다.
 
 ```java
@@ -341,11 +341,11 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 
 ### 테스트에서 확인하기
 
-[MultipleProvidersLocalModelTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)에서
+[MultipleProvidersLocalModelTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)에서
 `SameProviderModelsService`를 주입받아 실행합니다. IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-multiple-models:test --tests '*MultipleProvidersLocalModelTest.요청별_모델을_선택해도_기본_모델은_유지된다'
+./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests '*MultipleProvidersLocalModelTest.요청별_모델을_선택해도_기본_모델은_유지된다'
 ```
 
 로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.

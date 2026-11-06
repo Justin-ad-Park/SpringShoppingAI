@@ -50,11 +50,11 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 | 수업 | 모듈 | 실행 후 확인할 것 |
 |---|---|---|
-| [06 확장 1](docs/lessons/06-workflow-agent/04-tool-call-limits.md) | `labs/06-tool-call-limits` | 도구별·전체 호출 상한과 finishReason |
-| [06 확장 2](docs/lessons/06-workflow-agent/05-model-timeout-retry.md) | `labs/06-model-timeout-retry` | 지연·오류 응답과 실제 HTTP 재시도 횟수 |
-| [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
-| [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
-| [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
+| [05 보충 5](docs/lessons/05-tool-calling/05-tool-call-limits.md) | `labs/05-05-tool-call-limits` | 도구별·전체 호출 상한과 finishReason |
+| [02 보충 5](docs/lessons/02-first-call/05-model-timeout-retry.md) | `labs/02-05-model-timeout-retry` | 지연·오류 응답과 실제 HTTP 재시도 횟수 |
+| [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-04-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
+| [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-02-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
+| [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-04-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
 
 각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.
 새 모듈은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
@@ -76,7 +76,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 상위 SpringShoppingAI 저장소 루트에서 실행합니다. 첫 실행은 인터넷으로 Gradle과 라이브러리를 받습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 위 명령은 외부 모델을 호출하지 않습니다. 실제 Spring AI가 **로컬 가짜 모델 HTTP 서버**에 보낸 요청을 검증합니다.
@@ -85,7 +85,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 실제 모델 호출은 [환경 설정](docs/lessons/01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 다음 명령으로 시작합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
 다른 터미널에서:
@@ -109,23 +109,27 @@ docs/
   diagram-guide.md       그림의 종류·기호·읽는 순서
 test-support/           공통 Mock 서버·결과 출력 (테스트 전용)
 labs/
-  02-first-chat/         02장 기본 호출과 03장 프롬프트 실험
-  02-multiple-models/    02장 선택 보충: OpenAI·Anthropic 모델 선택
-  04-structured-output/  조건 record와 응답 변환
-  05-tool-calling/       로컬 Java 도구
-  06-workflow-agent/     Workflow·Agent·혼합 비교
-  07-chat-memory/        이전 대화의 직접 저장·재전달
-  08-advisors/           호출 체인·메모리·도구 루프
-  09-embeddings-search/  임베딩·유사도·필터
-  10-rag/                문서 분할·검색·근거 확인
-  10-rag-advisor/        표준 Reader·Splitter·RAG Advisor
-  11-mcp-workflow-agent/ MCP 도구를 사용하는 세 실행 방식
-  12-evaluation/         고정 사례 평가·사용량·실패 처리
-  12-model-evaluation/   Spring AI Evaluator
-  12-observability/      기본 메트릭·Actuator
-  13-shopping-agent/     상품·정책·후속 질문 통합
+  02-00-first-chat/             02장 기본 호출과 03장 프롬프트 실험
+  02-04-multiple-models/        02장 보충 4: OpenAI·Anthropic 모델 선택
+  02-05-model-timeout-retry/    02장 보충 5: 모델 통신 타임아웃·재시도
+  04-00-structured-output/      조건 record와 응답 변환
+  05-00-tool-calling/           로컬 Java 도구
+  05-05-tool-call-limits/       05장 보충 5: 도구별·전체 호출 제한
+  06-00-workflow-agent/         Workflow·Agent·혼합 비교
+  07-00-chat-memory/            이전 대화의 직접 저장·재전달
+  08-00-advisors/               호출 체인·메모리·도구 루프
+  09-00-embeddings-search/      임베딩·유사도·필터
+  10-00-rag/                    문서 분할·검색·근거 확인
+  10-04-rag-advisor/            10장 보충 4·5: 표준 Reader·Splitter·RAG Advisor
+  11-00-mcp-workflow-agent/     MCP 도구를 사용하는 세 실행 방식
+  12-00-evaluation/             고정 사례 평가·사용량·실패 처리
+  12-02-model-evaluation/       12장 보충 2: Spring AI Evaluator
+  12-04-observability/          12장 보충 4: 기본 메트릭·Actuator
+  13-00-shopping-agent/         상품·정책·후속 질문 통합
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
+
+labs 폴더명은 `단원번호-읽기순서-이름`을 사용합니다. `00`은 본 실습이고, 나머지는 소주제의 읽기 번호입니다. 이름순으로 정렬하면 본 실습 다음에 보충 실습이 표시됩니다.
 
 학습 코드의 클래스 읽기 순서는 `FirstChatApplication` → `ChatController` → `ChatService`입니다.
 테스트 내부의 가짜 서버 구현은 첫 실습의 선수 지식이 아닙니다.

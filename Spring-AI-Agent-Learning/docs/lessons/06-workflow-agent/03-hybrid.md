@@ -1,6 +1,6 @@
 # 06-3. 모델의 선택을 Java로 검증하기
 
-**실행 코드·설정·테스트:** [labs/06-workflow-agent](../../../labs/06-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/06-00-workflow-agent](../../../labs/06-00-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 모델이 상품 조회 도구를 선택하되, 배송비 포함 금액과 카테고리를 코드로 검증해 최종 추천 후보를 확정하는 혼합 방식을 구현합니다.
 
@@ -36,7 +36,7 @@ sequenceDiagram
 ```
 
 반복 구간은 도구가 필요한 경우에만 발생합니다. 모델이 바로 답하면 생략됩니다.
-[hybrid 메서드](../../../labs/06-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)는 아래처럼 구현되어 있습니다.
+[hybrid 메서드](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)는 아래처럼 구현되어 있습니다.
 
 ```java
     private ExecutionResult hybrid(String question) {
@@ -118,8 +118,8 @@ public class BudgetShoppingTools {
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootRun
 ```
 
 ```bash
@@ -153,4 +153,4 @@ curl -sS http://127.0.0.1:8096/api/compare/workflow \
 
 모델이 조회한 커피의 총액이 31000원이면, 3만원 예산에서 누가 제외하나요?
 
-[이전](02-agent.md) · [다음: 확장 1](04-tool-call-limits.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)
+[이전](02-agent.md) · [보충: 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

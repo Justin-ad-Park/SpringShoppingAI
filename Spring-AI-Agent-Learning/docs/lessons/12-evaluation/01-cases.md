@@ -1,6 +1,6 @@
 # 12-1. 고정 사례와 품질 평가의 기준
 
-**실행 코드·설정·테스트:** [labs/12-evaluation](../../../labs/12-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/12-00-evaluation](../../../labs/12-00-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 고정된 질문과 기대 결과를 정하고 실제 답변과 비교하는 방법을 이해합니다.
 
@@ -26,7 +26,7 @@
 
 ## 고정 질문 세트부터 읽기
 
-[evaluation-cases.json](../../../labs/12-evaluation/src/main/resources/evaluation-cases.json)에 질문·기대 상태·출처·문구가 있습니다.
+[evaluation-cases.json](../../../labs/12-00-evaluation/src/main/resources/evaluation-cases.json)에 질문·기대 상태·출처·문구가 있습니다.
 배송비, 미개봉 반품, 무관한 우주 질문 세 개로 시작합니다. 평가는 서버 내부의 이 고정 목록만 사용합니다.
 
 ```mermaid
@@ -48,7 +48,7 @@ flowchart TD
 
 ## 평가 코드
 
-읽는 순서: evaluation-cases.json → [EvaluationRunner](../../../labs/12-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java) → [RagService](../../../labs/12-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java) → [EvaluationController](../../../labs/12-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationController.java).
+읽는 순서: evaluation-cases.json → [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java) → [RagService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java) → [EvaluationController](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationController.java).
 PolicyLoader·Source·정책 파일은 10에서 배운 것과 같은 역할입니다.
 
 ```java

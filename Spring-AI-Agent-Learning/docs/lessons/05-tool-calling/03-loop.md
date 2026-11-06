@@ -1,6 +1,6 @@
 # 05-3. 도구 결과가 모델로 돌아가는 과정
 
-**실행 코드·설정·테스트:** [labs/05-tool-calling](../../../labs/05-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 한 번의 `.call().content()` 실행에서 여러 모델 요청이 생기는 이유를 설명합니다.
 
@@ -33,14 +33,14 @@ Spring AI 2.0의 도구 루프가 이 반복을 처리합니다. 지금은 사�
 
 ## 읽는 순서와 실행
 
-폴더 `labs/05-tool-calling`, 패키지 `com.example.ailearning.l05tools`를 열어보세요.
-Product → ProductPriceDetails → ProductCatalog → ShoppingTools → ToolChatService → [ToolController](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolController.java) 순서입니다.
+폴더 `labs/05-00-tool-calling`, 패키지 `com.example.ailearning.l05tools`를 열어보세요.
+Product → ProductPriceDetails → ProductCatalog → ShoppingTools → ToolChatService → [ToolController](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolController.java) 순서입니다.
 
 명령은 모두 저장소 루트에서 실행합니다. `bootRun` 전에는 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:bootRun
 ```
 
 먼저 모델 없는 Java 호출입니다.
@@ -78,7 +78,7 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 실제 모델의 도구 이름·결과·호출 횟수를 응답에서 비교하는 실습은 [06-3](../06-workflow-agent/03-hybrid.md#실행과-관찰)에서 진행합니다.
 코드를 바꾸는 실험은 서버를 종료한 뒤 다시 시작하고, 실험 후 원복한 코드로도 재시작합니다.
 
-[ToolCallingLocalModelTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingLocalModelTest.java)는 HTTP 직접 조회 시 모델 요청 0회, 도구 선택 시 결과 재전달, 배송비 근거, 도구 없는 답변과 입력 거부를 확인합니다.
+[ToolCallingLocalModelTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingLocalModelTest.java)는 HTTP 직접 조회 시 모델 요청 0회, 도구 선택 시 결과 재전달, 배송비 근거, 도구 없는 답변과 입력 거부를 확인합니다.
 외부 API만 고정 서버로 바꾸고 실제 Spring AI가 콜백을 실행합니다.
 가짜 모델은 언어를 이해하지 않습니다. 실제 모델의 도구 선택 품질을 입증하는 테스트는 아닙니다.
 잘못된 인자·존재하지 않는 상품은 Java가 거부합니다. 이 입문 실습은 외부 오류의 상세 업무 응답 변환을 추가하지 않아 일반 500으로 보일 수 있습니다.

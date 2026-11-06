@@ -43,11 +43,11 @@ Spring AI는 모델 연결·도구 호출·대화 메시지 같은 구성 요소
 
 ## 실행 코드와 테스트
 
-[labs/13-shopping-agent의 실행 안내](../../labs/13-shopping-agent/README.md)를 확인합니다.
+[labs/13-00-shopping-agent의 실행 안내](../../labs/13-00-shopping-agent/README.md)를 확인합니다.
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:13-shopping-agent:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:13-shopping-agent:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootRun
 ```

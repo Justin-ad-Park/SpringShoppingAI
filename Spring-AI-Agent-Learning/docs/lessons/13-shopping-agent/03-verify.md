@@ -1,6 +1,6 @@
 # 13-3. 조회한 사실로 최종 결과 확인
 
-**실행 코드·설정·테스트:** [labs/13-shopping-agent](../../../labs/13-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 상품 총액과 출처 ID를 실제 도구 기록으로 검증합니다.
 

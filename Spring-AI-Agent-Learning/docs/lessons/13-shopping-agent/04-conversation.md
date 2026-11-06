@@ -1,6 +1,6 @@
 # 13-4. 대화 저장과 통합 시나리오 관찰
 
-**실행 코드·설정·테스트:** [labs/13-shopping-agent](../../../labs/13-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 정상 결과·결과 없음·실패에서 저장 여부를 비교합니다.
 
@@ -35,14 +35,14 @@ HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 
 먼저 API 키 없이 테스트합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest :Spring-AI-Agent-Learning:labs:13-shopping-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootJar
 ```
 
 실제 실행은 저장소 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 준비한 뒤 실행합니다.
 작성 방법은 [실행 설정 안내](../../run-guide.md)를 참고하세요.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-shopping-agent:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootRun
 ```
 
 실제 실행은 시작 시 정책 임베딩, 정책 검색 시 질문 임베딩, 상담 시 Chat 요청 비용이 발생할 수 있습니다.
@@ -80,7 +80,7 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 
 ## 6. 테스트와 한 가지씩 바꾸는 실험
 
-[ShoppingAgentLocalModelTest](../../../labs/13-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 9개 테스트는
+[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 9개 테스트는
 실제 MVC·Spring AI 어댑터·벡터 저장소에 로컬 가짜 Chat/Embedding HTTP 서버를 연결합니다.
 
 - 상품·배송비·반품 근거 결합과 Java의 최종 표시.

@@ -19,7 +19,7 @@ flowchart TD
 
 ## 서비스 전체 코드
 
-[전체 소스: McpHybridService.java](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpHybridService.java)
+[전체 소스: McpHybridService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpHybridService.java)
 
 ```java
 package com.example.ailearning.l11mcp;
@@ -78,7 +78,7 @@ Agent와 같은 `askWithMcpTools()`를 재사용하지만 `McpToolRun`에 `condi
 | 계산 전 | 검색 결과 전체의 ID인지 확인하고 빈 데모 장바구니로 고정 | 검색 결과를 읽고 계산 도구의 인자를 구성 |
 | 응답 전 | 계산 성공·총예산 확인, 실제 금액으로 문장 작성 | 도구 선택 반복과 종료 요청 |
 
-[보조 코드 McpToolRun](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpToolRun.java)의 `restrictArguments()`에서 실제 연결을 확인합니다.
+[보조 코드 McpToolRun](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpToolRun.java)의 `restrictArguments()`에서 실제 연결을 확인합니다.
 `McpToolRun`의 `new ToolCallback() { ... }`는 인터페이스의 구현 객체를 그 자리에서 만드는 Java 익명 클래스입니다. `getToolDefinition()`은 모델에 보낼 도구 정보를, `call()`은 실제 실행을 담당합니다. `call()`에서 검사 → 원격 호출 → 결과 기록 순서를 추가합니다.
 
 검색 ID와 계산 ID의 집합·개수가 모두 같아야 하므로 일부 누락·중복·새 ID를 거부합니다.

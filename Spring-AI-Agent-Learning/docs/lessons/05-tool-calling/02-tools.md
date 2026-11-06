@@ -1,6 +1,6 @@
 # 05-2. Java 메서드를 도구로 제공하기
 
-**실행 코드·설정·테스트:** [labs/05-tool-calling](../../../labs/05-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 도구 설명 등록과 실제 메서드 실행을 구분합니다.
 
@@ -11,7 +11,7 @@
 `@Tool`은 메서드를 도구로 설명하고, `@ToolParam`은 인자의 설명이나 생략 가능 여부를 정합니다.
 어노테이션을 붙였다고 모든 모델 호출에서 자동으로 노출되지는 않습니다. 이번 요청의 `.tools(tools)`에 명시적으로 등록합니다.
 
-[ShoppingTools.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 전체 코드입니다.
+[ShoppingTools.java](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l05tools;
@@ -45,7 +45,7 @@ public class ShoppingTools {
 
 ## 모델과 연결하기
 
-[ToolChatService.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolChatService.java)의 전체 코드입니다.
+[ToolChatService.java](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolChatService.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l05tools;

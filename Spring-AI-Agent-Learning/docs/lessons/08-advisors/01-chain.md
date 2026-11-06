@@ -1,6 +1,6 @@
 # 08-1. 호출 전후를 감싸는 Advisor
 
-**실행 코드·설정·테스트:** [labs/08-advisors](../../../labs/08-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/08-00-advisors](../../../labs/08-00-advisors/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 여러 Advisor의 요청 전·응답 후 처리 순서를 이해합니다.
 
@@ -34,7 +34,7 @@ String answer = client
 System.out.println(steps); // [A:before, B:before, B:after, A:after]
 ```
 
-실행 모듈의 등록 위치는 [AdvisorChatService.chat()](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)입니다.
+실행 모듈의 등록 위치는 [AdvisorChatService.chat()](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)입니다.
 그 코드에는 다음 수업에서 설명할 메모리와 도구 루프 기준 순서도 포함되어 있습니다.
 먼저 위 등록 원리와 아래 `adviseCall()`의 앞뒤 처리를 연결하세요.
 도구 없는 실제 API 실행 명령은 [08-3](03-observe.md#실행)에 있고, 같은 순서는 `Advisor의_응답_처리는_요청의_반대_순서로_실행된다` 로컬 테스트로도 확인합니다.
@@ -60,7 +60,7 @@ sequenceDiagram
     App-->>User: 답변과 순서 기록
 ```
 
-[TraceAdvisor.java](../../../labs/08-advisors/src/main/java/com/example/ailearning/l08advisors/TraceAdvisor.java)의 전체 코드입니다.
+[TraceAdvisor.java](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/TraceAdvisor.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l08advisors;

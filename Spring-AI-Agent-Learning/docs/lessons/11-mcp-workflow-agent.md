@@ -55,12 +55,12 @@ MCP는 **기능을 연결하는 약속**이고, Workflow·Agent는 **다음 행�
 
 ## 실행 코드와 테스트
 
-실행 모듈은 [labs/11-mcp-workflow-agent](../../labs/11-mcp-workflow-agent/README.md)입니다.
+실행 모듈은 [labs/11-00-mcp-workflow-agent](../../labs/11-00-mcp-workflow-agent/README.md)입니다.
 로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다. 수동 실행은 MCP 서버와 학습 애플리케이션을 각각 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-mcp-workflow-agent:test --tests '*LocalModelTest' --tests '*UnitTest'
-./gradlew :Spring-AI-Agent-Learning:labs:11-mcp-workflow-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*LocalModelTest' --tests '*UnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:bootJar
 ```
 
 [이전: 10장 RAG](10-rag.md) · [다음: 12장 평가와 운영](12-evaluation.md) · [전체 교육 계획](../curriculum.md)

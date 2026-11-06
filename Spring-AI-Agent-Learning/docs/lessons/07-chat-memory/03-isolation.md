@@ -1,6 +1,6 @@
 # 07-3. 대화 구분·삭제·메시지 창 관찰
 
-**실행 코드·설정·테스트:** [labs/07-chat-memory](../../../labs/07-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/07-00-chat-memory](../../../labs/07-00-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 같은 대화 ID라도 소유자가 다르면 분리되는지 확인합니다.
 
@@ -19,8 +19,8 @@
 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootRun
 ```
 
 로컬 테스트는 실제 키가 필요 없습니다. bootRun으로 실제 모델을 호출하면 비용이 발생할 수 있습니다.
@@ -83,7 +83,7 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 메시지 하나가 길면 토큰도 많아질 수 있습니다. 메시지 수 제한은 토큰 예산 제한과 같지 않습니다.
 이 단원은 토큰 계산·요약·장기 기억을 추가하지 않습니다. 오래된 정보가 창 밖으로 사라지는 현상을 먼저 확인합니다.
 
-[MemoryLocalModelTest](../../../labs/07-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryLocalModelTest.java)는 이전 user/assistant 재전달, stateless 비교, 쿠키별 격리, 대화별 삭제, 6개 창, 빈 응답 저장 방지, 입력 검증을 확인합니다.
+[MemoryLocalModelTest](../../../labs/07-00-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryLocalModelTest.java)는 이전 user/assistant 재전달, stateless 비교, 쿠키별 격리, 대화별 삭제, 6개 창, 빈 응답 저장 방지, 입력 검증을 확인합니다.
 테스트는 서버가 보낸 실제 모델 API 메시지를 검사하며 고정 응답의 언어 이해 능력을 평가하지 않습니다.
 
 ## 확인 질문

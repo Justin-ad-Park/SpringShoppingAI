@@ -1,6 +1,6 @@
 # 12-5. 실패·지연·재시도 관찰
 
-**실행 코드·설정·테스트:** [labs/12-evaluation](../../../labs/12-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/12-00-evaluation](../../../labs/12-00-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 잘못된 답변과 요청 실패를 다른 결과로 읽습니다.
 
@@ -48,7 +48,7 @@ spring:
 ```
 
 이 실습의 429/시간 초과 테스트는 설정 파일만 읽는 검사가 아니라 실제 전송 횟수와 대기를 확인합니다.
-06 확장 2와 같은 공통 연결 설정을 사용합니다.
+02 보충 5와 같은 공통 연결 설정을 사용합니다.
 SDK 재시도는 0회, 요청 타임아웃은 2초로 설정했습니다. 자동 재시도가 과금·지연·중복 실행을 늘릴 수 있어 이번에는 끕니다.
 실제 모델의 정상 응답도 2초를 넘을 수 있습니다. 상황에 맞게 한도를 조정하고 변경 전후를 기록하세요.
 
@@ -57,8 +57,8 @@ SDK 재시도는 0회, 요청 타임아웃은 2초로 설정했습니다. 자동
 키·Chat 모델·임베딩 모델 설정은 [10장](../10-rag.md)과 같습니다. 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-evaluation:test --tests com.example.ailearning.l12evaluation.EvaluationLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-evaluation:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests com.example.ailearning.l12evaluation.EvaluationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:bootRun
 curl -sS http://127.0.0.1:8101/api/evaluation/ask \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '미개봉 반품 기간은?'
 curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
@@ -81,24 +81,24 @@ curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
 먼저 원래 설정으로 테스트를 실행합니다. 그다음 테스트의 타임아웃 설정 위치와 요청 횟수 검증문을 찾아
 대기 시간과 재시도가 서로 다른 설정임을 설명해 보세요. 실제 서버의 정상 지연과 로컬 테스트의 인위적인 지연도 구분합니다.
 
-[EvaluationLocalModelTest](../../../labs/12-evaluation/src/test/java/com/example/ailearning/l12evaluation/EvaluationLocalModelTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.
+[EvaluationLocalModelTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/EvaluationLocalModelTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.
 usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니다. 실제 비용이나 품질로 표시하지 않습니다.
 2초 설정과 별개로 시간 초과 테스트만 500ms로 줄여 빠르게 검증합니다.
 
-## 06장의 확장 실습을 다시 실행하기
+## 02·05장의 보충 실습을 다시 실행하기
 
 RAG 평가 코드에 제약 처리를 추가하지 않고 앞에서 완성한 독립 모듈을 활용합니다.
 
 | 실습 | 12장에서 확인할 것 |
 |---|---|
-| [06 확장 1: 도구 호출 횟수 제한](../06-workflow-agent/04-tool-call-limits.md) | `TOOL_LIMIT`·`finishReason`을 모델 품질 실패나 통신 오류와 구분 |
-| [06 확장 2: 모델 요청 타임아웃과 재시도](../06-workflow-agent/05-model-timeout-retry.md) | 같은 질문·같은 429 응답에서 재시도 0회와 1회의 실제 HTTP 요청 수 비교 |
+| [05 보충 5: 도구 호출 횟수 제한](../05-tool-calling/05-tool-call-limits.md) | `TOOL_LIMIT`·`finishReason`을 모델 품질 실패나 통신 오류와 구분 |
+| [02 보충 5: 모델 요청 타임아웃과 재시도](../02-first-call/05-model-timeout-retry.md) | 같은 질문·같은 429 응답에서 재시도 0회와 1회의 실제 HTTP 요청 수 비교 |
 
 아래 명령은 로컬 고정 서버만 사용하며 실제 OpenAI API를 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-tool-call-limits:test --tests '*ToolLimitLocalModelTest'
-./gradlew :Spring-AI-Agent-Learning:labs:06-model-timeout-retry:test --tests '*LocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:05-05-tool-call-limits:test --tests '*ToolLimitLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:02-05-model-timeout-retry:test --tests '*LocalModelTest'
 ```
 
 평가 기록에는 답변 품질, 도구 상한 도달, 통신 실패를 서로 다른 결과로 남깁니다. 서비스에서 질문 한 번을 처리했더라도 SDK가 재시도하면 실제 HTTP 요청은 여러 번일 수 있습니다. `chatCalls` 같은 서비스 계수를 HTTP 요청 수로 해석하지 말고, 이 실습에서는 로컬 서버의 요청 목록과 비교하세요.

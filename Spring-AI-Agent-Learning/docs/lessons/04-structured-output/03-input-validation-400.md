@@ -4,7 +4,7 @@
 
 ## 1. 공백 질문으로 실패 재현하기
 
-[CriteriaController](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
+[CriteriaController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
 
 ```java
 @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
@@ -32,7 +32,7 @@ public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String qu
 
 ## 3. HTTP 응답과 모델 요청 기록 확인하기
 
-[StructuredOutputLocalModelTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `공백_질문은_모델_호출_전에_거부한다()`에서 다음을 확인합니다. 실제 코드 발췌입니다.
+[StructuredOutputLocalModelTest](../../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `공백_질문은_모델_호출_전에_거부한다()`에서 다음을 확인합니다. 실제 코드 발췌입니다.
 
 ```java
 assertThat(postQuestion("   ").statusCode()).isEqualTo(400);

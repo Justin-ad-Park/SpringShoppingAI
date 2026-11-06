@@ -1,6 +1,6 @@
 # 09-2. 문서를 넣고 유사한 문서를 찾기
 
-**실행 코드·설정·테스트:** [labs/09-embeddings-search](../../../labs/09-embeddings-search/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/09-00-embeddings-search](../../../labs/09-00-embeddings-search/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 문서를 벡터 저장소에 넣고 질문과 관련된 문서를 검색하는 흐름을 연결합니다.
 
@@ -76,7 +76,7 @@ SimpleVectorStore의 “메모리 저장”은 JVM 내부 저장을 뜻하며, 0
 
 ## 코드 읽기
 
-[PolicyDocuments](../../../labs/09-embeddings-search/src/main/java/com/example/ailearning/l09search/PolicyDocuments.java) → SearchService → [SearchController](../../../labs/09-embeddings-search/src/main/java/com/example/ailearning/l09search/SearchController.java) 순서로 읽습니다.
+[PolicyDocuments](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/PolicyDocuments.java) → SearchService → [SearchController](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/SearchController.java) 순서로 읽습니다.
 이 단원의 핵심 서비스 전체 코드입니다.
 
 ```java

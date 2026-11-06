@@ -1,9 +1,9 @@
 # 10-4. 직접 읽던 문서를 표준 Reader·Splitter로 바꾸기
 
-**실행 코드·설정·테스트:** [labs/10-rag-advisor](../../../labs/10-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/10-04-rag-advisor](../../../labs/10-04-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 먼저 10-1의 문서 적재를 이해합니다. 이번 목표는 **읽기·분할·저장 역할을 표준 타입과 연결**하는 것입니다.
-이 수업과 다음 수업은 독립 실행 모듈 `labs/10-rag-advisor`를 공유합니다.
+이 수업과 다음 수업은 독립 실행 모듈 `labs/10-04-rag-advisor`를 공유합니다.
 
 ## 먼저 역할을 대응시키기
 
@@ -23,7 +23,7 @@ flowchart LR
     S --> V[SimpleVectorStore: 임베딩을 만들어 저장]
 ```
 
-[AdvisorRagService](../../../labs/10-rag-advisor/src/main/java/com/example/ailearning/l10advisor/AdvisorRagService.java)의 생성자에서 아래 부분만 먼저 읽습니다.
+[AdvisorRagService](../../../labs/10-04-rag-advisor/src/main/java/com/example/ailearning/l10advisor/AdvisorRagService.java)의 생성자에서 아래 부분만 먼저 읽습니다.
 
 ```java
         var reader = new TextReader(new ClassPathResource("return-policy.txt"));
@@ -45,7 +45,7 @@ flowchart LR
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.AdvisorRagLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-04-rag-advisor:test --tests com.example.ailearning.l10advisor.AdvisorRagLocalModelTest
 ```
 
 `AdvisorRagLocalModelTest`는 실제 Reader·Splitter·저장소·OpenAI 어댑터에 로컬 고정 응답 서버를 연결합니다.
@@ -54,10 +54,10 @@ flowchart LR
 
 ## 문서 분할만 테스트하기
 
-[TokenTextSplitterUnitTest](../../../labs/10-rag-advisor/src/test/java/com/example/ailearning/l10advisor/TokenTextSplitterUnitTest.java)는 긴 문서를 여러 조각으로 나누는 객체 기능만 검사합니다. Spring·임베딩·채팅 모델은 사용하지 않습니다.
+[TokenTextSplitterUnitTest](../../../labs/10-04-rag-advisor/src/test/java/com/example/ailearning/l10advisor/TokenTextSplitterUnitTest.java)는 긴 문서를 여러 조각으로 나누는 객체 기능만 검사합니다. Spring·임베딩·채팅 모델은 사용하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:test --tests com.example.ailearning.l10advisor.TokenTextSplitterUnitTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-04-rag-advisor:test --tests com.example.ailearning.l10advisor.TokenTextSplitterUnitTest
 ```
 
 Reader·Splitter·저장소·Advisor가 함께 동작하는지는 `AdvisorRagLocalModelTest`에서 확인합니다.

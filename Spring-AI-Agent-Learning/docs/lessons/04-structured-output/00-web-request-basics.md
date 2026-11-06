@@ -18,7 +18,7 @@ Tomcat이 현재 API 요청의 처리를 등록된 `DispatcherServlet`에 맡기
 
 ## 요청은 어느 메서드와 연결될까?
 
-[CriteriaController](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
+[CriteriaController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
 
 ```java
 @RestController
@@ -64,10 +64,10 @@ flowchart TD
 일반 애플리케이션 실행은 저장소 루트에서 다음 명령을 사용합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:bootRun
 ```
 
-[application.yml](../../../labs/04-structured-output/src/main/resources/application.yml)의 설정은 다음 의미입니다.
+[application.yml](../../../labs/04-00-structured-output/src/main/resources/application.yml)의 설정은 다음 의미입니다.
 
 | 설정 | 의미 |
 |---|---|

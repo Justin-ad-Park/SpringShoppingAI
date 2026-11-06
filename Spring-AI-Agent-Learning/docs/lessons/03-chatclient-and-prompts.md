@@ -37,7 +37,7 @@
 **Builder**는 여러 설정을 모아 객체를 만드는 방식입니다.
 Spring은 설정에 맞는 `ChatClient.Builder`를 준비해 Service 생성자에 전달합니다.
 
-다음은 [ChatService.java](../../labs/02-first-chat/src/main/java/com/example/ailearning/ChatService.java)에서 필드·생성자·호출 메서드를 함께 발췌한 코드입니다. package·import·`@Service`는 생략했습니다.
+다음은 [ChatService.java](../../labs/02-00-first-chat/src/main/java/com/example/ailearning/ChatService.java)에서 필드·생성자·호출 메서드를 함께 발췌한 코드입니다. package·import·`@Service`는 생략했습니다.
 
 ```java
 public class ChatService {
@@ -70,7 +70,7 @@ public class ChatService {
 먼저 원본 코드를 실행하고 다른 터미널에서 수정 전 응답을 저장합니다. 이미 서버가 실행 중이면 중복 실행하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
 ```bash
@@ -93,7 +93,7 @@ cat /tmp/learning03-before.txt
 기존 서버를 Ctrl+C로 종료하고 같은 터미널에서 다시 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
 다른 터미널에서 같은 질문을 보냅니다.
@@ -114,7 +114,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 되돌린 후 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 ## 4. 실험: 이전 대화를 보내지 않는 요청
@@ -122,7 +122,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 앞 실험의 서버를 Ctrl+C로 종료하고, system 줄을 제거한 원본 코드로 다시 시작합니다. 소스만 수정해도 이미 실행 중인 서버에 자동 반영되는 것은 아닙니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
 다른 터미널에서 다음 두 요청을 차례로 보냅니다.
@@ -140,7 +140,7 @@ curl -sS http://127.0.0.1:8091/api/chat \
 [00장 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.
 지금 실행한 `ask()`는 매 요청의 `message`만 전달합니다. 두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.
 모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.
-[FirstChatLocalModelTest](../../labs/02-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
+[FirstChatLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.
 [07장 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.
 
 ## 5. 이번 실습에서 프롬프트와 코드의 책임

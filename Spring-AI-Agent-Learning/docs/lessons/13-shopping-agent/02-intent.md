@@ -1,6 +1,6 @@
 # 13-2. 의도 추출과 허용 도구 선택
 
-**실행 코드·설정·테스트:** [labs/13-shopping-agent](../../../labs/13-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 바깥 순서는 Java, 안쪽 도구 선택은 모델이라는 구조를 설명합니다.
 
@@ -8,7 +8,7 @@
 
 ## 3.1 바깥 순서와 안쪽 모델 판단
 
-다음은 실제 `CounselService.execute()` 전체입니다. import와 나머지 클래스 코드는 [CounselService.java](../../../labs/13-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)에서 확인합니다.
+다음은 실제 `CounselService.execute()` 전체입니다. import와 나머지 클래스 코드는 [CounselService.java](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)에서 확인합니다.
 
 ```java
     private Draft execute(String question, List<Message> previous, RunState run) {

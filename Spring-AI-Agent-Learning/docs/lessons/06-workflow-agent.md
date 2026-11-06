@@ -16,7 +16,7 @@ Agent라는 말은 모델과 도구, 실행 흐름을 결합한 서비스의 동
 
 **정해진 절차와 예측 가능한 처리가 중요한 업무에는 Workflow를, 상황에 따라 조회 대상을 바꿔야 하는 부분에는 Agent를 적용할 수 있습니다.** 가격·예산 검증을 고정하면서 조회 선택을 모델에 맡기는 것이 이 단원의 혼합 방식입니다. “모델에게 어디까지 선택을 맡길 것인가?”가 기획 단계의 핵심 질문입니다.
 
-사용자 질문 한 번을 처리하면서 모델 요청과 도구 실행은 여러 번 발생할 수 있습니다. **호출 제한**은 허용한 실행 횟수를 넘지 않게 하는 장치이고, **타임아웃**은 모델 요청의 대기를 제한하는 설정입니다. **재시도**는 일시적인 실패에 추가 요청을 보내는 동작입니다. 06장의 확장 실습에서 이 설정들을 따로 확인합니다.
+사용자 질문 한 번을 처리하면서 모델 요청과 도구 실행은 여러 번 발생할 수 있습니다. **호출 제한**은 허용한 실행 횟수를 넘지 않게 하는 장치이고, **타임아웃**은 모델 요청의 대기를 제한하는 설정입니다. **재시도**는 일시적인 실패에 추가 요청을 보내는 동작입니다. 02·05장의 보충 실습에서 이 설정들을 따로 확인합니다.
 
 개념 참고: [Spring AI의 Workflow·Agent 구분](https://docs.spring.io/spring-ai/reference/api/effective-agents.html).
 
@@ -37,10 +37,8 @@ Agent라는 말은 모델과 도구, 실행 흐름을 결합한 서비스의 동
 | 1 | [Java가 순서를 정하는 Workflow](06-workflow-agent/01-workflow.md) | 모델로 요청 조건을 추출하고, 상품 검색·배송비 계산·예산 검증·답변 생성을 정해진 순서로 연결하는 Workflow를 구현합니다. |
 | 2 | [모델이 다음 도구를 고르는 Agent](06-workflow-agent/02-agent.md) | 모델에 목표와 도구를 제공하고, 모델이 필요한 도구와 인자를 선택해 요청을 처리하는 Agent를 구현합니다. |
 | 3 | [모델의 선택을 Java로 검증하기](06-workflow-agent/03-hybrid.md) | 모델이 상품 조회 도구를 선택하되, 배송비 포함 금액과 카테고리를 코드로 검증해 최종 추천 후보를 확정하는 혼합 방식을 구현합니다. |
-| 확장 1 | [도구 호출 횟수 제한](06-workflow-agent/04-tool-call-limits.md) | Spring AI 설정으로 도구별·전체 호출 횟수를 제한하고 초과 결과를 처리합니다. |
-| 확장 2 | [모델 요청 타임아웃과 재시도](06-workflow-agent/05-model-timeout-retry.md) | 클라이언트 설정을 바꾸고 지연·오류 응답에서 실제 요청 횟수를 확인합니다. |
 
-기본 1~3은 `06-workflow-agent`를 사용합니다. 확장 1·2는 기본 모듈에 의존하지 않는 별도 실행 모듈이며, 기본 흐름을 익힌 뒤 선택합니다. 12장에서는 이 확장 실습을 실패 평가와 관측에 다시 활용합니다.
+1~3은 `06-00-workflow-agent`를 사용합니다. 실행 제한을 확인하려면 [05 보충 5: 도구 호출 횟수 제한](05-tool-calling/05-tool-call-limits.md)과 [02 보충 5: 모델 요청 타임아웃과 재시도](02-first-call/05-model-timeout-retry.md)를 참고하세요. 두 보충 실습은 12장에서 실패 평가와 관측에 다시 활용합니다.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## Workflow와 Agent 비교 수업
@@ -89,7 +87,7 @@ Agent의 프롬프트:
 5. 혼합 구조 구성과 설명. 조회 선택은 모델, 가격 검증은 코드.
 
 기록은 실제로 확인할 수 있는 도구 호출과 결과를 사용합니다. 모델의 내부 사고 과정을 요구하지 않습니다.
-기본 비교에서는 테스트의 모델 요청 목록과 도구 실행 기록을 확인합니다. 도구 호출 제한과 모델 요청 타임아웃·재시도는 06장 확장의 독립 모듈에서 실험합니다. 모델 요청 타임아웃은 Workflow 전체의 실행 시간 제한과 구분합니다.
+기본 비교에서는 테스트의 모델 요청 목록과 도구 실행 기록을 확인합니다. 도구 호출 제한은 05장 보충, 모델 요청 타임아웃·재시도는 02장 보충의 독립 모듈에서 실험합니다. 모델 요청 타임아웃은 Workflow 전체의 실행 시간 제한과 구분합니다.
 
 완료 질문:
 
@@ -100,11 +98,11 @@ Agent의 프롬프트:
 
 ## 실행 코드와 테스트
 
-[labs/06-workflow-agent의 실행 안내](../../labs/06-workflow-agent/README.md)를 확인합니다.
+[labs/06-00-workflow-agent의 실행 안내](../../labs/06-00-workflow-agent/README.md)를 확인합니다.
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:06-workflow-agent:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootRun
 ```

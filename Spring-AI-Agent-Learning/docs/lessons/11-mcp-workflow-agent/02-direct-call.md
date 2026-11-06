@@ -14,7 +14,7 @@ curl http://127.0.0.1:8106/api/mcp/shipping-policy
 
 ## 도구 목록을 실행 가능한 객체로 연결하기
 
-[전체 소스: ShoppingMcpGateway.java](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/ShoppingMcpGateway.java)
+[전체 소스: ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/ShoppingMcpGateway.java)
 
 서버 도구마다 callback 하나를 만들고, 각 callback이 같은 MCP 클라이언트를 통해 호출을 전달합니다.
 

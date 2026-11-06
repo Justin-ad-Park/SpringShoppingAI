@@ -22,8 +22,8 @@ IDE에서는 SpringShoppingAI 루트를 Gradle 프로젝트로 열거나 새로�
 
 ```bash
 # 모든 명령은 SpringShoppingAI 루트에서 실행
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
 bootRun에는 OPENAI_API_KEY와 OPENAI_CHAT_MODEL 설정이 필요합니다. test에는 실제 키가 필요 없습니다.

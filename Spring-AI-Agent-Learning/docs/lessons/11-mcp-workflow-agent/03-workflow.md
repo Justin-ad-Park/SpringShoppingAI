@@ -1,7 +1,7 @@
 # 11-3. Workflow: Java가 도구 호출 순서를 정하기
 
 목표는 **모델이 추출한 조건을 Java가 받아 검색 → 계산을 정해진 순서로 실행하는 것**입니다.
-04장의 구조화 응답을 사용하는 [SearchConditionExtractor](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
+04장의 구조화 응답을 사용하는 [SearchConditionExtractor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
 
 | 필드 | 의미 |
 |---|---|
@@ -26,7 +26,7 @@ sequenceDiagram
 
 ## 서비스 전체 코드
 
-[전체 소스: McpWorkflowService.java](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpWorkflowService.java)
+[전체 소스: McpWorkflowService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpWorkflowService.java)
 
 ```java
 package com.example.ailearning.l11mcp;

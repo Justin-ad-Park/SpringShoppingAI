@@ -1,6 +1,6 @@
 # 12-3. 같은 응답에서 사용량 읽기
 
-**실행 코드·설정·테스트:** [labs/12-evaluation](../../../labs/12-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/12-00-evaluation](../../../labs/12-00-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 모델 응답에서 입력·출력 토큰 사용량을 읽는 방법을 이해합니다.
 
@@ -25,7 +25,7 @@ var usage = response
         .getUsage();
 ```
 
-위 코드는 새 API를 설명하기 위한 부분 예제입니다. 질문과 근거를 조립하는 실제 실행 코드는 [RagService.answerInternal()](../../../labs/12-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)에 있습니다. 실제 소스는 `questionAndContext` 변수 대신 문자열을 직접 조립합니다.
+위 코드는 새 API를 설명하기 위한 부분 예제입니다. 질문과 근거를 조립하는 실제 실행 코드는 [RagService.answerInternal()](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)에 있습니다. 실제 소스는 `questionAndContext` 변수 대신 문자열을 직접 조립합니다.
 토큰을 읽으려고 모델을 두 번 호출하지 않습니다.
 
 ### 사용량을 응답 필드로 옮기기

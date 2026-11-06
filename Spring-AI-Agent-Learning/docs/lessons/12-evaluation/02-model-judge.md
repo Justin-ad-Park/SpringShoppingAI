@@ -1,6 +1,6 @@
 # 12-2. Evaluator로 답변을 평가하는 모델 호출하기
 
-**실행 코드·설정·테스트:** [labs/12-model-evaluation](../../../labs/12-model-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/12-02-model-evaluation](../../../labs/12-02-model-evaluation/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 선수 지식: 12-1의 고정 사례·기대 값 평가, 03의 ChatClient.
 이번 목표는 **질문·근거·후보 답변을 평가 모델에 전달하고 판정값을 읽는 것**입니다.
@@ -38,7 +38,7 @@ sequenceDiagram
 
 ## Service를 한 메서드씩 읽기
 
-[AnswerEvaluator.java](../../../labs/12-model-evaluation/src/main/java/com/example/ailearning/l12judge/AnswerEvaluator.java) 전체입니다.
+[AnswerEvaluator.java](../../../labs/12-02-model-evaluation/src/main/java/com/example/ailearning/l12judge/AnswerEvaluator.java) 전체입니다.
 
 ```java
 package com.example.ailearning.l12judge;
@@ -92,14 +92,14 @@ Controller는 두 요청을 쉽게 비교하도록 같은 Candidate JSON을 받�
 먼저 로컬 고정 모델 테스트를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-model-evaluation:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:bootJar
 ```
 
 실제 모델은 루트 `.env`의 OPENAI_API_KEY, OPENAI_MODEL을 사용합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-model-evaluation:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:bootRun
 ```
 
 다른 터미널에서:

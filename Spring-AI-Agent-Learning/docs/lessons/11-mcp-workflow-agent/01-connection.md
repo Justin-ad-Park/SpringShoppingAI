@@ -35,14 +35,14 @@ sequenceDiagram
 ```
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-mcp-workflow-agent:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:bootRun
 ```
 
 서버 기본 주소는 `http://127.0.0.1:8082`, 학습 API는 `http://127.0.0.1:8106`입니다. 종료는 각 터미널에서 Ctrl+C입니다.
 
 ## 클라이언트 설정 읽기
 
-[application.yml](../../../labs/11-mcp-workflow-agent/src/main/resources/application.yml)의 MCP 부분입니다.
+[application.yml](../../../labs/11-00-mcp-workflow-agent/src/main/resources/application.yml)의 MCP 부분입니다.
 
 ```yaml
 spring:

@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * 텍스트별로 지정한 테스트 벡터를 OpenAI 임베딩 응답 형식으로 반환한다. 실제 임베딩 모델을 호출하지 않는다.
- * <p>사용 단원: 09 임베딩·검색, 10 RAG와 RAG Advisor, 12-evaluation, 13 종합 실습.
+ * <p>사용 단원: 09 임베딩·검색, 10 RAG와 RAG Advisor, 12-00-evaluation, 13 종합 실습.
  * 벡터 값과 분기 함수는 각 단원 테스트에서 정하며 채팅 초기화는 이 객체의 설정·기록을 지우지 않는다.
  */
 public final class OpenAiEmbeddingStub {
@@ -29,7 +29,7 @@ public final class OpenAiEmbeddingStub {
 
     /**
      * 입력 텍스트에 대응하는 float 배열을 반환할 함수를 등록한다. 상품·정책별 벡터 정의는 단원에 둔다.
-     * <p>사용 단원: 09, 10-rag·10-rag-advisor, 12-evaluation, 12.
+     * <p>사용 단원: 09, 10-00-rag·10-04-rag-advisor, 12-00-evaluation, 12.
      * 문서 초기 적재가 Spring 컨텍스트 생성 중 실행될 수 있어 해당 단원은 서버 준비 시 함수를 지정한다.
      */
     public OpenAiEmbeddingStub setVectorFunction(Function<String, float[]> vectorForText) {
@@ -49,7 +49,7 @@ public final class OpenAiEmbeddingStub {
     /**
      * 단일 문자열 또는 문자열 배열 입력에 벡터 함수를 적용해 OpenAI 형식의 임베딩 본문을 만든다.
      * 같은 배열을 재사용하는 함수도 지원하도록 결과를 복사하며, 함수를 지정하지 않았다면 실패한다.
-     * <p>사용 단원: 09·10·12-evaluation·12의 임베딩 HTTP 요청에서 내부적으로 호출한다.
+     * <p>사용 단원: 09·10·12-00-evaluation·12의 임베딩 HTTP 요청에서 내부적으로 호출한다.
      */
     private StubHttpServer.Response createEmbeddingHttpResponse(JsonNode request) {
         Function<String, float[]> embeddingVectorForRequestText = embeddingVectorForText;

@@ -1,0 +1,19 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8111}
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: 02-05-model-timeout-retry
+  ai:
+    model:
+      embedding: none
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      timeout: 30s
+      max-retries: 1
+      chat:
+        options:
+          model: ${OPENAI_MODEL}

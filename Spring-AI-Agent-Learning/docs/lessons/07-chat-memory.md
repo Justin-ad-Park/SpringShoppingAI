@@ -58,11 +58,11 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 ## 실행 코드와 테스트
 
-[labs/07-chat-memory의 실행 안내](../../labs/07-chat-memory/README.md)를 확인합니다.
+[labs/07-00-chat-memory의 실행 안내](../../labs/07-00-chat-memory/README.md)를 확인합니다.
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:07-chat-memory:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootRun
 ```

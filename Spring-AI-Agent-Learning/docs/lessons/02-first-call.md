@@ -32,7 +32,7 @@ JSON 요청 객체를 추가하기 전에 흐름에 집중하도록 요청과 �
 
 ## 1. 시작 클래스
 
-파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/FirstChatApplication.java`
+파일: `Spring-AI-Agent-Learning/labs/02-00-first-chat/src/main/java/com/example/ailearning/FirstChatApplication.java`
 
 ```java
 package com.example.ailearning;
@@ -54,7 +54,7 @@ public class FirstChatApplication {
 
 ## 2. HTTP 요청을 받는 Controller
 
-파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/ChatController.java`
+파일: `Spring-AI-Agent-Learning/labs/02-00-first-chat/src/main/java/com/example/ailearning/ChatController.java`
 
 ```java
 package com.example.ailearning;
@@ -93,7 +93,7 @@ public class ChatController {
 
 ## 3. 모델을 호출하는 Service
 
-파일: `Spring-AI-Agent-Learning/labs/02-first-chat/src/main/java/com/example/ailearning/ChatService.java`
+파일: `Spring-AI-Agent-Learning/labs/02-00-first-chat/src/main/java/com/example/ailearning/ChatService.java`
 
 ```java
 package com.example.ailearning;
@@ -180,7 +180,8 @@ HTTP 400을 기대합니다. 모델 호출 전에 애플리케이션이 입력�
 따라서 제공 업체의 401 등이 클라이언트에는 일반 500으로 보일 수 있습니다. 서버 로그에서 원인을 확인합니다.
 로그를 공유할 때는 키와 민감한 질문 내용을 제외하세요.
 현재 설정에도 재시도 0회와 요청 시간 제한 30초가 적용되어 있습니다.
-후속 평가·운영 수업에서는 재시도 정책, 전체 실행 시간 제한, 오류 응답 설계를 더 자세히 배웁니다.
+통신 타임아웃과 재시도는 [02 보충 5: 모델 요청 타임아웃과 재시도](02-first-call/05-model-timeout-retry.md)에서 별도 모듈로 실험합니다. 첫 호출을 익힌 뒤 선택하세요.
+후속 평가·운영 수업에서는 전체 실행 시간 제한과 오류 응답 설계를 더 자세히 배웁니다.
 
 ## 확인 질문
 

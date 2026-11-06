@@ -18,7 +18,7 @@ MODEL
 
 ## 2. 서비스에서 500 지정하기
 
-[CriteriaService](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 실제 코드 발췌입니다.
+[CriteriaService](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 실제 코드 발췌입니다.
 
 ```java
 try {
@@ -50,7 +50,7 @@ try {
 
 서비스만 Java 코드로 직접 호출하면 예외가 전달됩니다. HTTP 상태를 확인하려면 아래 테스트처럼 HTTP 요청으로 호출해야 합니다.
 
-[StructuredOutputLocalModelTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `잘못된_JSON_응답은_변환_실패로_처리한다()`는 고정 응답을 설정한 뒤 다음을 확인합니다.
+[StructuredOutputLocalModelTest](../../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `잘못된_JSON_응답은_변환_실패로_처리한다()`는 고정 응답을 설정한 뒤 다음을 확인합니다.
 
 ```java
 assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(500);

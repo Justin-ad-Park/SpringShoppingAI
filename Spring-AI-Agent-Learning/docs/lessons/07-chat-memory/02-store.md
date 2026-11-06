@@ -1,6 +1,6 @@
 # 07-2. 메시지 조회·전달·저장 연결하기
 
-**실행 코드·설정·테스트:** [labs/07-chat-memory](../../../labs/07-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/07-00-chat-memory](../../../labs/07-00-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 이전 대화를 조회해 새 질문과 함께 전달하고, 새 답변을 저장하는 흐름을 연결합니다.
 
@@ -8,11 +8,11 @@
 
 ## 코드 읽는 순서
 
-모듈: `labs/07-chat-memory`, 패키지: `com.example.ailearning.l07memory`.
+모듈: `labs/07-00-chat-memory`, 패키지: `com.example.ailearning.l07memory`.
 
-1. [MessageView](../../../labs/07-chat-memory/src/main/java/com/example/ailearning/l07memory/MessageView.java), [MemoryReply](../../../labs/07-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryReply.java): HTTP에서 관찰할 record
-2. [MemoryChatService](../../../labs/07-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryChatService.java): 조회 → 프롬프트 → 호출 → 성공 시 저장
-3. [MemoryController](../../../labs/07-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryController.java): 세션 소유자와 대화 ID 연결
+1. [MessageView](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MessageView.java), [MemoryReply](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryReply.java): HTTP에서 관찰할 record
+2. [MemoryChatService](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryChatService.java): 조회 → 프롬프트 → 호출 → 성공 시 저장
+3. [MemoryController](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryController.java): 세션 소유자와 대화 ID 연결
 
 ### 서비스 전체 코드
 

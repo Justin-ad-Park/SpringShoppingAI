@@ -22,7 +22,7 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 실습 안내
 
-**실행 코드·설정·테스트:** [labs/04-structured-output](../../labs/04-structured-output/README.md)
+**실행 코드·설정·테스트:** [labs/04-00-structured-output](../../labs/04-00-structured-output/README.md)
 
 **이번 목표:** 모델 응답을 record로 받고, 변환된 값을 Java 코드로 검증하는 흐름을 이해합니다.
 
@@ -36,7 +36,7 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 1. 결과를 담을 record
 
-[SearchCriteria.java](../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 전체 코드입니다.
+[SearchCriteria.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 전체 코드입니다.
 `category`는 상품 카테고리, `maxPrice`는 상품 한 개의 가격 상한(원)입니다.
 
 ```java
@@ -63,7 +63,7 @@ public record SearchCriteria(String category, Integer maxPrice) {
 
 ## 2. 문자열과 record로 응답받기
 
-[CriteriaService.java](../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 전체 코드입니다.
+[CriteriaService.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 전체 코드입니다.
 같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extract()`는 record로 받아 검증합니다.
 
 ```java
@@ -156,8 +156,8 @@ sequenceDiagram
 로컬 테스트에는 실제 키가 필요 없고, `bootRun`으로 호출하는 외부 모델에는 비용이 발생할 수 있습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:bootRun
 ```
 
 다른 터미널에서 같은 질문을 두 경로에 보냅니다.
@@ -195,7 +195,7 @@ MODEL
 테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.
 테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04장에서-먼저-읽을-코드)에 있습니다.
 
-[StructuredOutputLocalModelTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
+[StructuredOutputLocalModelTest](../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
 
 | 경우 | 결과 |
 |---|---|
@@ -223,10 +223,10 @@ MODEL
 
 ## 실제 OpenAI로 확인하기
 
-[StructuredOutputOpenAiLiveTest](../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputOpenAiLiveTest.java)는 같은 질문을 문자열과 record로 받아 케이스 이름과 함께 출력합니다.
+[StructuredOutputOpenAiLiveTest](../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputOpenAiLiveTest.java)는 같은 질문을 문자열과 record로 받아 케이스 이름과 함께 출력합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:04-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
+./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
 ```
 
 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용하며 실제 API 사용량이 발생합니다. 로컬 테스트의 고정 응답과 달리 모델의 추출 결과도 검증합니다.

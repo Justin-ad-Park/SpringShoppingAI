@@ -1,6 +1,6 @@
 # 09-3. 검색 결과와 필터 실험
 
-**실행 코드·설정·테스트:** [labs/09-embeddings-search](../../../labs/09-embeddings-search/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/09-00-embeddings-search](../../../labs/09-00-embeddings-search/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 질문·결과 개수·유사도 조건을 바꾸며 검색 결과를 비교합니다.
 
@@ -13,8 +13,8 @@
 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:test --tests com.example.ailearning.l09search.SearchLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:09-embeddings-search:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests com.example.ailearning.l09search.SearchLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootRun
 curl -sS http://127.0.0.1:8099/api/embedding \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비'
 curl --get http://127.0.0.1:8099/api/search \
@@ -38,7 +38,7 @@ bootRun은 **시작 시 문서 임베딩부터 실제 API를 호출**합니다. 
 카테고리가 잘못되거나 topK/threshold가 범위를 벗어나면 400입니다.
 threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0.5는 서비스 품질을 보장하는 값이 아닙니다.
 
-[SearchLocalModelTest](../../../labs/09-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchLocalModelTest.java)는 실제 어댑터와 저장소를 사용합니다.
+[SearchLocalModelTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchLocalModelTest.java)는 실제 어댑터와 저장소를 사용합니다.
 테스트 서버는 정해진 단어군에 3차원 직교 벡터를 반환해 적재·검색·필터를 재현합니다.
 이는 실제 모델의 의미 검색 성능을 평가하는 테스트가 아닙니다. 실제 모델 품질은 별도 질문으로 확인해야 합니다.
 

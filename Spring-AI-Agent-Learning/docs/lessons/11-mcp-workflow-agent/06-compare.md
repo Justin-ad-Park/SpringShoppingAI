@@ -18,10 +18,10 @@
 
 ## 로컬 통합 테스트
 
-[테스트 전체 소스](../../../labs/11-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)를 실행합니다.
+[테스트 전체 소스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-mcp-workflow-agent:test --tests '*LocalModelTest' --tests '*UnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*LocalModelTest' --tests '*UnitTest'
 ```
 
 | 고정 모델로 재현하는 상황 | 확인하는 동작 |
@@ -42,10 +42,10 @@
 
 ## 실제 OpenAI 테스트
 
-루트 `.env` 설정을 준비한 뒤 [Live 클래스](../../../labs/11-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)를 실행합니다.
+루트 `.env` 설정을 준비한 뒤 [Live 클래스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:11-mcp-workflow-agent:test --tests '*OpenAiLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*OpenAiLiveTest'
 ```
 
 실제 모델 선택은 비결정적이므로 테스트가 실패하면 출력의 도구 인자와 결과부터 확인합니다. 금액 assertions는 고정된 서버 상품·배송 정책 기준입니다.

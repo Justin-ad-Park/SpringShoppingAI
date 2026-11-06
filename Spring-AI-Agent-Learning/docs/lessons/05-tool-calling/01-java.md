@@ -1,6 +1,6 @@
 # 05-1. 모델 없이 상품 서비스를 호출하기
 
-**실행 코드·설정·테스트:** [labs/05-tool-calling](../../../labs/05-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 가격과 배송비의 출처를 일반 Java 코드에서 찾습니다.
 
@@ -40,7 +40,7 @@ classDiagram
     ProductPriceDetails --> Product : 상품 정보 포함
 ```
 
-[ProductCatalog.java](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 전체 코드입니다.
+[ProductCatalog.java](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l05tools;
@@ -86,15 +86,15 @@ public class ProductCatalog {
 ```
 
 `search()`는 일반 Java 필터입니다. `calculatePriceDetails()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
-[Product](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/Product.java)와 [ProductPriceDetails](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductPriceDetails.java)는 04장에서 배운 record입니다.
+[Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/Product.java)와 [ProductPriceDetails](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductPriceDetails.java)는 04장에서 배운 record입니다.
 
 
 ## 상품 기능만 테스트하기
 
-[ProductCatalogUnitTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ProductCatalogUnitTest.java)는 `new ProductCatalog()`로 객체를 만들고 검색 조건·상품 ID 검증과 무료 배송을 검사합니다. Spring이나 모델 서버를 띄울 필요가 없습니다.
+[ProductCatalogUnitTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/ProductCatalogUnitTest.java)는 `new ProductCatalog()`로 객체를 만들고 검색 조건·상품 ID 검증과 무료 배송을 검사합니다. Spring이나 모델 서버를 띄울 필요가 없습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
 ```
 
 도구 호출과 HTTP 연결은 별도의 `ToolCallingLocalModelTest`에서 확인합니다.

@@ -1,6 +1,6 @@
 # 12-4. Actuator로 모델 호출과 토큰 지표 관찰하기
 
-**실행 코드·설정·테스트:** [labs/12-observability](../../../labs/12-observability/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/12-04-observability](../../../labs/12-04-observability/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 선수 지식: 02의 첫 호출, 12-3의 응답 usage.
 이번 목표는 **Service에 계측 코드를 추가하지 않고 Spring AI 기본 지표를 조회**하는 것입니다.
@@ -21,7 +21,7 @@
 
 ## Java 코드는 첫 호출 그대로
 
-[ObservedChatService](../../../labs/12-observability/src/main/java/com/example/ailearning/l12observe/ObservedChatService.java) 전체입니다.
+[ObservedChatService](../../../labs/12-04-observability/src/main/java/com/example/ailearning/l12observe/ObservedChatService.java) 전체입니다.
 
 ```java
 package com.example.ailearning.l12observe;
@@ -86,9 +86,9 @@ sequenceDiagram
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-observability:test --tests com.example.ailearning.l12observe.ObservationLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-observability:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:12-observability:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.ObservationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootRun
 ```
 
 실제 실행은 루트 `.env`의 OPENAI_API_KEY, OPENAI_MODEL을 사용합니다.

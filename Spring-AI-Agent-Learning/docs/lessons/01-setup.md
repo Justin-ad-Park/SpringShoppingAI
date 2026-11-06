@@ -41,13 +41,13 @@ IDE에서는 SpringShoppingAI의 `settings.gradle`을 열고 Gradle JVM을 Java 
 루트 [settings.gradle](../../../settings.gradle)은 실습을 등록합니다. 처음에는 첫 실습의 등록 한 줄만 읽습니다. 아래 코드는 파일 전체가 아닌 발췌입니다.
 
 ```groovy
-include 'Spring-AI-Agent-Learning:labs:02-first-chat'
+include 'Spring-AI-Agent-Learning:labs:02-00-first-chat'
 ```
 
-`:Spring-AI-Agent-Learning:labs:02-first-chat:test`는 교육 폴더의 첫 실습만 테스트한다는 뜻입니다. 다른 서비스를 시작하지 않습니다.
+`:Spring-AI-Agent-Learning:labs:02-00-first-chat:test`는 교육 폴더의 첫 실습만 테스트한다는 뜻입니다. 다른 서비스를 시작하지 않습니다.
 등록과 공통 버전은 저장소가 관리하고, 교육용 코드는 별도 폴더에 둡니다.
 
-`Spring-AI-Agent-Learning/labs/02-first-chat/build.gradle`의 의존성 부분입니다.
+`Spring-AI-Agent-Learning/labs/02-00-first-chat/build.gradle`의 의존성 부분입니다.
 파일 아래의 작업 디렉터리·테스트 태스크 설정은 제공된 실행 보조 코드로 사용하면 됩니다.
 
 ```groovy
@@ -71,11 +71,11 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 성공 시 마지막에 `BUILD SUCCESSFUL`이 나옵니다.
-보고서는 `Spring-AI-Agent-Learning/labs/02-first-chat/build/reports/tests/test/index.html`을 브라우저로 열어 확인합니다.
+보고서는 `Spring-AI-Agent-Learning/labs/02-00-first-chat/build/reports/tests/test/index.html`을 브라우저로 열어 확인합니다.
 
 테스트 경로는 다음과 같습니다.
 
@@ -173,7 +173,7 @@ spring:
 | `JAVA_HOME`/Java 버전 오류 | 터미널 `java -version`, IDE의 Gradle JVM, Java 21 설치 |
 | 의존성 다운로드 실패 | 인터넷, 프록시, Maven Central·Gradle 배포 서버 접근 |
 | 키·모델 placeholder 오류 | 루트 `.env`의 변수 이름과 IDE 작업 디렉터리 확인. 키 값은 출력하지 않기 |
-| 포트 충돌 | 다음 실행에 `LEARNING_PORT=8092 ./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:bootRun` 사용 |
+| 포트 충돌 | 다음 실행에 `LEARNING_PORT=8092 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun` 사용 |
 
 기본 로컬 MockModel 테스트까지는 API 키가 없어도 됩니다. 다음 장의 실제 호출은 키와 모델 접근 권한이 필요합니다.
 

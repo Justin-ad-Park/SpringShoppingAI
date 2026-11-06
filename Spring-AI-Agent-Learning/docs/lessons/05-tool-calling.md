@@ -47,17 +47,18 @@ Spring AI는 도구의 설명을 모델에 전달하고, 모델이 요청한 기
 | 2 | [Java 메서드를 도구로 제공하기](05-tool-calling/02-tools.md) | 도구 설명 등록과 실제 메서드 실행을 구분합니다. |
 | 3 | [도구 결과가 모델로 돌아가는 과정](05-tool-calling/03-loop.md) | 한 번의 `.call().content()` 실행에서 여러 모델 요청이 생기는 이유를 설명합니다. |
 | 4 (선택) | [Spy로 실제 도구 호출 검증하기](05-tool-calling/04-spy-and-inorder.md) | Spy 준비 조건과 호출 순서·인자 검증을 실제 실행과 구분합니다. |
+| 5 (선택) | [도구 호출 횟수 제한](05-tool-calling/05-tool-call-limits.md) | 반복되는 도구 실행을 상한으로 차단하고 제한 초과 응답을 구분합니다. |
 
-각 소수업은 이 단원의 실습 모듈을 함께 사용합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
+1~4는 `05-00-tool-calling`, 5는 독립된 `05-05-tool-call-limits` 모듈을 사용합니다. 도구 호출과 결과 전달 흐름을 익힌 뒤 5를 선택하세요.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
 
-[labs/05-tool-calling의 실행 안내](../../labs/05-tool-calling/README.md)를 확인합니다.
+[labs/05-00-tool-calling의 실행 안내](../../labs/05-00-tool-calling/README.md)를 확인합니다.
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:bootRun
 ```

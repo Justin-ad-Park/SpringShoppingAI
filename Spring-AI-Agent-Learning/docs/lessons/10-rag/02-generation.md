@@ -1,6 +1,6 @@
 # 10-2. 검색 결과를 프롬프트에 담기
 
-**실행 코드·설정·테스트:** [labs/10-rag](../../../labs/10-rag/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/10-00-rag](../../../labs/10-00-rag/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 검색 → 근거 조립 → 모델 호출을 코드에서 연결합니다.
 
@@ -38,9 +38,9 @@ sequenceDiagram
 
 ## 1. 관련 문서를 검색하기
 
-아래 코드는 [RagService.java](../../../labs/10-rag/src/main/java/com/example/ailearning/l10rag/RagService.java)의 **메서드와 일부 구문 발췌**입니다.
+아래 코드는 [RagService.java](../../../labs/10-00-rag/src/main/java/com/example/ailearning/l10rag/RagService.java)의 **메서드와 일부 구문 발췌**입니다.
 `store`는 생성자에서 문서를 적재한 `SimpleVectorStore`, `client`는 Builder로 준비한 ChatClient입니다.
-[Source](../../../labs/10-rag/src/main/java/com/example/ailearning/l10rag/Source.java)는 문서의 ID와 원문 등을 담는 record입니다.
+[Source](../../../labs/10-00-rag/src/main/java/com/example/ailearning/l10rag/Source.java)는 문서의 ID와 원문 등을 담는 record입니다.
 
 ```java
 public List<Source> retrieve(String question) {

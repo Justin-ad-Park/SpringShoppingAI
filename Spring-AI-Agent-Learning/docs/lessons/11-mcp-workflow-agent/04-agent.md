@@ -24,7 +24,7 @@ sequenceDiagram
 
 ## 서비스 전체 코드
 
-[전체 소스: McpAgentService.java](../../../labs/11-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpAgentService.java)
+[전체 소스: McpAgentService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpAgentService.java)
 
 ```java
 package com.example.ailearning.l11mcp;

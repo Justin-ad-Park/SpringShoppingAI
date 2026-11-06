@@ -1,6 +1,6 @@
 # 10-1. 문서를 읽고 검색 준비하기
 
-**실행 코드·설정·테스트:** [labs/10-rag](../../../labs/10-rag/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/10-00-rag](../../../labs/10-00-rag/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 미리 하는 문서 적재와 질문마다 하는 검색을 구분합니다.
 
@@ -27,7 +27,7 @@ flowchart LR
     E --> V[SimpleVectorStore에 저장]
 ```
 
-[PolicyLoader.java](../../../labs/10-rag/src/main/java/com/example/ailearning/l10rag/PolicyLoader.java)의 전체 코드입니다.
+[PolicyLoader.java](../../../labs/10-00-rag/src/main/java/com/example/ailearning/l10rag/PolicyLoader.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l10rag;

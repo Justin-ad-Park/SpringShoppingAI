@@ -4,7 +4,7 @@
 `ChatService.ask()`의 네 줄입니다. 테스트는 제공된 검증 도구로 실행하면 충분하며,
 가짜 HTTP 서버를 직접 구현하는 것은 이번 학습 목표에 포함하지 않습니다.
 
-테스트도 읽고 싶다면 [FirstChatLocalModelTest.java](../../../labs/02-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)에서 다음 순서로 확인하세요.
+테스트도 읽고 싶다면 [FirstChatLocalModelTest.java](../../../labs/02-00-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)에서 다음 순서로 확인하세요.
 
 1. `modelProperties()`: 테스트용 연결 설정
 2. `로컬_모델에_질문을_보내고_고정_응답을_받는다()`: 질문이 전달되고 응답 문자열이 반환되는지 확인
@@ -51,7 +51,7 @@
 저장소 루트에서 아래 명령으로 해당 클래스만 실행할 수 있습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
 [이전: 생성자 주입](01-constructor-injection.md) · [다음: 실제 모델 호출](03-live-model-call.md) · [02장 본문](../02-first-call.md)

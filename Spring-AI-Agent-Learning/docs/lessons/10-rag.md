@@ -38,24 +38,24 @@ flowchart LR
 
 | 순서 | 소수업 | 실행 모듈 | 완료 기준 |
 |---|---|---|---|
-| 1 | [문서를 읽고 검색 준비하기](10-rag/01-indexing.md) | `10-rag` | 적재와 질문 시 검색 구분 |
-| 2 | [검색 결과를 프롬프트에 담기](10-rag/02-generation.md) | `10-rag` | 검색·근거 조립·생성 호출 연결 |
-| 3 | [출처 확인과 답변 보류](10-rag/03-evidence.md) | `10-rag` | 출처 ID 확인과 내용 검증 구분 |
-| 4 | [표준 Reader·Splitter로 적재](10-rag/04-standard-indexing.md) | `10-rag-advisor` | 읽기·분할·저장 역할 대응 |
-| 5 | [QuestionAnswerAdvisor로 연결](10-rag/05-standard-advisor.md) | `10-rag-advisor` | 문맥 전달 자동화와 업무 검증 구분 |
+| 1 | [문서를 읽고 검색 준비하기](10-rag/01-indexing.md) | `10-00-rag` | 적재와 질문 시 검색 구분 |
+| 2 | [검색 결과를 프롬프트에 담기](10-rag/02-generation.md) | `10-00-rag` | 검색·근거 조립·생성 호출 연결 |
+| 3 | [출처 확인과 답변 보류](10-rag/03-evidence.md) | `10-00-rag` | 출처 ID 확인과 내용 검증 구분 |
+| 4 | [표준 Reader·Splitter로 적재](10-rag/04-standard-indexing.md) | `10-04-rag-advisor` | 읽기·분할·저장 역할 대응 |
+| 5 | [QuestionAnswerAdvisor로 연결](10-rag/05-standard-advisor.md) | `10-04-rag-advisor` | 문맥 전달 자동화와 업무 검증 구분 |
 
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
 
-[labs/10-rag의 실행 안내](../../labs/10-rag/README.md)를 확인합니다.
+[labs/10-00-rag의 실행 안내](../../labs/10-00-rag/README.md)를 확인합니다.
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:test --tests com.example.ailearning.l10rag.RagLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:test --tests com.example.ailearning.l10rag.RagLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:bootRun
 ```
 
 표준 API 추가 수업은 표에 적힌 별도 모듈의 README 명령을 사용합니다.

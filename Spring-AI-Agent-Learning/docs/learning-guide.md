@@ -60,8 +60,8 @@ AI 기능을 기획하는 구성원은 [00장](lessons/00-llm-and-spring-ai.md)�
 |---|---|
 | Service의 프롬프트·도구 등록·검색 호출 | 직접 읽고 한 줄씩 설명 |
 | Controller·입력 검증 | 익숙한 Spring 연결로 확인 |
-| Spring AI 도구 호출 상한 | [06 확장 1](lessons/06-workflow-agent/04-tool-call-limits.md)에서 설정과 제한 초과 응답 확인 |
-| 모델 연결 타임아웃·재시도 | [06 확장 2](lessons/06-workflow-agent/05-model-timeout-retry.md)에서 설정 변경과 실제 HTTP 요청 수 확인. 12장에서 실패 분석에 재활용 |
+| Spring AI 도구 호출 상한 | [05 보충 5](lessons/05-tool-calling/05-tool-call-limits.md)에서 설정과 제한 초과 응답 확인 |
+| 모델 연결 타임아웃·재시도 | [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md)에서 설정 변경과 실제 HTTP 요청 수 확인. 12장에서 실패 분석에 재활용 |
 | `test-support`의 Mock 서버·결과 출력 | 공통 검증 도구. 단원에서는 지정한 응답·실제 결과·assertion부터 읽기 |
 | 통합 단원의 여러 도구·메모리 조합 | 각 기능을 따로 실행한 뒤 책임 지도로 확인 |
 
@@ -87,7 +87,7 @@ Mock 테스트는 프롬프트 구성·도구 실행·값 검증 같은 Java 코
 임베딩을 사용하는 실습만 `OPENAI_EMBEDDING_MODEL`을 추가로 사용합니다.
 09 검색 실습은 임베딩만 사용하므로 채팅 모델이 필요 없습니다.
 두 업체를 사용하는 선택 실습은 Anthropic 설정도 필요합니다. 전체 대응은 [실행 설정 안내](run-guide.md)를 참고하세요.
-`02-multiple-models`에도 별도 `MultipleProvidersLiveTest`가 있으며 실제 OpenAI·Anthropic을 호출합니다.
+`02-04-multiple-models`에도 별도 `MultipleProvidersLiveTest`가 있으며 실제 OpenAI·Anthropic을 호출합니다.
 각 모듈의 전체 test에는 Live 클래스가 포함되므로, 로컬 테스트만 원하면 클래스 필터를 사용합니다.
 이 두 Live 클래스를 제외한 자동 테스트는 파일 읽기를 끄고 로컬 고정 모델 서버를 사용합니다.
 

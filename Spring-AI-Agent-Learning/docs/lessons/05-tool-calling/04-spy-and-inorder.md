@@ -1,6 +1,6 @@
 # 05-4. Spy로 실제 도구 호출 순서와 인자 검증하기
 
-[05-3 도구 결과가 모델로 돌아가는 과정](03-loop.md)을 읽은 뒤 보는 **선택 보충**입니다. [ToolCallingOpenAiLiveTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingOpenAiLiveTest.java)의 실제 도구 호출 검증 코드를 설명합니다.
+[05-3 도구 결과가 모델로 돌아가는 과정](03-loop.md)을 읽은 뒤 보는 **선택 보충**입니다. [ToolCallingOpenAiLiveTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingOpenAiLiveTest.java)의 실제 도구 호출 검증 코드를 설명합니다.
 
 **이번 목표:** 실제 도구 실행과 실행 후 호출 기록 검증을 구분하고, `@MockitoSpyBean`·`InOrder`·`toolCallOrder`의 역할을 이해합니다.
 
@@ -44,7 +44,7 @@ class ToolCallingOpenAiLiveTest {
 | 준비 조건 | 현재 코드에서 확인할 곳 |
 |---|---|
 | Spring 테스트 환경이 있어야 함 | `@SpringBootTest` |
-| 관찰할 실제 빈이 등록되어 있어야 함 | [ShoppingTools](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 `@Component` |
+| 관찰할 실제 빈이 등록되어 있어야 함 | [ShoppingTools](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 `@Component` |
 | 관찰 대상을 지정해야 함 | `@MockitoSpyBean ShoppingTools shoppingTools` |
 | 후보가 여러 개이면 대상을 하나로 구분해야 함 | 필요시 `@Qualifier` 또는 `@MockitoSpyBean(name = "...")` 사용. 필드명도 후보 선택에 사용됨 |
 
@@ -52,7 +52,7 @@ class ToolCallingOpenAiLiveTest {
 
 ### 테스트 필드에만 Spy가 들어가는 것은 아닙니다
 
-[ToolChatService](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolChatService.java)에도 Spy가 적용된 `ShoppingTools` 빈이 연결됩니다. 따라서 실제 서비스가 실행한 도구 호출을 테스트 필드에서 검증할 수 있습니다.
+[ToolChatService](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolChatService.java)에도 Spy가 적용된 `ShoppingTools` 빈이 연결됩니다. 따라서 실제 서비스가 실행한 도구 호출을 테스트 필드에서 검증할 수 있습니다.
 
 ```mermaid
 classDiagram
@@ -112,7 +112,7 @@ toolCallOrder
 
 ### P01은 어디서 온 값일까?
 
-[ProductCatalog](../../../labs/05-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 현재 데이터에서 15000원 이하 음료는 P01 허브티입니다. 따라서 테스트가 `"P01"`을 기대값으로 지정합니다.
+[ProductCatalog](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 현재 데이터에서 15000원 이하 음료는 P01 허브티입니다. 따라서 테스트가 `"P01"`을 기대값으로 지정합니다.
 
 이 값은 앞선 `verify().searchProducts(...)`의 반환값에서 얻은 것이 아닙니다. `verify()`는 실제 검색 반환값을 받는 용도로 사용하지 않습니다. 현재 검증은 지정한 상품의 도구 호출 연결을 확인하며, 여러 검색 결과의 모든 상품을 구매 처리했는지 확인하는 테스트는 아닙니다.
 
@@ -133,7 +133,7 @@ verifyNoInteractions(shoppingTools);
 
 | 테스트 | 확인하는 기록 | 검증하는 내용 |
 |---|---|---|
-| [ToolCallingLocalModelTest](../../../labs/05-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingLocalModelTest.java) | 로컬 고정 응답 서버가 받은 모델 요청 | 도구 실행 후 실제 상품 결과가 tool 메시지로 모델에 재전달됐는지 |
+| [ToolCallingLocalModelTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/ToolCallingLocalModelTest.java) | 로컬 고정 응답 서버가 받은 모델 요청 | 도구 실행 후 실제 상품 결과가 tool 메시지로 모델에 재전달됐는지 |
 | `ToolCallingOpenAiLiveTest` | Spy에 남은 Java 도구 호출 | 실제 모델이 요청한 도구의 인자와 실행 순서, 또는 도구 미사용 |
 
 로컬 테스트에도 Spy를 사용할 수 있지만 현재 연결은 모델 요청 기록으로 확인하므로 추가하지 않았습니다. Spy로 메서드 실행을 확인하는 것만으로는 그 결과가 모델에게 제대로 재전달됐는지 알 수 없습니다. 반대로 최종 답변이 비어 있지 않다는 검증만으로 도구 호출을 증명할 수도 없습니다.
@@ -145,7 +145,7 @@ verifyNoInteractions(shoppingTools);
 기존 Live 테스트를 실행하려면 저장소 루트의 `.env` 설정이 필요합니다. **실제 OpenAI API 사용량이 발생합니다.**
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest
 ```
 
 빈 줄과 `===== [ 테스트 메서드명 ] ======`이 한 번 출력된 뒤 모델 답변이 출력되고, 조합 테스트는 호출 순서 검증을 통과한 뒤 확인한 도구 호출을 출력합니다. 인사 테스트는 도구 미호출 검증을 통과한 뒤 호출 횟수 0을 출력합니다.
@@ -171,4 +171,4 @@ ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 �
 
 </details>
 
-[이전: 도구 결과가 모델로 돌아가는 과정](03-loop.md) · [05장 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)
+[이전: 도구 결과가 모델로 돌아가는 과정](03-loop.md) · [다음: 도구 호출 제한](05-tool-call-limits.md) · [05장 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

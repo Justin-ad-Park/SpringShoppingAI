@@ -10,7 +10,7 @@
 {"category":"음료","maxPrice":-1}
 ```
 
-생성된 record의 가격은 `-1`입니다. [SearchCriteria](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
+생성된 record의 가격은 `-1`입니다. [SearchCriteria](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
 
 ```java
 if (maxPrice != null && maxPrice < 0) {
@@ -22,7 +22,7 @@ if (maxPrice != null && maxPrice < 0) {
 
 ## 2. 서비스에서 422 지정하기
 
-[CriteriaService](../../../labs/04-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)는 변환에 성공하고 결과가 `null`이 아닌 것을 확인한 뒤 다음 코드를 실행합니다. 실제 코드 발췌입니다.
+[CriteriaService](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)는 변환에 성공하고 결과가 `null`이 아닌 것을 확인한 뒤 다음 코드를 실행합니다. 실제 코드 발췌입니다.
 
 ```java
 try {
@@ -49,7 +49,7 @@ return criteria;
 
 현재 기본 구성에서 Spring MVC가 `ResponseStatusException`에 담긴 422를 HTTP 응답에 적용합니다. **record 생성 성공 → validate() 실패 → 서비스가 422 지정 → MVC가 HTTP 422 응답 처리**의 순서입니다.
 
-[StructuredOutputLocalModelTest](../../../labs/04-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `변환에_성공해도_허용되지_않는_값은_거부한다()`에서 확인하는 첫 번째 사례입니다. 실제 테스트 코드 발췌입니다.
+[StructuredOutputLocalModelTest](../../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `변환에_성공해도_허용되지_않는_값은_거부한다()`에서 확인하는 첫 번째 사례입니다. 실제 테스트 코드 발췌입니다.
 
 ```java
 MODEL

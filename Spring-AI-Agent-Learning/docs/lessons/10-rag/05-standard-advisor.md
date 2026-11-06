@@ -1,6 +1,6 @@
 # 10-5. 검색과 프롬프트 조립을 Advisor에 맡기기
 
-**실행 코드·설정·테스트:** [labs/10-rag-advisor](../../../labs/10-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/10-04-rag-advisor](../../../labs/10-04-rag-advisor/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 선수 지식: 08의 Advisor, 10-2의 직접 만든 RAG, 10-4의 문서 적재.
 이번 목표는 **같은 검색·프롬프트 조립을 QuestionAnswerAdvisor로 연결**하는 것입니다.
@@ -93,7 +93,7 @@ public class AdvisorRagService {
 추가로 `OPENAI_EMBEDDING_MODEL`을 파일 또는 실행 환경에 설정합니다. 실제 키를 코드에 적지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-rag-advisor:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:10-04-rag-advisor:bootRun
 ```
 
 다른 터미널에서:
@@ -114,7 +114,7 @@ curl -sS http://127.0.0.1:8103/api/advisor-rag \
 
 1. 파일의 기간만 수정하고 재시작합니다. 새로운 근거가 전달되는지 확인합니다.
 2. 현재 정책 파일은 짧아 한 조각만 적재될 수 있습니다. 이때 `topK`를 1에서 2로 늘려도 문서 수는 늘지 않습니다. `topK`가 반환 수의 보장이 아닌 상한임을 설명하세요.
-3. 검색 문서가 프롬프트에 들어간 근거는 [AdvisorRagLocalModelTest](../../../labs/10-rag-advisor/src/test/java/com/example/ailearning/l10advisor/AdvisorRagLocalModelTest.java)의 `Reader와_Splitter와_Advisor로_문서를_모델에_전달한다`에서 확인합니다. 현재 실제 API는 답변만 반환하므로 답변 문자열만으로 검색 결과 수나 전체 프롬프트를 확인할 수는 없습니다.
+3. 검색 문서가 프롬프트에 들어간 근거는 [AdvisorRagLocalModelTest](../../../labs/10-04-rag-advisor/src/test/java/com/example/ailearning/l10advisor/AdvisorRagLocalModelTest.java)의 `Reader와_Splitter와_Advisor로_문서를_모델에_전달한다`에서 확인합니다. 현재 실제 API는 답변만 반환하므로 답변 문자열만으로 검색 결과 수나 전체 프롬프트를 확인할 수는 없습니다.
 4. 빈 검색 시 생성 자체를 생략해야 하는 업무라면 10-2의 어느 분기를 유지할지 설명합니다.
 
 확인 질문: Advisor를 쓴다고 출처가 올바르고 답변 내용도 정확하다고 결론 내릴 수 있을까요?

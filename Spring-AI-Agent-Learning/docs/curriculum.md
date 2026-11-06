@@ -23,7 +23,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 [학습 방법](learning-guide.md)을 기준으로 각 단원의 목차에서 소수업에 들어갑니다.
 04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다. 05~13은 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.
-06장의 기본 비교 뒤 확장 1(도구 호출 횟수 제한)과 확장 2(모델 요청 타임아웃·재시도)를 별도 모듈로 실행합니다. 12장에서는 같은 테스트와 결과를 실패 평가·관측에 다시 활용합니다.
+02장의 첫 호출 뒤 모델 요청 타임아웃·재시도를, 05장의 도구 호출 뒤 도구 실행 횟수 제한을 별도 보충 모듈로 선택해 학습합니다. 12장에서는 같은 테스트와 결과를 실패 평가·관측에 다시 활용합니다.
 
 ## 학습 지도
 
@@ -36,7 +36,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 응답 | 04 구조화 응답 | record 설명 → 문자열과 객체 비교 → 상품 조건 추출 | 형식 성공과 값의 정확성 구분·검증 | [교재·실습 완성](lessons/04-structured-output.md) |
 | 도구 | 05 Tool Calling | 일반 Java 상품 서비스 → @Tool → 호출 결과 | 모델은 요청, 애플리케이션은 실행함을 설명 | [교재·실습 완성](lessons/05-tool-calling.md) |
 | 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·혼합 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
-| 확장 | [06 확장 1·2](lessons/06-workflow-agent.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
+| 보충 | [02-5 모델 통신](lessons/02-first-call/05-model-timeout-retry.md) · [05-5 도구 제한](lessons/05-tool-calling/05-tool-call-limits.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
 | 문맥 | 07 대화 메모리 | 이전 사용자 질문·모델 응답 저장 → 대화 ID로 조회 → 새 질문과 함께 다음 프롬프트에 다시 포함, 사용자별 대화 격리 | 이전 대화가 포함된 프롬프트로 후속 질문 처리, 대화 분리와 전달 메시지 수 제한 확인 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 호출 전후 처리, 체인과 순서, 메모리 연결 | 도구 루프와 함께 동작하는 위치 설명 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
@@ -48,20 +48,20 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 ## 설명 수업과 실행 모듈의 대응
 
-실행 모듈 앞의 숫자는 연결된 본 단원 번호입니다. 02장의 기본 실습은 `02-first-chat`, 선택 보충은 `02-multiple-models`입니다.
+실행 모듈 앞의 숫자는 연결된 본 단원 번호입니다. 02장의 기본 실습은 `02-00-first-chat`, 선택 보충은 `02-04-multiple-models`입니다.
 하위 설명 파일의 `01`·`02`·`03`·`04`는 그 단원 안에서의 읽기 순서이며 실행 모듈 번호와는 구분합니다.
 
 | 설명 수업 | 실행 모듈 | 함께 제공하는 코드와 테스트 |
 |---|---|---|
-| 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
-| 02장 보충 4: 여러 모델 | `02-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
+| 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-00-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
+| 02장 보충 4: 여러 모델 | `02-04-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
 | 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
-| [06 확장 1](lessons/06-workflow-agent/04-tool-call-limits.md) | `06-tool-call-limits` | 반복 도구 요청·전체 상한·요청별 초기화 검증, 별도 Live 테스트 |
-| [06 확장 2](lessons/06-workflow-agent/05-model-timeout-retry.md) | `06-model-timeout-retry` | 정상·지연·429·500·400 응답과 재시도 횟수 검증, 별도 Live 테스트 |
-| [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
-| [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
-| [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
-| [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
+| [05 보충 5](lessons/05-tool-calling/05-tool-call-limits.md) | `05-05-tool-call-limits` | 반복 도구 요청·전체 상한·요청별 초기화 검증, 별도 Live 테스트 |
+| [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md) | `02-05-model-timeout-retry` | 정상·지연·429·500·400 응답과 재시도 횟수 검증, 별도 Live 테스트 |
+| [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-04-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
+| [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-00-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
+| [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-02-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
+| [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.
