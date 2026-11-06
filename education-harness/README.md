@@ -13,7 +13,7 @@
 | 새 과정의 안·계획 | [과정 계획](common/workflows/plan-course.md), [작성 규칙](common/rules/authoring.md)의 설명 수준 | 대상·기준 문서·기술 | 계획안. 구현 요청 전에는 코드 생성 안 함 |
 | 기존 자료 검토만 | [검토 절차](common/workflows/review-materials.md), [검토 기준](common/rules/review.md) | 대상·기준 문서, 관련 동작·검증 정보 | 위치·근거·개선안. 파일 수정 안 함 |
 | 문장·링크 등 작은 수정 | [수정 절차](common/workflows/update-materials.md), 관련 작성 규칙 | 대상·해당 문서·커밋 방식 | 요청한 수정과 관련 검사 |
-| 새 단원·실행 코드 구현 | [단원 작성](common/workflows/write-lesson.md), [작성 규칙](common/rules/authoring.md), [검토 기준](common/rules/review.md) | 대상·기술·관련 모듈·검증·커밋 방식 | 실행 코드·설명·테스트·검증 기록 |
+| 새 단원·실행 코드 구현 | [단원 작성](common/workflows/write-lesson.md), [작성 규칙](common/rules/authoring.md), [검토 기준](common/rules/review.md) | 대상·기술·관련 모듈·코드 형식·검증·커밋 방식 | 실행 코드·설명·테스트·검증 기록 |
 | 하네스 규칙·절차 수정 | [수정 절차](common/workflows/update-materials.md), [행동 평가](common/evals/README.md) | 관련 정책·도구·커밋 방식 | 지침 변경과 정적·행동 검증의 구분 |
 | 하네스 자체 평가 | [행동 평가](common/evals/README.md) | 범위·검증·외부 호출 여부 | 사례별 실행 근거와 판정 |
 
@@ -30,7 +30,7 @@
 | 작업 순서·검사 방법 | common/workflows/ | 규칙의 설명을 반복하기보다 수행 단계 제시 |
 | 독자·기술·검증 명령·과정별 예외 | [프로젝트 설정](project.md) | 실제 빌드·소스에서 사실을 확인하고 관련 안내 갱신 |
 | 단원과 실습의 대응 | 프로젝트 설정이 지정한 교육 계획 | 테스트 클래스·로컬 명령은 프로젝트 설정이 관리 |
-| 현재 작업과 완료 근거 | 장기 작업은 context/, 완료 보고는 reports/ | 학습자 문서에 제작 이력 삽입 안 함 |
+| 현재 작업과 완료 근거 | 장기 작업은 context/, 큰 변화의 완료 근거는 프로젝트 지정 위치 | 작은 수정은 별도 기록 없이 결과만 안내 |
 
 버전은 실제 선언 파일이 기준입니다. 안내 문서에 같은 값이 필요하면 기준 링크와 함께 유지하고, 원본 변경 시 참조 문서도 검색합니다.
 기준 변경은 원칙의 소유 파일부터 고치고 템플릿·검토 질문이 여전히 같은 뜻인지 확인합니다.

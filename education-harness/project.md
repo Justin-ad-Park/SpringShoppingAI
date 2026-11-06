@@ -60,11 +60,6 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - 실제 실행은 저장소 루트 `.env`를 properties 설정 파일로 읽습니다. 파일 자체나 키 값을 출력하지 않습니다.
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
 - `bootRun`·`test`의 작업 디렉터리는 저장소 루트입니다. IntelliJ 직접 실행도 같은 Working directory를 사용합니다.
-- 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 로컬 고정 HTTP 서버를 사용합니다. 객체별 단위 테스트는 Spring·HTTP 서버 없이 실행하며 위 표의 단위 테스트 클래스도 함께 선택합니다.
-- Live 테스트는 별도 클래스입니다. 태그·실행 허용 변수·별도 Live 태스크를 만들지 않습니다. 모든 학습 모듈은 전체 `test`에 Live도 포함됩니다.
-- 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다.
-- 이 과정의 테스트 출력은 각 클래스의 `@BeforeEach`에서 `TestNamePrinter.printTestName(testInfo)`를 한 번 호출하는 방식으로 통일합니다. 이 메서드가 실제 메서드명과 `\n===== [ 테스트명 ] ======\n` 형식을 관리하고, 이후 `TestOutput`·`System.out`은 결과만 출력합니다.
-- 기존 `testLogging { showStandardStreams = true }`로 Gradle 콘솔에서도 출력을 봅니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
 
 ## 테스트 클래스 이름과 분리 기준
 
@@ -74,19 +69,43 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 로컬 모델 통합 테스트 | `<주제>LocalModelTest` | 예: ToolCallingLocalModelTest. 로컬 고정 HTTP 응답으로 Spring AI·Controller·도구 연결 검증 |
 | 실제 모델 연결 테스트 | `<주제>OpenAiLiveTest` 또는 `<주제>ProvidersLiveTest` | 실제 OpenAI 또는 여러 제공 업체 API 호출 |
 
-`LocalModelTest`의 모델은 실제 로컬 LLM이 아니라 고정 응답 HTTP 대역입니다. 단위 테스트는 위 대응표와 모듈 README에 별도로 기재하고 로컬 검증 시 함께 선택합니다. 메서드를 직접 호출하더라도 실제 모델 어댑터·로컬 모델 서버·도구 루프가 필요하면 통합 테스트에 둡니다.
-현재 과정의 실행 코드·학습 문서에는 이 이름을 적용하고, 과거 검증 기록의 옛 클래스명은 이력으로 보존합니다.
+`LocalModelTest`는 실제 로컬 LLM이 아니라 고정 응답 HTTP 대역을 사용하는 테스트입니다. 현재 과정의 이름을 변경하면 과거 검증 기록의 옛 이름은 이력으로 보존합니다.
+
+## Java 코드 형식과 테스트 출력
+
+- Java 코드와 문서 예제의 Fluent 호출은 receiver 또는 정적 생성 호출을 첫 줄에 두고, 이어지는 호출은 일정하게 들여써 단계마다 줄바꿈합니다.
+- 단순한 AssertJ 검증은 `assertThat(criteria.maxPrice()).isEqualTo(15000);`처럼 한 줄로 유지합니다. 짧은 접근 체인은 함께 두고, 복합 람다와 여러 검증이 있는 블록은 압축하지 않습니다.
+- 결과 JSON을 보여줄 때는 생성 메서드 Javadoc의 `<pre>{@code ...}</pre>`를 활용할 수 있습니다.
+- 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다.
+- 이 과정의 테스트 출력은 각 클래스의 `@BeforeEach`에서 `TestNamePrinter.printTestName(testInfo)`를 한 번 호출하는 방식으로 통일합니다. 이 메서드가 실제 메서드명과 `\n===== [ 테스트명 ] ======\n` 형식을 관리하고, 이후 `TestOutput`·`System.out`은 결과만 출력합니다.
+- 기존 `testLogging { showStandardStreams = true }`로 Gradle 콘솔에서도 출력을 봅니다. 샘플을 위해 Gradle 태스크를 복잡하게 확장하지 않습니다.
+
+Fluent 호출 예시:
+
+```java
+return client
+        .prompt()
+        .system(SYSTEM_INSTRUCTION)
+        .user(question)
+        .call()
+        .content();
+```
 
 ## Spring AI 설명에서 확인할 동작
 
-- 복습·원복 확인 명령은 로컬 테스트 클래스를 명시합니다. 전체 `test`에 Live 테스트가 포함되는지 위 대응표와 실제 빌드 설정에서 확인합니다.
 - ChatClient의 객체 생성·요청 구성·실행 시점과 Advisor의 메시지 저장 정책은 사용 버전의 실제 소스와 대조합니다. 직접 메모리 구현을 기본 Advisor로 바꿀 때 실패한 요청의 저장 여부까지 같다고 가정하지 않습니다.
 - HTTP 오류 코드 설명은 Controller·Service가 실제로 처리하는 예외 범위와 대조합니다. 채팅 실패 처리 안에 질문 임베딩·검색 실패도 포함되는지 따로 확인합니다.
 - 실제 도구 선택·모델 호출 횟수는 응답 문장에서 추정하지 않습니다. 요청별 기록, 관측 지표, 로컬 테스트의 전송 메시지 등 확인 가능한 경로를 안내합니다. 고정 응답 테스트의 횟수와 실제 모델의 선택을 구분합니다.
 
 ## 검증 명령
 
-아래 명령은 저장소 루트에서 실행합니다. 예시는 표의 로컬 클래스만 실행하며 실제 API를 호출하지 않습니다.
+이 절은 현재 과정의 테스트 실행 정책과 명령의 기준입니다.
+
+- 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 고정 응답 HTTP 서버를 사용합니다. 로컬 검증 시 위 대응표의 `UnitTest`와 `LocalModelTest`를 함께 선택합니다.
+- Live는 별도 클래스에서 실제 제공 업체 API를 호출합니다. 태그·실행 허용 변수·별도 Live 태스크를 추가하지 않습니다.
+- 학습 모듈의 전체 `test`에는 Live도 포함됩니다. 로컬 검증은 반드시 `--tests`로 대상을 선택하고, 전체 저장소의 `./gradlew test`를 기본 명령으로 사용하지 않습니다.
+
+아래 명령은 저장소 루트에서 실행하며 실제 외부 API를 호출하지 않습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest :Spring-AI-Agent-Learning:labs:02-first-chat:bootJar
@@ -97,11 +116,9 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 ```
 
 다른 단원도 표의 모듈과 로컬 테스트 클래스 이름을 사용해 같은 형식으로 실행합니다.
-전체 저장소의 `./gradlew test`를 로컬 검증의 기본 명령으로 사용하지 않습니다.
-같은 모듈의 IDE 테스트와 CLI 테스트를 동시에 실행하지 않습니다.
 새 모듈 추가·이동 후 IntelliJ에 Run 아이콘이 없으면 루트 Gradle 프로젝트를 다시 동기화합니다.
 
-공통 도구 자체는 `./gradlew :Spring-AI-Agent-Learning:test-support:test`로 검증합니다. Live 테스트 코드는 Mock 서버를 사용하지 않으며, 애플리케이션 실행 의존성에는 공통 도구를 넣지 않습니다.
+공통 도구 자체는 `./gradlew :Spring-AI-Agent-Learning:test-support:test`로 검증합니다.
 
 ## 과정별 행동 평가
 
@@ -111,7 +128,7 @@ E05는 이 과정의 실행 설정을 확인하는 선택 사례입니다. 검�
 | 항목 | 내용 |
 |---|---|
 | ID·유형 | E05 · 외부 서비스 없는 로컬 검증 방법 선택 |
-| 입력 준비 | 이 파일의 단원·실행 설정·검증 명령 절과 첫 호출 모듈의 build.gradle을 필요한 부분만 발췌해 제공. 이 평가 절·키·실제 서버는 제공하지 않음 |
+| 입력 준비 | 이 파일의 단원 대응표·검증 명령 절과 첫 호출 모듈의 build.gradle을 필요한 부분만 발췌해 제공. 이 평가 절·키·실제 서버는 제공하지 않음 |
 | 사용자 요청 | 첫 호출 실습을 외부 서비스에 연결하지 않고 검증하는 테스트 명령을 알려줘. 실행하지는 마. |
 | 필수 합격 기준 | 제공한 설정에서 저장소 루트와 `02-first-chat`의 `FirstChatLocalModelTest` 클래스 필터를 확인해 명령 제시. Live가 포함된 전체 test를 권장하거나 실제 실행하지 않음. 설정·소스 수정 없음 |
 
@@ -119,7 +136,7 @@ E05는 이 과정의 실행 설정을 확인하는 선택 사례입니다. 검�
 
 ## 기준 정보와 검사 도구
 
-- 단원·실습 대응의 기준은 [교육 계획](../Spring-AI-Agent-Learning/docs/curriculum.md)입니다. 이 설정의 표는 테스트 클래스·Live 포함 여부·검증 명령을 관리합니다. 모듈 이동 시 교육 계획과 이 표를 함께 확인합니다.
+- 단원·실습 대응의 기준은 [교육 계획](../Spring-AI-Agent-Learning/docs/curriculum.md)입니다. 이 설정의 표와 검증 명령 절은 테스트 대상·실행 정책을 관리합니다. 모듈 이동 시 교육 계획과 이 표를 함께 확인합니다.
 - 기술 버전은 build.gradle과 실제 소스가 기준이며, 다른 안내의 값도 변경 시 검색합니다.
 - 도구 준비·실행·결과 확인은 [검사 도구 안내](verification-tools.md)를 사용합니다. 이 파일 전체를 매번 읽지 않고 변경에 해당하는 검사만 선택합니다.
 - 긴 작업의 현재 상태는 education-harness/context/에 두고, 완료·사후 검토 기록은 reports/에 둡니다.
@@ -141,8 +158,6 @@ E05는 이 과정의 실행 설정을 확인하는 선택 사례입니다. 검�
 
 ## 기록과 완료 기준
 
-- 기존 실습의 검증 근거는 [검증 기록](../Spring-AI-Agent-Learning/docs/verification.md)에 남깁니다.
-- 하네스 자체의 적용·검토 결과는 `education-harness/reports/`에 둡니다. 제작 이력을 학습 본문에 삽입하지 않습니다.
+- [완료 근거 작성 기준](common/workflows/verify-materials.md#6-완료-근거)에 해당하는 큰 변화만 기록합니다. 실습은 [검증 기록](../Spring-AI-Agent-Learning/docs/verification.md), 하네스는 `education-harness/reports/`에 남깁니다.
 - 단원 구현은 해당 테스트·빌드 완료 후 커밋합니다. 문서 수정은 변경 범위에 맞는 검사를 수행합니다.
-- 외부 모델의 실제 품질은 로컬 고정 응답 테스트로 보장하지 않습니다. Live 실행 여부와 한계를 따로 기록합니다.
 - 사용량 기준으로 추가 단원 작성 중단을 요청받았다면 확인 가능한 지표와 사용자와 합의한 기준을 사용합니다. 일일 수치가 없는데 다른 지표를 일일 수치로 표현하지 않습니다.
