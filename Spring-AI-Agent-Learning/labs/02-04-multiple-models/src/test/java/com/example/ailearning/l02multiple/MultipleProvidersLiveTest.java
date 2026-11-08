@@ -16,10 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 로컬 가짜 서버를 사용하지 않으며 실제 API 사용량이 발생합니다. 키는 출력하지 않습니다.
  */
 @DisplayName("다중 모델 — 실제 OpenAI·Anthropic 연결 테스트 (API 사용량 발생)")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-        "spring.ai.openai.base-url=https://api.openai.com/v1",
-        "spring.ai.anthropic.base-url=https://api.anthropic.com"
-})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class MultipleProvidersLiveTest {
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {

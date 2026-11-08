@@ -16,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 요청과 응답만 출력하며 API 키를 출력하지 않습니다.
  */
 @DisplayName("첫 Chat 호출 — 실제 OpenAI 연결 테스트 (API 사용량 발생)")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = "spring.ai.openai.base-url=https://api.openai.com/v1")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class FirstChatOpenAiLiveTest {
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {

@@ -136,6 +136,7 @@ spring:
     model:
       embedding: none
     openai:
+      base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
       chat:
         max-retries: 0

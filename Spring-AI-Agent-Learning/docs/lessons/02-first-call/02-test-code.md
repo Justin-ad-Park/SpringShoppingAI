@@ -24,7 +24,7 @@
 |---|---|---|
 | `spring.ai.openai.api-key` | 루트 `.env`의 `OPENAI_API_KEY` | 더미 키 `local-test-key` |
 | `spring.ai.openai.chat.options.model` | 루트 `.env`의 `OPENAI_MODEL` | 검증용 이름 `tutor-test-model` |
-| `spring.ai.openai.base-url` | 별도로 지정하지 않은 제공 업체 연결 주소 | 테스트가 시작한 로컬 가짜 서버 주소 |
+| `spring.ai.openai.base-url` | `application.yml`의 OpenAI 기본 주소 | 테스트가 시작한 로컬 가짜 서버 주소 |
 
 더미 키도 Spring AI의 연결 설정에 사용하므로 유지합니다. 가짜 서버는 이 키로 실제 계정 인증을 하지 않습니다.
 테스트의 인증 헤더 검증은 `Bearer local-test-key`가 요청에 담겼는지 확인합니다.

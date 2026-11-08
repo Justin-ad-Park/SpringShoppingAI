@@ -27,6 +27,19 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.
 모델 ID는 계정에서 접근 가능하고 해당 실습의 기능을 지원하는 값을 사용합니다.
 
+모델 서버의 기본 주소는 각 모듈의 `application.yml`에 둡니다.
+
+```yaml
+spring:
+  ai:
+    openai:
+      base-url: https://api.openai.com/v1
+```
+
+Live 테스트는 이 주소를 그대로 사용합니다. 로컬 고정 응답 테스트만 `@DynamicPropertySource`에서
+`spring.ai.openai.base-url`을 테스트 서버 주소로 덮어씁니다. 테스트 서버의 포트는 실행할 때 정해지므로 Java에서 등록합니다.
+다중 제공 업체 모듈의 Anthropic 기본 주소도 YAML에 두고, 해당 로컬 테스트에서만 덮어씁니다.
+
 ## 2. 파일을 읽는 위치와 실행 방법
 
 각 실습의 `application.yml`에 다음 설정이 있습니다.

@@ -19,6 +19,7 @@ Spring AI가 설정을 받아 **내부 OpenAI Java SDK에 전달**하고 SDK가 
 spring:
   ai:
     openai:
+      base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
       timeout: 30s
       max-retries: 1

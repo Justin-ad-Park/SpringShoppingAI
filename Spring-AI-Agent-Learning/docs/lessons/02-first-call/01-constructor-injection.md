@@ -58,6 +58,7 @@ spring:
     model:
       embedding: none
     openai:
+      base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
       chat:
         max-retries: 0
@@ -73,6 +74,7 @@ Gradle의 작업 디렉터리는 저장소 루트로 고정되어 있으므로 `
 | 설정 | 현재 예제에서의 의미 |
 |---|---|
 | `spring.config.import` | 루트 `.env`를 properties 형식의 설정 파일로 읽기 |
+| `spring.ai.openai.base-url` | OpenAI API 기본 주소. 로컬 테스트에서는 고정 응답 서버 주소로 덮어쓰기 |
 | `spring.ai.openai.api-key` | `${OPENAI_API_KEY}`를 찾아 OpenAI 인증에 사용할 값으로 설정 |
 | `spring.ai.openai.chat.options.model` | `${OPENAI_MODEL}`을 찾아 OpenAI에 요청할 구체적인 모델 이름으로 설정 |
 | `spring.ai.openai.chat.max-retries` | SDK 자동 재시도 횟수를 0으로 설정 |

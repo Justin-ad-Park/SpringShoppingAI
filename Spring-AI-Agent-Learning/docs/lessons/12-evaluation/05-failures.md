@@ -40,6 +40,7 @@ sequenceDiagram
 spring:
   ai:
     openai:
+      base-url: https://api.openai.com/v1
       max-retries: 0
       timeout: 2s
       chat:

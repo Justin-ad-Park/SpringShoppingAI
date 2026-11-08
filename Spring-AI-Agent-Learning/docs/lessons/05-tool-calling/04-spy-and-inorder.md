@@ -22,7 +22,6 @@
 
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-        "spring.ai.openai.base-url=https://api.openai.com/v1",
         "spring.ai.openai.chat.timeout=30s"
 })
 class ToolCallingOpenAiLiveTest {

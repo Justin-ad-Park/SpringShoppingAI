@@ -11,6 +11,7 @@ spring:
     model:
       embedding: none
     openai:
+      base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
       timeout: 30s
       max-retries: 0

@@ -60,6 +60,7 @@ spring:
       client:
         enabled: false
     openai:
+      base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
       chat:
         max-retries: 0
@@ -67,6 +68,7 @@ spring:
         options:
           model: ${OPENAI_MODEL}
     anthropic:
+      base-url: https://api.anthropic.com
       api-key: ${ANTHROPIC_API_KEY}
       max-retries: 0
       timeout: 10s
