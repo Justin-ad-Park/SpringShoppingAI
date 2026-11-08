@@ -80,7 +80,7 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 
 ## 6. 테스트와 한 가지씩 바꾸는 실험
 
-[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 9개 테스트는
+[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 11개 테스트는
 실제 MVC·Spring AI 어댑터·벡터 저장소에 로컬 가짜 Chat/Embedding HTTP 서버를 연결합니다.
 
 - 상품·배송비·반품 근거 결합과 Java의 최종 표시.
@@ -89,6 +89,7 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 - 예산 누락과 업무별 허용 도구 차이.
 - 허위 출처·예산 초과 선택 거부.
 - 세션 격리·삭제 범위·실패 시 기존 대화 유지.
+- 동기 상담 흐름의 직접 실행과 모델 요청 상한.
 - 반복 도구 호출 상한과 타임아웃 이후 미저장.
 
 가짜 서버는 정해진 문장·벡터만 처리합니다. 언어 이해·검색 품질·실제 도구 선택 성능의 증거가 아닙니다.
@@ -103,9 +104,11 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 
 <details><summary>보충: 타임아웃 이후 저장을 막는 구현</summary>
 
-`chat()`은 이전 대화의 복사본으로 작업합니다. 작업 스레드는 메모리를 수정하지 않으며,
+`CounselService.chat()`은 이전 대화의 복사본을 `CounselWorkflow.execute()`에 전달합니다.
+`LimitedCounselExecutor`가 별도 스레드의 대기·취소를 담당하고 `RunState`는 호출 횟수와 마감 시간을 검사합니다. 작업 스레드는 메모리를 수정하지 않으며,
 결과를 기다리는 호출자 스레드가 위 저장 정책에 맞는 응답만 저장합니다.
 타임아웃 뒤 늦게 완료된 작업이 대화를 변경하지 않게 하기 위한 구성입니다.
+실패하면 서버 로그에는 처리 단계(`INTENT`, `TOOLS`, `VERIFY`)·상태·예외 타입을 기록합니다. 질문·응답 원문과 예외 메시지는 로그에 넣지 않습니다.
 Service의 `synchronized`는 요청을 직렬화하는 Java 장치입니다. 여러 대화의 처리량이 제한되므로 운영 환경의 동시성 설계는 별도로 검토해야 합니다.
 
 </details>

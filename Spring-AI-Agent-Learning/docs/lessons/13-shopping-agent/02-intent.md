@@ -8,12 +8,26 @@
 
 ## 3.1 바깥 순서와 안쪽 모델 판단
 
-다음은 실제 `CounselService.execute()` 전체입니다. import와 나머지 클래스 코드는 [CounselService.java](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)에서 확인합니다.
+다음은 실제 `CounselWorkflow.execute()`와 그 안에서 부르는 추출·도구 선택 메서드입니다. import와 나머지 클래스 코드는 [CounselWorkflow.java](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselWorkflow.java)에서 확인합니다.
 
 ```java
-    private Draft execute(String question, List<Message> previous, RunState run) {
+    public Draft execute(String question, List<Message> previous, RunState run) {
+        run.stage("INTENT");
         List<Message> messages = new ArrayList<>(previous);
         messages.add(new UserMessage(question));
+        Intent intent = extractIntent(messages, run);
+        if (intent.task().equals("SHOPPING") && intent.totalBudget() == null) {
+            return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", intent, List.of(), List.of());
+        }
+
+        run.stage("TOOLS");
+        TurnFacts facts = new TurnFacts();
+        Selection selected = selectWithTools(messages, intent, facts, run);
+        run.stage("VERIFY");
+        return verify(intent, selected, facts);
+    }
+
+    private Intent extractIntent(List<Message> messages, RunState run) {
         Intent intent = client(run)
                 .prompt()
                 .system("""
@@ -28,12 +42,10 @@
                 .entity(Intent.class);
         if (intent == null) throw new IllegalArgumentException("의도 응답이 비었습니다.");
         intent.validate();
-        if (intent
-                .task()
-                .equals("SHOPPING") && intent.totalBudget() == null)
-            return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", intent, List.of(), List.of());
+        return intent;
+    }
 
-        TurnFacts facts = new TurnFacts();
+    private Selection selectWithTools(List<Message> messages, Intent intent, TurnFacts facts, RunState run) {
         var request = client(run)
                 .prompt()
                 .system("""
@@ -46,14 +58,14 @@
                 .messages(messages)
                 .user("Java 확정 조건: " + intent)
                 .tools(new PolicyTools(policies, facts, run));
-        if (intent
-                .task()
-                .equals("SHOPPING")) request.tools(new ProductTools(catalog, intent, facts, run));
+        if (intent.task().equals("SHOPPING")) {
+            request.tools(new ProductTools(catalog, intent, facts, run));
+        }
         Selection selected = request
                 .call()
                 .entity(Selection.class);
         run.check();
-        return verify(intent, selected, facts);
+        return selected;
     }
 ```
 

@@ -55,6 +55,9 @@ public class McpHybridService {
         }
         McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, conditions);
         agentService.askWithMcpTools(question, toolRun);
+        if (toolRun.searchedWithoutResults()) {
+            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolRun.toolCalls());
+        }
         JsonNode quote = toolRun.lastQuote();
         if (quote == null || !quote.path("valid").asBoolean()) {
             return new McpRunResult("UNVERIFIED", "전체 상품의 금액 계산을 확인하지 못했습니다.", toolRun.toolCalls());
@@ -86,7 +89,9 @@ Agent와 같은 `askWithMcpTools()`를 재사용하지만 `McpToolRun`에 `condi
 
 `VERIFIED`는 고정한 검색 조건과 전체 ID 계산, 서버 계산 성공, 총예산 검사를 통과했다는 뜻입니다.
 사용자 의도를 처음 추출한 모델 판단의 정확성이나 상품 품질까지 보장하지 않습니다.
-검색·계산을 생략하면 `UNVERIFIED`, 총예산을 넘으면 `OVER_BUDGET`입니다.
+검색을 실제 실행한 결과가 비었으면 `NO_RESULTS`입니다. 빈 장바구니를 계산해 `valid=true`, `total=0`을 받아도 구매 성공으로 표시하지 않습니다. 검색 자체를 하지 않았거나, 비어 있지 않은 검색 결과의 전체 금액을 확인하지 못하면 `UNVERIFIED`, 총예산을 넘으면 `OVER_BUDGET`입니다.
+
+로컬 회귀 테스트는 실제 MCP 서버를 사용해 빈 검색 뒤 계산 생략과 빈 장바구니 계산 두 경로를 확인합니다.
 
 ## 실행과 비교
 

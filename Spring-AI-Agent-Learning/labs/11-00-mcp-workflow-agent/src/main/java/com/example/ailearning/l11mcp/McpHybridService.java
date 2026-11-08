@@ -31,6 +31,9 @@ public class McpHybridService {
         }
         McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, conditions);
         agentService.askWithMcpTools(question, toolRun);
+        if (toolRun.searchedWithoutResults()) {
+            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolRun.toolCalls());
+        }
         JsonNode quote = toolRun.lastQuote();
         if (quote == null || !quote.path("valid").asBoolean()) {
             return new McpRunResult("UNVERIFIED", "전체 상품의 금액 계산을 확인하지 못했습니다.", toolRun.toolCalls());

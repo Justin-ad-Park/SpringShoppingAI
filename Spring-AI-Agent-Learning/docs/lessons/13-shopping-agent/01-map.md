@@ -32,11 +32,13 @@
 
 ```mermaid
 classDiagram
-    CounselService --> Intent : 조건 추출
+    CounselService --> CounselWorkflow : 상담 실행
+    CounselService --> LimitedCounselExecutor : 실행 대기와 취소
+    CounselWorkflow --> Intent : 조건 추출
     CounselService --> ChatMemory : 이전 대화 조회와 확정 저장
-    CounselService --> ProductTools : 상품 도구 제공
-    CounselService --> PolicyTools : 정책 도구 제공
-    CounselService --> TurnFacts : 실제 조회 사실 검증
+    CounselWorkflow --> ProductTools : 상품 도구 제공
+    CounselWorkflow --> PolicyTools : 정책 도구 제공
+    CounselWorkflow --> TurnFacts : 실제 조회 사실 검증
     ProductTools --> ProductCatalog : 가격과 배송비 조회
     ProductTools --> TurnFacts : 조회 결과 기록
     PolicyTools --> PolicySearch : 정책 벡터 검색
@@ -78,8 +80,8 @@ flowchart TD
 2. [PolicySearch](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/PolicySearch.java)와 같은 폴더의 `PolicyLoader`, `Source`: 09~10의 문서 적재·검색.
 3. [Intent](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/Intent.java)와 [TurnFacts](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/TurnFacts.java): 추출한 조건과 실제 사실 구분.
 4. [ProductTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/ProductTools.java), [PolicyTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/PolicyTools.java): 실행과 기록.
-5. [CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java): 다음 [13-2](02-intent.md)의 `execute()`, [13-3](03-verify.md)의 `verify()`를 읽고, [13-4](04-conversation.md)에서 `chat()`의 저장·실패 처리를 확인합니다.
-6. [RunState](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/support/RunState.java)와 같은 폴더의 `CountedChatModel`: 이 통합 예제의 자체 실행 제한 보조 코드. 06장의 기본 흐름이나 Spring AI 기본 제한 구현은 아닙니다. 기본 기능을 사용하는 방법은 [05 보충 도구 제한](../05-tool-calling/05-tool-call-limits.md)과 [02 보충 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md)에서 확인합니다.
+5. [CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselWorkflow.java): 다음 [13-2](02-intent.md)의 `execute()`, [13-3](03-verify.md)의 `verify()`를 읽고, [13-4](04-conversation.md)에서 `CounselService.chat()`의 저장·실패 처리를 확인합니다.
+6. [CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)는 대화 저장을, [LimitedCounselExecutor](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/support/LimitedCounselExecutor.java)는 작업 대기·취소를 맡습니다. [RunState](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/support/RunState.java)와 같은 폴더의 `CountedChatModel`: 이 통합 예제의 자체 실행 제한 보조 코드. 06장의 기본 흐름이나 Spring AI 기본 제한 구현은 아닙니다. 기본 기능을 사용하는 방법은 [05 보충 도구 제한](../05-tool-calling/05-tool-call-limits.md)과 [02 보충 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md)에서 확인합니다.
 7. [CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
 
 

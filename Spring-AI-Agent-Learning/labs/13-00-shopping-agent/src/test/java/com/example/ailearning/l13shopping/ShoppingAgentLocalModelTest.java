@@ -7,6 +7,9 @@ import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantT
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.ailearning.l13shopping.support.RunState;
+import com.example.ailearning.l13shopping.support.LimitedCounselExecutor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -31,6 +34,7 @@ class ShoppingAgentLocalModelTest {
 
     static final OpenAiStubServer MODEL = createModelServer();
     @Value("${local.server.port}") int port;
+    @Autowired CounselWorkflow workflow;
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
@@ -46,6 +50,32 @@ class ShoppingAgentLocalModelTest {
                 .setResponseFunction(this::script);
     }
     @AfterAll static void stop() { MODEL.close(); }
+
+    @Test
+    void 상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다() {
+        // 의도 추출 → 도구 선택 → 검증을 동기 호출한다. 저장과 스레드 대기는 서비스의 별도 책임이다.
+        RunState run = new RunState(8, 4, 5000);
+        var draft = workflow.execute("배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘", List.of(), run);
+        output.printValue("동기 상담 결과", draft);
+
+        assertThat(draft.status()).isEqualTo("VERIFIED");
+        assertThat(draft.offers().getFirst().total()).isEqualTo(15000);
+        assertThat(draft.sources().getFirst().id()).isEqualTo("return-sealed");
+        assertThat(run.snapshot().toolCalls()).isEqualTo(3);
+    }
+
+    @Test
+    void 실행기는_의도_추출과_도구_루프를_합쳐_모델_요청_상한을_검사한다() {
+        var execution = new LimitedCounselExecutor(1, 4, 5000);
+        var outcome = execution.execute(run -> workflow.execute("배송비 포함 30000원 음료 추천", List.of(), run));
+        output.printValue("모델 상한 결과", outcome);
+
+        assertThat(outcome.succeeded()).isFalse();
+        assertThat(outcome.failureStatus()).isEqualTo("MODEL_LIMIT");
+        assertThat(outcome.value()).isNull();
+        assertThat(outcome.trace().modelCalls()).isEqualTo(1);
+        assertThat(MODEL.chat().getRequests()).hasSize(1);
+    }
 
     @Test void 상품과_배송비와_정책을_조회해_검증한_값으로_답한다() throws Exception {
         try (var alice = browser()) {

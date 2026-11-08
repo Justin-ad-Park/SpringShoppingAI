@@ -119,6 +119,8 @@ RAG 평가 코드에 제약 처리를 추가하지 않고 앞에서 완성한 �
 보충: [공식 Evaluation](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).
 
 
+`RagService`는 실패 응답과 별도로 서버 로그에 실패 단계(`RETRIEVE`, `CHAT_OR_OUTPUT`)와 예외 타입을 남깁니다. 질문·검색 문서·모델 응답·예외 메시지는 로그에 넣지 않습니다. `failureKind`는 API에서 실패 종류를 비교하기 위한 값이고 서버 로그는 실패 위치를 찾는 단서입니다.
+
 ## 여기서 멈춰 확인하기
 
 HTTP 200 응답이라도 `FAILED`인 경우와 답변 내용만 틀린 경우를 구분해 보세요.

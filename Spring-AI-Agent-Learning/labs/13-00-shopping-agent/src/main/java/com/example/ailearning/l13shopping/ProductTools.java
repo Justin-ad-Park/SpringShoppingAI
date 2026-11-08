@@ -20,9 +20,9 @@ public class ProductTools {
         return products;
     }
     @Tool(description = "상품 ID로 실제 상품 가격과 배송비 포함 총액을 확인합니다.")
-    public Offer calculateShipping(String productId) {
+    public ProductPriceDetails calculateShipping(String productId) {
         run.startTool("calculateShipping", productId);
-        Offer offer = catalog.quote(productId);
+        ProductPriceDetails offer = catalog.calculatePriceDetails(productId);
         run.check(); facts.offers.put(productId, offer);
         run.recordToolResult("calculateShipping", offer);
         return offer;

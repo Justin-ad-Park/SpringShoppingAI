@@ -107,6 +107,10 @@ public final class McpToolRun {
         return List.copyOf(toolCalls);
     }
 
+    public boolean searchedWithoutResults() {
+        return searchedProductIds != null && searchedProductIds.isEmpty();
+    }
+
     public JsonNode lastQuote() {
         return lastQuote;
     }

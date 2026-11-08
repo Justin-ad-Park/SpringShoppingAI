@@ -10,6 +10,7 @@ public final class RunState {
     private final long deadline;
     private int clients, models, tools;
     private String stopped;
+    private String stage = "INTENT";
     private final List<Step> steps = new ArrayList<>();
 
     public RunState(int maxModels, int maxTools, long timeoutMs) {
@@ -38,6 +39,8 @@ public final class RunState {
         check();
         steps.add(new Step("RESULT", name, String.valueOf(result)));
     }
+    public synchronized void stage(String stage) { check(); this.stage = stage; }
+    public synchronized String stage() { return stage; }
     public synchronized String stopped() { return stopped; }
     public synchronized void stop(String reason) { if (stopped == null) stopped = reason; }
     public record Snapshot(int clientCalls, int modelCalls, int toolCalls, List<Step> steps) {}

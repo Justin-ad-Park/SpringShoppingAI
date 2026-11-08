@@ -157,7 +157,7 @@ ToolCallPrinter.printMockitoDetails(shoppingTools); // 호출 위치·스텁 설
 ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 이름·인자를 실행 순서대로 출력
 ```
 
-06장 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
+05장 보충 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
 
 
 1. `@MockitoSpyBean`을 제거하고 `@Autowired`만 쓰면 `verify()`를 사용할 수 있을까요?

@@ -4,6 +4,8 @@ import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -139,6 +141,37 @@ class McpComparisonLocalModelTest {
         JsonNode result = post("workflow", "1원 이하 음료");
         assertThat(result.path("status").asString()).isEqualTo("NO_RESULTS");
         assertThat(result.path("toolCalls").size()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void 하이브리드는_빈_검색_뒤_계산_여부와_무관하게_결과_없음을_반환한다(boolean calculateEmptyCart) throws Exception {
+        // 실제 MCP 검색은 빈 배열을 반환한다. 모델은 계산을 생략하거나 빈 장바구니를 계산한다.
+        MODEL
+                .chat()
+                .setResponseFunction(request -> {
+            if (request.path("messages").toString().contains("TASK:MCP_EXTRACT")) {
+                return createAssistantTextMessage("{\"category\":\"음료\",\"maxPrice\":1,\"totalBudget\":30000}");
+            }
+            long results = java.util.stream.StreamSupport
+                    .stream(request.path("messages").spliterator(), false)
+                    .filter(message -> message.path("role").asString().equals("tool"))
+                    .count();
+            if (results == 0) {
+                return createAssistantToolCallMessage("search", "searchProducts", "{\"query\":{\"category\":\"음료\",\"maxPrice\":1}}");
+            }
+            if (results == 1 && calculateEmptyCart) {
+                return createAssistantToolCallMessage("quote", "quoteCart", "{\"scenario\":\"empty\",\"additionalProductIds\":[]}");
+            }
+            return createAssistantTextMessage("총액은 0원입니다.");
+        });
+
+        JsonNode result = post("hybrid", "1원 이하 음료 모두 구매");
+
+        assertThat(result.path("status").asString()).isEqualTo("NO_RESULTS");
+        assertThat(result.path("answer").asString()).doesNotContain("0원");
+        assertThat(result.path("toolCalls").size()).isEqualTo(calculateEmptyCart ? 2 : 1);
+        assertThat(result.at("/toolCalls/0/result").isEmpty()).isTrue();
     }
 
     @Test

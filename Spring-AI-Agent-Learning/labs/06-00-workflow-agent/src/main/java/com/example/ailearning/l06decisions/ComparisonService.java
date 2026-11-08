@@ -2,10 +2,13 @@ package com.example.ailearning.l06decisions;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Service
 public class ComparisonService {
+    private static final Logger log = LoggerFactory.getLogger(ComparisonService.class);
     static final String EXTRACT_CATEGORY_BUDGET = """
             TASK:EXTRACT
             명시한 상품 카테고리(category: 음료/생활)와 배송비 포함 총예산(totalBudget)을 추출하세요.
@@ -36,6 +39,9 @@ public class ComparisonService {
             };
             return new RunResult(mode, result.status(), result.answer(), result.offers());
         } catch (RuntimeException error) {
+            Throwable causeType = error;
+            while (causeType.getCause() != null) causeType = causeType.getCause();
+            log.warn("Comparison failed: stage={}, errorType={}", mode, causeType.getClass().getSimpleName());
             return new RunResult(mode, "FAILED", "모델 연결과 응답 형식을 확인하세요.", List.of());
         }
     }

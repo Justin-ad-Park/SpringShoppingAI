@@ -6,11 +6,14 @@ import org.springframework.ai.vectorstore.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
 @Service
 public class RagService {
+    private static final Logger log = LoggerFactory.getLogger(RagService.class);
     public record DraftAnswer(Boolean answerable, String answer, List<String> sourceIds) {}
     public record Reply(String status, String answer, List<Source> sources) {}
     private final ChatClient client;
@@ -37,7 +40,7 @@ public class RagService {
 
     public record Metrics(long elapsedMs, int chatCalls, Integer inputTokens, Integer outputTokens, String failureKind) {}
     public record Run(Reply reply, Metrics metrics) {}
-    private static final class Stats { int calls; Integer input, output; }
+    private static final class Stats { int calls; Integer input, output; String stage = "RETRIEVE"; }
 
     public Run answer(String question) {
         long started = System.nanoTime();
@@ -46,6 +49,9 @@ public class RagService {
             Reply reply = answerInternal(question, stats);
             return new Run(reply, metrics(started, stats, null));
         } catch (RuntimeException error) {
+            Throwable causeType = error;
+            while (causeType.getCause() != null) causeType = causeType.getCause();
+            log.warn("RAG failed: stage={}, errorType={}", stats.stage, causeType.getClass().getSimpleName());
             String kind = "UPSTREAM_OR_OUTPUT";
             for (Throwable cause = error; cause != null; cause = cause.getCause()) {
                 if (cause instanceof com.openai.errors.RateLimitException) { kind = "RATE_LIMIT"; break; }
@@ -71,6 +77,7 @@ public class RagService {
                 .collect(java.util.stream.Collectors.joining("\n"));
         DraftAnswer draft;
         try {
+            stats.stage = "CHAT_OR_OUTPUT";
             stats.calls++;
             var response = client
                     .prompt()
