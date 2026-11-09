@@ -1,5 +1,7 @@
 package com.example.ailearning.l04structured;
 
+import com.example.ailearning.l04structured.domain.SearchCriteria;
+
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;

@@ -1,4 +1,4 @@
-package com.example.ailearning.l13shopping;
+package com.example.ailearning.l05tools.domain;
 
 import org.springframework.stereotype.Service;
 import java.util.List;

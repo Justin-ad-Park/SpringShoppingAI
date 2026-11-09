@@ -1,5 +1,8 @@
 package com.example.ailearning.l13shopping;
 
+import com.example.ailearning.l13shopping.domain.Intent;
+import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
+
 import com.example.ailearning.l13shopping.support.*;
 import org.springframework.ai.chat.memory.*;
 import org.springframework.ai.chat.messages.*;

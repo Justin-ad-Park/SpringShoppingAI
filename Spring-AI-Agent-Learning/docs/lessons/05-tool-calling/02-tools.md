@@ -16,6 +16,10 @@
 ```java
 package com.example.ailearning.l05tools;
 
+import com.example.ailearning.l05tools.domain.Product;
+import com.example.ailearning.l05tools.domain.ProductCatalog;
+import com.example.ailearning.l05tools.domain.ProductPriceDetails;
+
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;

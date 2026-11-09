@@ -1,5 +1,7 @@
 package com.example.ailearning.l04structured;
 
+import com.example.ailearning.l04structured.domain.SearchCriteria;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;

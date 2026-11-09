@@ -1,5 +1,7 @@
 package com.example.ailearning.l04structured;
 
+import com.example.ailearning.l04structured.domain.SearchCriteria;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

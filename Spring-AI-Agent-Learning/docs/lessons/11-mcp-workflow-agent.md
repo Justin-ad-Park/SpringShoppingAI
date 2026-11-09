@@ -33,6 +33,8 @@ MCP는 **기능을 연결하는 약속**이고, Workflow·Agent는 **다음 행�
 
 ## 실습 안내
 
+`SearchConditions`는 상품 검색 조건과 검증 규칙을 담아 [domain 패키지](../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+
 목표는 **외부 서버의 도구를 연결하고, 같은 도구를 사용할 때 Java와 모델의 판단 범위가 어떻게 달라지는지 설명하고 실행하는 것**입니다.
 선수 지식은 04 구조화 응답, 05 도구 호출, 06 세 실행 방식입니다. RAG는 MCP의 필수 조건이 아닙니다.
 

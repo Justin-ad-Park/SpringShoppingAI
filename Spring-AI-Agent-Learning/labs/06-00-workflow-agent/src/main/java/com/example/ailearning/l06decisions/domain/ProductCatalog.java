@@ -1,4 +1,4 @@
-package com.example.ailearning.l06decisions;
+package com.example.ailearning.l06decisions.domain;
 
 import org.springframework.stereotype.Service;
 import java.util.List;

@@ -22,6 +22,8 @@ Agent라는 말은 모델과 도구, 실행 흐름을 결합한 서비스의 동
 
 ## 실습 안내
 
+상품 데이터·검색·가격 계산과 `ProductSelectionCriteria`의 선택 조건을 [domain 패키지](../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+
 선수 지식: 04의 조건 추출, 05의 상품 서비스와 도구 호출.
 새 라이브러리는 추가하지 않습니다. **같은 요구와 데이터에서 판단 주체만 바꿔 비교**합니다.
 05에서 다룬 상품 정보·배송비 포함 가격 계산을 이 단원의 패키지에 별도로 구현했습니다. 이 단원에서는 가격 계산 결과에 `ProductPriceDetails`라는 이름을 사용하며, 05 프로젝트를 import하지 않습니다.

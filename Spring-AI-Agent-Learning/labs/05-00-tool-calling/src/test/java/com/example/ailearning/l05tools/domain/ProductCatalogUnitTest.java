@@ -1,4 +1,4 @@
-package com.example.ailearning.l05tools;
+package com.example.ailearning.l05tools.domain;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;

@@ -1,4 +1,4 @@
-package com.example.ailearning.l11mcp;
+package com.example.ailearning.l11mcp.domain;
 
 import java.util.List;
 import java.util.Map;

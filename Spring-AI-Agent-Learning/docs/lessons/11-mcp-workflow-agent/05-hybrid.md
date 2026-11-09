@@ -24,6 +24,8 @@ flowchart TD
 ```java
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.domain.SearchConditions;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;

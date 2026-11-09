@@ -1,5 +1,7 @@
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.domain.SearchConditions;
+
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import tools.jackson.databind.JsonNode;

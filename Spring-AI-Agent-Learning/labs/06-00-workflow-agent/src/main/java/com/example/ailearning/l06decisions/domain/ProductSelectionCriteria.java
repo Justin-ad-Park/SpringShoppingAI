@@ -1,4 +1,4 @@
-package com.example.ailearning.l06decisions;
+package com.example.ailearning.l06decisions.domain;
 
 import java.util.Set;
 

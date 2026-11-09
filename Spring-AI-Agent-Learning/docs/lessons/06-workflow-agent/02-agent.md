@@ -56,6 +56,10 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
 ```java
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.l06decisions.domain.Product;
+import com.example.ailearning.l06decisions.domain.ProductCatalog;
+import com.example.ailearning.l06decisions.domain.ProductPriceDetails;
+
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import java.util.ArrayList;

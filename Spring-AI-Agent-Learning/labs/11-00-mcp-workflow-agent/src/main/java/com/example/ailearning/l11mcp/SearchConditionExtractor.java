@@ -1,5 +1,7 @@
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.domain.SearchConditions;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 

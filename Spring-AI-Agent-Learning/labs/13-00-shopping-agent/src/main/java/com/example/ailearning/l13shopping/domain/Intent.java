@@ -1,4 +1,4 @@
-package com.example.ailearning.l13shopping;
+package com.example.ailearning.l13shopping.domain;
 import java.util.Set;
 
 public record Intent(String task, String category, Integer totalBudget) {

@@ -1,4 +1,9 @@
 package com.example.ailearning.l13shopping;
+
+import com.example.ailearning.l13shopping.domain.Intent;
+import com.example.ailearning.l13shopping.domain.Product;
+import com.example.ailearning.l13shopping.domain.ProductCatalog;
+import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
 import com.example.ailearning.l13shopping.support.RunState;
 import org.springframework.ai.tool.annotation.Tool;
 import java.util.List;

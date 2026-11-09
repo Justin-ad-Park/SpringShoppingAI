@@ -1,4 +1,7 @@
 package com.example.ailearning.l13shopping;
+
+import com.example.ailearning.l13shopping.domain.Product;
+import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

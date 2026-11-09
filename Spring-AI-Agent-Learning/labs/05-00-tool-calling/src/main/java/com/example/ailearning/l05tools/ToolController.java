@@ -1,5 +1,9 @@
 package com.example.ailearning.l05tools;
 
+import com.example.ailearning.l05tools.domain.Product;
+import com.example.ailearning.l05tools.domain.ProductCatalog;
+import com.example.ailearning.l05tools.domain.ProductPriceDetails;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;

@@ -1,4 +1,4 @@
-package com.example.ailearning.l11mcp;
+package com.example.ailearning.l11mcp.domain;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import org.junit.jupiter.api.*;

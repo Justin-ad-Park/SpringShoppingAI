@@ -22,6 +22,8 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 실습 안내
 
+상품 검색 조건과 검증 규칙을 담는 `SearchCriteria`를 [domain 패키지](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+
 **실행 코드·설정·테스트:** [labs/04-00-structured-output](../../labs/04-00-structured-output/README.md)
 
 **이번 목표:** 모델 응답을 record로 받고, 변환된 값을 Java 코드로 검증하는 흐름을 이해합니다.
@@ -36,11 +38,11 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 1. 결과를 담을 record
 
-[SearchCriteria.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 전체 코드입니다.
+[SearchCriteria.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/SearchCriteria.java)의 전체 코드입니다.
 `category`는 상품 카테고리, `maxPrice`는 상품 한 개의 가격 상한(원)입니다.
 
 ```java
-package com.example.ailearning.l04structured;
+package com.example.ailearning.l04structured.domain;
 
 import java.util.Set;
 
@@ -68,6 +70,8 @@ public record SearchCriteria(String category, Integer maxPrice) {
 
 ```java
 package com.example.ailearning.l04structured;
+
+import com.example.ailearning.l04structured.domain.SearchCriteria;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.HttpStatus;

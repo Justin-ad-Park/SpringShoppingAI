@@ -1,5 +1,10 @@
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.l06decisions.domain.Product;
+import com.example.ailearning.l06decisions.domain.ProductCatalog;
+import com.example.ailearning.l06decisions.domain.ProductPriceDetails;
+import com.example.ailearning.l06decisions.domain.ProductSelectionCriteria;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;

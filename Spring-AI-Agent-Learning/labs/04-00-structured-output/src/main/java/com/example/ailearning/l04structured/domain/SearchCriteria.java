@@ -1,4 +1,4 @@
-package com.example.ailearning.l04structured;
+package com.example.ailearning.l04structured.domain;
 
 import java.util.Set;
 

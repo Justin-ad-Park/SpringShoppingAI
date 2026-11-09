@@ -40,7 +40,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 02 보충 4 | `02-04-multiple-models` | `com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest` | `com.example.ailearning.l02multiple.MultipleProvidersLiveTest` |
 | 02 보충 5 타임아웃·재시도 | `02-05-model-timeout-retry` | `com.example.ailearning.l02requests.TimeoutNoRetryLocalModelTest`<br>`com.example.ailearning.l02requests.RetryLocalModelTest` | `com.example.ailearning.l02requests.ModelRequestOpenAiLiveTest` |
 | 04 구조화 응답 | `04-00-structured-output` | `com.example.ailearning.l04structured.StructuredOutputLocalModelTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
-| 05 도구 호출 | `05-00-tool-calling` | `com.example.ailearning.l05tools.ToolCallingLocalModelTest`<br>`com.example.ailearning.l05tools.ProductCatalogUnitTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
+| 05 도구 호출 | `05-00-tool-calling` | `com.example.ailearning.l05tools.ToolCallingLocalModelTest`<br>`com.example.ailearning.l05tools.domain.ProductCatalogUnitTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
 | 05 보충 5 도구 제한 | `05-05-tool-call-limits` | `com.example.ailearning.l05limits.ToolLimitLocalModelTest` | `com.example.ailearning.l05limits.ToolLimitOpenAiLiveTest` |
 | 06 Workflow·Agent | `06-00-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
 | 07 대화 메모리 | `07-00-chat-memory` | `com.example.ailearning.l07memory.MemoryLocalModelTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
@@ -48,7 +48,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
 | 10 RAG | `10-00-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
 | 10-4·10-5 표준 API | `10-04-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
-| 11 MCP 세 실행 방식 | `11-00-mcp-workflow-agent` | `com.example.ailearning.l11mcp.McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.McpComparisonOpenAiLiveTest` |
+| 11 MCP 세 실행 방식 | `11-00-mcp-workflow-agent` | `com.example.ailearning.l11mcp.McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.domain.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.McpComparisonOpenAiLiveTest` |
 | 12 평가·실패 | `12-00-evaluation` | `com.example.ailearning.l12evaluation.EvaluationLocalModelTest` | `com.example.ailearning.l12evaluation.EvaluationOpenAiLiveTest` |
 | 12-2 모델 평가 | `12-02-model-evaluation` | `com.example.ailearning.l12judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest` |
 | 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
@@ -84,6 +84,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 ## 코드와 실행 설정
 
 - Java 코드는 실습별 패키지와 모듈로 격리합니다. 미래 단원의 클래스나 다른 서비스를 선행 의존성으로 끌어오지 않습니다.
+- Spring AI와 무관한 업무 데이터·조건·검증·계산은 각 실습의 `domain` 패키지에 모아 AI 연결 코드와 구분합니다. 도메인 객체의 단위 테스트도 같은 패키지에 두며, 모델 응답을 받는다는 이유만으로 도메인 객체를 AI 전용 타입으로 분류하지 않습니다. 대화 이력·모델 실행 결과·전송용 DTO는 역할에 맞는 기존 위치에 두고, 빈 패키지나 불필요한 계층은 만들지 않습니다.
 - 공통 Mock 서버·프로토콜 응답·결과 출력은 `Spring-AI-Agent-Learning/test-support`를 `testImplementation`으로만 참조합니다. 이 일반 Java 라이브러리는 Boot 애플리케이션 플러그인 적용 대상에서 제외합니다. `OpenAiStubServer`는 주소·수명과 `chat()`·`embeddings()` 연결을 담당하고 두 대역이 각 설정·기록을 관리합니다. 단원별 응답·도구 순서·벡터 값·assertion은 실습 테스트에 둡니다.
 - 11장은 기존 shopping-mcp를 원격 서버로 사용합니다. 테스트에서만 서버 프로젝트를 의존하며, 운영 코드에서 서버 클래스를 import하지 않습니다.
 - 06의 기본 Workflow·Agent·혼합 흐름은 자체 제한 보조 코드 없이 실행합니다. 모델 통신은 02 보충, 도구 제한은 05 보충의 별도 모듈로 제공하며 12장에서 같은 테스트를 재활용합니다. 전체 Workflow 시간 제한·모델 호출 예산은 현재 확장 범위에 넣지 않습니다.

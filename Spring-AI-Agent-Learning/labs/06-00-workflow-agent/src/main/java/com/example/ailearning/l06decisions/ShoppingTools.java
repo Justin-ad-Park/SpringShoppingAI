@@ -1,5 +1,9 @@
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.l06decisions.domain.Product;
+import com.example.ailearning.l06decisions.domain.ProductCatalog;
+import com.example.ailearning.l06decisions.domain.ProductPriceDetails;
+
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import java.util.ArrayList;

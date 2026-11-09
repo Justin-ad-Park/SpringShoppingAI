@@ -4,7 +4,7 @@
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest --tests com.example.ailearning.l05tools.domain.ProductCatalogUnitTest
 ./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:bootRun
 ```
 
@@ -23,7 +23,7 @@ bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 도�
 - 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다. 출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest --tests com.example.ailearning.l05tools.ProductCatalogUnitTest
+./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest --tests com.example.ailearning.l05tools.domain.ProductCatalogUnitTest
 ./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest
 ```
 

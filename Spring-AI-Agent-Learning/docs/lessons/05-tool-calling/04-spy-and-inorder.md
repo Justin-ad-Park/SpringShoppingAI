@@ -111,7 +111,7 @@ toolCallOrder
 
 ### P01은 어디서 온 값일까?
 
-[ProductCatalog](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ProductCatalog.java)의 현재 데이터에서 15000원 이하 음료는 P01 허브티입니다. 따라서 테스트가 `"P01"`을 기대값으로 지정합니다.
+[ProductCatalog](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductCatalog.java)의 현재 데이터에서 15000원 이하 음료는 P01 허브티입니다. 따라서 테스트가 `"P01"`을 기대값으로 지정합니다.
 
 이 값은 앞선 `verify().searchProducts(...)`의 반환값에서 얻은 것이 아닙니다. `verify()`는 실제 검색 반환값을 받는 용도로 사용하지 않습니다. 현재 검증은 지정한 상품의 도구 호출 연결을 확인하며, 여러 검색 결과의 모든 상품을 구매 처리했는지 확인하는 테스트는 아닙니다.
 

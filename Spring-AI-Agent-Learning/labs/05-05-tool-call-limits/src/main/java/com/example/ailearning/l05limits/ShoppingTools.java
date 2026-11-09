@@ -1,13 +1,13 @@
 package com.example.ailearning.l05limits;
 
+import com.example.ailearning.l05limits.domain.Product;
+
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
 public class ShoppingTools {
-    public record Product(String productId, String name, int price) {}
-
     @Tool(description = "음료, 생활, 간식 중 한 카테고리의 상품을 검색합니다. 한 번에 카테고리 하나만 전달하세요.")
     public List<Product> searchProducts(String category) {
         if (category == null) return List.of();

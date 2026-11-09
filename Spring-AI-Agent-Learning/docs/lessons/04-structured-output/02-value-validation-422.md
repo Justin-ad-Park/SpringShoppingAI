@@ -10,7 +10,7 @@
 {"category":"음료","maxPrice":-1}
 ```
 
-생성된 record의 가격은 `-1`입니다. [SearchCriteria](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchCriteria.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
+생성된 record의 가격은 `-1`입니다. [SearchCriteria](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/SearchCriteria.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
 
 ```java
 if (maxPrice != null && maxPrice < 0) {

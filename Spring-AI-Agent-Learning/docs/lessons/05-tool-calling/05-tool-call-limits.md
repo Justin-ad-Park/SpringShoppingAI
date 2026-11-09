@@ -4,6 +4,8 @@
 
 선수 수업은 05-2의 도구 제공과 05-3의 도구 결과 전달입니다. 기본 예제를 바꾸지 않고 [05-05-tool-call-limits](../../../labs/05-05-tool-call-limits/README.md)를 실행합니다.
 
+검색 결과를 담는 `Product`는 이 보충 실습의 [domain 패키지](../../../labs/05-05-tool-call-limits/src/main/java/com/example/ailearning/l05limits/domain/Product.java)에 있습니다. 도구 등록과 제한 처리 코드는 기존 패키지에 있습니다.
+
 ## 어떤 횟수를 제한할까?
 
 모델이 같은 검색을 계속 요청하면 비용과 대기가 늘어날 수 있습니다. 프롬프트에 “반복하지 마세요”라고 쓰는 것과 별도로, Spring AI가 도구 실행 전에 횟수를 확인하도록 설정합니다.

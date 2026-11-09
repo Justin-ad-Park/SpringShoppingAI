@@ -21,6 +21,8 @@ Spring AI는 모델 연결·도구 호출·대화 메시지 같은 구성 요소
 
 ## 실습 안내
 
+상품 데이터·검색·가격 계산과 `Intent`의 상담 조건을 [domain 패키지](../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+
 먼저 04~12를 학습하고, 각 단원에서 배운 기능을 하나의 상담 흐름으로 연결합니다.
 목표는 **상품 추천·정책 검색·후속 질문을 연결하면서 모델 판단과 Java의 책임을 설명하는 것**입니다.
 명령은 모두 SpringShoppingAI 저장소 루트에서 실행합니다.

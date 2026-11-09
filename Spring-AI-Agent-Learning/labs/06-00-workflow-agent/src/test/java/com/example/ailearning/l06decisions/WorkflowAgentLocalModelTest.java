@@ -1,5 +1,7 @@
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.l06decisions.domain.ProductCatalog;
+
 import com.example.ailearning.testsupport.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
