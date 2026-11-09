@@ -30,24 +30,35 @@ class EvaluationApiLocalModelTest {
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL
-            .chat()
-            .resetResponsesAndRequests();
+    @BeforeEach
+    void reset() {
         MODEL
                 .chat()
-                .setTokenUsage(10, 5); MODEL
-                        .chat()
-                        .setResponseMessage(createAssistantTextMessage("YES")); }
-    @AfterAll static void stop() { MODEL.close(); }
+                .resetResponsesAndRequests();
+        MODEL
+                .chat()
+                .setTokenUsage(10, 5);
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage("YES"));
+    }
 
-    @Test void 질문과_근거와_후보_답변을_평가_모델에_전달한다() throws Exception {
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
+
+    @Test
+    void 질문과_근거와_후보_답변을_평가_모델에_전달한다() throws Exception {
         var response = post("relevance", "미개봉 반품 기간", "미개봉은 7일 이내 반품", "반품은 7일 이내입니다.");
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("true");
         assertThat(MODEL.chat().getRequests()).hasSize(1);
         assertThat(MODEL.chat().getRequests().getFirst().path("messages").toString()).contains("미개봉 반품 기간", "미개봉은 7일 이내 반품", "반품은 7일 이내입니다.");
     }
-    @Test void 근거와_주장을_평가하고_NO를_false로_변환한다() throws Exception {
+
+    @Test
+    void 근거와_주장을_평가하고_NO를_false로_변환한다() throws Exception {
         // Given: 가짜 평가 모델이 NO를 반환하도록 설정
         MODEL
                 .chat()
@@ -61,7 +72,9 @@ class EvaluationApiLocalModelTest {
         assertThat(MODEL.chat().getRequests()).hasSize(1);
         assertThat(MODEL.chat().getRequests().getFirst().path("messages").toString()).contains("Document:", "Claim:", "7일", "30일");
     }
-    @Test void 예상하지_못한_평가_응답은_통과로_처리하지_않는다() throws Exception {
+
+    @Test
+    void 예상하지_못한_평가_응답은_통과로_처리하지_않는다() throws Exception {
         // Given: YES/NO가 아닌 가짜 평가 응답 설정
         MODEL
                 .chat()
@@ -73,10 +86,13 @@ class EvaluationApiLocalModelTest {
         // Then: 평가 성공으로 오인하지 않고 false를 반환하는지 검증
         assertThat(response.body()).isEqualTo("false");
     }
-    @Test void 빈_후보_답변은_평가_모델_호출_전에_거부한다() throws Exception {
+
+    @Test
+    void 빈_후보_답변은_평가_모델_호출_전에_거부한다() throws Exception {
         assertThat(post("relevance", "질문", "근거", " ").statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
+
     HttpResponse<String> post(String kind, String question, String context, String answer) throws Exception {
         var body = OpenAiStubServer.JSON
                 .createObjectNode()

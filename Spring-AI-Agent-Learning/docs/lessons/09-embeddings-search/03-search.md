@@ -40,6 +40,7 @@ threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0
 
 [SearchLocalModelTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchLocalModelTest.java)는 실제 어댑터와 저장소를 사용합니다.
 테스트 서버는 정해진 단어군에 3차원 직교 벡터를 반환해 적재·검색·필터를 재현합니다.
+임베딩 API의 정상 벡터 반환과 검색 API의 잘못된 조건 거부는 서로 다른 테스트로 확인합니다. 잘못된 topK·threshold·category는 매개변수 테스트로 각각 실행하므로 어떤 조건에서 실패했는지 구분할 수 있습니다.
 이는 실제 모델의 의미 검색 성능을 평가하는 테스트가 아닙니다. 실제 모델 품질은 별도 질문으로 확인해야 합니다.
 
 ## 확인 질문
