@@ -48,6 +48,8 @@ class ToolLimitLocalModelTest {
         System.out.println("제한 결과: " + reply);
         System.out.println("모델 요청 수: " + MODEL.chat().getRequests().size());
 
+        ToolCallPrinter.printToolCalls(shoppingTools);
+
         // Then: 세 번째 요청은 실행 전에 차단된다. verify는 이미 실행된 호출을 검사한다.
         assertThat(reply.status()).isEqualTo("TOOL_LIMIT");
         assertThat(reply.finishReason()).isEqualTo("toolCallLimitExceeded");
@@ -87,12 +89,15 @@ class ToolLimitLocalModelTest {
                 .setResponseSequence(
                 createAssistantToolCallMessage("s1", "searchProducts", "{\"category\":\"음료\"}"),
                 createAssistantToolCallMessage("d1", "calculateShipping", "{\"productId\":\"P01\"}"),
-                createAssistantToolCallMessage("s2", "searchProducts", "{\"category\":\"음료\"}"),
-                createAssistantToolCallMessage("d2", "calculateShipping", "{\"productId\":\"P01\"}"));
+                createAssistantToolCallMessage("s2", "searchProducts", "{\"category\":\"생활\"}"),
+                createAssistantToolCallMessage("d2", "calculateShipping", "{\"productId\":\"P03\"}"));
         var reply = toolLimitService.ask("검색과 배송비 조회를 반복해줘.");
         System.out.println("전체 상한 결과: " + reply);
+        ToolCallPrinter.printToolCalls(shoppingTools);
+
         assertThat(reply.status()).isEqualTo("TOOL_LIMIT");
-        verify(shoppingTools, times(2)).searchProducts("음료");
+        verify(shoppingTools).searchProducts("음료");
+        verify(shoppingTools).searchProducts("생활");
         verify(shoppingTools, times(1)).calculateShipping("P01");
         assertThat(MODEL.chat().getRequests()).hasSize(4);
     }
@@ -114,17 +119,47 @@ class ToolLimitLocalModelTest {
 
     @Test
     void 새_사용자_요청에는_이전_요청의_도구_횟수를_합산하지_않는다() {
+        // Given: 실제 AI 대신, 검색 도구 호출 1회와 최종 답변을 순서대로 반환한다.
         MODEL
                 .chat()
-                .setResponseFunction(request -> createAssistantToolCallMessage(
-                "search-" + MODEL.chat().getRequests().size(), "searchProducts", "{\"category\":\"음료\"}"));
-        var first = toolLimitService.ask("계속 검색");
-        var second = toolLimitService.ask("다시 계속 검색");
-        System.out.println("첫 요청: " + first + " / 다음 요청: " + second);
-        assertThat(first.status()).isEqualTo("TOOL_LIMIT");
-        assertThat(second.status()).isEqualTo("TOOL_LIMIT");
-        verify(shoppingTools, times(4)).searchProducts("음료");
-        assertThat(MODEL.chat().getRequests()).hasSize(6);
+                .setResponseSequence(
+                        createAssistantToolCallMessage("first-search", "searchProducts", "{\"category\":\"음료\"}"),
+                        createAssistantTextMessage("음료 검색을 완료했습니다."));
+
+        // When: 첫 사용자 요청에서 검색을 한 번 실행한다.
+        var first = toolLimitService.ask("음료를 한 번만 검색해줘.");
+        System.out.println("첫 요청: " + first);
+        ToolCallPrinter.printToolCalls(shoppingTools);
+
+        // Then: 제한에 걸리지 않고 정상 종료한다.
+        assertThat(first.status()).isEqualTo("COMPLETED");
+        verify(shoppingTools).searchProducts("음료");
+        verifyNoMoreInteractions(shoppingTools);
+        // 모델에 사용자 질문을 보내고, 도구 실행 결과를 보내 최종 답변을 받으므로 총 2회 요청한다.
+        assertThat(MODEL.chat().getRequests()).hasSize(2);
+
+        // Given: 출력·검증용 Spy 기록만 비운다. Spring AI의 제한 횟수를 초기화하는 코드는 아니다.
+        clearInvocations(shoppingTools);
+        MODEL
+                .chat()
+                .setResponseSequence(
+                        createAssistantToolCallMessage("second-search-1", "searchProducts", "{\"category\":\"생활\"}"),
+                        createAssistantToolCallMessage("second-search-2", "searchProducts", "{\"category\":\"간식\"}"),
+                        createAssistantTextMessage("생활과 간식 검색을 완료했습니다."));
+
+        // When: 새 사용자 요청에서 같은 검색 도구를 두 번 실행한다.
+        var second = toolLimitService.ask("생활과 간식을 각각 한 번씩 검색해줘.");
+        System.out.println("두번째 요청: " + second);
+        ToolCallPrinter.printToolCalls(shoppingTools);
+
+        // Then: 새 사용자 요청에서는 검색 도구의 제한 횟수를 처음부터 센다.
+        // 첫 요청에서 이미 한 번 검색했어도, 두 번째 요청에서 다시 두 번 검색하고 정상 종료한다.
+        assertThat(second.status()).isEqualTo("COMPLETED");
+        verify(shoppingTools).searchProducts("생활");
+        verify(shoppingTools).searchProducts("간식");
+        verifyNoMoreInteractions(shoppingTools);
+        // 모델 요청 기록은 누적된다. 첫 요청 2회 + 다음 요청 3회이다.
+        assertThat(MODEL.chat().getRequests()).hasSize(5);
     }
 
     @Test
