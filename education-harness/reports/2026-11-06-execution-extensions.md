@@ -4,8 +4,8 @@
 
 - 06장 기본 Workflow·Agent·혼합 방식에서 자체 RunState·CountedChatModel·Executor·Future를 제거했다. 검색·배송비 포함 예산·카테고리 검증·추가 입력·결과 없음 처리는 유지했다.
 - 기본 Agent의 도구와 혼합 방식의 고정 조건 도구를 분리했다. 조회 금액은 요청별 도구 객체가 보관하며 다른 요청에 섞이지 않는다.
-- [06 확장 1](../../Spring-AI-Agent-Learning/docs/lessons/06-workflow-agent/04-tool-call-limits.md): `06-tool-call-limits`에서 Spring AI 기본 도구별·전체 호출 상한과 finishReason 처리, 정상·반복·요청별 분리를 구현했다.
-- [06 확장 2](../../Spring-AI-Agent-Learning/docs/lessons/06-workflow-agent/05-model-timeout-retry.md): `06-model-timeout-retry`에서 SDK 타임아웃·재시도 설정과 정상·지연·429·500·400 결과를 구현했다.
+- [06 확장 1](../../Spring-AI-Agent-Learning/docs/lessons/05-tool-calling/05-tool-call-limits.md): `06-tool-call-limits`에서 Spring AI 기본 도구별·전체 호출 상한과 finishReason 처리, 정상·반복·요청별 분리를 구현했다.
+- [06 확장 2](../../Spring-AI-Agent-Learning/docs/lessons/02-first-call/05-model-timeout-retry.md): `06-model-timeout-retry`에서 SDK 타임아웃·재시도 설정과 정상·지연·429·500·400 결과를 구현했다.
 - 두 확장 모두 별도 시작 클래스·Controller·Service·application.yml·로컬 테스트·Live 클래스를 제공하며, 기본 모듈이나 서로의 운영 코드를 import하지 않는다.
 - 12장 실패 수업에서 같은 모듈을 다시 실행하고 결과를 평가·관측에 연결한다. 타임아웃·재시도 설명을 복제하거나 다른 실행 제어기를 추가하지 않았다.
 - 전체 Workflow 시간 제한·모델 호출 예산은 구현하지 않았다. 13의 기존 자체 제약 코드는 유지하고, 06의 기본 코드 복습으로 오해하지 않도록 안내를 바로잡았다.
