@@ -87,36 +87,37 @@ public class CounselWorkflow {
     }
 
     private Draft verify(Intent intent, Selection selected, TurnFacts facts) {
-        if (selected == null || selected.productIds() == null || selected.sourceIds() == null)
+        if (selected == null || selected.productIds() == null || selected.sourceIds() == null) {
             throw new IllegalArgumentException("선택 형식이 올바르지 않습니다.");
+        }
+
+        boolean shopping = intent.task().equals("SHOPPING");
         List<ProductPriceDetails> offers = new ArrayList<>();
-        for (String id : selected
-                .productIds()
-                .stream()
-                .distinct()
-                .toList()) {
+        for (String id : selected.productIds().stream().distinct().toList()) {
             ProductPriceDetails offer = facts.offers.get(id);
-            if (!intent
-                    .task()
-                    .equals("SHOPPING") || offer == null || offer.total() > intent.totalBudget()
-                    || (intent.category() != null && !offer
-                    .product()
-                    .category()
-                    .equals(intent.category())))
+            // 상품 추천에서 이번 요청에 실제로 가격을 조회한 상품만 검증한다.
+            if (!shopping || offer == null) {
                 return invalid(intent);
+            }
+
+            boolean withinBudget = offer.total() <= intent.totalBudget();
+            boolean categoryMatches = intent.category() == null
+                    || offer.product().category().equals(intent.category());
+            if (!withinBudget || !categoryMatches) {
+                return invalid(intent);
+            }
             offers.add(offer);
         }
+
         List<Source> sources = new ArrayList<>();
-        for (String id : selected
-                .sourceIds()
-                .stream()
-                .distinct()
-                .toList()) {
+        for (String id : selected.sourceIds().stream().distinct().toList()) {
             Source source = facts.sources.get(id);
-            if (source == null) return invalid(intent);
+            if (source == null) {
+                return invalid(intent);
+            }
             sources.add(source);
         }
-        if (intent.task().equals("SHOPPING") && offers.isEmpty()) {
+        if (shopping && offers.isEmpty()) {
             boolean noAffordableProduct = facts.productSearched && facts.lastProducts
                     .stream()
                     .allMatch(product -> {
@@ -130,18 +131,23 @@ public class CounselWorkflow {
             String status = facts.policySearched && facts.sources.isEmpty() ? "NO_CONTEXT" : "NO_VERIFIED_SOURCE";
             return new Draft(status, "확인할 수 있는 정책 근거가 없습니다.", intent, List.of(), List.of());
         }
+        String answer = createAnswer(offers, sources);
+        return new Draft("VERIFIED", answer, intent, List.copyOf(offers), List.copyOf(sources));
+    }
+
+    private String createAnswer(List<ProductPriceDetails> offers, List<Source> sources) {
         // 자유 생성 문장 대신 검증한 실제 총액과 정책 원문으로 표시한다.
         String answer = offers
                 .stream()
-                .map(offer -> offer
-                        .product()
-                        .name() + " 총 " + offer.total() + "원")
+                .map(offer -> offer.product().name() + " 총 " + offer.total() + "원")
                 .collect(java.util.stream.Collectors.joining(" / "));
-        if (!sources.isEmpty()) answer += "\n정책 근거: " + sources
-                .stream()
-                .map(Source::text)
-                .collect(java.util.stream.Collectors.joining(" / "));
-        return new Draft("VERIFIED", answer.strip(), intent, List.copyOf(offers), List.copyOf(sources));
+        if (!sources.isEmpty()) {
+            String policyText = sources.stream()
+                    .map(Source::text)
+                    .collect(java.util.stream.Collectors.joining(" / "));
+            answer += "\n정책 근거: " + policyText;
+        }
+        return answer.strip();
     }
 
     private Draft invalid(Intent intent) {

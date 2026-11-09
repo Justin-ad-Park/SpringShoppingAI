@@ -40,7 +40,11 @@ public class RagService {
 
     public record Metrics(long elapsedMs, int chatCalls, Integer inputTokens, Integer outputTokens, String failureKind) {}
     public record Run(Reply reply, Metrics metrics) {}
-    private static final class Stats { int calls; Integer input, output; String stage = "RETRIEVE"; }
+    private static final class Stats {
+        int calls;
+        Integer input, output;
+        String stage = "RETRIEVE";
+    }
 
     public Run answer(String question) {
         long started = System.nanoTime();
@@ -50,15 +54,21 @@ public class RagService {
             return new Run(reply, metrics(started, stats, null));
         } catch (RuntimeException error) {
             Throwable causeType = error;
-            while (causeType.getCause() != null) causeType = causeType.getCause();
+            while (causeType.getCause() != null) {
+                causeType = causeType.getCause();
+            }
             log.warn("RAG failed: stage={}, errorType={}", stats.stage, causeType.getClass().getSimpleName());
             String kind = "UPSTREAM_OR_OUTPUT";
             for (Throwable cause = error; cause != null; cause = cause.getCause()) {
-                if (cause instanceof com.openai.errors.RateLimitException) { kind = "RATE_LIMIT"; break; }
-                if (cause instanceof java.net.SocketTimeoutException || cause
-                        .getClass()
-                        .getSimpleName()
-                        .contains("Timeout")) kind = "TIMEOUT";
+                if (cause instanceof com.openai.errors.RateLimitException) {
+                    kind = "RATE_LIMIT";
+                    break;
+                }
+                boolean timeout = cause instanceof java.net.SocketTimeoutException
+                        || cause.getClass().getSimpleName().contains("Timeout");
+                if (timeout) {
+                    kind = "TIMEOUT";
+                }
             }
             return new Run(new Reply("FAILED", "모델 연결 또는 응답 형식을 확인하세요.", List.of()), metrics(started, stats, kind));
         }
@@ -70,7 +80,10 @@ public class RagService {
 
     private Reply answerInternal(String question, Stats stats) {
         List<Source> sources = retrieve(question);
-        if (sources.isEmpty()) return new Reply("NO_CONTEXT", "관련 정책 근거가 없습니다.", List.of());
+        if (sources.isEmpty()) {
+            return new Reply("NO_CONTEXT", "관련 정책 근거가 없습니다.", List.of());
+        }
+
         String context = sources
                 .stream()
                 .map(source -> "[" + source.id() + "] " + source.text())
@@ -90,10 +103,7 @@ public class RagService {
                     .call()
                     .responseEntity(DraftAnswer.class);
             draft = response.entity();
-            var usage = response
-                    .response()
-                    .getMetadata()
-                    .getUsage();
+            var usage = response.response().getMetadata().getUsage();
             if (usage != null && usage.getTotalTokens() > 0) {
                 stats.input = usage.getPromptTokens();
                 stats.output = usage.getCompletionTokens();
@@ -104,27 +114,21 @@ public class RagService {
         if (draft != null && Boolean.FALSE.equals(draft.answerable())) {
             return new Reply("NO_ANSWER", "검색된 근거로는 답할 수 없습니다.", List.of());
         }
-        if (draft == null || !Boolean.TRUE.equals(draft.answerable()) || draft.answer() == null || draft
-                .answer()
-                .isBlank() || draft.sourceIds() == null
-                || draft
-                .sourceIds()
-                .isEmpty()
-                || draft
-                .sourceIds()
-                .stream()
-                .anyMatch(id -> sources
-                        .stream()
-                        .noneMatch(source -> source
-                                .id()
-                                .equals(id)))) {
+        boolean missingAnswer = draft == null || !Boolean.TRUE.equals(draft.answerable())
+                || draft.answer() == null || draft.answer().isBlank()
+                || draft.sourceIds() == null || draft.sourceIds().isEmpty();
+        if (missingAnswer) {
             return new Reply("INVALID_CITATION", "모델 답변의 출처를 확인할 수 없습니다.", List.of());
         }
-        List<Source> cited = sources
-                .stream()
-                .filter(source -> draft
-                        .sourceIds()
-                        .contains(source.id()))
+
+        boolean unknownSource = draft.sourceIds().stream()
+                .anyMatch(id -> sources.stream().noneMatch(source -> source.id().equals(id)));
+        if (unknownSource) {
+            return new Reply("INVALID_CITATION", "모델 답변의 출처를 확인할 수 없습니다.", List.of());
+        }
+
+        List<Source> cited = sources.stream()
+                .filter(source -> draft.sourceIds().contains(source.id()))
                 .toList();
         return new Reply("ANSWERED", draft.answer(), cited);
     }

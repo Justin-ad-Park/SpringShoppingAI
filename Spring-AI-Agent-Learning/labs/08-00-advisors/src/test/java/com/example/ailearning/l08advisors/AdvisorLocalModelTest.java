@@ -26,13 +26,18 @@ class AdvisorLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
-    @Value("${local.server.port}") int port;
-    @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
+    @Value("${local.server.port}")
+    int port;
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() {
+
+    @BeforeEach
+    void reset() {
         MODEL
                 .chat()
                 .resetResponsesAndRequests();
@@ -41,16 +46,23 @@ class AdvisorLocalModelTest {
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("고정 응답"));
     }
-    @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void Advisor의_응답_처리는_요청의_반대_순서로_실행된다() throws Exception {
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
+
+    @Test
+    void Advisor의_응답_처리는_요청의_반대_순서로_실행된다() throws Exception {
         try (var browser = browser()) {
             var response = post(browser, "/api/advisors/demo", "안녕");
             assertThat(response.statusCode()).isEqualTo(200);
             assertThat(json(response).path("steps").toString()).isEqualTo("[\"A:before\",\"B:before\",\"B:after\",\"A:after\"]");
         }
     }
-    @Test void 메모리_Advisor는_이전_대화를_중복_저장_없이_전달한다() throws Exception {
+
+    @Test
+    void 메모리_Advisor는_이전_대화를_중복_저장_없이_전달한다() throws Exception {
         try (var browser = browser()) {
             // Given: 첫 요청으로 메모리 Advisor에 이전 대화 저장
             post(browser, "/api/advisors/demo", "예산은 3만원");
@@ -64,7 +76,9 @@ class AdvisorLocalModelTest {
             assertThat(MODEL.chat().getRequests().get(1).path("messages").size()).isEqualTo(4);
         }
     }
-    @Test void 모델_호출에_실패해도_기본_Advisor에_사용자_질문이_남는다() throws Exception {
+
+    @Test
+    void 모델_호출에_실패해도_기본_Advisor에_사용자_질문이_남는다() throws Exception {
         try (var browser = browser()) {
             // Given: 가짜 모델이 HTTP 503을 반환하도록 설정
             MODEL
@@ -97,7 +111,9 @@ class AdvisorLocalModelTest {
             assertThat(json(next).path("storedMessages").asInt()).isEqualTo(3);
         }
     }
-    @Test void 도구_루프_안쪽과_바깥쪽_Advisor의_실행_횟수가_다르다() throws Exception {
+
+    @Test
+    void 도구_루프_안쪽과_바깥쪽_Advisor의_실행_횟수가_다르다() throws Exception {
         // Given: 도구 호출 요청과 최종 답변을 순서대로 반환하도록 설정
         MODEL
                 .chat()
@@ -115,7 +131,9 @@ class AdvisorLocalModelTest {
             assertThat(json(response).path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void 메모리_삭제는_다른_사용자_세션에_영향을_주지_않는다() throws Exception {
+
+    @Test
+    void 메모리_삭제는_다른_사용자_세션에_영향을_주지_않는다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             // Given: 서로 다른 세션에 이전 대화 저장
             post(alice, "/api/advisors/demo", "Alice의 질문");
@@ -123,9 +141,11 @@ class AdvisorLocalModelTest {
             assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).doesNotContain("Alice");
 
             // When: Alice 대화만 삭제
-            output.printHttpResponse(alice.send(HttpRequest.newBuilder(uri("/api/advisors/demo"))
-                                    .DELETE()
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(uri("/api/advisors/demo"))
+                    .DELETE()
+                    .build();
+            var response = alice.send(request, HttpResponse.BodyHandlers.ofString());
+            output.printHttpResponse(response);
 
             // When: 삭제한 Alice 세션에서 새 질문 전달
             var aliceResponse = post(alice, "/api/advisors/demo", "새 질문");
@@ -140,20 +160,35 @@ class AdvisorLocalModelTest {
             assertThat(json(bobResponse).path("storedMessages").asInt()).isEqualTo(4);
         }
     }
-    HttpClient browser() { return HttpClient.newBuilder()
-            .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
-            .build(); }
-    URI uri(String path) { return URI.create("http://127.0.0.1:" + port + path); }
+
+    HttpClient browser() {
+        return HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .build();
+    }
+
+    URI uri(String path) {
+        return URI.create("http://127.0.0.1:" + port + path);
+    }
+
     HttpResponse<String> post(HttpClient http, String path, String text) throws Exception {
-        return output.printHttpResponse(http.send(HttpRequest.newBuilder(uri(path))
-                                .header("Content-Type", "text/plain; charset=UTF-8")
-                                .POST(HttpRequest.BodyPublishers.ofString(text))
-                                .build(), HttpResponse.BodyHandlers.ofString()));
+        var request = HttpRequest.newBuilder(uri(path))
+                .header("Content-Type", "text/plain; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(text))
+                .build();
+        var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+        return output.printHttpResponse(response);
     }
+
     HttpResponse<String> get(HttpClient http, String path) throws Exception {
-        return output.printHttpResponse(http.send(HttpRequest.newBuilder(uri(path))
-                                .GET()
-                                .build(), HttpResponse.BodyHandlers.ofString()));
+        var request = HttpRequest.newBuilder(uri(path))
+                .GET()
+                .build();
+        var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+        return output.printHttpResponse(response);
     }
-    JsonNode json(HttpResponse<String> response) { return OpenAiStubServer.JSON.readTree(response.body()); }
+
+    JsonNode json(HttpResponse<String> response) {
+        return OpenAiStubServer.JSON.readTree(response.body());
+    }
 }

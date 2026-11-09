@@ -24,12 +24,16 @@ class EvaluationApiLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
-    @Value("${local.server.port}") int port;
-    @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
+    @Value("${local.server.port}")
+    int port;
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
+
     @BeforeEach
     void reset() {
         MODEL
@@ -100,11 +104,12 @@ class EvaluationApiLocalModelTest {
                 .put("context", context)
                 .put("answer", answer);
         try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/evaluate/"+kind))
-                                    .header("Content-Type", "application/json")
-                                    .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
-                                    .build(),
-                    HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluate/"+kind))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            return output.printHttpResponse(response);
         }
     }
 }

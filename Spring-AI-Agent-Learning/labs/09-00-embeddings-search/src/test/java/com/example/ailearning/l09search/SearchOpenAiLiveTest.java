@@ -31,6 +31,7 @@ class SearchOpenAiLiveTest {
                 java.util.Arrays.toString(java.util.Arrays.copyOf(vector.values(), Math.min(8, vector.dimensions()))));
         SearchService.Comparison result = service.search("배송비는 얼마인가요?", 2, 0.0, null);
         System.out.printf("문자열 검색과 벡터 검색: %s%n", result);
+        // 연결·결과 존재를 검사한다. 관련 문서를 찾았는지는 docs/lessons/09-embeddings-search/03-search.md의 기준으로 비교한다.
         assertThat(vector.dimensions()).isPositive();
         assertThat(result.vectorHits()).isNotEmpty();
     }

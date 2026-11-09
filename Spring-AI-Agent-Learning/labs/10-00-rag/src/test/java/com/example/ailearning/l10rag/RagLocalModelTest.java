@@ -24,8 +24,11 @@ class RagLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = createModelServer();
-    @Value("${local.server.port}") int port;
-    @org.springframework.beans.factory.annotation.Autowired RagService service;
+    @Value("${local.server.port}")
+    int port;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    RagService service;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -34,12 +37,21 @@ class RagLocalModelTest {
         registry.add("spring.ai.openai.embedding.options.model", () -> "learning-embedding");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL
-            .chat()
-            .resetResponsesAndRequests(); }
-    @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void 문서를_나누어_검색한_근거를_모델에_전달한다() throws Exception {
+    @BeforeEach
+    void reset() {
+        MODEL
+                .chat()
+                .resetResponsesAndRequests();
+    }
+
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
+
+    @Test
+    void 문서를_나누어_검색한_근거를_모델에_전달한다() throws Exception {
         // Given: 근거 ID를 포함한 가짜 모델 답변 설정
         MODEL
                 .chat()
@@ -62,12 +74,16 @@ class RagLocalModelTest {
         assertThat(messages).contains("REFERENCE_START", "return-sealed", "7일", "return-opened");
         assertThat(MODEL.embeddings().getRequests().toString()).contains("미개봉", "반품");
     }
-    @Test void 검색_근거가_없으면_답변_모델을_호출하지_않는다() throws Exception {
+
+    @Test
+    void 검색_근거가_없으면_답변_모델을_호출하지_않는다() throws Exception {
         var response = post("우주 여행");
         assertThat(OpenAiStubServer.JSON.readTree(response.body()).path("status").asString()).isEqualTo("NO_CONTEXT");
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
-    @Test void 검색하지_않은_출처나_출처_누락은_답변으로_채택하지_않는다() throws Exception {
+
+    @Test
+    void 검색하지_않은_출처나_출처_누락은_답변으로_채택하지_않는다() throws Exception {
         // Given: 검색하지 않은 출처를 인용하는 모델 응답 설정
         MODEL
                 .chat()
@@ -90,7 +106,9 @@ class RagLocalModelTest {
         // Then: 출처 ID가 비어 있는 응답을 근거로 채택하지 않는지 검증
         assertThat(OpenAiStubServer.JSON.readTree(missingSource.body()).path("status").asString()).isEqualTo("INVALID_CITATION");
     }
-    @Test void 문서를_찾았어도_근거가_부족하면_답변을_보류한다() throws Exception {
+
+    @Test
+    void 문서를_찾았어도_근거가_부족하면_답변을_보류한다() throws Exception {
         // Given: 검색 후 답할 수 없다는 가짜 모델 응답 설정
         MODEL
                 .chat()
@@ -102,7 +120,9 @@ class RagLocalModelTest {
         // Then: 근거 부족 상태로 답변을 보류하는지 검증
         assertThat(OpenAiStubServer.JSON.readTree(response.body()).path("status").asString()).isEqualTo("NO_ANSWER");
     }
-    @Test void 답변_형식이_잘못되면_변환_실패로_처리한다() throws Exception {
+
+    @Test
+    void 답변_형식이_잘못되면_변환_실패로_처리한다() throws Exception {
         // Given: JSON이 아닌 가짜 모델 응답 설정
         MODEL
                 .chat()
@@ -114,16 +134,21 @@ class RagLocalModelTest {
         // Then: 모델 응답 변환 실패를 HTTP 500으로 처리하는지 검증
         assertThat(response.statusCode()).isEqualTo(500);
     }
-    @Test void 공백_질문은_답변_모델을_호출하지_않는다() throws Exception {
+
+    @Test
+    void 공백_질문은_답변_모델을_호출하지_않는다() throws Exception {
         assertThat(post(" ").statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
+
     HttpResponse<String> post(String question) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/rag"))
-                                    .header("Content-Type", "text/plain; charset=UTF-8")
-                                    .POST(HttpRequest.BodyPublishers.ofString(question))
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/rag"))
+                    .header("Content-Type", "text/plain; charset=UTF-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(question))
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            return output.printHttpResponse(response);
         }
     }
 
@@ -132,8 +157,12 @@ class RagLocalModelTest {
         server
                 .embeddings()
                 .setVectorFunction(text -> {
-                    if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
-                    if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
+                    if (text.contains("배송") || text.contains("운송")) {
+                        return new float[]{1, 0, 0};
+                    }
+                    if (text.contains("반품") || text.contains("개봉")) {
+                        return new float[]{0, 1, 0};
+                    }
                     return new float[]{0, 0, 1};
                 });
         return server;

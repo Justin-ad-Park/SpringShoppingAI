@@ -33,15 +33,22 @@ class ShoppingAgentLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = createModelServer();
-    @Value("${local.server.port}") int port;
-    @Autowired CounselWorkflow workflow;
-    @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
+    @Value("${local.server.port}")
+    int port;
+
+    @Autowired
+    CounselWorkflow workflow;
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.embedding.options.model", () -> "learning-embedding");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() {
+
+    @BeforeEach
+    void reset() {
         MODEL
                 .chat()
                 .resetResponsesAndRequests();
@@ -49,7 +56,11 @@ class ShoppingAgentLocalModelTest {
                 .chat()
                 .setResponseFunction(this::script);
     }
-    @AfterAll static void stop() { MODEL.close(); }
+
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
 
     @Test
     void 상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다() {
@@ -77,7 +88,8 @@ class ShoppingAgentLocalModelTest {
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
-    @Test void 상품과_배송비와_정책을_조회해_검증한_값으로_답한다() throws Exception {
+    @Test
+    void 상품과_배송비와_정책을_조회해_검증한_값으로_답한다() throws Exception {
         try (var alice = browser()) {
             var body = post(alice, "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘");
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
@@ -89,7 +101,9 @@ class ShoppingAgentLocalModelTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void 후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다() throws Exception {
+
+    @Test
+    void 후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다() throws Exception {
         try (var alice = browser()) {
             // Given: 예산과 카테고리가 담긴 첫 대화 저장
             post(alice, "배송비 포함 30000원 음료 추천");
@@ -110,16 +124,24 @@ class ShoppingAgentLocalModelTest {
             assertThat(revised.path("storedMessages").asInt()).isEqualTo(6);
         }
     }
-    @Test void 배송비를_더하면_모든_상품이_예산을_초과할_수_있다() throws Exception {
+
+    @Test
+    void 배송비를_더하면_모든_상품이_예산을_초과할_수_있다() throws Exception {
         // Given: 배송비 포함 예산을 넘는 상품만 반환하는 모델 흐름 설정
         MODEL
                 .chat()
                 .setResponseFunction(request -> {
-                    if (isIntent(request)) return intent("SHOPPING", "음료", "13000");
+                    if (isIntent(request)) {
+                        return intent("SHOPPING", "음료", "13000");
+                    }
                     int count = toolResults(request)
                             .size();
-                    if (count == 0) return createAssistantToolCallMessage("s", "searchProducts", "{}");
-                    if (count == 1) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P01\"}");
+                    if (count == 0) {
+                        return createAssistantToolCallMessage("s", "searchProducts", "{}");
+                    }
+                    if (count == 1) {
+                        return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P01\"}");
+                    }
                     return selection(List.of(), List.of());
                 });
         try (var alice = browser()) {
@@ -131,7 +153,9 @@ class ShoppingAgentLocalModelTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void 예산이_없으면_도구_사용_전에_추가_질문을_한다() throws Exception {
+
+    @Test
+    void 예산이_없으면_도구_사용_전에_추가_질문을_한다() throws Exception {
         try (var alice = browser()) {
             var body = post(alice, "선물 추천");
             assertThat(body.path("status").asString()).isEqualTo("NEEDS_INPUT");
@@ -139,24 +163,39 @@ class ShoppingAgentLocalModelTest {
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
-    @Test void 정책_질문에는_상품_도구를_제공하지_않고_없는_근거는_만들지_않는다() throws Exception {
+
+    @Test
+    void 정책_질문에는_상품_도구를_제공하지_않고_없는_근거는_만들지_않는다() throws Exception {
         try (var alice = browser()) {
+            // When: 정책만 질문
             var body = post(alice, "미개봉 반품 기간");
+
+            // Then: 상품 도구 없이 정책 도구만 제공
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
-            assertThat(MODEL.chat().getRequests().get(1).path("tools").toString()).contains("searchPolicy").doesNotContain("searchProducts");
+            var tools = MODEL.chat().getRequests().get(1).path("tools");
+            assertThat(tools.toString()).contains("searchPolicy").doesNotContain("searchProducts");
+
+            // When: 정책 자료에 없는 주제로 후속 질문
             var unknown = post(alice, "우주 여행 정책");
+
+            // Then: 없는 정책을 만들어 답하지 않고 보류
             assertThat(unknown.path("status").asString()).isEqualTo("NO_CONTEXT");
         }
     }
-    @Test void 확인하지_않은_ID와_예산_초과_선택은_거부하고_저장하지_않는다() throws Exception {
+
+    @Test
+    void 확인하지_않은_ID와_예산_초과_선택은_거부하고_저장하지_않는다() throws Exception {
         try (var alice = browser()) {
             // Given: 배송비 포함 예산을 초과한 상품을 선택하도록 모델 설정
             MODEL
                     .chat()
                     .setResponseFunction(request -> {
-                        if (isIntent(request)) return intent("SHOPPING", "음료", "30000");
-                        if (toolResults(request)
-                                .isEmpty()) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P02\"}");
+                        if (isIntent(request)) {
+                            return intent("SHOPPING", "음료", "30000");
+                        }
+                        if (toolResults(request).isEmpty()) {
+                            return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\"P02\"}");
+                        }
                         return selection(List.of("P02"), List.of());
                     });
 
@@ -179,12 +218,14 @@ class ShoppingAgentLocalModelTest {
             assertThat(unknownSource.path("status").asString()).isEqualTo("VERIFY_FAILED");
         }
     }
-    @Test void 실패해도_기존_대화를_유지하고_사용자별로_격리한다() throws Exception {
+
+    @Test
+    void 실패해도_기존_대화를_유지하고_사용자별로_격리한다() throws Exception {
         try (var alice = browser(); var bob = browser()) {
             // Given: Alice와 Bob의 대화를 저장하고 세션 격리 확인
             post(alice, "30000원 음료 추천");
             post(bob, "선물 추천");
-            assertThat(MODEL.chat().getRequests().get(MODEL.chat().getRequests().size()-1).path("messages").toString()).doesNotContain("30000원");
+            assertThat(MODEL.chat().getRequests().getLast().path("messages").toString()).doesNotContain("30000원");
 
             // Given: 다음 모델 호출은 HTTP 429로 실패하도록 변경
             MODEL
@@ -199,16 +240,20 @@ class ShoppingAgentLocalModelTest {
             assertThat(failed.path("storedMessages").asInt()).isEqualTo(2);
 
             // When: Alice 대화 삭제
-            output.printHttpResponse(alice.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                                    .DELETE()
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                    .DELETE()
+                    .build();
+            var response = alice.send(request, HttpResponse.BodyHandlers.ofString());
+            output.printHttpResponse(response);
 
             // Then: Alice만 삭제되고 Bob의 대화는 유지되는지 검증
             assertThat(history(alice).size()).isZero();
             assertThat(history(bob).size()).isEqualTo(2);
         }
     }
-    @Test void 도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다() throws Exception {
+
+    @Test
+    void 도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다() throws Exception {
         // Given: 상품 검색 도구를 계속 요청하는 가짜 모델 설정
         MODEL
                 .chat()
@@ -224,7 +269,9 @@ class ShoppingAgentLocalModelTest {
             assertThat(body.path("storedMessages").asInt()).isZero();
         }
     }
-    @Test void 시간_초과_뒤에_도착한_응답은_저장하지_않는다() throws Exception {
+
+    @Test
+    void 시간_초과_뒤에_도착한_응답은_저장하지_않는다() throws Exception {
         // Given: 응답이 시간 제한보다 늦게 오도록 설정
         MODEL
                 .chat()
@@ -244,82 +291,108 @@ class ShoppingAgentLocalModelTest {
     // 고정 시나리오만 처리하는 테스트 대역이다. 한국어 이해 성능을 평가하지 않는다.
     ObjectNode script(JsonNode request) {
         List<JsonNode> users = new ArrayList<>();
-        for (JsonNode message : request.path("messages")) if (message
-                .path("role")
-                .asString()
-                .equals("user")) users.add(message);
-        String latest = users
-                .get(users.size()-1)
-                .path("content")
-                .asString();
-        String all = request
-                .path("messages")
-                .toString();
+        for (JsonNode message : request.path("messages")) {
+            if (message.path("role").asString().equals("user")) {
+                users.add(message);
+            }
+        }
+        String latest = users.getLast().path("content").asString();
+        String all = request.path("messages").toString();
+
         if (isIntent(request)) {
-            String task = latest.contains("반품") && !latest.contains("추천") || latest.contains("우주") ? "POLICY" : "SHOPPING";
+            boolean policyQuestion = (latest.contains("반품") && !latest.contains("추천"))
+                    || latest.contains("우주");
+            String task = policyQuestion ? "POLICY" : "SHOPPING";
             String category = latest.contains("생활") || all.contains("생활로만") ? "생활" : all.contains("음료") ? "음료" : null;
             return intent(task, category, all.contains("40000") ? "40000" : all.contains("30000") ? "30000" : "null");
         }
         var results = toolResults(request);
         boolean policyOnly = latest.contains("task=POLICY");
         if (policyOnly) {
-            if (results.isEmpty()) return createAssistantToolCallMessage("p", "searchPolicy", all.contains("우주") ? "{\"question\":\"우주 여행\"}" : "{\"question\":\"미개봉 반품\"}");
-            return selection(List.of(), results
-                            .getLast()
-                            .contains("return-sealed") ? List.of("return-sealed") : List.of());
+            if (results.isEmpty()) {
+                String arguments = all.contains("우주")
+                        ? "{\"question\":\"우주 여행\"}"
+                        : "{\"question\":\"미개봉 반품\"}";
+                return createAssistantToolCallMessage("p", "searchPolicy", arguments);
+            }
+            List<String> sourceIds = results.getLast().contains("return-sealed")
+                    ? List.of("return-sealed") : List.of();
+            return selection(List.of(), sourceIds);
         }
-        if (results.isEmpty()) return createAssistantToolCallMessage("s", "searchProducts", "{}");
+        if (results.isEmpty()) {
+            return createAssistantToolCallMessage("s", "searchProducts", "{}");
+        }
         String searchResult = results.getFirst();
         String product = searchResult.contains("P01") ? "P01" : searchResult.contains("P03") ? "P03" : null;
-        if (product == null) return selection(List.of(), List.of());
-        if (results.size()==1) return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\""+product+"\"}");
+        if (product == null) {
+            return selection(List.of(), List.of());
+        }
+        if (results.size() == 1) {
+            return createAssistantToolCallMessage("q", "calculateShipping", "{\"productId\":\""+product+"\"}");
+        }
         boolean policy = all.contains("반품");
-        if (policy && results.size()==2) return createAssistantToolCallMessage("p", "searchPolicy", "{\"question\":\"미개봉 반품\"}");
+        if (policy && results.size() == 2) {
+            return createAssistantToolCallMessage("p", "searchPolicy", "{\"question\":\"미개봉 반품\"}");
+        }
         return selection(List.of(product), policy ? List.of("return-sealed") : List.of());
     }
-    boolean isIntent(JsonNode request) { return request
-            .path("messages")
-            .get(0)
-            .path("content")
-            .asString()
-            .contains("TASK:INTENT"); }
+
+    boolean isIntent(JsonNode request) {
+        String system = request.path("messages").get(0).path("content").asString();
+        return system.contains("TASK:INTENT");
+    }
+
     List<String> toolResults(JsonNode request) {
         var results = new ArrayList<String>();
-        for (var message : request.path("messages")) if (message
-                .path("role")
-                .asString()
-                .equals("tool")) results.add(message
-                                .path("content")
-                                .asString());
+        for (var message : request.path("messages")) {
+            if (message.path("role").asString().equals("tool")) {
+                results.add(message.path("content").asString());
+            }
+        }
         return results;
     }
+
     ObjectNode intent(String task, String category, String budget) {
         return createAssistantTextMessage("{\"task\":\""+task+"\",\"category\":"+(category==null?"null":"\""+category+"\"")+",\"totalBudget\":"+budget+"}");
     }
+
     ObjectNode selection(List<String> products, List<String> sources) {
         var object = OpenAiStubServer.JSON.createObjectNode();
-        var productIds = object.putArray("productIds"); products.forEach(productIds::add);
-        var sourceIds = object.putArray("sourceIds"); sources.forEach(sourceIds::add);
+        var productIds = object.putArray("productIds");
+        products.forEach(productIds::add);
+        var sourceIds = object.putArray("sourceIds");
+        sources.forEach(sourceIds::add);
         return createAssistantTextMessage(object.toString());
     }
-    HttpClient browser() { return HttpClient.newBuilder()
-            .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
-            .build(); }
-    URI uri(String path) { return URI.create("http://127.0.0.1:"+port+path); }
+
+    HttpClient browser() {
+        return HttpClient.newBuilder()
+                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
+                .build();
+    }
+
+    URI uri(String path) {
+        return URI.create("http://127.0.0.1:" + port + path);
+    }
+
     JsonNode post(HttpClient browser, String question) throws Exception {
-        var response = output.printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                                .header("Content-Type", "text/plain; charset=UTF-8")
-                                .POST(HttpRequest.BodyPublishers.ofString(question))
-                                .build(), HttpResponse.BodyHandlers.ofString()));
+        var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                .header("Content-Type", "text/plain; charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString(question))
+                .build();
+        var response = browser.send(request, HttpResponse.BodyHandlers.ofString());
+        output.printHttpResponse(response);
         assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
         return OpenAiStubServer.JSON.readTree(response.body());
     }
+
     JsonNode history(HttpClient browser) throws Exception {
-        return OpenAiStubServer.JSON.readTree(output
-                        .printHttpResponse(browser.send(HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                                        .GET()
-                                        .build(),HttpResponse.BodyHandlers.ofString()))
-                        .body());
+        var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
+                .GET()
+                .build();
+        var response = browser.send(request, HttpResponse.BodyHandlers.ofString());
+        output.printHttpResponse(response);
+        return OpenAiStubServer.JSON.readTree(response.body());
     }
 
     private static OpenAiStubServer createModelServer() {
@@ -327,8 +400,12 @@ class ShoppingAgentLocalModelTest {
         server
                 .embeddings()
                 .setVectorFunction(text -> {
-                    if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
-                    if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
+                    if (text.contains("배송") || text.contains("운송")) {
+                        return new float[]{1, 0, 0};
+                    }
+                    if (text.contains("반품") || text.contains("개봉")) {
+                        return new float[]{0, 1, 0};
+                    }
                     return new float[]{0, 0, 1};
                 });
         server

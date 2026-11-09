@@ -27,22 +27,23 @@ public class EvaluationRunner {
         var results = new ArrayList<CaseResult>();
         for (var example : cases) {
             RagService.Run actual = service.answer(example.question());
+            var reply = actual.reply();
             var failures = new ArrayList<String>();
-            if (!actual
-                    .reply()
-                    .status()
-                    .equals(example.expectedStatus())) failures.add("상태 불일치");
-            var ids = actual
-                    .reply()
-                    .sources()
+            if (!reply.status().equals(example.expectedStatus())) {
+                failures.add("상태 불일치");
+            }
+
+            var sourceIds = reply.sources()
                     .stream()
                     .map(Source::id)
                     .toList();
-            if (!ids.containsAll(example.expectedSourceIds())) failures.add("expected source ID missing");
-            if (!actual
-                    .reply()
-                    .answer()
-                    .contains(example.expectedText())) failures.add("expected text missing");
+            if (!sourceIds.containsAll(example.expectedSourceIds())) {
+                failures.add("expected source ID missing");
+            }
+            if (!reply.answer().contains(example.expectedText())) {
+                failures.add("expected text missing");
+            }
+
             results.add(new CaseResult(example.id(), failures.isEmpty(), List.copyOf(failures), actual));
         }
         int passed = (int) results

@@ -24,23 +24,36 @@ class ObservationLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
-    @Value("${local.server.port}") int port;
-    @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
+    @Value("${local.server.port}")
+    int port;
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL
-            .chat()
-            .resetResponsesAndRequests();
+
+    @BeforeEach
+    void reset() {
         MODEL
                 .chat()
-                .setTokenUsage(10, 5); MODEL
-                        .chat()
-                        .setResponseMessage(createAssistantTextMessage("로컬 안내 응답")); }
-    @AfterAll static void stop() { MODEL.close(); }
+                .resetResponsesAndRequests();
+        MODEL
+                .chat()
+                .setTokenUsage(10, 5);
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage("로컬 안내 응답"));
+    }
 
-    @Test void 직접_계측하지_않아도_모델_호출_횟수와_시간을_조회한다() throws Exception {
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
+
+    @Test
+    void 직접_계측하지_않아도_모델_호출_횟수와_시간을_조회한다() throws Exception {
         // Given: 요청 전 모델 호출 횟수 조회
         double before = measurement("gen_ai.client.operation", "COUNT");
 
@@ -53,7 +66,9 @@ class ObservationLocalModelTest {
         assertThat(measurement("gen_ai.client.operation", "TOTAL_TIME")).isPositive();
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
-    @Test void 추가_모델_호출_없이_응답의_토큰_사용량을_집계한다() throws Exception {
+
+    @Test
+    void 추가_모델_호출_없이_응답의_토큰_사용량을_집계한다() throws Exception {
         // Given: 요청 전 누적 토큰 수 조회
         double before = measurement("gen_ai.client.token.usage?tag=gen_ai.token.type:total", "COUNT");
 
@@ -66,31 +81,34 @@ class ObservationLocalModelTest {
         assertThat(measurement("gen_ai.client.token.usage?tag=gen_ai.token.type:total", "COUNT")).isEqualTo(before + 15);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
+
     double measurement(String metric, String statistic) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            var response = output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/actuator/metrics/"+metric))
-                                    .GET()
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/actuator/metrics/"+metric))
+                    .GET()
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            output.printHttpResponse(response);
             if (response.statusCode() == 404) return 0; // 첫 호출 전에는 아직 계측 항목이 없을 수 있습니다.
             assertThat(response.statusCode()).isEqualTo(200);
-            for (var value : OpenAiStubServer.JSON
-                    .readTree(response.body())
-                    .path("measurements"))
-                if (value
-                        .path("statistic")
-                        .asString()
-                        .equals(statistic)) return value
-                                .path("value")
-                                .asDouble();
+            var measurements = OpenAiStubServer.JSON.readTree(response.body()).path("measurements");
+            for (var value : measurements) {
+                if (value.path("statistic").asString().equals(statistic)) {
+                    return value.path("value").asDouble();
+                }
+            }
             throw new AssertionError("계측 항목 없음: " + metric + " / " + statistic);
         }
     }
+
     HttpResponse<String> ask() throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:"+port+"/api/observed-chat"))
-                                    .header("Content-Type", "text/plain; charset=UTF-8")
-                                    .POST(HttpRequest.BodyPublishers.ofString("배송비 기준을 설명해줘"))
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/observed-chat"))
+                    .header("Content-Type", "text/plain; charset=UTF-8")
+                    .POST(HttpRequest.BodyPublishers.ofString("배송비 기준을 설명해줘"))
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            return output.printHttpResponse(response);
         }
     }
 }

@@ -23,8 +23,11 @@ class EvaluationLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = createModelServer();
-    @Value("${local.server.port}") int port;
-    @org.springframework.beans.factory.annotation.Autowired RagService service;
+    @Value("${local.server.port}")
+    int port;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    RagService service;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -33,12 +36,21 @@ class EvaluationLocalModelTest {
         registry.add("spring.ai.openai.embedding.options.model", () -> "learning-embedding");
         registry.add("spring.ai.openai.base-url", MODEL::getBaseUrl);
     }
-    @BeforeEach void reset() { MODEL
-            .chat()
-            .resetResponsesAndRequests(); }
-    @AfterAll static void stop() { MODEL.close(); }
 
-    @Test void 고정_평가_사례를_비교하고_토큰과_지연을_기록한다() throws Exception {
+    @BeforeEach
+    void reset() {
+        MODEL
+                .chat()
+                .resetResponsesAndRequests();
+    }
+
+    @AfterAll
+    static void stop() {
+        MODEL.close();
+    }
+
+    @Test
+    void 고정_평가_사례를_비교하고_토큰과_지연을_기록한다() throws Exception {
         // Given: 평가 사례별 가짜 모델 답변 설정
         MODEL
                 .chat()
@@ -60,7 +72,9 @@ class EvaluationLocalModelTest {
         assertThat(report.at("/cases/2/actual/metrics/chatCalls").asInt()).isZero();
         assertThat(MODEL.chat().getRequests()).hasSize(2);
     }
-    @Test void 출처가_유효해도_주장이_틀리면_평가에서_실패한다() throws Exception {
+
+    @Test
+    void 출처가_유효해도_주장이_틀리면_평가에서_실패한다() throws Exception {
         // Given: 유효한 출처 ID와 잘못된 반품 기간을 응답하도록 설정
         MODEL
                 .chat()
@@ -73,7 +87,9 @@ class EvaluationLocalModelTest {
         assertThat(report.path("passed").asInt()).isLessThan(3);
         assertThat(report.at("/cases/1/failures").toString()).contains("expected text missing");
     }
-    @Test void 호출_제한은_실패로_기록하고_자동으로_재시도하지_않는다() throws Exception {
+
+    @Test
+    void 호출_제한은_실패로_기록하고_자동으로_재시도하지_않는다() throws Exception {
         // Given: 가짜 모델이 HTTP 429를 반환하도록 설정
         MODEL
                 .chat()
@@ -87,7 +103,9 @@ class EvaluationLocalModelTest {
         assertThat(report.at("/cases/0/actual/metrics/failureKind").asString()).isEqualTo("RATE_LIMIT");
         assertThat(MODEL.chat().getRequests()).hasSize(2);
     }
-    @Test void 형식_오류를_실패로_기록하고_내부_예외는_노출하지_않는다() throws Exception {
+
+    @Test
+    void 형식_오류를_실패로_기록하고_내부_예외는_노출하지_않는다() throws Exception {
         // Given: JSON이 아닌 가짜 모델 응답 설정
         MODEL
                 .chat()
@@ -95,6 +113,7 @@ class EvaluationLocalModelTest {
 
         // When: 평가 대상 API 호출
         var response = post("반품");
+
         // Then: HTTP 성공과 사례 실패를 구분하고 내부 예외 대신 실패 분류 확인
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
@@ -102,7 +121,9 @@ class EvaluationLocalModelTest {
         assertThat(body.at("/metrics/failureKind").asString()).isEqualTo("UPSTREAM_OR_OUTPUT");
         assertThat(body.at("/metrics/inputTokens").isMissingNode() || body.at("/metrics/inputTokens").isNull()).isTrue();
     }
-    @Test void 느린_응답은_시간_초과로_기록하고_자동으로_재시도하지_않는다() throws Exception {
+
+    @Test
+    void 느린_응답은_시간_초과로_기록하고_자동으로_재시도하지_않는다() throws Exception {
         // Given: 시간 제한보다 늦게 응답하는 가짜 모델 설정
         MODEL
                 .chat()
@@ -121,21 +142,27 @@ class EvaluationLocalModelTest {
         assertThat(MODEL.chat().getRequests()).hasSize(1);
         Thread.sleep(800);
     }
+
     tools.jackson.databind.JsonNode run() throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            var response = output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/run"))
-                                    .POST(HttpRequest.BodyPublishers.noBody())
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/run"))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            output.printHttpResponse(response);
             assertThat(response.statusCode()).isEqualTo(200);
             return OpenAiStubServer.JSON.readTree(response.body());
         }
     }
+
     HttpResponse<String> post(String question) throws Exception {
         try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/ask"))
-                                    .header("Content-Type", "text/plain; charset=UTF-8")
-                                    .POST(HttpRequest.BodyPublishers.ofString(question))
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
+            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/ask"))
+                    .header("Content-Type", "text/plain; charset=UTF-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(question))
+                    .build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            return output.printHttpResponse(response);
         }
     }
 
@@ -144,8 +171,12 @@ class EvaluationLocalModelTest {
         server
                 .embeddings()
                 .setVectorFunction(text -> {
-                    if (text.contains("배송") || text.contains("운송")) return new float[]{1, 0, 0};
-                    if (text.contains("반품") || text.contains("개봉")) return new float[]{0, 1, 0};
+                    if (text.contains("배송") || text.contains("운송")) {
+                        return new float[]{1, 0, 0};
+                    }
+                    if (text.contains("반품") || text.contains("개봉")) {
+                        return new float[]{0, 1, 0};
+                    }
                     return new float[]{0, 0, 1};
                 });
         server

@@ -28,6 +28,7 @@ class RagOpenAiLiveTest {
     void 실제_OpenAI로_검색한_정책을_근거로_답한다() {
         RagService.Reply result = service.answer("미개봉 상품의 반품 기간은 며칠인가요?");
         System.out.printf("답변과 출처: %s%n", result);
+        // 답변·출처 존재를 검사한다. 주장과 원문의 일치는 docs/lessons/10-rag/03-evidence.md의 기준으로 별도 확인한다.
         assertThat(result.status()).isEqualTo("ANSWERED");
         assertThat(result.answer()).isNotBlank();
         assertThat(result.sources()).isNotEmpty();

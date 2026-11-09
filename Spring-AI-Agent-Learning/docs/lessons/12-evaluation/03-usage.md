@@ -19,10 +19,7 @@ var response = client
         .call()
         .responseEntity(DraftAnswer.class);
 DraftAnswer draft = response.entity();
-var usage = response
-        .response()
-        .getMetadata()
-        .getUsage();
+var usage = response.response().getMetadata().getUsage();
 ```
 
 위 코드는 새 API를 설명하기 위한 부분 예제입니다. 질문과 근거를 조립하는 실제 실행 코드는 [RagService.answerInternal()](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)에 있습니다. 실제 소스는 `questionAndContext` 변수 대신 문자열을 직접 조립합니다.
