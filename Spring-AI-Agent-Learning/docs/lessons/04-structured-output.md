@@ -65,8 +65,32 @@ public record SearchCriteria(String category, Integer maxPrice) {
 
 ## 2. 문자열과 record로 응답받기
 
-[CriteriaService.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 전체 코드입니다.
 같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extract()`는 record로 받아 검증합니다.
+
+### 2.1. 먼저 정상 흐름 읽기
+
+다음은 `extract()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `client`는 생성자로 만든 ChatClient이고, `SYSTEM_INSTRUCTION`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extract()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
+
+```java
+SearchCriteria criteria = client
+        .prompt()
+        .system(SYSTEM_INSTRUCTION)
+        .user(question)
+        .call()
+        .entity(SearchCriteria.class);
+criteria.validate();
+return criteria;
+```
+
+1. Spring AI가 모델을 호출하고 응답을 `SearchCriteria`로 변환합니다.
+2. Java의 `validate()`가 변환된 카테고리·가격을 업무 규칙으로 검사합니다.
+3. 두 단계를 통과한 객체를 반환합니다.
+
+첫 학습에서는 이 흐름을 설명한 뒤 3·4절의 그림과 정상 실행 결과로 이어가도 됩니다. 예외·HTTP 상태 처리는 실패 실험 때 아래 전체 코드와 5절로 돌아와 읽으세요.
+
+### 2.2. 실패 처리까지 포함한 전체 코드
+
+[CriteriaService.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 전체 코드입니다. 정상 흐름에 모델 호출·변환 실패, 빈 응답, 업무 검증 실패 처리를 추가합니다.
 
 ```java
 package com.example.ailearning.l04structured;
@@ -113,7 +137,7 @@ public class CriteriaService {
                     .entity(SearchCriteria.class);
         } catch (RuntimeException error) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
+                    "모델 호출 또는 응답 변환에 실패했습니다.", error);
         }
         if (criteria == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 응답이 비었습니다.");
@@ -128,6 +152,8 @@ public class CriteriaService {
     }
 }
 ```
+
+`extract()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
 
 - `.content()`는 응답 문자열을 반환합니다.
 - `.entity(SearchCriteria.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다. 반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
@@ -211,7 +237,9 @@ MODEL
 
 실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다. 이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
 
-### 5.1. 예외는 어디에서 발생하고 HTTP 상태는 누가 정할까?
+### 5.1. 보충: 예외는 어디에서 발생하고 HTTP 상태는 누가 정할까?
+
+정상 변환·값 검증을 이해했다면 첫 학습에서는 이 절을 건너뛰고 05장으로 넘어가도 됩니다. 아래 문서는 실패 원인을 더 자세히 확인할 때 읽습니다.
 
 먼저 **입력 검사 → 모델 응답 변환 → 변환된 값 검사** 중 어느 단계에서 실패했는지 구분합니다. 웹 서버와 Controller의 역할이 낯설면 [0. 웹 요청의 기본 흐름](04-structured-output/00-web-request-basics.md)을 먼저 읽으세요.
 

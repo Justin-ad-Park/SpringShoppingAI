@@ -53,21 +53,20 @@ sequenceDiagram
         List<ProductPriceDetails> eligible = shoppingTools
                 .getPriceDetails()
                 .stream()
-                .filter(productPriceDetails -> criteria.category() == null || productPriceDetails
-                        .product()
-                        .category()
-                        .equals(criteria.category()))
-                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
+                .filter(offer -> criteria.category() == null || offer.product().category().equals(criteria.category()))
+                .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
+        if (eligible.isEmpty()) {
+            return new ExecutionResult("NO_VERIFIED_OFFER", "검증된 예산 안의 후보가 없습니다.", eligible);
+        }
+
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
-        return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
-                eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
-                        : "Java 검증 후보: " + eligible
+        List<String> productIds = eligible
                 .stream()
-                .map(productPriceDetails -> productPriceDetails
-                        .product()
-                        .id())
-                .toList(), eligible);
+                .map(offer -> offer.product().id())
+                .toList();
+        String answer = "Java 검증 후보: " + productIds;
+        return new ExecutionResult("COMPLETED", answer, eligible);
     }
 ```
 
@@ -97,14 +96,14 @@ public class BudgetShoppingTools {
     }
 
     @Tool(description = "확정된 카테고리와 총예산 안에서 상품을 검색합니다. 배송비는 별도로 조회하세요.")
-    public List<Product> search(@ToolParam(required = false) String category,
+    public List<Product> searchProducts(@ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
-        return shoppingTools.search(criteria.category(), criteria.totalBudget());
+        return shoppingTools.searchProducts(criteria.category(), criteria.totalBudget());
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public ProductPriceDetails calculatePriceDetails(String productId) {
-        return shoppingTools.calculatePriceDetails(productId);
+    public ProductPriceDetails calculateShipping(String productId) {
+        return shoppingTools.calculateShipping(productId);
     }
 
     public List<ProductPriceDetails> getPriceDetails() {

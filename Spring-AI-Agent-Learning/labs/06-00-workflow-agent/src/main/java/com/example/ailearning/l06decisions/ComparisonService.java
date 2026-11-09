@@ -108,21 +108,20 @@ public class ComparisonService {
         List<ProductPriceDetails> eligible = shoppingTools
                 .getPriceDetails()
                 .stream()
-                .filter(productPriceDetails -> criteria.category() == null || productPriceDetails
-                        .product()
-                        .category()
-                        .equals(criteria.category()))
-                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
+                .filter(offer -> criteria.category() == null || offer.product().category().equals(criteria.category()))
+                .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
+        if (eligible.isEmpty()) {
+            return new ExecutionResult("NO_VERIFIED_OFFER", "검증된 예산 안의 후보가 없습니다.", eligible);
+        }
+
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
-        return new ExecutionResult(eligible.isEmpty() ? "NO_VERIFIED_OFFER" : "COMPLETED",
-                eligible.isEmpty() ? "검증된 예산 안의 후보가 없습니다."
-                        : "Java 검증 후보: " + eligible
+        List<String> productIds = eligible
                 .stream()
-                .map(productPriceDetails -> productPriceDetails
-                        .product()
-                        .id())
-                .toList(), eligible);
+                .map(offer -> offer.product().id())
+                .toList();
+        String answer = "Java 검증 후보: " + productIds;
+        return new ExecutionResult("COMPLETED", answer, eligible);
     }
 
     private ExecutionResult needsBudget() { return new ExecutionResult("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }

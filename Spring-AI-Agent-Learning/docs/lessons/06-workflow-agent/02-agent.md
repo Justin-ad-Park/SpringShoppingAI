@@ -49,7 +49,9 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
     }
 ```
 
-`ShoppingTools`는 모델에 `search`와 `calculatePriceDetails` 도구를 제공하며, 내부에서 같은 이름의 `ProductCatalog` 메서드를 호출합니다. 도구 객체는 요청마다 새로 만들고, 조회한 금액을 `priceDetails`에 보관합니다. 이 목록은 모델이 실제로 조회한 값이며, 예산 검증을 통과한 최종 추천 목록은 아닙니다.
+`ShoppingTools`는 05장과 같은 `searchProducts`·`calculateShipping` 도구를 제공합니다. 내부에서는 각각 `ProductCatalog.search()`·`calculatePriceDetails()`를 호출합니다. 도구 객체는 요청마다 새로 만들고, 조회한 금액을 `priceDetails`에 보관합니다. 이 목록은 모델이 실제로 조회한 값이며, 예산 검증을 통과한 최종 추천 목록은 아닙니다.
+
+05장의 도구는 요청별 조회 기록을 필드에 보관하지 않아 Spring 빈으로 공유했습니다. 06장은 `priceDetails`가 요청마다 달라지므로 새 객체를 만듭니다. Agent라고 해서 반드시 도구를 `new`로 생성해야 하는 것은 아닙니다.
 
 [ShoppingTools.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingTools.java)의 전체 코드입니다.
 
@@ -75,13 +77,13 @@ public class ShoppingTools {
     }
 
     @Tool(description = "상품 검색. category는 음료/생활, maxPrice는 상품 가격 상한. 배송비는 별도로 조회하세요.")
-    public List<Product> search(@ToolParam(required = false) String category,
+    public List<Product> searchProducts(@ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
         return productCatalog.search(category, maxPrice);
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public ProductPriceDetails calculatePriceDetails(String productId) {
+    public ProductPriceDetails calculateShipping(String productId) {
         ProductPriceDetails productPriceDetails = productCatalog.calculatePriceDetails(productId);
         priceDetails.add(productPriceDetails);
         return productPriceDetails;

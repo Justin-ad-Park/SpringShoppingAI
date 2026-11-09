@@ -8,7 +8,7 @@
 | 순서 | 읽고 해볼 것 | 여기서 확인할 것 |
 |---|---|---|
 | 1 | ChatClient·ChatModel·Builder | 클라이언트 생성 위치와 요청에서 재사용하는 위치 찾기 |
-| 2 | 서비스에 응답 원칙 추가 | 실행 중인 서버에서 system 추가 전후를 비교 |
+| 2 | 서비스에 응답 원칙 추가 | 실제 모델 응답을 비교하거나, 로컬 테스트로 system/user 전달 확인 |
 | 3 | 기억 없는 두 요청 | 두 번째 요청에 이전 메시지가 없음을 확인 |
 
 [공통 학습 방법](../learning-guide.md)
@@ -64,8 +64,11 @@ public class ChatService {
 
 ## 3. 실험: 서비스에 응답 원칙 추가하기
 
-실제 모델을 호출하는 실험입니다. 먼저 [01장의 루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비하세요. 호출에는 비용이 발생할 수 있습니다.
-키가 없다면 실행을 생략하고 코드와 아래 로컬 Mock 테스트로 메시지 구성을 확인할 수 있습니다.
+같은 system/user 구성을 두 가지 방법으로 관찰합니다. 실제 모델이 지시에 따라 답변을 바꾸는지는 3.1에서, 메시지가 요청에 담기는지는 API 키 없는 3.2에서 확인합니다. 키가 없다면 [3.2 로컬 테스트](#32-api-키-없이-systemuser-전달-확인하기)부터 진행하세요.
+
+### 3.1. 실제 모델의 답변 비교하기
+
+먼저 [01장의 루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비하세요. 호출에는 비용이 발생할 수 있습니다.
 
 먼저 원본 코드를 실행하고 다른 터미널에서 수정 전 응답을 저장합니다. 이미 서버가 실행 중이면 중복 실행하지 않습니다.
 
@@ -116,6 +119,27 @@ curl -i http://127.0.0.1:8091/api/chat \
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
+
+### 3.2. API 키 없이 system/user 전달 확인하기
+
+[FirstChatLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)의 `system과_user_메시지를_한_요청에_함께_전달한다`를 실행합니다. `ChatService` 소스는 원본 그대로 두며, 테스트 안에서 같은 요청 구성에 system을 추가합니다. Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*FirstChatLocalModelTest.system과_user_메시지를_한_요청에_함께_전달한다'
+```
+
+먼저 다음을 예상한 뒤 테스트 코드의 실제 요청 기록과 비교하세요.
+
+| 관찰 대상 | 기대 결과 |
+|---|---|
+| 모델 HTTP 요청 수 | 1회. 메시지 두 개를 한 프롬프트로 전달 |
+| 첫 메시지 | role은 system, content는 튜터 역할과 세 문장 지시 |
+| 두 번째 메시지 | role은 user, content는 “DI가 뭐야?” |
+| 반환 문장 | 서버에 지정한 고정 응답. 지시 내용과 관계없이 같음 |
+
+작은 변경 실습으로 테스트의 `instruction`을 “한 문장으로 설명하세요.”로 바꿉니다. 다시 실행해 system의 content가 바뀌어도 요청은 한 번이고 답변은 그대로인지 확인합니다. 검증문은 같은 `instruction` 변수를 사용하므로 내용 변경도 확인합니다. 실험 후 원래 문구로 복원합니다.
+
+이 테스트는 요청 메시지 전달을 확인합니다. 모델이 문장 수 지시를 이해하거나 지키는지는 실제 모델로 따로 관찰해야 합니다.
 
 ## 4. 실험: 이전 대화를 보내지 않는 요청
 

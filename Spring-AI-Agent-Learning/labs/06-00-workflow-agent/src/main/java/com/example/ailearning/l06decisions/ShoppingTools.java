@@ -19,13 +19,13 @@ public class ShoppingTools {
     }
 
     @Tool(description = "상품 검색. category는 음료/생활, maxPrice는 상품 가격 상한. 배송비는 별도로 조회하세요.")
-    public List<Product> search(@ToolParam(required = false) String category,
+    public List<Product> searchProducts(@ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
         return productCatalog.search(category, maxPrice);
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public ProductPriceDetails calculatePriceDetails(String productId) {
+    public ProductPriceDetails calculateShipping(String productId) {
         ProductPriceDetails productPriceDetails = productCatalog.calculatePriceDetails(productId);
         priceDetails.add(productPriceDetails);
         return productPriceDetails;

@@ -42,7 +42,7 @@ public class CriteriaService {
                     .entity(SearchCriteria.class);
         } catch (RuntimeException error) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
+                    "모델 호출 또는 응답 변환에 실패했습니다.", error);
         }
         if (criteria == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 응답이 비었습니다.");

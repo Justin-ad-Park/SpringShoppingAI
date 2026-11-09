@@ -36,7 +36,7 @@ Java에서는 `service.run(ExecutionMode.WORKFLOW, question)`처럼 Enum으로 �
 | Agent | 모델이 선택한 도구가 실제로 수행한 검색·계산 기록 출력. 선택 순서·횟수를 고정하지 않음 |
 | 혼합 방식 | 실제 검색의 고정 조건과 최종 후보의 조회 여부·카테고리·배송비 포함 예산 검증, 실제 호출 기록 출력 |
 
-세 테스트는 `ProductCatalog`에 `@MockitoSpyBean`을 두고 `ToolCallPrinter.printMockitoDetails(productCatalog)`를 출력합니다. Workflow는 카탈로그를 직접 호출하며, Agent·혼합 방식의 도구는 내부에서 같은 카탈로그를 호출합니다. 도구와 카탈로그는 모두 `search`(상품 검색), `calculatePriceDetails`(배송비·총액 조회)라는 메서드명을 사용합니다. Agent 테스트는 두 카탈로그 메서드가 각각 한 번 이상 실행됐는지 검증합니다. 도구 객체 자체의 호출 인자 기록과는 다르며, 특히 혼합 방식에서는 Java가 고정한 검색 인자가 출력됩니다.
+세 테스트는 `ProductCatalog`에 `@MockitoSpyBean`을 두고 `ToolCallPrinter.printMockitoDetails(productCatalog)`를 출력합니다. Workflow는 카탈로그를 직접 호출하며, Agent·혼합 방식의 도구는 내부에서 같은 카탈로그를 호출합니다. 05장과 같은 도구 이름인 `searchProducts`·`calculateShipping`을 사용하며, 내부에서 카탈로그의 `search`·`calculatePriceDetails`를 각각 호출합니다. Agent 테스트는 두 카탈로그 메서드가 각각 한 번 이상 실행됐는지 검증합니다. 도구 객체 자체의 호출 인자 기록과는 다르며, 특히 혼합 방식에서는 Java가 고정한 검색 인자가 출력됩니다.
 `InOrder`는 이미 실행된 기록을 검증하며 실행 순서를 지정하지 않습니다. 실제 모델이 필요한 조회를 생략하거나 조건 추출에 실패하면 Live 테스트도 실패할 수 있습니다.
 
 테스트의 `extracting`, `containsExactly`, `allSatisfy`, `verify`, `atLeastOnce`가 낯설면 [06장 보충: 테스트 검증 코드 읽기](../../docs/lessons/06-workflow-agent/04-test-assertions.md)를 참고하세요.

@@ -30,9 +30,11 @@ try {
             .entity(SearchCriteria.class);
 } catch (RuntimeException error) {
     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-            "모델 응답을 조건 객체로 변환하지 못했습니다.", error);
+            "모델 호출 또는 응답 변환에 실패했습니다.", error);
 }
 ```
+
+이 재현은 모델 호출에 성공한 뒤 JSON 변환이 실패하는 사례입니다. 같은 `catch`는 연결·인증 등 모델 호출 실패도 받을 수 있으므로 안내 문구는 두 범위를 포함합니다. 구체적인 원인은 함께 보존한 원래 예외로 구분합니다.
 
 `catch`는 원래 변환 예외를 잡고 **새 `ResponseStatusException`을 던집니다.** 생성자에 전달한 첫 인자 `HttpStatus.INTERNAL_SERVER_ERROR`가 상태를 결정합니다. 이 상수의 숫자 값이 **500**입니다. 세 번째 인자 `error`는 원래 예외를 원인으로 보존합니다.
 

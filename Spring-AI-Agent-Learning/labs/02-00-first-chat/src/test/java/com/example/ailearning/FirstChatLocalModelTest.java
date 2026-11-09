@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.DisplayName;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -39,6 +41,9 @@ class FirstChatLocalModelTest {
 
     @Value("${local.server.port}")
     private int port;
+
+    @Autowired
+    private ChatClient.Builder chatClientBuilder;
 
     // 테스트에서만 적용하며 application.yml의 같은 설정을 덮어씁니다.
     @DynamicPropertySource
@@ -93,6 +98,34 @@ class FirstChatLocalModelTest {
         assertThat(request.at("/messages/0/content").asText()).isEqualTo("스프링이 무엇인가요?");
         // 선택 심화: 더미 키가 제공 업체 요청의 인증 헤더에 들어가는지도 확인합니다.
         assertThat(MODEL_SERVER.chat().getAuthorizationHeaders()).containsExactly("Bearer local-test-key");
+    }
+
+    // 03장: 서비스 소스를 바꾸지 않고 같은 system/user 구성을 로컬 모델 서버에 전달한다.
+    @Test
+    void system과_user_메시지를_한_요청에_함께_전달한다() {
+        // Given: 고정 응답 서버와 두 메시지에 담을 내용
+        String instruction = "Spring 입문자를 가르치는 튜터입니다. 쉬운 한국어로 세 문장 이내로 설명하세요.";
+        String question = "DI가 뭐야?";
+
+        // When: 실제 서비스와 같은 요청 구성에 system 메시지를 추가한다.
+        String answer = chatClientBuilder
+                .build()
+                .prompt()
+                .system(instruction)
+                .user(question)
+                .call()
+                .content();
+        output.printValue("고정 응답", answer);
+
+        // Then: 두 메시지가 한 HTTP 요청에 담겼는지 확인한다. 모델의 지시 준수는 검사하지 않는다.
+        assertThat(answer).isEqualTo("로컬 테스트 모델의 고정 응답입니다.");
+        assertThat(MODEL_SERVER.chat().getRequests()).hasSize(1);
+        JsonNode messages = MODEL_SERVER.chat().getRequests().getFirst().path("messages");
+        assertThat(messages.size()).isEqualTo(2);
+        assertThat(messages.get(0).path("role").asText()).isEqualTo("system");
+        assertThat(messages.get(0).path("content").asText()).isEqualTo(instruction);
+        assertThat(messages.get(1).path("role").asText()).isEqualTo("user");
+        assertThat(messages.get(1).path("content").asText()).isEqualTo(question);
     }
 
     /**

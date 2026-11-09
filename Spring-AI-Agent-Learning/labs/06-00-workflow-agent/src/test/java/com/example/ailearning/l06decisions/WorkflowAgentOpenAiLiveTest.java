@@ -82,8 +82,8 @@ class WorkflowAgentOpenAiLiveTest {
         ToolCallPrinter.printMockitoDetails(productCatalog);
 
         // 모델이 호출한 ShoppingTools의 도구는 내부에서 ProductCatalog를 호출한다.
-        // ShoppingTools.search → ProductCatalog.search
-        // ShoppingTools.calculatePriceDetails → ProductCatalog.calculatePriceDetails
+        // ShoppingTools.searchProducts → ProductCatalog.search
+        // ShoppingTools.calculateShipping → ProductCatalog.calculatePriceDetails
         // ProductCatalog의 호출 기록으로 검색과 가격 조회가 모두 실행됐는지 검증한다.
         // 실제 모델의 도구 선택·반복 횟수는 달라질 수 있으므로 고정 순서를 검증하지 않는다.
         // atLeastOnce는 1회 이상을 뜻한다. any는 임의 인자, anyString은 null이 아닌 임의 문자열을 허용한다.

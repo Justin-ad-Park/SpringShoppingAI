@@ -87,7 +87,7 @@ Agent 테스트의 `verify(productCatalog, atLeastOnce()).search(any(), any())`�
 Agent 테스트는 `verify(productCatalog, atLeastOnce()).calculatePriceDetails(anyString())`도 검사하므로, 검색과 가격 조회가 모두 한 번 이상 실행되어야 통과합니다. `anyString()`은 null이 아닌 어떤 문자열 인자든 허용한다는 검증 조건입니다.
 혼합 방식의 `verify(productCatalog, atLeastOnce()).search("음료", 30000)`는 Java가 고정한 인자로 실제 검색했는지까지 확인합니다.
 
-카탈로그의 호출 기록은 도구 내부에서 실행한 조회·계산 기록입니다. 도구와 카탈로그의 같은 메서드명·인자 처리 관계는 [실습 README](../../../labs/06-00-workflow-agent/README.md#실제-모델-연결)를 참고하세요.
+카탈로그의 호출 기록은 도구 내부에서 실행한 조회·계산 기록입니다. 도구와 카탈로그의 메서드명 대응·인자 처리 관계는 [실습 README](../../../labs/06-00-workflow-agent/README.md#실제-모델-연결)를 참고하세요.
 호출이 있었다는 사실만으로 계산 결과나 모델 답변 전체가 정확하다고 보장하지는 않습니다. 값 검사와 호출 기록 검사는 서로 다른 사실을 확인합니다.
 
 ## 확인 질문

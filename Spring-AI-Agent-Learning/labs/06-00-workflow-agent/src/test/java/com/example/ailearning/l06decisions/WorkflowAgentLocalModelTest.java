@@ -100,8 +100,8 @@ class WorkflowAgentLocalModelTest {
                 .chat()
                 .setResponseSequence(
                         createAssistantTextMessage("{\"category\":\"음료\",\"totalBudget\":30000}"),
-                        createAssistantToolCallMessage("search", "search", "{\"category\":\"생활\",\"maxPrice\":999999}"),
-                        createAssistantToolCallMessage("shipping", "calculatePriceDetails", "{\"productId\":\"P01\"}"),
+                        createAssistantToolCallMessage("search", "searchProducts", "{\"category\":\"생활\",\"maxPrice\":999999}"),
+                        createAssistantToolCallMessage("shipping", "calculateShipping", "{\"productId\":\"P01\"}"),
                         createAssistantTextMessage("허브티를 추천합니다."));
         JsonNode result = post("HYBRID", "3만원 이하 음료");
         verify(productCatalog).search("음료", 30000);
@@ -189,9 +189,9 @@ class WorkflowAgentLocalModelTest {
                             .asString()
                             .equals("tool")) results++;
                     return switch (results) {
-                        case 0 -> createAssistantToolCallMessage("search", "search", "{\"category\":\"음료\",\"maxPrice\":30000}");
-                        case 1 -> createAssistantToolCallMessage("quote2", "calculatePriceDetails", "{\"productId\":\"P02\"}");
-                        case 2 -> createAssistantToolCallMessage("quote1", "calculatePriceDetails", "{\"productId\":\"P01\"}");
+                        case 0 -> createAssistantToolCallMessage("search", "searchProducts", "{\"category\":\"음료\",\"maxPrice\":30000}");
+                        case 1 -> createAssistantToolCallMessage("quote2", "calculateShipping", "{\"productId\":\"P02\"}");
+                        case 2 -> createAssistantToolCallMessage("quote1", "calculateShipping", "{\"productId\":\"P01\"}");
                         default -> createAssistantTextMessage("P02를 추천합니다. 이 문장은 Java가 검증해야 합니다.");
                     };
                 });
