@@ -88,9 +88,28 @@ public class ToolChatService {
 여기서 `tools`는 ShoppingTools 객체이고, Spring AI는 `@Tool` 메서드에서 도구 설명과 인자 구조를 만듭니다.
 모델은 `{"productId":"P02"}` 같은 인자를 요청합니다. Java 객체를 모델 서버로 보내서 실행시키는 방식이 아닙니다.
 
+```java
+// UserTools에도 @Tool 메서드가 있다고 가정한 예시입니다.
+// client는 위 서비스의 ChatClient 필드입니다.
+public String ask(String question, ShoppingTools shoppingTools, UserTools userTools) {
+    return client
+            .prompt()
+            .user(question)
+            .tools(shoppingTools, userTools)
+            .call()
+            .content();
+}
+```
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 `@Tool`로 설명한 메서드가 모델 요청에 제공되는 위치는 어디인가요?
+
+<details>
+<summary>해설</summary>
+
+ChatClient 요청을 구성하는 `.tools(tools)`에서 제공합니다. 이 예제의 `tools`는 `ShoppingTools` 객체이며, Spring AI가 그 객체의 `@Tool` 메서드에서 도구 설명과 인자 구조를 만들어 모델 요청에 포함합니다. 여러 도구 객체는 `.tools(shoppingTools, userTools)`처럼 함께 등록할 수 있습니다.
+
+</details>
 
 [이전](01-java.md) · [다음](03-loop.md) · [단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

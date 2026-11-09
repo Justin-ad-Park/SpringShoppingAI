@@ -97,8 +97,15 @@ public class ShoppingTools {
 `.call().content()` 한 번에서 모델 요청은 여러 번 발생할 수 있습니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 `.tools()`를 등록했는데도 도구 호출이 없을 수 있는 이유를 흐름 그림으로 설명해 보세요.
+
+<details>
+<summary>해설</summary>
+
+`.tools()`는 사용할 수 있는 도구를 등록합니다. 도구를 실제로 요청할지는 모델이 판단하므로, 인사처럼 도구가 필요 없는 질문에는 바로 답할 수 있습니다.
+
+</details>
 
 [이전](01-workflow.md) · [다음](03-hybrid.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

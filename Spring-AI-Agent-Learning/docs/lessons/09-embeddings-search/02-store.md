@@ -152,8 +152,15 @@ public class SearchService {
 score가 없는 문자열 결과는 JSON에서 score가 생략될 수 있습니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
-문서 적재와 질문 검색 중 각각 어느 코드가 임베딩을 요청하나요?
+같은 EmbeddingModel에 연결된 벡터 저장소에서 문서를 적재할 때와 질문으로 검색할 때, 각각 어떤 텍스트를 임베딩하며 왜 두 과정 모두 필요한가요?
+
+<details>
+<summary>해설</summary>
+
+문서 적재에서는 검색할 문서의 본문을 임베딩해 저장하고, 검색에서는 사용자의 질문을 임베딩합니다. 문서와 질문을 같은 모델의 벡터 공간에서 비교해야 관련 문서를 찾을 수 있기 때문입니다. 이 예제의 `SimpleVectorStore`는 `add(...)`와 `similaritySearch(...)`에서 연결된 EmbeddingModel을 사용합니다.
+
+</details>
 
 [이전](01-vectors.md) · [다음](03-search.md) · [단원 목차](../09-embeddings-search.md) · [학습 방법](../../learning-guide.md)

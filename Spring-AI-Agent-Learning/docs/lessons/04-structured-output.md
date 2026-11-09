@@ -240,4 +240,12 @@ MODEL
 1. `text()`와 `extract()`의 반환 타입과 처리 과정은 어떻게 다른가요?
 2. `.entity()` 변환에 성공한 뒤에도 `validate()`를 호출하는 이유는 무엇인가요?
 
+<details>
+<summary>해설</summary>
+
+1. `text()`는 모델의 문자열 답변을 반환합니다. `extract()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
+2. 객체 변환은 응답 형식을 Java 타입으로 읽는 작업입니다. 허용 카테고리나 예산 범위 같은 업무 규칙은 `validate()`로 별도 확인해야 합니다.
+
+</details>
+
 [이전: 03. ChatClient와 프롬프트](03-chatclient-and-prompts.md) · [다음: 05. 도구 호출](05-tool-calling.md) · [교육 계획](../curriculum.md)

@@ -56,8 +56,15 @@ classDiagram
 ChatMemory는 모델에 보낼 문맥 관리용이며 전체 대화 영구 기록과 다릅니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 두 번째 질문에 필요한 이전 user·assistant 메시지를 표에서 찾아보세요. 저장만 하고 보내지 않으면 어떻게 될까요?
+
+<details>
+<summary>해설</summary>
+
+앞선 예산 설명의 user 메시지와 그에 대한 assistant 메시지가 두 번째 질문의 문맥입니다. 저장만 하고 다음 요청에 포함하지 않으면 모델은 이 대화를 참고할 수 없습니다.
+
+</details>
 
 [이전](../07-chat-memory.md) · [다음](02-store.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)

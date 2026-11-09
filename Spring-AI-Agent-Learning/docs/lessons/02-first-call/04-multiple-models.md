@@ -362,11 +362,12 @@ Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행
 2. `spring.ai.chat.client.enabled: false`면 OpenAiChatModel도 만들어지지 않을까요?
 3. `/openai` 요청이 Anthropic에 전달되지 않는 이유는 무엇인가요?
 
-<details><summary>확인 해설</summary>
+<details>
+<summary>해설</summary>
 
-각 `@Bean`의 이름을 생성자 매개변수의 `@Qualifier`에 적어 구분합니다.
-해당 설정은 기본 ChatClient.Builder 자동 설정만 끄며 제공 업체 모델 자동 설정은 별개입니다.
-`/openai`는 `askOpenAi()`를 호출하고, 그 메서드는 OpenAiChatModel에 연결된 ChatClient를 사용합니다.
+1. 각 `@Bean`의 이름을 생성자 매개변수의 `@Qualifier`에 적어 구분합니다.
+2. 아닙니다. `spring.ai.chat.client.enabled: false`는 기본 `ChatClient.Builder` 자동 설정만 끄며 제공 업체 모델 자동 설정은 별개입니다.
+3. `/openai`는 `askOpenAi()`를 호출하고, 그 메서드는 `OpenAiChatModel`에 연결된 ChatClient를 사용하기 때문입니다.
 
 </details>
 

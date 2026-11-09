@@ -74,18 +74,18 @@ Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 �
 1. order가 작은 Advisor의 after는 언제 실행되나요?
 2. 07의 직접 저장과 메모리 Advisor를 함께 사용하면 왜 문제가 될까요?
 3. 도구 결과가 모델 재요청에는 있는데 다음 대화 메모리에는 없을 수 있나요?
+4. 현재처럼 A는 도구 루프 밖, B는 안에 두고 도구를 1회 실행한 뒤 최종 답변을 받으면, 왜 A의 before·after는 각 1회이고 B는 각 2회인가요?
 
-<details><summary>해설</summary>
+<details>
+<summary>해설</summary>
 
-요청에는 먼저, 응답에는 나중에 실행됩니다. 수동 저장과 Advisor 저장을 중복 적용하면 같은 턴이 두 번 들어갈 수 있습니다.
-현재 구성은 도구 루프 밖에서 user와 최종 assistant만 저장하므로 가능합니다.
+1. 요청에서 먼저 들어간 Advisor는 응답에서 나중에 나옵니다. 따라서 order가 작은 Advisor의 after가 더 나중에 실행됩니다.
+2. 같은 질문과 답변을 수동 코드와 Advisor가 각각 저장해 대화가 중복될 수 있기 때문입니다.
+3. 가능합니다. 현재 메모리 Advisor는 도구 루프 밖에서 user와 최종 assistant만 저장합니다. tool 결과는 같은 요청의 모델 재요청에는 전달되지만 다음 대화의 메모리에는 저장하지 않습니다.
+4. A는 전체 도구 루프를 한 번 감쌉니다. B는 최초 질문과 도구 실행 결과를 전달하는 두 모델 요청을 각각 감싸므로 두 번 실행됩니다. 따라서 이 배치와 종료 조건에서는 `steps`에 A의 before·after가 각 1회, B의 before·after가 각 2회 나타납니다.
+
 </details>
 
 보충: [공식 Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html).
-
-
-## 여기서 멈춰 확인하기
-
-도구를 한 번 호출했을 때 A와 B의 기록 횟수가 다른 이유를 응답의 `steps`로 설명해 보세요.
 
 [이전](02-memory-loop.md) · [다음](../08-advisors.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)

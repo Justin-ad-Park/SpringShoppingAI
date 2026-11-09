@@ -164,10 +164,27 @@ curl http://127.0.0.1:8111/api/model-requests \
 
 ## 확인 질문
 
-1. 재시도 1회인데 서버가 받은 요청은 왜 2회인가요?
-2. 같은 설정에서 400 응답은 왜 한 번만 요청하나요?
-3. 이 타임아웃이 Workflow 전체를 30초 안에 끝내나요?
+앞서 설명한 연결 설정 중 질문에 필요한 부분입니다. 1·2번은 최초 요청이 각각 HTTP 429·400으로 실패한 경우를 비교합니다.
 
-최초 요청에 추가 재시도 한 번이 더해집니다. 재시도 대상 오류만 다시 요청하며, 이 설정은 Workflow 전체의 제한 시간이 아닙니다.
+```yaml
+spring:
+  ai:
+    openai:
+      timeout: 30s
+      max-retries: 1
+```
+
+1. `max-retries: 1`일 때 HTTP 429 응답 후 서버가 받은 요청은 왜 총 2회인가요?
+2. 같은 `max-retries: 1` 설정에서 HTTP 400 응답에는 왜 총 1회만 요청하나요?
+3. `spring.ai.openai.timeout: 30s`는 Workflow 전체를 30초 안에 끝내는 설정인가요?
+
+<details>
+<summary>해설</summary>
+
+1. 최초 요청 1회에 추가 재시도 1회가 더해지므로 서버에는 총 2회 요청합니다.
+2. 현재 설정에서 HTTP 400은 재시도 대상이 아니므로 최초 요청 후 다시 요청하지 않습니다.
+3. 아닙니다. 해당 모델 HTTP 요청의 타임아웃이며 Workflow 전체의 제한 시간이 아닙니다.
+
+</details>
 
 [Spring AI 연결 설정](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html#_connection_properties) · [이전: 다중 모델](04-multiple-models.md) · [02장 목차](../02-first-call.md) · [관련: 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md) · [12장 목차](../12-evaluation.md)

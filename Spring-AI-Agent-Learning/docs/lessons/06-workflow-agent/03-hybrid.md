@@ -156,8 +156,15 @@ curl -sS http://127.0.0.1:8096/api/compare/WORKFLOW \
 
 실행 예외가 나면 API에는 기존 `FAILED` 안내를 반환하고 서버 로그에는 실행 방식(`WORKFLOW`, `AGENT`, `HYBRID`)과 예외 타입을 남깁니다. 질문·모델 응답·예외 메시지는 로그에 넣지 않습니다.
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 모델이 조회한 커피의 총액이 31000원이면, 3만원 예산에서 누가 제외하나요?
+
+<details>
+<summary>해설</summary>
+
+Java 코드가 실제 조회한 금액을 총예산과 비교해 제외합니다. `ComparisonService.hybrid()`의 `total() <= criteria.totalBudget()` 필터에서 31000원인 커피를 제거합니다.
+
+</details>
 
 [이전](02-agent.md) · [보충: 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md) · [단원 목차](../06-workflow-agent.md) · [학습 방법](../../learning-guide.md)

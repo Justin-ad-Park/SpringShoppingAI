@@ -62,7 +62,9 @@ flowchart LR
 
 Reader·Splitter·저장소·Advisor가 함께 동작하는지는 `AdvisorRagLocalModelTest`에서 확인합니다.
 
-확인 질문: 문서 내용이 바뀌면 어느 단계를 다시 수행해야 할까요?
+## 확인 질문
+
+문서 내용이 바뀌면 어느 단계를 다시 수행해야 할까요?
 
 <details><summary>해설</summary>
 읽기·분할·임베딩 적재를 다시 해야 새 문서가 검색됩니다. 질문을 다시 보내는 것만으로 저장된 벡터가 새 원문으로 바뀌지는 않습니다.

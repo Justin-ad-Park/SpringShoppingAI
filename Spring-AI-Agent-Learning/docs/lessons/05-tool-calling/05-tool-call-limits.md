@@ -114,8 +114,33 @@ public class ToolLimitService {
 | 검색→배송비→검색→배송비 요청 | 검색 2회, 배송비 1회 | 4회 | TOOL_LIMIT |
 | 검색→배송비→최종 답변 | 검색 1회, 배송비 1회 | 3회 | COMPLETED |
 | 인사에 바로 답변 | 0회 | 1회 | COMPLETED |
+| 요청별 초기화 확인: 첫 사용자 요청 | 음료 검색 1회 | 2회 | COMPLETED |
+| 요청별 초기화 확인: 두 번째 사용자 요청 | 생활·간식 검색 각 1회 | 3회, 두 요청 누적 5회 | COMPLETED |
 
 [ToolLimitLocalModelTest](../../../labs/05-05-tool-call-limits/src/test/java/com/example/ailearning/l05limits/ToolLimitLocalModelTest.java)는 `@MockitoSpyBean`의 호출 기록으로 실제 실행 수를 검증합니다. 고정 모델이 반복 요청했다는 설정과, 도구가 실제 몇 번 실행됐는지는 다른 확인입니다. 테스트 이름과 결과는 콘솔에 출력됩니다.
+
+### 고정 응답과 요청별 초기화 읽기
+
+로컬 테스트에서는 실제 AI가 질문을 해석하지 않습니다. 테스트 서버가 코드로 정한 응답을 반환합니다.
+
+- 반복 검색 테스트의 `setResponseFunction(...)`은 요청을 받을 때마다 검색 도구 호출 메시지를 반환합니다. 도구 결과를 받아도 다시 검색을 요구하므로 상한에서 차단됩니다.
+- 요청별 초기화 테스트의 `setResponseSequence(...)`는 지정한 응답을 순서대로 반환합니다. 첫 사용자 요청에는 검색 도구 호출 1회와 최종 답변, 두 번째 사용자 요청에는 검색 도구 호출 2회와 최종 답변을 준비합니다.
+
+**도구 호출 메시지 하나가 무한 반복을 만드는 것은 아닙니다.** 도구 실행 결과를 모델에 보낸 뒤, 다음 응답이 도구 호출이면 실행을 이어가고 일반 답변이면 종료합니다.
+
+요청별 초기화 테스트는 상한 초과가 아니라, 새 사용자 요청에서 검색 도구를 다시 두 번 실행할 수 있는지 확인합니다. 첫 요청의 검색 1회가 합산된다면 두 번째 요청의 두 번째 검색은 도구별 상한 2회를 넘습니다. 두 요청이 모두 `COMPLETED`로 끝나고 지정한 검색이 실제로 실행됐는지 검사해, 이전 요청의 횟수가 합산되지 않음을 확인합니다.
+
+모델 요청 횟수는 도구 실행 횟수와 다릅니다. 첫 사용자 요청은 질문 전달과 검색 결과 전달로 모델에 2회 요청합니다. 두 번째 사용자 요청은 질문 전달과 두 검색 결과의 순차 전달로 3회 요청합니다.
+
+이 테스트에서 제한 횟수와 관찰용 기록은 다음처럼 구분합니다.
+
+| 대상 | 두 사용자 요청 사이의 처리 |
+|---|---|
+| Spring AI의 도구 제한 횟수 | 새 사용자 요청에서 처음부터 계산합니다. |
+| Mockito Spy의 도구 호출 기록 | `clearInvocations(shoppingTools)`로 비워 각 요청의 호출만 출력·검증합니다. 이 코드는 Spring AI의 제한 횟수를 초기화하지 않습니다. |
+| 테스트 서버의 모델 요청 기록 | `MODEL.chat().getRequests()`는 비우지 않으므로 첫 요청 2회와 두 번째 요청 3회를 합친 5건을 보관합니다. 이전 대화를 모델에 전달한다는 뜻은 아닙니다. |
+
+`verifyNoMoreInteractions(shoppingTools)`는 앞의 `verify`로 확인한 검색 외에 추가 도구 호출이 없었는지 검사합니다. 따라서 첫 요청은 검색 1회만, 두 번째 요청은 검색 2회만 실행됐는지 확인할 수 있습니다.
 
 실제 모델로 실행하려면 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`을 준비합니다. API 사용량이 발생합니다.
 
@@ -150,10 +175,27 @@ curl http://127.0.0.1:8110/api/tool-limits \
 
 ## 확인 질문
 
-1. 세 번째 검색 요청이 있어도 실제 검색은 왜 두 번인가요?
-2. 상한 초과를 일반 성공과 구분하는 응답 값은 무엇인가요?
-3. 모델 요청 횟수까지 2회로 제한되는 설정인가요?
+다음은 이 실습에서 사용하는 도구별 제한 설정의 발췌입니다.
 
-상한을 넘는 도구 실행은 시작 전에 차단합니다. `finishReason=toolCallLimitExceeded`로 구분하며, 모델 요청 횟수 자체를 제한하는 설정은 아닙니다.
+```yaml
+spring:
+  ai:
+    tools:
+      limits:
+        max-calls-per-tool-default: 2
+```
+
+1. 세 번째 검색 요청이 있어도 실제 검색은 왜 두 번인가요?
+2. 도구 호출 상한 초과 여부를 확인하려면, 왜 `.content()`로 답변 문자열만 읽지 않고 `.chatResponse()`로 응답을 받아야 하나요?
+3. 위 `max-calls-per-tool-default: 2` 설정은 같은 도구의 실행 횟수뿐 아니라 모델 서버에 보내는 HTTP 요청도 최대 2회로 제한하나요?
+
+<details>
+<summary>해설</summary>
+
+1. 도구별 상한이 2회이므로 Spring AI가 세 번째 검색의 실행을 시작하기 전에 차단합니다. 모델이 검색을 요청한 횟수와 도구가 실제 실행된 횟수는 다릅니다.
+2. Spring AI는 도구 호출 상한 초과를 응답 메타데이터의 종료 사유인 `toolCallLimitExceeded`로 알려주기 때문입니다. `.chatResponse()`로 응답을 받아 `getResult().getMetadata().getFinishReason()`을 확인합니다. `.content()`로 얻은 답변 문자열만으로는 이 종료 사유를 확인할 수 없습니다.
+3. 아닙니다. `max-calls-per-tool-default: 2`는 하나의 사용자 요청을 처리하는 동안 같은 도구를 최대 2회 실행하도록 제한합니다. 모델 서버에 보내는 HTTP 요청 횟수를 직접 제한하지는 않습니다. 도구 호출 여부를 판단하거나 도구 실행 결과를 전달하는 모델 요청은 별도로 발생합니다.
+
+</details>
 
 [Spring AI 공식 도구 제한](https://docs.spring.io/spring-ai/reference/api/tools.html#_tool_call_limits) · [이전: Spy 검증](04-spy-and-inorder.md) · [05장 목차](../05-tool-calling.md) · [관련: 모델 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md) · [12장에서 재활용](../12-evaluation/05-failures.md)

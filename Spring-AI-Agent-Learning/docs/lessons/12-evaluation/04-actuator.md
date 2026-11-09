@@ -122,16 +122,18 @@ curl -sS 'http://127.0.0.1:8105/actuator/metrics/gen_ai.client.token.usage?tag=g
 실제 토큰은 모델 응답에 따라 달라지며 이 값만으로 정확한 청구액을 확정하지 않습니다.
 재시작하면 기본 메모리 지표는 초기화됩니다. 장기 보관·대시보드는 후속 운영 학습 범위입니다.
 
-## 테스트와 확인 질문
+## 테스트
 
 `ObservationLocalModelTest`의 2개 테스트는 실제 Boot·Spring AI·Micrometer·Actuator와 로컬 모델 HTTP 서버를 사용합니다.
 기본 모델 타이머 증가, 고정 usage의 입력 10+출력 5=15 토큰 증가, 지표 조회에 추가 모델 호출이 없음을 확인합니다.
 이 수치는 가짜 서버의 고정 검증 값이며 실제 모델 사용량 예측치가 아닙니다.
 
-확인 질문: 토큰 COUNT가 15이면 모델을 15번 호출했다는 뜻인가요?
+## 확인 질문
+
+`gen_ai.client.token.usage`에서 `gen_ai.token.type=total`로 조회한 COUNT가 15이면 모델을 15번 호출했다는 뜻인가요?
 
 <details><summary>해설</summary>
-아닙니다. 같은 COUNT 통계라도 어느 지표인지에 따라 단위가 다릅니다. 모델 operation의 COUNT는 호출 수이고 token.usage의 COUNT는 토큰 수입니다.
+아닙니다. 선택한 태그 범위의 누적 총 토큰 수가 15라는 뜻입니다. 모델 호출 수는 `gen_ai.client.operation`의 COUNT를 별도로 확인합니다. 같은 COUNT라도 지표에 따라 세는 대상이 다릅니다.
 </details>
 
 보충: [공식 Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).

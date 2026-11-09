@@ -96,11 +96,12 @@ Agent 테스트는 `verify(productCatalog, atLeastOnce()).calculatePriceDetails(
 2. `allSatisfy` 앞에서 `isNotEmpty`를 검사하는 이유는 무엇인가요?
 3. `verify(..., atLeastOnce())`는 메서드를 다시 호출하거나 실행 순서를 정하나요?
 
-<details><summary>해설</summary>
+<details>
+<summary>해설</summary>
 
-`extracting`은 각 항목에서 검증할 값을 꺼내며 원래 목록을 변경하지 않습니다.
-`allSatisfy`는 빈 목록도 통과하므로 후보 존재 여부는 따로 검사합니다.
-`verify`는 이미 남은 기록을 검사하며 메서드를 재실행하지 않습니다. `atLeastOnce`는 횟수 조건이고 순서 조건이 아닙니다.
+1. 아닙니다. `extracting`은 각 항목에서 검증할 값을 꺼내며 원래 목록을 변경하거나 P01만 남기지 않습니다.
+2. `allSatisfy`는 빈 목록도 통과하므로 후보가 하나 이상 있는지는 `isNotEmpty()`로 따로 확인해야 합니다.
+3. 아닙니다. `verify`는 이미 남은 기록을 검사하고 메서드를 재실행하지 않습니다. `atLeastOnce`는 횟수 조건이며 순서 조건이 아닙니다.
 
 </details>
 

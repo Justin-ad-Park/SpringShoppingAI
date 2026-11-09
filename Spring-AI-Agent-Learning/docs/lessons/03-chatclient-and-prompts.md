@@ -161,14 +161,16 @@ system을 수정하는 작업과 Java의 입력 검증·메시지 저장 기능�
 4. 같은 ChatClient 객체를 재사용하면 이전 질문도 기억하나요?
 
 <details>
-<summary>해설과 완료 기준</summary>
+<summary>해설</summary>
 
-자동 설정이 준비한 Builder로 모델 연결을 활용한 ChatClient를 만들기 위해서입니다.
-user는 사용자의 요청, system은 애플리케이션의 역할·응답 원칙 등을 담습니다.
-지시는 정확성 보장이 아니므로 실제 데이터와 검증 코드가 필요합니다.
-ChatClient 재사용만으로 대화 기록이 저장·전달되지는 않습니다.
-코드 네 줄을 설명하고 메시지 추가 실험과 기억 실험의 의미를 설명하면 이번 묶음을 마친 것입니다.
+1. 자동 설정이 준비한 Builder로 모델 연결이 구성된 ChatClient를 만들기 위해서입니다.
+2. user는 사용자의 요청, system은 애플리케이션의 역할·응답 원칙 등을 담습니다.
+3. 필요합니다. 프롬프트 지시는 정확성 보장이 아니므로 실제 데이터와 Java 검증 코드가 필요합니다.
+4. 아닙니다. ChatClient 재사용만으로 대화 기록이 저장·전달되지는 않습니다.
+
 </details>
+
+코드 네 줄을 설명하고 메시지 추가 실험과 기억 실험의 의미를 설명하면 이번 묶음을 마친 것입니다.
 
 보충 읽기: [Chat Client API](https://docs.spring.io/spring-ai/reference/api/chatclient.html)의 프롬프트 구성과 Builder 부분.
 

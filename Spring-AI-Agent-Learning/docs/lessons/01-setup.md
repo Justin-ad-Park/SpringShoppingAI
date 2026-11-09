@@ -187,11 +187,13 @@ spring:
 <details>
 <summary>해설</summary>
 
-Starter는 기능 의존성과 자동 설정을 제공하고, BOM은 버전 조합을 관리합니다.
-로컬 테스트는 연결 계약을 확인하며 실제 모델의 품질을 보장하지 않습니다.
-환경 변수는 프로세스와 자식 프로세스에 전달되므로 다른 실행 환경에서는 별도 설정이 필요합니다.
-테스트를 통과시키고 이 세 가지를 설명하면 다음 장으로 넘어가세요.
+1. Starter는 기능 의존성과 자동 설정을 제공하고, BOM은 여러 의존성의 버전 조합을 관리합니다.
+2. 아닙니다. 로컬 고정 응답 테스트는 연결과 처리 규칙을 확인하며 실제 모델의 답변 품질을 보장하지 않습니다.
+3. 아닙니다. 환경 변수는 해당 프로세스와 자식 프로세스에 전달되므로 새 터미널이나 IDE에는 별도 설정이 필요할 수 있습니다.
+
 </details>
+
+테스트를 통과시키고 이 세 가지를 설명하면 다음 장으로 넘어가세요.
 
 보충 읽기: [Getting Started](https://docs.spring.io/spring-ai/reference/getting-started.html)의 버전·BOM,
 [OpenAI Chat](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html)의 자동 설정 부분.

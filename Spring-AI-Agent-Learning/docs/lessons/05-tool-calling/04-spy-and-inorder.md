@@ -139,7 +139,7 @@ verifyNoInteractions(shoppingTools);
 
 현재 Live 검증은 모든 답변 문장과 가격의 정확성을 보장하지 않습니다. 모델이 기대한 도구를 선택하지 않으면 실패할 수 있으며, 고정 응답 테스트와 구분해서 결과를 읽습니다.
 
-## 실행과 확인 질문
+## 실행
 
 기존 Live 테스트를 실행하려면 저장소 루트의 `.env` 설정이 필요합니다. **실제 OpenAI API 사용량이 발생합니다.**
 
@@ -159,6 +159,8 @@ ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 �
 05장 보충 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
 
 
+## 확인 질문
+
 1. `@MockitoSpyBean`을 제거하고 `@Autowired`만 쓰면 `verify()`를 사용할 수 있을까요?
 2. `toolCallOrder.verify(...).searchProducts(...)`는 검색을 다시 실행할까요?
 3. InOrder 검증을 통과하면 답변의 모든 가격까지 정확하다고 볼 수 있을까요?
@@ -166,7 +168,9 @@ ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 �
 <details>
 <summary>해설</summary>
 
-일반 빈에는 Mockito 호출 기록이 없어 위 검증을 사용할 수 없습니다. `verify()`는 기존 기록을 검사하며 도구를 재실행하지 않습니다. 도구 호출 검증과 답변 내용의 정확성 검증은 별개입니다.
+1. 일반 빈에는 Mockito 호출 기록이 없어 `@Autowired`만으로는 `verify()`를 사용할 수 없습니다.
+2. 아닙니다. `verify()`는 기존 호출 기록을 검사하며 도구를 재실행하지 않습니다.
+3. 아닙니다. 호출 순서·인자 검증과 답변 내용의 정확성 검증은 별개입니다.
 
 </details>
 

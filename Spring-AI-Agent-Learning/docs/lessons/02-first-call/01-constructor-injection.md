@@ -207,12 +207,12 @@ OpenAI와 Anthropic을 함께 사용하고 `@Qualifier`로 주입할 ChatClient�
 2. 현재 파일에는 `spring.ai.model.chat`이 없는데 왜 OpenAI 자동 설정이 활성 조건을 만족할까요?
 3. ChatService 생성자에 OpenAiChatModel 대신 ChatClient.Builder를 적어도 OpenAI를 사용할 수 있는 이유는 무엇일까요?
 
-<details><summary>확인 해설</summary>
+<details>
+<summary>해설</summary>
 
-OpenAI용 구현과 자동 설정은 Starter 의존성으로 제공되므로 YAML 설정값만으로 대신할 수 없습니다.
-OpenAI Chat 자동 설정의 제공 업체 조건에 matchIfMissing=true가 있어, 해당 선택 설정을 생략한 현재 예제도 조건을 만족합니다.
-ChatClient.Builder에는 이미 현재 예제의 ChatModel 구현인 OpenAiChatModel이 연결됩니다.
-따라서 생성자는 공통 Builder 타입으로 전달받아도 현재 설정에 따른 OpenAI 호출을 사용할 수 있습니다.
+1. 아닙니다. OpenAI용 구현과 자동 설정은 Starter 의존성이 제공하므로 YAML 값만으로 대신할 수 없습니다.
+2. OpenAI Chat 자동 설정의 제공 업체 조건에 `matchIfMissing=true`가 있어 현재 예제는 제공 업체 선택 설정을 생략해도 조건을 만족합니다.
+3. 자동 설정이 `OpenAiChatModel`을 연결한 `ChatClient.Builder`를 전달하기 때문입니다. 생성자는 공통 Builder 타입을 받아도 현재 설정에 따른 OpenAI 호출을 사용할 수 있습니다.
 
 </details>
 

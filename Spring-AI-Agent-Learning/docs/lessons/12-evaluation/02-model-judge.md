@@ -127,10 +127,12 @@ curl -sS http://127.0.0.1:8104/api/evaluate/facts \
 한 가지 실험: 질문과 근거는 유지한 채 답변만 7일 → 30일로 바꿉니다.
 그 뒤 질문만 엉뚱하게 바꿔 relevance와 facts가 어떤 다른 질문을 평가하는지 비교하세요.
 
-확인 질문: Evaluator가 true를 반환하면 사람의 사실 검증이 필요 없을까요?
+## 확인 질문
+
+평가 결과의 `EvaluationResponse.isPass()`가 true이면 답변의 사실성이 보장되나요?
 
 <details><summary>해설</summary>
-아닙니다. 평가자 역시 모델입니다. 실제 질문의 다양한 표현·잘못된 근거·반례를 포함한 평가 세트와 사람 검토를 병행해야 합니다.
+아닙니다. 평가 모델이 해당 기준을 통과했다고 판정한 결과입니다. 근거와의 일치도 평가가 원문 자체의 진실성을 증명하지는 않습니다. 다양한 질문·잘못된 근거·반례를 포함한 평가 세트와 사람 검토를 병행해야 합니다.
 </details>
 
 보충: [공식 Evaluation API](https://docs.spring.io/spring-ai/reference/api/testing.html).

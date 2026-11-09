@@ -58,8 +58,15 @@ return new Run(reply, metrics(started, stats, null));
 실제 응답은 [12-5 실행 명령](05-failures.md#실행)의 `/api/evaluation/ask`를 호출해 `metrics` 필드에서 확인합니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 사용량을 읽는 코드와 경과 시간을 계산하는 코드가 각각 어떤 범위를 측정하는지 설명해 보세요.
+
+<details>
+<summary>해설</summary>
+
+`response.getMetadata().getUsage()`는 해당 채팅 응답이 보고한 입력·출력 토큰을 읽습니다. `System.nanoTime()`으로 계산하는 `elapsedMs`는 질문 임베딩·검색과 필요한 채팅 생성을 포함한 처리 시간을 측정합니다. 채팅 토큰 수에 임베딩 사용량이 합산되는 것은 아닙니다.
+
+</details>
 
 [이전](02-model-judge.md) · [다음](04-actuator.md) · [단원 목차](../12-evaluation.md) · [학습 방법](../../learning-guide.md)

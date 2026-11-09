@@ -117,7 +117,9 @@ curl -sS http://127.0.0.1:8103/api/advisor-rag \
 3. 검색 문서가 프롬프트에 들어간 근거는 [AdvisorRagLocalModelTest](../../../labs/10-04-rag-advisor/src/test/java/com/example/ailearning/l10advisor/AdvisorRagLocalModelTest.java)의 `Reader와_Splitter와_Advisor로_문서를_모델에_전달한다`에서 확인합니다. 현재 실제 API는 답변만 반환하므로 답변 문자열만으로 검색 결과 수나 전체 프롬프트를 확인할 수는 없습니다.
 4. 빈 검색 시 생성 자체를 생략해야 하는 업무라면 10-2의 어느 분기를 유지할지 설명합니다.
 
-확인 질문: Advisor를 쓴다고 출처가 올바르고 답변 내용도 정확하다고 결론 내릴 수 있을까요?
+## 확인 질문
+
+Advisor를 쓴다고 출처가 올바르고 답변 내용도 정확하다고 결론 내릴 수 있을까요?
 
 <details><summary>해설</summary>
 아닙니다. Advisor는 검색과 문맥 전달을 조합합니다. 출처 확인·답변 품질 평가는 애플리케이션 요구에 맞게 별도로 검증합니다.

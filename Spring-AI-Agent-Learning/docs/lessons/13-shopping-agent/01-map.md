@@ -85,8 +85,15 @@ flowchart TD
 7. [CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
-이전 대화와 이번 요청의 조회 사실을 보관하는 객체를 클래스 그림에서 각각 찾아보세요.
+이전 대화와 이번 요청의 실제 조회 결과는 각각 무엇에 사용하며, 왜 서로 구분해 관리해야 하나요?
+
+<details>
+<summary>해설</summary>
+
+이전 대화는 후속 질문의 의도와 유지할 조건을 해석하는 문맥이고, 이번 조회 결과는 선택한 상품·정책이 실제로 확인됐는지 검증하는 근거입니다. 과거 답변을 이번에 조회한 사실로 취급하면 현재 확인하지 않은 ID나 금액을 확인된 사실로 잘못 취급할 수 있습니다. 예제는 대화 메모리와 요청별 `TurnFacts`를 구분해 이 역할을 나눕니다.
+
+</details>
 
 [이전](../13-shopping-agent.md) · [다음](02-intent.md) · [단원 목차](../13-shopping-agent.md) · [학습 방법](../../learning-guide.md)

@@ -100,8 +100,15 @@ flowchart TD
 메모리를 루프 안으로 이동하는 심화 구성은 이번에 구현하지 않습니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 기본 메모리 Advisor가 user와 assistant를 각각 언제 저장하는지 07장과 비교해 보세요.
+
+<details>
+<summary>해설</summary>
+
+기본 `MessageChatMemoryAdvisor`는 모델 호출 전에 현재 user를 저장하고 정상 응답 뒤 최종 assistant를 저장합니다. 07장은 정상 답변을 확인한 뒤 둘을 함께 저장합니다. 따라서 실패하면 07장은 이번 대화를 저장하지 않지만 기본 Advisor에는 user가 남을 수 있습니다.
+
+</details>
 
 [이전](01-chain.md) · [다음](03-observe.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)

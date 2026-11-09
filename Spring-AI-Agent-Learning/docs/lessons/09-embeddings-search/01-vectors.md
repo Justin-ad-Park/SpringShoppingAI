@@ -50,8 +50,15 @@ public Vector embed(String text) {
 문장을 보내면 `float[]`를 받고 그 길이와 값을 확인할 수 있습니다. 이 호출에도 외부 임베딩 API 사용량이 발생합니다.
 실행 설정과 벡터 조회 API는 [09-3의 설정과 실행](03-search.md)에서 확인합니다.
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 `embedding.embed(text)`의 입력과 출력은 무엇이며, 벡터의 차원은 코드에서 어떻게 확인하나요?
+
+<details>
+<summary>해설</summary>
+
+입력은 텍스트이고 출력은 `float[]` 숫자 벡터입니다. 반환 배열의 `length`로 차원을 확인하며, 예제의 `SearchService.embed()`는 이를 `dimensions` 필드에 담습니다.
+
+</details>
 
 [이전](../09-embeddings-search.md) · [다음](02-store.md) · [단원 목차](../09-embeddings-search.md) · [학습 방법](../../learning-guide.md)

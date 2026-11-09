@@ -90,8 +90,15 @@
 
 </details>
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 실제 조회하지 않은 ID를 거절하는 코드와, 요청 일부의 누락은 검사하지 않는 한계를 설명해 보세요.
+
+<details>
+<summary>해설</summary>
+
+`verify()`가 선택 ID를 `facts.offers`·`facts.sources`에서 찾고, 조회한 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
+
+</details>
 
 [이전](02-intent.md) · [다음](04-conversation.md) · [단원 목차](../13-shopping-agent.md) · [학습 방법](../../learning-guide.md)

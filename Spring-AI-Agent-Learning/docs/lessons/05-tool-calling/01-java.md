@@ -99,8 +99,15 @@ public class ProductCatalog {
 
 도구 호출과 HTTP 연결은 별도의 `ToolCallingLocalModelTest`에서 확인합니다.
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
-모델을 호출하지 않고 상품 검색과 배송비 계산을 하는 메서드는 무엇인가요?
+상품 가격과 배송비를 모델이 추측하게 하지 않고 Java 서비스에서 조회·계산하게 하는 이유는 무엇인가요?
+
+<details>
+<summary>해설</summary>
+
+모델의 답변만으로 실제 상품 가격과 배송 정책이 맞다고 보장할 수 없기 때문입니다. Java 서비스가 카탈로그와 배송 규칙으로 값을 확인하고, 이후 모델은 도구로 받은 결과를 답변에 사용하도록 역할을 나눕니다.
+
+</details>
 
 [이전](../05-tool-calling.md) · [다음](02-tools.md) · [단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

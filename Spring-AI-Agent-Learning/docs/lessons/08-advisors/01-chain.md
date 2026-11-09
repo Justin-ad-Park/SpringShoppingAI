@@ -85,8 +85,15 @@ public record TraceAdvisor(String name, int order, List<String> steps) implement
 같은 order 값이면 순서를 보장할 수 없어 A와 B에는 서로 다른 값을 사용합니다.
 
 
-## 여기서 멈춰 확인하기
+## 확인 질문
 
 A·B 등록 코드와 `chain.nextCall()`을 연결해 before·after의 순서를 설명해 보세요.
+
+<details>
+<summary>해설</summary>
+
+A의 order는 0, B는 10이므로 A before → B before → B after → A after 순서입니다. A의 `chain.nextCall()` 안에서 B가 실행되고, B가 반환된 뒤 A의 after가 실행됩니다.
+
+</details>
 
 [이전](../08-advisors.md) · [다음](02-memory-loop.md) · [단원 목차](../08-advisors.md) · [학습 방법](../../learning-guide.md)
