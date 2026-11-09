@@ -14,7 +14,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-// 실제 OpenAI를 호출합니다. 저장소 루트 .env를 사용하며 API 사용량이 발생합니다.
+/**
+ * 실제 OpenAI를 호출한다. 저장소 루트 .env를 사용하며 API 사용량이 발생한다.
+ * 검증 메서드 설명은 과정의 docs/lessons/06-workflow-agent/04-test-assertions.md를 참고한다.
+ * @see <a href="../../../../../../../../../docs/lessons/06-workflow-agent/04-test-assertions.md">06장 보충: 테스트 검증 코드 읽기</a>
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
         "spring.ai.openai.chat.timeout=30s" //yaml의 5s 설정을 덮어 씀
 })
@@ -59,7 +63,9 @@ class WorkflowAgentOpenAiLiveTest {
 
         assertThat(result.status()).isEqualTo("COMPLETED");
         assertThat(result.answer()).isNotBlank();
+
         // P02는 상품가 28000원 + 배송비 3000원으로 총예산을 초과한다.
+        // extracting으로 ID를 꺼내고, containsExactly로 P01 하나뿐인지 확인한다.
         assertThat(result.offers())
                 .extracting(offer -> offer.product().id())
                 .containsExactly("P01");
@@ -75,9 +81,14 @@ class WorkflowAgentOpenAiLiveTest {
         System.out.printf("Agent 결과: %s%n", result);
         ToolCallPrinter.printMockitoDetails(productCatalog);
 
-        // searchProducts → search, calculateShipping → calculatePriceDetails로 연결된다.
+        // 모델이 호출한 ShoppingTools의 도구는 내부에서 ProductCatalog를 호출한다.
+        // ShoppingTools.search → ProductCatalog.search
+        // ShoppingTools.calculatePriceDetails → ProductCatalog.calculatePriceDetails
+        // ProductCatalog의 호출 기록으로 검색과 가격 조회가 모두 실행됐는지 검증한다.
         // 실제 모델의 도구 선택·반복 횟수는 달라질 수 있으므로 고정 순서를 검증하지 않는다.
+        // atLeastOnce는 1회 이상을 뜻한다. any는 임의 인자, anyString은 null이 아닌 임의 문자열을 허용한다.
         verify(productCatalog, atLeastOnce()).search(any(), any());
+        verify(productCatalog, atLeastOnce()).calculatePriceDetails(anyString());
         assertThat(result.status()).isEqualTo("COMPLETED");
         assertThat(result.answer()).isNotBlank();
         assertThat(result.offers()).isNotEmpty();
@@ -98,9 +109,13 @@ class WorkflowAgentOpenAiLiveTest {
         verify(productCatalog, atLeastOnce()).search("음료", 30000);
         assertThat(result.status()).isEqualTo("COMPLETED");
         assertThat(result.answer()).isNotBlank();
+
+        // allSatisfy는 모든 추천에 아래 검사를 적용한다.
+        // 빈 목록도 통과하므로 추천이 있는지 먼저 확인한다.
         assertThat(result.offers()).isNotEmpty();
         assertThat(result.offers())
                 .allSatisfy(offer -> {
+                    // 각 상품의 기존 가격 조회가 1회 이상 있었는지 검사한다. 다시 조회하지 않는다.
                     verify(productCatalog, atLeastOnce()).calculatePriceDetails(offer.product().id());
                     assertThat(offer.product().category()).isEqualTo("음료");
                     assertThat(offer.total()).isLessThanOrEqualTo(30000);

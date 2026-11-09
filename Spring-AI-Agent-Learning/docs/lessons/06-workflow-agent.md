@@ -39,6 +39,7 @@ Agent라는 말은 모델과 도구, 실행 흐름을 결합한 서비스의 동
 | 1 | [Java가 순서를 정하는 Workflow](06-workflow-agent/01-workflow.md) | 모델로 요청 조건을 추출하고, 상품 검색·배송비 계산·예산 검증·답변 생성을 정해진 순서로 연결하는 Workflow를 구현합니다. |
 | 2 | [모델이 다음 도구를 고르는 Agent](06-workflow-agent/02-agent.md) | 모델에 목표와 도구를 제공하고, 모델이 필요한 도구와 인자를 선택해 요청을 처리하는 Agent를 구현합니다. |
 | 3 | [모델의 선택을 Java로 검증하기](06-workflow-agent/03-hybrid.md) | 모델이 상품 조회 도구를 선택하되, 배송비 포함 금액과 카테고리를 코드로 검증해 최종 추천 후보를 확정하는 혼합 방식을 구현합니다. |
+| 선택 보충 | [테스트 검증 코드 읽기](06-workflow-agent/04-test-assertions.md) | 결과 목록 검사와 Spy 호출 기록 검사를 구분하고, Live 테스트의 검증문을 읽습니다. |
 
 1~3은 `06-00-workflow-agent`를 사용합니다. 실행 제한을 확인하려면 [05 보충 5: 도구 호출 횟수 제한](05-tool-calling/05-tool-call-limits.md)과 [02 보충 5: 모델 요청 타임아웃과 재시도](02-first-call/05-model-timeout-retry.md)를 참고하세요. 두 보충 실습은 12장에서 실패 평가와 관측에 다시 활용합니다.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)

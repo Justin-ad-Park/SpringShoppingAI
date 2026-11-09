@@ -97,14 +97,14 @@ public class BudgetShoppingTools {
     }
 
     @Tool(description = "확정된 카테고리와 총예산 안에서 상품을 검색합니다. 배송비는 별도로 조회하세요.")
-    public List<Product> searchProducts(@ToolParam(required = false) String category,
+    public List<Product> search(@ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
-        return shoppingTools.searchProducts(criteria.category(), criteria.totalBudget());
+        return shoppingTools.search(criteria.category(), criteria.totalBudget());
     }
 
     @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public ProductPriceDetails calculateShipping(String productId) {
-        return shoppingTools.calculateShipping(productId);
+    public ProductPriceDetails calculatePriceDetails(String productId) {
+        return shoppingTools.calculatePriceDetails(productId);
     }
 
     public List<ProductPriceDetails> getPriceDetails() {
