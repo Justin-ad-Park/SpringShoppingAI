@@ -34,13 +34,12 @@ public class ComparisonService {
         this.productCatalog = productCatalog;
     }
 
-    public RunResult run(String mode, String question) {
+    public RunResult run(ExecutionMode mode, String question) {
         try {
             ExecutionResult result = switch (mode) {
-                case "workflow" -> workflow(question);
-                case "agent" -> agent(question);
-                case "hybrid" -> hybrid(question);
-                default -> throw new IllegalArgumentException("mode는 workflow/agent/hybrid입니다.");
+                case WORKFLOW -> workflow(question);
+                case AGENT -> agent(question);
+                case HYBRID -> hybrid(question);
             };
             return new RunResult(mode, result.status(), result.answer(), result.offers());
         } catch (RuntimeException error) {

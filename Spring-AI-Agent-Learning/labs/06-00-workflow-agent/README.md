@@ -18,13 +18,26 @@
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootRun
-curl http://127.0.0.1:8096/api/compare/workflow \
+curl http://127.0.0.1:8096/api/compare/WORKFLOW \
   -H 'Content-Type: text/plain; charset=UTF-8' \
   --data-raw '배송비 포함 3만원 이하 음료를 추천해줘.'
 ./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests '*WorkflowAgentOpenAiLiveTest'
 ```
 
-경로의 `workflow`를 `agent`, `hybrid`로 바꿔 비교합니다. 응답은 `mode`, `status`, `answer`, `offers`입니다. Agent의 offers는 실제 조회한 금액이며 최종 예산 준수는 보장하지 않습니다. 혼합 방식은 조회 사실을 다시 검증해 확정한 후보만 반환합니다.
+경로의 `WORKFLOW`를 `AGENT`, `HYBRID`로 바꿔 비교합니다. 응답은 `mode`, `status`, `answer`, `offers`입니다. Agent의 offers는 실제 조회한 금액이며 최종 예산 준수는 보장하지 않습니다. 혼합 방식은 조회 사실을 다시 검증해 확정한 후보만 반환합니다.
+
+Java에서는 `service.run(ExecutionMode.WORKFLOW, question)`처럼 Enum으로 실행 방식을 지정합니다. `ExecutionMode`는 정해진 선택지인 `WORKFLOW`, `AGENT`, `HYBRID`를 하나의 타입으로 묶습니다. Controller는 `@PathVariable ExecutionMode mode`로 값을 직접 받고, 서비스는 Enum 상수로 분기합니다. URL과 JSON 응답도 같은 대문자 이름을 사용하므로 별도의 대소문자 변환 메서드가 필요 없습니다. 소문자나 정의하지 않은 값은 Spring MVC가 HTTP 400으로 거부합니다. 예를 들어 응답은 `"mode":"WORKFLOW"` 형태입니다.
+
+`WorkflowAgentOpenAiLiveTest`는 같은 질문을 세 개의 독립 테스트로 비교합니다.
+
+| 테스트 | 검증·출력 내용 |
+|---|---|
+| Workflow | Java가 실행하는 `search(음료, 30000)` → P01 가격 계산 → P02 가격 계산 순서와 최종 P01 후보 검증 |
+| Agent | 모델이 선택한 도구가 실제로 수행한 검색·계산 기록 출력. 선택 순서·횟수를 고정하지 않음 |
+| 혼합 방식 | 실제 검색의 고정 조건과 최종 후보의 조회 여부·카테고리·배송비 포함 예산 검증, 실제 호출 기록 출력 |
+
+세 테스트는 `ProductCatalog`에 `@MockitoSpyBean`을 두고 `ToolCallPrinter.printMockitoDetails(productCatalog)`를 출력합니다. Workflow는 카탈로그를 직접 호출하며, Agent·혼합 방식의 도구는 내부에서 같은 카탈로그를 호출합니다. 로그의 `search`는 도구의 `searchProducts`, `calculatePriceDetails`는 도구의 `calculateShipping`에 대응합니다. 도구 객체 자체의 호출 인자 기록과는 다르며, 특히 혼합 방식에서는 Java가 고정한 검색 인자가 출력됩니다.
+`InOrder`는 이미 실행된 기록을 검증하며 실행 순서를 지정하지 않습니다. 실제 모델이 필요한 조회를 생략하거나 조건 추출에 실패하면 Live 테스트도 실패할 수 있습니다.
 
 모델 호출 수는 로컬 테스트 서버의 요청 목록으로 확인합니다. 자체 RunState나 CountedChatModel은 사용하지 않습니다.
 

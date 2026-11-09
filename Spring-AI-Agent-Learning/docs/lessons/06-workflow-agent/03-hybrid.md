@@ -128,12 +128,12 @@ public class BudgetShoppingTools {
 ```
 
 ```bash
-curl -sS http://127.0.0.1:8096/api/compare/workflow \
+curl -sS http://127.0.0.1:8096/api/compare/WORKFLOW \
   -H 'Content-Type: text/plain; charset=UTF-8' \
   --data-raw '배송비 포함 3만원 이하인 음료 선물을 추천해줘.'
 ```
 
-같은 질문을 `/api/compare/agent`, `/api/compare/hybrid`에도 보냅니다.
+같은 질문을 `/api/compare/AGENT`, `/api/compare/HYBRID`에도 보냅니다.
 실제 모델 호출은 유료일 수 있습니다. 종료는 서버 터미널 Ctrl+C입니다.
 
 | 응답 필드 | 읽는 방법 |
@@ -154,7 +154,7 @@ curl -sS http://127.0.0.1:8096/api/compare/workflow \
 5. 테스트의 모델이 커피를 추천하도록 고정한 사례를 읽습니다. hybrid는 총액 31000원을 Java가 제외하고 P01만 반환합니다.
 
 
-실행 예외가 나면 API에는 기존 `FAILED` 안내를 반환하고 서버 로그에는 실행 방식(`workflow`, `agent`, `hybrid`)과 예외 타입을 남깁니다. 질문·모델 응답·예외 메시지는 로그에 넣지 않습니다.
+실행 예외가 나면 API에는 기존 `FAILED` 안내를 반환하고 서버 로그에는 실행 방식(`WORKFLOW`, `AGENT`, `HYBRID`)과 예외 타입을 남깁니다. 질문·모델 응답·예외 메시지는 로그에 넣지 않습니다.
 
 ## 여기서 멈춰 확인하기
 
