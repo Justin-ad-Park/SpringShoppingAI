@@ -91,7 +91,7 @@ class ToolLimitLocalModelTest {
                 createAssistantToolCallMessage("d1", "calculateShipping", "{\"productId\":\"P01\"}"),
                 createAssistantToolCallMessage("s2", "searchProducts", "{\"category\":\"생활\"}"),
                 createAssistantToolCallMessage("d2", "calculateShipping", "{\"productId\":\"P03\"}"));
-        var reply = toolLimitService.ask("검색과 배송비 조회를 반복해줘.");
+        var reply = toolLimitService.ask("툴 호출이 4번 들어가는 케이스.");
         System.out.println("전체 상한 결과: " + reply);
         ToolCallPrinter.printToolCalls(shoppingTools);
 
@@ -134,6 +134,7 @@ class ToolLimitLocalModelTest {
         // Then: 제한에 걸리지 않고 정상 종료한다.
         assertThat(first.status()).isEqualTo("COMPLETED");
         verify(shoppingTools).searchProducts("음료");
+        // 더 이상의 호출은 없었음을 검증한다.
         verifyNoMoreInteractions(shoppingTools);
         // 모델에 사용자 질문을 보내고, 도구 실행 결과를 보내 최종 답변을 받으므로 총 2회 요청한다.
         assertThat(MODEL.chat().getRequests()).hasSize(2);
@@ -157,6 +158,7 @@ class ToolLimitLocalModelTest {
         assertThat(second.status()).isEqualTo("COMPLETED");
         verify(shoppingTools).searchProducts("생활");
         verify(shoppingTools).searchProducts("간식");
+        // 더 이상의 호출은 없었음을 검증한다.
         verifyNoMoreInteractions(shoppingTools);
         // 모델 요청 기록은 누적된다. 첫 요청 2회 + 다음 요청 3회이다.
         assertThat(MODEL.chat().getRequests()).hasSize(5);
@@ -170,6 +172,8 @@ class ToolLimitLocalModelTest {
         var reply = toolLimitService.ask("안녕");
         System.out.println("인사 결과: " + reply);
         assertThat(reply.status()).isEqualTo("COMPLETED");
+
+        //툴 호출이 없었음을 검증한다.
         verifyNoInteractions(shoppingTools);
     }
 }
