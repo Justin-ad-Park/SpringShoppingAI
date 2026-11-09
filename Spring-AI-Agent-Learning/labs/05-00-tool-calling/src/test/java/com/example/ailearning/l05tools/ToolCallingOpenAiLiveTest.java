@@ -48,6 +48,10 @@ class ToolCallingOpenAiLiveTest {
     void 실제_OpenAI에_가격과_배송비를_질문한다() {
         String answer = service.ask("P02 커피의 가격과 배송비 포함 총액을 도구로 확인해줘.");
         System.out.printf("답변: %s%n", answer);
+
+        // Mock 상세 내역 출력
+        ToolCallPrinter.printMockitoDetails(shoppingTools);
+
         assertThat(answer).isNotBlank();
     }
 
