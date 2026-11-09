@@ -88,6 +88,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - 11장은 기존 shopping-mcp를 원격 서버로 사용합니다. 테스트에서만 서버 프로젝트를 의존하며, 운영 코드에서 서버 클래스를 import하지 않습니다.
 - 06의 기본 Workflow·Agent·혼합 흐름은 자체 제한 보조 코드 없이 실행합니다. 모델 통신은 02 보충, 도구 제한은 05 보충의 별도 모듈로 제공하며 12장에서 같은 테스트를 재활용합니다. 전체 Workflow 시간 제한·모델 호출 예산은 현재 확장 범위에 넣지 않습니다.
 - 같은 기능의 설명을 나눈 소수업은 한 실행 모듈을 공유할 수 있습니다. 번호를 맞추기 위해 모듈을 불필요하게 복제하지 않습니다.
+- 모델 서버 기본 주소는 각 독립 모듈의 `application.yml`에 둡니다. OpenAI는 `spring.ai.openai.base-url`, 다중 제공 업체 모듈의 Anthropic은 `spring.ai.anthropic.base-url`을 사용합니다. Live 테스트는 이 기본값을 사용하고, 로컬 고정 응답 테스트는 `@DynamicPropertySource`로 실행 시 정해지는 서버 주소를 덮어씁니다. 테스트 조건상 값을 고정해야 하는 경우에는 그 목적에 맞는 설정을 유지합니다.
 - 실제 실행은 저장소 루트 `.env`를 properties 설정 파일로 읽습니다. 파일 자체나 키 값을 출력하지 않습니다.
 - 채팅은 `OPENAI_API_KEY`, `OPENAI_MODEL`, 임베딩은 `OPENAI_EMBEDDING_MODEL`을 사용합니다. 두 제공 업체 실습만 Anthropic 키·모델을 추가합니다.
 - `bootRun`·`test`의 작업 디렉터리는 저장소 루트입니다. IntelliJ 직접 실행도 같은 Working directory를 사용합니다.
@@ -123,6 +124,8 @@ return client
 ```
 
 ## Spring AI 설명에서 확인할 동작
+
+- 공통 `spring.ai.openai.*`와 기능별 `spring.ai.openai.chat.*`·`spring.ai.openai.embedding.*`가 같은 연결 속성을 지정하면 사용 버전의 우선순위를 확인합니다. 2.0.2에서는 기능별 값이 있으면 공통 값보다 우선하므로, 테스트의 timeout 변경이 기존 기능별 설정에 가려지지 않는지 확인합니다. URL·시간 제한을 변경한 로컬 테스트가 실제로 대체 서버에 연결하고 의도한 대기·실패 동작을 보이는지 확인하며, 이를 실제 API 연결 검증으로 기록하지 않습니다.
 
 - ChatClient의 객체 생성·요청 구성·실행 시점과 Advisor의 메시지 저장 정책은 사용 버전의 실제 소스와 대조합니다. 직접 메모리 구현을 기본 Advisor로 바꿀 때 실패한 요청의 저장 여부까지 같다고 가정하지 않습니다.
 - HTTP 오류 코드 설명은 Controller·Service가 실제로 처리하는 예외 범위와 대조합니다. 채팅 실패 처리 안에 질문 임베딩·검색 실패도 포함되는지 따로 확인합니다.
