@@ -46,6 +46,8 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 
 
+13장 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 공개된 상용 사례를 참고해 대분류 10개·소분류 40개를 단계적으로 선택하고, 모호함·범위 밖·복수 요청을 보류합니다. 기본 통합 상담과 분리된 실습입니다.
+
 ## 설명 수업과 실행 모듈의 대응
 
 실행 모듈 앞의 숫자는 연결된 본 단원 번호입니다. 02장의 기본 실습은 `02-00-first-chat`, 선택 보충은 `02-04-multiple-models`입니다.
@@ -62,6 +64,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-00-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
 | [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-02-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
 | [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
+| [13-5 계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md) | `13-05-intent-classification` | 관리되는 분류표·두 단계 분류·후보 소속 검사·별도 Live 테스트 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.

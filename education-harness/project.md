@@ -53,6 +53,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 12-2 모델 평가 | `12-02-model-evaluation` | `com.example.ailearning.l12judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest` |
 | 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
 | 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
+| 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 

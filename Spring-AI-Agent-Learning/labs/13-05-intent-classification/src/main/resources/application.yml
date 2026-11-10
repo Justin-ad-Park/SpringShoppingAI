@@ -1,0 +1,20 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8107}
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: intent-classification-lab
+  ai:
+    model:
+      embedding: none
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        max-retries: 0
+        timeout: 15s
+        options:
+          model: ${OPENAI_MODEL}

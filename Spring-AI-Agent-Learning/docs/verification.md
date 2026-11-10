@@ -487,3 +487,15 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 새 과제는 `/tmp/later-rag-exercise`의 RagService 사본에서 `.user(...)`의 context 전달만 제거했습니다. 선택한 테스트 1개가 예상대로 전송 메시지의 REFERENCE_START·출처 ID·원문 누락으로 실패했습니다. 임시 init·소스·빌드 결과는 /tmp에만 두었으며 위 정상 소스 33개 통과와 구분합니다.
 - 정적 검사: 교재·실습 로컬 링크 616개 오류 0개, 확인 질문 제목·통합 접힘·번호 대응 및 `git diff --check` 통과. 변경한 EvaluationRunner 전체 예제와 CounselWorkflow 검증·문장 생성 발췌가 실제 소스와 일치함을 확인했습니다. 교육·기술 검토는 한 에이전트가 관점을 바꾸어 수행했습니다.
 - 미검증: 실제 모델의 검색·답변 품질, Markdown 화면 렌더링, 초급 학습자의 수행 시간. 커밋은 하지 않았습니다.
+
+## 13장 선택 보충: 계층형 상담 의도 분류 — 2026-11-10
+
+- 범위: 기존 상담 Workflow와 분리한 `13-05-intent-classification` 모듈과 `13-shopping-agent/05-intent-classification.md`를 추가했습니다. 기존 13-2에는 보충 링크만 추가했습니다. 교육 계획·실행 안내·README·Gradle 등록·프로젝트의 실습 대응표를 갱신했습니다. 하네스 공통 규칙은 변경하지 않았습니다.
+- 조사: NatWest의 Lex Gateway/하위 봇 사례와 PEBA의 상담 의도 라우팅 운영 사례를 제공 업체 원문으로 확인했습니다. AWS의 가상 보험 상담 예제·Dialogflow CX 제품 설명은 고객 도입 사례와 구분해 인용했습니다. 이 사례들이 Spring AI나 10×4 분류표를 사용했다는 주장은 하지 않습니다.
+- 구현: 업무 코드·경계 설명·버전을 JSON으로 관리합니다. 대분류 후보 10개에서 선택한 뒤 그 소분류 4개만 다음 Chat 요청에 전달하고 원문을 유지합니다. 실제 등록 코드와 부모·자식 관계를 Java에서 검사합니다. 모호함·범위 밖·복수 요청은 미확정으로 반환하며, 통신/변환/후보 검증 오류는 HTTP 502로 구분합니다. 업무 도구·대화 저장은 추가하지 않았습니다.
+- 검증 환경: 루트 build.gradle의 Java 21·Spring Boot 4.0.9·Spring AI 2.0.2를 사용했습니다. 로컬 테스트는 `.env` import를 끄고 dummy key/model과 공통 OpenAiStubServer를 사용했습니다.
+- 실행 명령: `./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentClassificationLocalModelTest' :Spring-AI-Agent-Learning:labs:13-05-intent-classification:bootJar --console=plain`.
+- 결과: 최종 소스에서 BUILD SUCCESSFUL. JUnit XML 기준 테스트 13개 통과, 실패 0·오류 0·건너뜀 0입니다. 두 단계 요청의 후보 범위·원문 전달, 두 단계 각각의 미확정 처리, 미등록 대분류·다른 부모의 소분류·모순 코드·깨진 JSON·통신 실패·공백 입력을 확인했습니다. Live 소스는 compileTestJava에서 컴파일했습니다.
+- 정적 검사: 교재·실습 로컬 링크 636개 오류 0개, 확인 질문 제목·접힘·번호 대응 및 git diff --check 통과. 분류표의 대분류 10개·고유 소분류 40개·부모 코드 접두어를 확인했습니다. 교재의 classify 메서드 발췌와 실제 소스가 일치합니다. 그림은 추가하지 않았습니다.
+- 교육·기술 검토: 한 에이전트가 관점을 바꾸어 검토했습니다. 단일 호출·2단계·검색 후 분류의 장단점, 상위 오분류 전파, MATCH의 검증 범위, 자기 보고 confidence와 정답 확률의 차이를 설명했습니다. 기본 상담 코드와 독립 실행되며, 실습에서 직접 읽을 핵심 메서드와 JSON 위치를 안내했습니다.
+- 실제 외부 호출: 상용 사례·제품 문서 웹 열람만 수행했습니다. 실제 모델 Live 호출·40개 의도의 품질/비용/지연 비교·상용 쇼핑몰 연동·Markdown 화면 렌더링은 미검증입니다. 로컬 고정 응답 통과를 의미 분류 정확도의 증거로 보지 않습니다. 커밋은 하지 않았습니다.
