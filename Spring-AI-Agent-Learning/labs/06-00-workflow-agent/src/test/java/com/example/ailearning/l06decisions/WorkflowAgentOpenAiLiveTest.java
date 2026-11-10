@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @see <a href="../../../../../../../../../docs/lessons/06-workflow-agent/04-test-assertions.md">06장 보충: 테스트 검증 코드 읽기</a>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-        "spring.ai.openai.chat.timeout=30s" //yaml의 5s 설정을 덮어 씀
+        "spring.ai.openai.timeout=30s" //yaml의 5s 설정을 덮어 씀
 })
 class WorkflowAgentOpenAiLiveTest {
     private static final String SHOPPING_QUESTION =

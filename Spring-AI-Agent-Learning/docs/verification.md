@@ -523,3 +523,10 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 해석 범위: 이 결과는 다섯 개 교육용 질문과 한 번의 실행 결과입니다. 모델의 일반 분류 품질·항상 재현되는 오답·종합 순위로 일반화하지 않습니다. Live 실행은 모델당 5회, 총 15회의 API 요청을 사용했습니다. 커밋은 하지 않았습니다.
 
 - 후속 수정·검증: 첫 실행에서 평가 JSON의 `expected_decision`이 Java record에 매핑되지 않아 결과 출력 중 null 오류가 났습니다. `@JsonProperty("expected_decision")`를 추가하고, 모델 호출 전에 기대 판단·코드 조합을 확인하도록 보완했습니다. 수정 후 같은 Live 명령을 실행해 테스트 1개 통과, 실패 0·오류 0·건너뜀 0을 확인했습니다. 세 모델 모두 유효 응답 5/5, 정답 일치 5/5(100%)였습니다. 이 작은 질문 세트에서는 모델 간 점수 차이가 나타나지 않았습니다.
+
+## OpenAI 요청 시간·13장 쇼핑 에이전트 제한 정리 — 2026-11-10
+
+- 설정 이관: 교육 실습의 OpenAI `chat.timeout`·`embedding.timeout`을 공통 `spring.ai.openai.timeout: 5s`로 이동했습니다. 테스트의 지연·Live 호출 등 의도적인 재정의는 동일한 공통 키를 사용합니다. 다중 모델 단원의 Anthropic 타임아웃은 OpenAI 설정이 아니므로 유지했습니다. 과거 변경 기록에 적힌 구 설정 키는 당시 상태를 설명하므로 그대로 두었습니다.
+- 13장 제한: `spring.ai.openai.timeout`은 OpenAI API 요청 한 건의 제한, `learning.limits.timeout-ms`는 사용자 요청 전체의 시간 제한, `learning.limits.max-model-calls`는 Workflow 단계 전체의 모델 호출 제한으로 구분해 설명했습니다. 도구 호출 상한은 `spring.ai.tools.limits.max-total-tool-calls`를 사용하고 `RunState`는 허용되어 실제 실행된 호출의 trace만 기록합니다. 모델 호출 수 집계용 `CountedChatModel`을 사용할 때 자동 구성 `ToolCallingManager`를 `ToolCallingAdvisor`에 연결해 application 설정이 실제 적용되도록 했습니다. 기존 `LimitedCounselExecutor`는 `ShoppingAgentRequestLimitExecutor`로 이름을 명확히 했습니다.
+- 검증: 교육 실습 18개 `application.yml`을 Ruby YAML parser로 읽었고, 교재 로컬 링크 576개 오류 0개와 `git diff --check`를 확인했습니다. `ShoppingAgentLocalModelTest` 11개, 05-05 도구 상한 테스트 6개, 02-05 재시도·타임아웃 로컬 테스트 8개가 통과했습니다. 13장 상한 테스트에서는 Spring AI가 네 번째 도구 실행 뒤의 실행을 차단하고, trace에 실제 실행 네 건만 기록하는 것을 확인했습니다.
+- 실제 외부 호출: 02-05 모듈 검증 명령에서 `ModelRequestOpenAiLiveTest` 한 건이 테스트 선택 필터에도 실행되어 OpenAI API 요청 한 번이 발생했고, 정상 답변을 받았습니다. 따라서 이 검증 묶음에는 외부 모델 호출이 포함되어 있습니다. 다른 테스트는 로컬 stub을 사용했습니다. 커밋은 하지 않았습니다.

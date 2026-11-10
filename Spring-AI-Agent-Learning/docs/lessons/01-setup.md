@@ -138,9 +138,9 @@ spring:
     openai:
       base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
+      timeout: 5s
       chat:
         max-retries: 0
-        timeout: 30s
         options:
           model: ${OPENAI_MODEL}
 ```
@@ -151,7 +151,7 @@ spring:
 - 이미 설정한 프로세스 환경 변수는 파일보다 우선합니다. 예상과 다른 모델이면 기존 `OPENAI_MODEL` 설정도 확인합니다.
 - `${LEARNING_PORT:8091}`은 포트 설정이 없으면 8091을 사용한다는 뜻입니다.
 - `embedding: none`은 아직 배우지 않은 임베딩 자동 설정을 끕니다.
-- `max-retries: 0`은 자동 재시도를 끄고, `timeout: 30s`는 SDK 요청 시간 제한입니다.
+- `max-retries: 0`은 자동 재시도를 끄고, `timeout: 5s`는 SDK 요청 시간 제한입니다.
 
 기본 로컬 MockModel 테스트는 `spring.config.import=`로 파일 읽기를 끄고 더미 설정을 주입합니다.
 실제 파일과 외부 API가 없어도 실행할 수 있습니다.

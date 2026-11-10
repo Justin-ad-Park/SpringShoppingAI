@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // 실제 OpenAI API를 모델별로 최대 5회씩 호출합니다. API 사용량과 비용이 발생합니다.
 @SpringBootTest(classes = IntentClassificationApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = "spring.ai.openai.chat.timeout=45s")
+        properties = "spring.ai.openai.timeout=45s")
 class IntentModelQualityOpenAiLiveTest {
     // 공식 가격표의 낮은 비용대에서 고른 모델입니다. 계정별 사용 가능 여부는 다를 수 있습니다.
     private static final List<String> MODELS = List.of(

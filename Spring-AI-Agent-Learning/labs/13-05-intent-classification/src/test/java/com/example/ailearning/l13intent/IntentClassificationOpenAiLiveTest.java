@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // 실제 OpenAI를 호출하므로 API 사용량이 발생한다. 분류표 전체의 정확도 평가는 아니다.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = "spring.ai.openai.chat.timeout=30s")
+        properties = "spring.ai.openai.timeout=30s")
 class IntentClassificationOpenAiLiveTest {
     @Autowired
     private IntentClassificationService service;

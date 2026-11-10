@@ -21,7 +21,7 @@ spring:
     openai:
       base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
-      timeout: 30s
+      timeout: 5s
       max-retries: 1
       chat:
         options:
@@ -170,13 +170,13 @@ curl http://127.0.0.1:8111/api/model-requests \
 spring:
   ai:
     openai:
-      timeout: 30s
+      timeout: 5s
       max-retries: 1
 ```
 
 1. `max-retries: 1`일 때 HTTP 429 응답 후 서버가 받은 요청은 왜 총 2회인가요?
 2. 같은 `max-retries: 1` 설정에서 HTTP 400 응답에는 왜 총 1회만 요청하나요?
-3. `spring.ai.openai.timeout: 30s`는 Workflow 전체를 30초 안에 끝내는 설정인가요?
+3. `spring.ai.openai.timeout: 5s`는 Workflow 전체를 5초 안에 끝내는 설정인가요?
 
 <details>
 <summary>해설</summary>

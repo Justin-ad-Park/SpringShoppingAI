@@ -60,9 +60,9 @@ spring:
     openai:
       base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
+      timeout: 5s
       chat:
         max-retries: 0
-        timeout: 30s
         options:
           model: ${OPENAI_MODEL}
 ```
@@ -78,7 +78,7 @@ Gradle의 작업 디렉터리는 저장소 루트로 고정되어 있으므로 `
 | `spring.ai.openai.api-key` | `${OPENAI_API_KEY}`를 찾아 OpenAI 인증에 사용할 값으로 설정 |
 | `spring.ai.openai.chat.options.model` | `${OPENAI_MODEL}`을 찾아 OpenAI에 요청할 구체적인 모델 이름으로 설정 |
 | `spring.ai.openai.chat.max-retries` | SDK 자동 재시도 횟수를 0으로 설정 |
-| `spring.ai.openai.chat.timeout` | SDK 요청 시간 제한을 30초로 설정 |
+| `spring.ai.openai.timeout` | OpenAI API 요청 시간 제한을 5초로 설정 |
 | `spring.ai.model.embedding: none` | 이번 수업에서 사용하지 않는 임베딩 모델 자동 설정을 끄기. Chat 기능을 끄는 설정은 아님 |
 
 `spring.ai.openai.*` 아래의 값들은 OpenAI 자동 설정이 읽도록 정해진 설정 이름입니다.

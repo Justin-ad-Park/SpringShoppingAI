@@ -11,13 +11,12 @@ spring:
     openai:
       base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
+      timeout: 5s
       chat:
         max-retries: 0
-        timeout: 15s
         options:
           model: ${OPENAI_MODEL}
       embedding:
         max-retries: 0
-        timeout: 15s
         options:
           model: ${OPENAI_EMBEDDING_MODEL}

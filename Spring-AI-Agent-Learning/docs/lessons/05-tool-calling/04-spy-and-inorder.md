@@ -22,7 +22,7 @@
 
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-        "spring.ai.openai.chat.timeout=30s"
+        "spring.ai.openai.timeout=30s"
 })
 class ToolCallingOpenAiLiveTest {
     @BeforeEach

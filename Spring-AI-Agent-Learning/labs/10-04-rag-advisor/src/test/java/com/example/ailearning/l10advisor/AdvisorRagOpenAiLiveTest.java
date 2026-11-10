@@ -12,8 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // 실제 OpenAI를 호출합니다. 저장소 루트 .env를 사용하며 API 사용량이 발생합니다.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-        "spring.ai.openai.chat.timeout=30s",
-        "spring.ai.openai.embedding.timeout=30s"
+        "spring.ai.openai.timeout=30s"
 })
 class AdvisorRagOpenAiLiveTest {
     @BeforeEach
