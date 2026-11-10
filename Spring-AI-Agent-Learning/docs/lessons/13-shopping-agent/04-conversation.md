@@ -21,20 +21,23 @@
 
 ### 세 번째 읽기: 실행 상한
 
-아래 값은 이 통합 예제의 실행 정책입니다. 먼저 위 저장 정책을 이해한 다음 상한·타임아웃 테스트와 비교하세요. `RunState`·`LimitedCounselExecutor`의 내부 구현은 아래 접힌 보충에서 이어 읽습니다.
+아래 값은 이 통합 예제의 실행 정책입니다. 먼저 위 저장 정책을 이해한 다음 상한·타임아웃 테스트와 비교하세요. `RunState`·`LimitedAgentRequestExecutor`의 내부 구현은 아래 접힌 보충에서 이어 읽습니다.
 
 | 기본 설정 | 값 | 의미 |
 |---|---:|---|
-| `max-model-calls` | 8 | 의도 추출과 내부 도구 루프를 합친 모델 요청 상한 |
-| `max-tool-calls` | 6 | 이번 요청의 실제 도구 진입 상한 |
-| `timeout-ms` | 20000 | 실행 작업의 결과를 기다리는 최대 시간 |
-| Chat/Embedding `timeout` | 5s | SDK의 요청 시간 제한 |
-| Chat/Embedding `max-retries` | 0 | SDK 자동 재시도 없음 |
+| `learning.limits.max-model-calls` | 8 | 한 쇼핑 에이전트 요청 안의 모델 호출 상한 |
+| `learning.limits.timeout-ms` | 20000 | 모델·도구 흐름을 포함한 전체 요청의 최대 실행 시간 |
+| `spring.ai.openai.timeout` | 5s | OpenAI API 요청 한 번의 시간 제한 |
+| `spring.ai.tools.limits.max-total-tool-calls` | 6 | 한 도구 호출 루프에서 모든 도구를 합친 실행 상한 |
+| `spring.ai.openai.chat.max-retries` | 0 | Chat API 자동 재시도 없음 |
+
+모델 API 타임아웃은 Spring AI 표준 설정으로 제한합니다. 전체 에이전트 요청은 의도 추출·도구 선택·도구 실행을 여러 번 거치므로 별도 실행기가 `learning.limits.timeout-ms`를 적용합니다. 두 시간 제한은 범위가 다릅니다.
+이 Workflow에는 도구를 사용하는 단계가 하나이므로 도구 횟수 상한은 Spring AI의 전체 도구 제한으로 적용합니다. `RunState`는 실제 실행된 도구 수를 응답 trace에 기록하지만 같은 제한을 다시 검사하지 않습니다. 도구 호출 단계가 여러 개로 늘어나 한 HTTP 요청 전체에 걸쳐 누적 상한을 적용해야 한다면 애플리케이션 카운터가 추가로 필요합니다. 설정 방법은 [05장 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md)을 참고하세요.
 
 HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 설정은 아닙니다.
 작업 취소를 요청해도 외부 제공 업체가 이미 수행한 요청과 비용까지 취소되지는 않을 수 있습니다.
-`trace.clientCalls`는 최상위 ChatClient 사용 수, `modelCalls`는 내부 도구 루프를 포함한 실제 Chat 요청 수입니다.
-임베딩 요청은 이 Chat 계수에 포함하지 않습니다. 기록은 도구 요청과 반환값이며 모델의 내부 사고가 아닙니다.
+`trace.clientCreations`는 이 상담에서 생성한 `ChatClient` 인스턴스 수입니다. `trace.modelRequestAttempts`는 `ChatModel.call()` 시작 횟수이며 제공 업체 SDK 내부의 HTTP 재시도는 포함하지 않습니다. `trace.toolExecutions`는 Spring AI 상한을 통과해 실제 도구 코드가 시작된 횟수입니다.
+임베딩 요청은 모델 요청 시도 수에 포함하지 않습니다. 기록은 도구 요청과 반환값이며 모델의 내부 사고가 아닙니다.
 
 ## 5. 실행과 관찰
 
@@ -105,13 +108,13 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 
 1. 메모리를 삭제하고 “4만원으로 바꿔줘”만 질문합니다. 이전 카테고리를 알 수 있는지 확인합니다.
 2. 정책 질문으로 시작해 `trace`와 허용 도구가 상품 추천과 어떻게 다른지 비교합니다.
-3. `max-tool-calls`를 1로 줄입니다. 여러 조회가 필요한 요청이 완성된 답변처럼 저장되는지 확인합니다.
+3. `spring.ai.tools.limits.max-total-tool-calls`를 1로 줄입니다. 여러 조회가 필요한 요청이 완성된 답변처럼 저장되는지 확인합니다.
 4. 12장의 고정 평가 방식을 복습해 상품 ID·총액·출처 ID를 함께 평가할 사례 3개를 작성합니다.
 
 <details><summary>보충: 타임아웃 이후 저장을 막는 구현</summary>
 
 `CounselService.chat()`은 이전 대화의 복사본을 `CounselWorkflow.execute()`에 전달합니다.
-`LimitedCounselExecutor`가 별도 스레드의 대기·취소를 담당하고 `RunState`는 호출 횟수와 마감 시간을 검사합니다. 작업 스레드는 메모리를 수정하지 않으며,
+`LimitedAgentRequestExecutor`가 에이전트 요청을 실행하고 별도 스레드의 대기·시간 초과 취소를 담당합니다. `RunState`는 모델 요청 수와 마감 시간을 검사하며 도구 실행 수를 기록합니다. 도구 상한은 Spring AI가 검사합니다. 작업 스레드는 메모리를 수정하지 않으며,
 결과를 기다리는 호출자 스레드가 위 저장 정책에 맞는 응답만 저장합니다.
 타임아웃 뒤 늦게 완료된 작업이 대화를 변경하지 않게 하기 위한 구성입니다.
 실패하면 서버 로그에는 처리 단계(`INTENT`, `TOOLS`, `VERIFY`)·상태·예외 타입을 기록합니다. 질문·응답 원문과 예외 메시지는 로그에 넣지 않습니다.

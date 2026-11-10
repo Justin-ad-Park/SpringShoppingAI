@@ -43,7 +43,20 @@ Spring AI는 모델 연결·도구 호출·대화 메시지 같은 구성 요소
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests 'com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest.상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다'
 ```
 
-이 테스트는 HTTP 상담 API나 별도 실행기 없이 Workflow를 직접 호출합니다. `RunState`는 호출 수·시간을 기록하고 제한하는 제공된 보조 객체로 사용합니다. 먼저 `draft`의 상품 총액·정책 출처와 실제 도구 호출 3회를 확인하고, 보조 객체의 내부 구현은 세 번째 단계에서 읽으세요. 실행 제한 기능은 처음부터 적용되어 있습니다.
+이 테스트는 HTTP 상담 API나 별도 실행기 없이 Workflow를 직접 호출합니다. `RunState`는 모델 호출 수·시간을 제한하고 실행 내역을 기록하는 제공된 보조 객체로 사용합니다. 도구 호출 상한은 Spring AI 설정이 적용됩니다. 먼저 `draft`의 상품 총액·정책 출처와 실제 도구 호출 3회를 확인하고, 보조 객체의 내부 구현은 세 번째 단계에서 읽으세요. 실행 제한 기능은 처음부터 적용되어 있습니다.
+
+### 요청 제한은 범위별로 적용합니다
+
+이 실습은 요청 제한을 세 범위로 나눕니다.
+
+| 제한 대상 | 설정 또는 코드 | 적용 범위 |
+|---|---|---|
+| OpenAI API 요청 한 번의 시간 | `spring.ai.openai.timeout` | 모델·임베딩 API 한 요청 |
+| 쇼핑 에이전트 전체 실행 시간 | `learning.limits.timeout-ms` | 의도 추출부터 도구 조회와 결과 선택까지 한 사용자 요청 |
+| 한 요청의 모델 호출 수 | `learning.limits.max-model-calls`와 `CountedChatModel` | 서로 다른 단계의 모델 요청을 합산 |
+| 도구 실행 수 | `spring.ai.tools.limits.max-total-tool-calls` | Spring AI의 도구 호출 루프에서 모든 도구를 합산 |
+
+Spring AI의 API 타임아웃만으로는 여러 모델 요청과 도구 실행을 묶은 전체 시간을 제한하지 못합니다. 그래서 전체 요청 시간과 여러 단계의 모델 호출 수는 애플리케이션이 관리합니다. 반면 이 Workflow에는 도구 호출 루프가 하나뿐이어서 전체 도구 상한은 Spring AI 설정으로 적용합니다. `RunState.beginToolExecution()`은 상한을 통과해 실제 실행된 도구 수를 응답 trace에 남기며 상한을 다시 검사하지 않습니다. 도구 호출 루프가 여러 개로 나뉘고 한 사용자 요청 전체에서 횟수를 합산해야 하는 구조로 바뀌면, 그때 애플리케이션 수준의 추가 카운터가 필요합니다. [05장의 Spring AI 도구 제한](05-tool-calling/05-tool-call-limits.md)에서 도구별·전체 상한 설정을 먼저 학습합니다.
 
 ## 작은 수업으로 나누어 읽기
 

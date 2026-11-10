@@ -12,7 +12,7 @@ public final class CountedChatModel implements ChatModel {
     public CountedChatModel(ChatModel delegate, RunState run) { this.delegate = delegate; this.run = run; }
     public ChatOptions getOptions() { return delegate.getOptions(); }
     public ChatResponse call(Prompt prompt) {
-        run.startModel();
+        run.beginModelRequest();
         ChatResponse response = delegate.call(prompt);
         run.check();
         return response;

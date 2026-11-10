@@ -6,12 +6,19 @@ import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
 
 import com.example.ailearning.l13shopping.support.CountedChatModel;
 import com.example.ailearning.l13shopping.support.RunState;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.*;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.stereotype.Service;
+import com.example.ailearning.l13shopping.support.StopReason;
+import com.example.ailearning.l13shopping.support.WorkflowStage;
+import io.micrometer.observation.ObservationRegistry;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.model.tool.ToolCallLimitExceededException;
+import org.springframework.ai.model.tool.ToolCallingManager;
+import org.springframework.stereotype.Service;
 
 /** 상담의 업무 순서만 담당한다. 스레드 실행과 대화 저장은 호출자가 맡는다. */
 @Service
@@ -20,17 +27,20 @@ public class CounselWorkflow {
     public record Draft(String status, String answer, Intent intent,
                         List<ProductPriceDetails> offers, List<Source> sources) {}
     private final ChatModel model;
+    private final ToolCallingManager toolCallingManager;
     private final ProductCatalog catalog;
     private final PolicySearch policies;
 
-    public CounselWorkflow(ChatModel model, ProductCatalog catalog, PolicySearch policies) {
+    public CounselWorkflow(ChatModel model, ToolCallingManager toolCallingManager,
+            ProductCatalog catalog, PolicySearch policies) {
         this.model = model;
+        this.toolCallingManager = toolCallingManager;
         this.catalog = catalog;
         this.policies = policies;
     }
 
     public Draft execute(String question, List<Message> previous, RunState run) {
-        run.stage("INTENT");
+        run.enterStage(WorkflowStage.INTENT);
         List<Message> messages = new ArrayList<>(previous);
         messages.add(new UserMessage(question));
         Intent intent = extractIntent(messages, run);
@@ -38,10 +48,10 @@ public class CounselWorkflow {
             return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", intent, List.of(), List.of());
         }
 
-        run.stage("TOOLS");
+        run.enterStage(WorkflowStage.TOOLS);
         TurnFacts facts = new TurnFacts();
         Selection selected = selectWithTools(messages, intent, facts, run);
-        run.stage("VERIFY");
+        run.enterStage(WorkflowStage.VERIFY);
         return verify(intent, selected, facts);
     }
 
@@ -79,9 +89,21 @@ public class CounselWorkflow {
         if (intent.task().equals("SHOPPING")) {
             request.tools(new ProductTools(catalog, intent, facts, run));
         }
-        Selection selected = request
-                .call()
-                .entity(Selection.class);
+        var response = request.call();
+        var chatResponse = response.chatResponse();
+        String finishReason = chatResponse == null || chatResponse.getResult() == null
+                || chatResponse.getResult().getMetadata() == null
+                ? null
+                : chatResponse.getResult().getMetadata().getFinishReason();
+        if (ToolCallLimitExceededException.FINISH_REASON.equals(finishReason)) {
+            // Spring AI의 전체 도구 상한 응답을 상담 API의 실패 상태로 변환한다.
+            run.recordStopReason(StopReason.TOOL_CALL_LIMIT);
+            throw new IllegalStateException(StopReason.TOOL_CALL_LIMIT.responseStatus());
+        }
+        String output = chatResponse == null || chatResponse.getResult() == null
+                ? null
+                : chatResponse.getResult().getOutput().getText();
+        Selection selected = new BeanOutputConverter<>(Selection.class).convert(output);
         run.check();
         return selected;
     }
@@ -155,7 +177,11 @@ public class CounselWorkflow {
     }
 
     private ChatClient client(RunState run) {
-        run.startClient();
-        return ChatClient.create(new CountedChatModel(model, run));
+        run.recordClientCreation();
+        var toolCallingAdvisor = ToolCallingAdvisor.builder()
+                .toolCallingManager(toolCallingManager);
+        return ChatClient.builder(new CountedChatModel(model, run), ObservationRegistry.NOOP,
+                null, null, toolCallingAdvisor)
+                .build();
     }
 }

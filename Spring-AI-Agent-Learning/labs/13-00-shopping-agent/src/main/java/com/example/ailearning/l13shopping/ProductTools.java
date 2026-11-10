@@ -23,7 +23,7 @@ public class ProductTools {
 
     @Tool(description = "Java가 확정한 카테고리와 예산으로 상품을 검색합니다. 총액은 배송비를 별도로 확인해야 합니다.")
     public List<Product> searchProducts() {
-        run.startTool("searchProducts", intent.toString());
+        run.beginToolExecution("searchProducts", intent.toString());
         List<Product> products = catalog.search(intent.category(), intent.totalBudget());
 
         run.check();
@@ -35,7 +35,7 @@ public class ProductTools {
 
     @Tool(description = "상품 ID로 실제 상품 가격과 배송비 포함 총액을 확인합니다.")
     public ProductPriceDetails calculateShipping(String productId) {
-        run.startTool("calculateShipping", productId);
+        run.beginToolExecution("calculateShipping", productId);
         ProductPriceDetails offer = catalog.calculatePriceDetails(productId);
 
         run.check();

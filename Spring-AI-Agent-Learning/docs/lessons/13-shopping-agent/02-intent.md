@@ -12,7 +12,7 @@
 
 ```java
     public Draft execute(String question, List<Message> previous, RunState run) {
-        run.stage("INTENT");
+        run.enterStage(WorkflowStage.INTENT);
         List<Message> messages = new ArrayList<>(previous);
         messages.add(new UserMessage(question));
         Intent intent = extractIntent(messages, run);
@@ -20,10 +20,10 @@
             return new Draft("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", intent, List.of(), List.of());
         }
 
-        run.stage("TOOLS");
+        run.enterStage(WorkflowStage.TOOLS);
         TurnFacts facts = new TurnFacts();
         Selection selected = selectWithTools(messages, intent, facts, run);
-        run.stage("VERIFY");
+        run.enterStage(WorkflowStage.VERIFY);
         return verify(intent, selected, facts);
     }
 
@@ -61,9 +61,21 @@
         if (intent.task().equals("SHOPPING")) {
             request.tools(new ProductTools(catalog, intent, facts, run));
         }
-        Selection selected = request
-                .call()
-                .entity(Selection.class);
+        var response = request.call();
+        var chatResponse = response.chatResponse();
+        String finishReason = chatResponse == null || chatResponse.getResult() == null
+                || chatResponse.getResult().getMetadata() == null
+                ? null
+                : chatResponse.getResult().getMetadata().getFinishReason();
+        if (ToolCallLimitExceededException.FINISH_REASON.equals(finishReason)) {
+            // Spring AI가 도구 상한으로 멈춘 결과를 상담 API의 제한 상태로 바꾼다.
+            run.recordStopReason(StopReason.TOOL_CALL_LIMIT);
+            throw new IllegalStateException(StopReason.TOOL_CALL_LIMIT.responseStatus());
+        }
+        String output = chatResponse == null || chatResponse.getResult() == null
+                ? null
+                : chatResponse.getResult().getOutput().getText();
+        Selection selected = new BeanOutputConverter<>(Selection.class).convert(output);
         run.check();
         return selected;
     }
@@ -74,6 +86,9 @@
 `searchProducts()`의 인자는 없고, Java가 검증한 `Intent`의 카테고리·예산을 사용합니다.
 모델이 검색 인자로 확정 조건을 임의 변경하는 일을 줄이는 구조입니다.
 다만 모델이 처음 추출한 의도 자체가 사용자의 뜻과 맞는지는 별도의 실제 모델 평가가 필요합니다.
+도구 호출 횟수 상한은 `spring.ai.tools.limits.max-total-tool-calls`로 Spring AI가 실행 전에 확인합니다. 상한에 도달하면 응답의 종료 사유를 `TOOL_LIMIT`으로 변환해 미완성 상담을 저장하지 않습니다. 실제 실행된 횟수는 `RunState`가 trace용으로 기록합니다.
+`StepKind`, `WorkflowStage`, `StopReason`은 각각 별도 Enum 파일에 선언되어 단계 종류·상담 단계·중단 원인을 제한합니다. 그래서 `TOOL`이나 `INTENT` 같은 임의의 문자열 대신 정해 둔 값만 코드에서 사용할 수 있습니다. `StopReason`은 내부 Enum 이름과 기존 API 상태 문자열을 연결합니다.
+모델 호출 수를 세는 `CountedChatModel`로 `ChatClient`를 만들 때도 자동 구성된 `ToolCallingManager`를 `ToolCallingAdvisor`에 전달합니다. 그래야 `application.yml`의 Spring AI 도구 상한이 이 요청에도 적용됩니다.
 
 
 업무가 대분류 10개·소분류 30~50개로 늘어나는 경우는 [13-5 계층형 의도 분류](05-intent-classification.md)에서 별도 샘플로 학습합니다.

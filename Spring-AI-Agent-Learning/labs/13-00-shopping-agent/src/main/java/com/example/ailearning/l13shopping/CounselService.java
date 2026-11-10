@@ -14,11 +14,11 @@ public class CounselService {
     public record Reply(String status, String answer, Intent criteria, List<ProductPriceDetails> offers,
                         List<Source> sources, int storedMessages, RunState.Snapshot trace) {}
     private final CounselWorkflow workflow;
-    private final LimitedCounselExecutor execution;
+    private final LimitedAgentRequestExecutor execution;
     private final ChatMemory memory = MessageWindowChatMemory.builder()
             .maxMessages(6)
             .build();
-    public CounselService(CounselWorkflow workflow, LimitedCounselExecutor execution) {
+    public CounselService(CounselWorkflow workflow, LimitedAgentRequestExecutor execution) {
         this.workflow = workflow;
         this.execution = execution;
     }

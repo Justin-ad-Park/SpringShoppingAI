@@ -11,16 +11,18 @@ spring:
     openai:
       base-url: https://api.openai.com/v1
       api-key: ${OPENAI_API_KEY}
+      timeout: 5s
       chat:
         max-retries: 0
-        timeout: 5s
         options:
           model: ${OPENAI_MODEL}
       embedding:
         max-retries: 0
-        timeout: 5s
         options:
           model: ${OPENAI_EMBEDDING_MODEL}
+    tools:
+      limits:
+        max-total-tool-calls: 6
 
 server.servlet.session.cookie.name: LEARNING_CAPSTONE_SESSION
 server.servlet.session.cookie.http-only: true
@@ -28,5 +30,4 @@ server.servlet.session.cookie.same-site: strict
 learning:
   limits:
     max-model-calls: 8
-    max-tool-calls: 6
     timeout-ms: 20000

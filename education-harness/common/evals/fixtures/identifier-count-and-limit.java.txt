@@ -1,0 +1,35 @@
+class RequestCounters {
+    private int clients;
+    private int models;
+    private int tools;
+    private final int maxModels;
+    private final long deadline;
+
+    RequestCounters(int maxModels, long timeoutMs) {
+        this.maxModels = maxModels;
+        this.deadline = System.nanoTime() + timeoutMs * 1_000_000L;
+    }
+
+    void startClient() {
+        clients++;
+    }
+
+    void startModel() {
+        if (models >= maxModels) {
+            throw new IllegalStateException("MODEL_LIMIT");
+        }
+        models++;
+    }
+
+    void startTool() {
+        tools++;
+    }
+
+    boolean isExpired() {
+        return System.nanoTime() >= deadline;
+    }
+
+    int modelCount() {
+        return models;
+    }
+}
