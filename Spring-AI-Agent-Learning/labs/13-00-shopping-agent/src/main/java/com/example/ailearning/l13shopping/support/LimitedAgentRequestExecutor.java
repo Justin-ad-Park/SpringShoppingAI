@@ -11,10 +11,14 @@ import java.util.function.Function;
 @Component
 public class LimitedAgentRequestExecutor {
     private static final Logger log = LoggerFactory.getLogger(LimitedAgentRequestExecutor.class);
-    public record Outcome<T>(T value, String failureStatus, RunState.Snapshot trace) {
-        public boolean succeeded() { return failureStatus == null; }
+    public record Outcome<T>(T result, String failureStatus, RunState.Snapshot trace) {
+        public boolean succeeded() {
+            return failureStatus == null;
+        }
     }
+    // 상담 한 건에서 허용할 ChatModel 요청 시도 횟수의 최댓값
     private final int maxModelRequestAttempts;
+    // 상담 한 건의 전체 실행에 허용할 시간(밀리초)
     private final long timeoutMs;
 
     public LimitedAgentRequestExecutor(
@@ -24,37 +28,43 @@ public class LimitedAgentRequestExecutor {
         this.timeoutMs = timeoutMs;
     }
 
-    public <T> Outcome<T> execute(Function<RunState, T> work) {
-        RunState run = new RunState(maxModelRequestAttempts, timeoutMs);
-        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-        Future<T> task = executor.submit(() -> work.apply(run));
+    public <T> Outcome<T> executeWithLimits(Function<RunState, T> requestWork) {
+        RunState runState = new RunState(maxModelRequestAttempts, timeoutMs);
+        ExecutorService taskExecutor = Executors.newVirtualThreadPerTaskExecutor();
+        Future<T> requestTask = taskExecutor.submit(() -> requestWork.apply(runState));
         try {
-            T value = task.get(timeoutMs, TimeUnit.MILLISECONDS);
-            run.check();
-            return new Outcome<>(value, null, run.snapshot());
-        } catch (TimeoutException error) {
-            run.recordStopReason(StopReason.TIMEOUT);
-            task.cancel(true);
-            return failed(run, error);
-        } catch (InterruptedException error) {
+            T requestResult = requestTask.get(timeoutMs, TimeUnit.MILLISECONDS);
+            runState.check();
+            return new Outcome<>(requestResult, null, runState.snapshot());
+        } catch (TimeoutException timeoutException) {
+            runState.recordStopReason(StopReason.TIMEOUT);
+            requestTask.cancel(true);
+            return failed(runState, timeoutException);
+        } catch (InterruptedException interruptionException) {
             Thread.currentThread().interrupt();
-            run.recordStopReason(StopReason.CANCELLED);
-            task.cancel(true);
-            return failed(run, error);
-        } catch (ExecutionException | RuntimeException error) {
-            return failed(run, error instanceof ExecutionException ? error.getCause() : error);
+            runState.recordStopReason(StopReason.CANCELLED);
+            requestTask.cancel(true);
+            return failed(runState, interruptionException);
+        } catch (ExecutionException executionException) {
+            // 작업이 예외로 끝난 뒤 전달된 예외이므로 완료된 requestTask를 다시 취소하지 않는다.
+            runState.recordStopReason(StopReason.EXECUTION_FAILED);
+            return failed(runState, executionException.getCause());
+        } catch (RuntimeException runtimeException) {
+            // 취소된 Future이거나 작업 완료 뒤 발생한 예외이므로 별도 취소 요청은 필요하지 않다.
+            runState.recordStopReason(StopReason.EXECUTION_FAILED);
+            return failed(runState, runtimeException);
         } finally {
-            executor.shutdownNow();
+            taskExecutor.shutdownNow();
         }
     }
 
-    private <T> Outcome<T> failed(RunState run, Throwable error) {
-        String status = run.stopReason() == null ? "FAILED" : run.stopReason().responseStatus();
-        Throwable causeType = error;
-        while (causeType.getCause() != null) causeType = causeType.getCause();
+    private <T> Outcome<T> failed(RunState runState, Throwable failureCause) {
+        String failureStatus = runState.stopReason() == null ? "FAILED" : runState.stopReason().responseStatus();
+        Throwable rootCause = failureCause;
+        while (rootCause.getCause() != null) rootCause = rootCause.getCause();
         // 원문 질문·응답·예외 메시지는 기록하지 않는다.
         log.warn("Counsel failed: stage={}, status={}, errorType={}",
-                run.currentStage(), status, causeType.getClass().getSimpleName());
-        return new Outcome<>(null, status, run.snapshot());
+                runState.currentStage(), failureStatus, rootCause.getClass().getSimpleName());
+        return new Outcome<>(null, failureStatus, runState.snapshot());
     }
 }

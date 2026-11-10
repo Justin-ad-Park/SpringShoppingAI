@@ -14,23 +14,24 @@ public class CounselService {
     public record Reply(String status, String answer, Intent criteria, List<ProductPriceDetails> offers,
                         List<Source> sources, int storedMessages, RunState.Snapshot trace) {}
     private final CounselWorkflow workflow;
-    private final LimitedAgentRequestExecutor execution;
+    private final LimitedAgentRequestExecutor limitedAgentRequestExecutor;
     private final ChatMemory memory = MessageWindowChatMemory.builder()
             .maxMessages(6)
             .build();
-    public CounselService(CounselWorkflow workflow, LimitedAgentRequestExecutor execution) {
+    public CounselService(CounselWorkflow workflow, LimitedAgentRequestExecutor limitedAgentRequestExecutor) {
         this.workflow = workflow;
-        this.execution = execution;
+        this.limitedAgentRequestExecutor = limitedAgentRequestExecutor;
     }
 
     public synchronized Reply chat(String owner, String conversationId, String question) {
         String key = owner + ":" + conversationId;
         List<Message> previous = List.copyOf(memory.get(key));
-        var outcome = execution.execute(run -> workflow.execute(question, previous, run));
+        var outcome = limitedAgentRequestExecutor.executeWithLimits(
+                runState -> workflow.execute(question, previous, runState));
         if (!outcome.succeeded()) {
             return failed(key, outcome.trace(), outcome.failureStatus());
         }
-        CounselWorkflow.Draft draft = outcome.value();
+        CounselWorkflow.Draft draft = outcome.result();
         if (List.of("VERIFIED", "NEEDS_INPUT", "NO_RESULTS", "NO_CONTEXT").contains(draft.status())) {
             memory.add(key, List.of(new UserMessage(question), new AssistantMessage(draft.answer())));
         }

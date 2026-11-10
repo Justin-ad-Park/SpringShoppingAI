@@ -77,14 +77,15 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 실행기는_의도_추출과_도구_루프를_합쳐_모델_요청_상한을_검사한다() {
-        var execution = new LimitedAgentRequestExecutor(1, 5000);
-        var outcome = execution.execute(run -> workflow.execute("배송비 포함 30000원 음료 추천", List.of(), run));
-        output.printValue("모델 상한 결과", outcome);
+        var requestExecutor = new LimitedAgentRequestExecutor(1, 5000);
+        var executionOutcome = requestExecutor.executeWithLimits(
+                runState -> workflow.execute("배송비 포함 30000원 음료 추천", List.of(), runState));
+        output.printValue("모델 상한 결과", executionOutcome);
 
-        assertThat(outcome.succeeded()).isFalse();
-        assertThat(outcome.failureStatus()).isEqualTo("MODEL_LIMIT");
-        assertThat(outcome.value()).isNull();
-        assertThat(outcome.trace().modelRequestAttempts()).isEqualTo(1);
+        assertThat(executionOutcome.succeeded()).isFalse();
+        assertThat(executionOutcome.failureStatus()).isEqualTo("MODEL_LIMIT");
+        assertThat(executionOutcome.result()).isNull();
+        assertThat(executionOutcome.trace().modelRequestAttempts()).isEqualTo(1);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
