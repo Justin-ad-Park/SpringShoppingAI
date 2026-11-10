@@ -43,3 +43,14 @@
 실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.0.2와 Boot 4.0.9로 통일했습니다.
 SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유틸리티를 기본 기능처럼 혼합하지 않습니다.
 자료를 업데이트할 때는 버전 확인 → 컴파일 → 로컬 계약 테스트 → 필요한 경우 실제 모델 평가 순으로 확인합니다.
+
+## 13-5 의도 분류의 참고 자료
+
+확인일: 2026-11-10. [13-5 교재](lessons/13-shopping-agent/05-intent-classification.md)와 [실습](../labs/13-05-intent-classification/README.md)의 구현 근거입니다.
+
+| 자료 | 읽을 부분 | 참고한 내용과 적용 범위 |
+|---|---|---|
+| AWS 공식 블로그: Information extraction with LLMs using Amazon SageMaker JumpStart — [한국어 경로](https://aws.amazon.com/ko/blogs/machine-learning/information-extraction-with-llms-using-amazon-sagemaker-jumpstart/), [영문 원문](https://aws.amazon.com/blogs/machine-learning/information-extraction-with-llms-using-amazon-sagemaker-jumpstart/) | Classification using prompt engineering → Sub-intents and intent trees | main_intent/sub_intents 트리, JSON 삽입, #### 구분 표시, 출력 예시, 한 문의에서 대분류·소분류를 함께 받는 방식. 내용은 영문 원문으로 확인했습니다. |
+| [Spring AI Output Converters](https://docs.spring.io/spring-ai/reference/api/structured-output/converters.html) | 구조화 응답 변환의 역할과 한계 | .entity()로 모델 응답을 record로 받는 구현 근거. 형식 변환과 코드 조합의 업무 검증을 구분합니다. |
+
+AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특정 상용 쇼핑몰의 도입 실적이나 이 저장소 샘플의 인증 근거가 아닙니다. 보험 분류를 쇼핑 분류로 바꾸고 한글 설명·보류 정책·JSON 반환·Java 검증을 추가한 자체 실습으로 사용합니다. SageMaker 배포와 파인튜닝 절차는 이번 구현 범위에 넣지 않습니다.

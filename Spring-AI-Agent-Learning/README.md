@@ -126,7 +126,7 @@ labs/
   12-02-model-evaluation/       12장 보충 2: Spring AI Evaluator
   12-04-observability/          12장 보충 4: 기본 메트릭·Actuator
   13-00-shopping-agent/         상품·정책·후속 질문 통합
-  13-05-intent-classification/  13장 보충 5: 대분류·소분류 의도 분류
+  13-05-intent-classification/  13장 보충 5: AWS 의도 트리 기반 단일 요청 분류
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
 

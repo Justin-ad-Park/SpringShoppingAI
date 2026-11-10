@@ -1,222 +1,222 @@
 {
-  "version": "shopping-intents-v1",
-  "majors": [
+  "version": "shopping-intents-v2",
+  "intents": [
     {
-      "code": "PRODUCT",
+      "main_intent": "PRODUCT",
       "description": "상품 탐색·비교·재고·상세 정보",
-      "children": [
+      "sub_intents": [
         {
-          "code": "PRODUCT.RECOMMEND",
+          "sub_intent": "RECOMMEND",
           "description": "조건에 맞는 상품 추천"
         },
         {
-          "code": "PRODUCT.COMPARE",
+          "sub_intent": "COMPARE",
           "description": "상품 간 차이 비교"
         },
         {
-          "code": "PRODUCT.STOCK",
+          "sub_intent": "STOCK",
           "description": "상품 재고 문의"
         },
         {
-          "code": "PRODUCT.DETAIL",
+          "sub_intent": "DETAIL",
           "description": "상품 규격·사용법 문의"
         }
       ]
     },
     {
-      "code": "ORDER",
+      "main_intent": "ORDER",
       "description": "주문 생성·조회·취소·변경",
-      "children": [
+      "sub_intents": [
         {
-          "code": "ORDER.CREATE",
+          "sub_intent": "CREATE",
           "description": "새 주문 요청"
         },
         {
-          "code": "ORDER.STATUS",
-          "description": "주문 접수·처리 상태 조회. 택배 이동은 DELIVERY.TRACK"
+          "sub_intent": "STATUS",
+          "description": "주문 접수·처리 상태 조회. 택배 이동은 DELIVERY:TRACK"
         },
         {
-          "code": "ORDER.CANCEL",
-          "description": "주문 취소. 반품 접수 철회는 RETURN.WITHDRAW"
+          "sub_intent": "CANCEL",
+          "description": "주문 취소. 반품 접수 철회는 RETURN:WITHDRAW"
         },
         {
-          "code": "ORDER.CHANGE",
-          "description": "주문 상품·수량 변경. 배송지 변경은 DELIVERY.ADDRESS"
+          "sub_intent": "CHANGE",
+          "description": "주문 상품·수량 변경. 배송지 변경은 DELIVERY:ADDRESS"
         }
       ]
     },
     {
-      "code": "PAYMENT",
+      "main_intent": "PAYMENT",
       "description": "결제 수단·오류·영수증·중복 결제",
-      "children": [
+      "sub_intents": [
         {
-          "code": "PAYMENT.METHOD",
+          "sub_intent": "METHOD",
           "description": "사용 가능한 결제 수단 문의"
         },
         {
-          "code": "PAYMENT.ERROR",
+          "sub_intent": "ERROR",
           "description": "결제 진행 중 오류"
         },
         {
-          "code": "PAYMENT.RECEIPT",
+          "sub_intent": "RECEIPT",
           "description": "영수증 발급"
         },
         {
-          "code": "PAYMENT.DUPLICATE",
+          "sub_intent": "DUPLICATE",
           "description": "중복 결제 확인"
         }
       ]
     },
     {
-      "code": "DELIVERY",
+      "main_intent": "DELIVERY",
       "description": "배송 추적·배송지·지연·분실",
-      "children": [
+      "sub_intents": [
         {
-          "code": "DELIVERY.TRACK",
+          "sub_intent": "TRACK",
           "description": "택배 위치·도착 예정일 조회"
         },
         {
-          "code": "DELIVERY.ADDRESS",
+          "sub_intent": "ADDRESS",
           "description": "배송지 변경"
         },
         {
-          "code": "DELIVERY.DELAY",
+          "sub_intent": "DELAY",
           "description": "배송 지연 문의"
         },
         {
-          "code": "DELIVERY.LOST",
+          "sub_intent": "LOST",
           "description": "배송 완료 표시 후 미수령·분실"
         }
       ]
     },
     {
-      "code": "RETURN",
+      "main_intent": "RETURN",
       "description": "받은 상품의 반품 접수·배송비·수거·철회. 환불 입금은 REFUND",
-      "children": [
+      "sub_intents": [
         {
-          "code": "RETURN.REQUEST",
+          "sub_intent": "REQUEST",
           "description": "받은 상품을 돌려보내는 반품 접수"
         },
         {
-          "code": "RETURN.FEE",
+          "sub_intent": "FEE",
           "description": "반품 배송비 문의"
         },
         {
-          "code": "RETURN.PICKUP",
+          "sub_intent": "PICKUP",
           "description": "반품 상품 수거 일정 문의"
         },
         {
-          "code": "RETURN.WITHDRAW",
-          "description": "이미 접수한 반품 철회. 주문 취소는 ORDER.CANCEL"
+          "sub_intent": "WITHDRAW",
+          "description": "이미 접수한 반품 철회. 주문 취소는 ORDER:CANCEL"
         }
       ]
     },
     {
-      "code": "EXCHANGE",
+      "main_intent": "EXCHANGE",
       "description": "교환 접수·재고·비용·상태",
-      "children": [
+      "sub_intents": [
         {
-          "code": "EXCHANGE.REQUEST",
+          "sub_intent": "REQUEST",
           "description": "다른 상품·사이즈로 교환 접수"
         },
         {
-          "code": "EXCHANGE.STOCK",
+          "sub_intent": "STOCK",
           "description": "교환할 상품의 재고 문의"
         },
         {
-          "code": "EXCHANGE.FEE",
+          "sub_intent": "FEE",
           "description": "교환 배송비 문의"
         },
         {
-          "code": "EXCHANGE.STATUS",
+          "sub_intent": "STATUS",
           "description": "접수한 교환 처리 상태 조회"
         }
       ]
     },
     {
-      "code": "REFUND",
+      "main_intent": "REFUND",
       "description": "취소·반품 이후 금액 반환. 상품 회수는 RETURN",
-      "children": [
+      "sub_intents": [
         {
-          "code": "REFUND.STATUS",
+          "sub_intent": "STATUS",
           "description": "환불 처리 상태 조회"
         },
         {
-          "code": "REFUND.TIMING",
+          "sub_intent": "TIMING",
           "description": "환불 입금 소요 기간"
         },
         {
-          "code": "REFUND.AMOUNT",
+          "sub_intent": "AMOUNT",
           "description": "환불 금액 계산·차이 문의"
         },
         {
-          "code": "REFUND.METHOD",
+          "sub_intent": "METHOD",
           "description": "환불받을 수단 문의"
         }
       ]
     },
     {
-      "code": "BENEFIT",
+      "main_intent": "BENEFIT",
       "description": "쿠폰·포인트·회원 혜택·행사",
-      "children": [
+      "sub_intents": [
         {
-          "code": "BENEFIT.COUPON",
+          "sub_intent": "COUPON",
           "description": "쿠폰 발급·사용 조건"
         },
         {
-          "code": "BENEFIT.POINT",
+          "sub_intent": "POINT",
           "description": "포인트 적립·사용·잔액"
         },
         {
-          "code": "BENEFIT.MEMBERSHIP",
+          "sub_intent": "MEMBERSHIP",
           "description": "회원 등급별 혜택"
         },
         {
-          "code": "BENEFIT.EVENT",
+          "sub_intent": "EVENT",
           "description": "행사·프로모션 문의"
         }
       ]
     },
     {
-      "code": "ACCOUNT",
+      "main_intent": "ACCOUNT",
       "description": "로그인·회원 정보·탈퇴·개인정보",
-      "children": [
+      "sub_intents": [
         {
-          "code": "ACCOUNT.LOGIN",
+          "sub_intent": "LOGIN",
           "description": "로그인·비밀번호 문제"
         },
         {
-          "code": "ACCOUNT.PROFILE",
-          "description": "회원 연락처 등 정보 변경. 배송지는 DELIVERY.ADDRESS"
+          "sub_intent": "PROFILE",
+          "description": "회원 연락처 등 정보 변경. 배송지는 DELIVERY:ADDRESS"
         },
         {
-          "code": "ACCOUNT.CLOSE",
+          "sub_intent": "CLOSE",
           "description": "회원 탈퇴"
         },
         {
-          "code": "ACCOUNT.PRIVACY",
+          "sub_intent": "PRIVACY",
           "description": "개인정보 처리·삭제 문의"
         }
       ]
     },
     {
-      "code": "SUPPORT",
+      "main_intent": "SUPPORT",
       "description": "상품 불량·서비스 불만·상담원·증빙",
-      "children": [
+      "sub_intents": [
         {
-          "code": "SUPPORT.DEFECT",
+          "sub_intent": "DEFECT",
           "description": "불량 증상 상담. 명시적 반품·교환 접수는 RETURN 또는 EXCHANGE"
         },
         {
-          "code": "SUPPORT.COMPLAINT",
+          "sub_intent": "COMPLAINT",
           "description": "서비스 불만 접수"
         },
         {
-          "code": "SUPPORT.HUMAN",
+          "sub_intent": "HUMAN",
           "description": "상담원 연결 요청"
         },
         {
-          "code": "SUPPORT.DOCUMENT",
+          "sub_intent": "DOCUMENT",
           "description": "상담 증빙 자료 제출"
         }
       ]

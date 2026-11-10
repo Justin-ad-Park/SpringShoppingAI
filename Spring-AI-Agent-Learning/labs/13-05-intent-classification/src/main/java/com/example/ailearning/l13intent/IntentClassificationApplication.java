@@ -14,6 +14,7 @@ public class IntentClassificationApplication {
         SpringApplication.run(IntentClassificationApplication.class, args);
     }
 
+    // 시작할 때 JSON 분류표를 한 번 읽어 공유한다. 모델을 학습시키는 작업은 아니다.
     @Bean
     IntentCatalog intentCatalog(ObjectMapper mapper) throws IOException {
         try (var input = new ClassPathResource("intent-catalog.json").getInputStream()) {

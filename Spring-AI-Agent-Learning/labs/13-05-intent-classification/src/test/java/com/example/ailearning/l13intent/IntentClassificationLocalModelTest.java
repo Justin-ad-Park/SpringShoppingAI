@@ -5,17 +5,17 @@ import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import tools.jackson.databind.JsonNode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
-import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -48,111 +48,84 @@ class IntentClassificationLocalModelTest {
     }
 
     @Test
-    void 대분류_선택_뒤에는_해당_소분류만_후보로_전달한다() throws Exception {
-        // Given: 첫 응답은 대분류, 두 번째 응답은 그 아래 소분류다.
+    void 전체_의도_트리와_출력_예시를_한번_전달해_대분류와_소분류를_함께_받는다() throws Exception {
+        // Given: 의미 판단은 고정하고, 실제 전송 내용과 응답 변환을 검증한다.
         MODEL
                 .chat()
-                .setResponseSequence(
-                        createAssistantTextMessage(createChoiceJson("MATCH", "RETURN")),
-                        createAssistantTextMessage(createChoiceJson("MATCH", "RETURN.FEE")));
+                .setResponseText(createPredictionJson("MATCH", "RETURN", "FEE"));
 
-        // When: 실제 Controller와 Spring AI를 통해 두 단계 분류 실행
-        var response = post("미개봉 상품을 반품하면 배송비는 누가 내나요?");
+        // When
+        var response = post("미개봉 상품의 반품 배송비 부담 기준이 궁금합니다.");
 
-        // Then: 응답 코드와 실제 두 모델 요청의 후보 범위를 확인한다.
+        // Then: 한 번의 모델 응답을 API 결과로 변환한다.
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
         assertThat(body.path("decision").asString()).isEqualTo("MATCH");
-        assertThat(body.path("majorCode").asString()).isEqualTo("RETURN");
-        assertThat(body.path("minorCode").asString()).isEqualTo("RETURN.FEE");
-        assertThat(body.path("taxonomyVersion").asString()).isEqualTo("shopping-intents-v1");
-        assertThat(MODEL.chat().getRequests()).hasSize(2);
-        var requests = MODEL.chat().getRequests();
-        String first = requests.getFirst().path("messages").get(0).path("content").asString();
-        String second = requests.get(1).path("messages").get(0).path("content").asString();
-        assertThat(first).contains("PRODUCT:", "RETURN:", "SUPPORT:").doesNotContain("RETURN.FEE:");
-        assertThat(second).contains("RETURN.REQUEST:", "RETURN.FEE:", "RETURN.PICKUP:", "RETURN.WITHDRAW:")
-                .doesNotContain("\nORDER.CANCEL:", "\nREFUND.TIMING:");
-        assertThat(MODEL.chat().getRequests().get(1).path("messages").toString()).contains("미개봉 상품을 반품하면");
+        assertThat(body.path("main_intent").asString()).isEqualTo("RETURN");
+        assertThat(body.path("sub_intent").asString()).isEqualTo("FEE");
+        assertThat(body.path("taxonomyVersion").asString()).isEqualTo("shopping-intents-v2");
+        assertThat(MODEL.chat().getRequests()).hasSize(1);
+
+        var messages = MODEL.chat().getRequests().getFirst().path("messages");
+        String system = messages.get(0).path("content").asString();
+        assertThat(system).contains("입력·출력 예시:", "반품 배송비 부담 기준", "DELIVERY", "TRACK");
+        assertThat(system).doesNotContain("{intents_json}");
+        assertThat(messages.toString()).contains("미개봉 상품의 반품 배송비 부담 기준");
+
+        // #### 사이에 JSON 트리 전체가 들어갔으며 각 소분류의 소속 관계가 유지된다.
+        int start = system.indexOf("####") + 4;
+        int end = system.lastIndexOf("####");
+        var tree = OpenAiStubServer.JSON.readTree(system.substring(start, end));
+        assertThat(tree.size()).isEqualTo(10);
+        var returns = findMainIntent(tree, "RETURN").path("sub_intents");
+        assertThat(returns.size()).isEqualTo(4);
+        assertThat(returns.get(1).path("sub_intent").asString()).isEqualTo("FEE");
+        assertThat(findMainIntent(tree, "REFUND").path("sub_intents").toString()).contains("TIMING");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"CLARIFY", "OUT_OF_SCOPE", "MULTIPLE"})
-    void 대분류를_확정하지_못하면_소분류_모델을_호출하지_않는다(String decision) throws Exception {
-        // Given: 모호함·범위 밖·복수 요청 중 하나를 모델이 반환
+    void 미확정_문의는_분류_코드_없이_안내하고_추가_모델_요청을_하지_않는다(String decision) throws Exception {
+        // Given: 보류 판단도 모델의 추정이므로 이 테스트에서는 응답으로 고정한다.
         MODEL
                 .chat()
-                .setResponseText(createChoiceJson(decision, null));
+                .setResponseText(createPredictionJson(decision, null, null));
 
-        // When: 실제 API로 분류 요청
         var response = post("분류할 문의");
 
-        // Then: 미확정 결과에 임의의 분류 코드를 채우지 않는다.
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
         assertThat(body.path("decision").asString()).isEqualTo(decision);
-        assertThat(body.path("majorCode").isNull()).isTrue();
-        assertThat(body.path("minorCode").isNull()).isTrue();
+        assertThat(body.path("main_intent").isNull()).isTrue();
+        assertThat(body.path("sub_intent").isNull()).isTrue();
+        assertThat(body.path("message").asString()).isNotBlank();
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"CLARIFY", "OUT_OF_SCOPE", "MULTIPLE"})
-    void 소분류를_확정하지_못하면_대분류만_남기고_처리를_보류한다(String decision) throws Exception {
+    @CsvSource({"INVENTED,FEE", "RETURN,INVENTED", "RETURN,TIMING"})
+    void 미등록_코드나_다른_대분류의_소분류_조합을_거부한다(String main, String sub) throws Exception {
+        // RETURN:TIMING은 두 코드가 각각 존재해도 같은 가지에 없는 조합이다.
         MODEL
                 .chat()
-                .setResponseSequence(
-                        createAssistantTextMessage(createChoiceJson("MATCH", "RETURN")),
-                        createAssistantTextMessage(createChoiceJson(decision, null)));
-
-        var response = post("반품 문의");
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        var body = OpenAiStubServer.JSON.readTree(response.body());
-        assertThat(body.path("decision").asString()).isEqualTo(decision);
-        assertThat(body.path("majorCode").asString()).isEqualTo("RETURN");
-        assertThat(body.path("minorCode").isNull()).isTrue();
-        assertThat(MODEL.chat().getRequests()).hasSize(2);
-    }
-
-    @Test
-    void 등록되지_않은_대분류는_거부하고_두번째_호출을_하지_않는다() throws Exception {
-        MODEL
-                .chat()
-                .setResponseText(createChoiceJson("MATCH", "INVENTED"));
-
-        assertThat(post("문의").statusCode()).isEqualTo(502);
-        assertThat(MODEL.chat().getRequests()).hasSize(1);
-    }
-
-    @Test
-    void 다른_대분류의_소분류는_실제로_등록되어_있어도_거부한다() throws Exception {
-        // Given: REFUND.TIMING은 유효한 코드지만 RETURN의 자식은 아니다.
-        MODEL
-                .chat()
-                .setResponseSequence(
-                        createAssistantTextMessage(createChoiceJson("MATCH", "RETURN")),
-                        createAssistantTextMessage(createChoiceJson("MATCH", "REFUND.TIMING")));
+                .setResponseText(createPredictionJson("MATCH", main, sub));
 
         assertThat(post("반품 문의").statusCode()).isEqualTo(502);
-        assertThat(MODEL.chat().getRequests()).hasSize(2);
-    }
-
-    @Test
-    void 미확정_판단에_분류_코드를_섞은_모델_응답은_거부한다() throws Exception {
-        MODEL
-                .chat()
-                .setResponseText(createChoiceJson("CLARIFY", "RETURN"));
-
-        assertThat(post("애매한 문의").statusCode()).isEqualTo(502);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
-    @Test
-    void 깨진_JSON은_업무_분류_성공으로_처리하지_않는다() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "JSON이 아닌 답변",
+            "{\"decision\":null,\"main_intent\":null,\"sub_intent\":null}",
+            "{\"decision\":\"MATCH\",\"main_intent\":\"RETURN\",\"sub_intent\":null}",
+            "{\"decision\":\"CLARIFY\",\"main_intent\":\"RETURN\",\"sub_intent\":null}",
+            "{\"decision\":\"UNKNOWN\",\"main_intent\":null,\"sub_intent\":null}"
+    })
+    void 형식이나_판단과_코드의_규칙을_어긴_응답은_성공으로_처리하지_않는다(String responseText) throws Exception {
         MODEL
                 .chat()
-                .setResponseText("JSON이 아닌 답변");
+                .setResponseText(responseText);
 
         assertThat(post("문의").statusCode()).isEqualTo(502);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
@@ -174,14 +147,21 @@ class IntentClassificationLocalModelTest {
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
 
-    private String createChoiceJson(String decision, String code) {
-        var json = OpenAiStubServer.JSON.createObjectNode().put("decision", decision);
-        if (code == null) {
-            json.putNull("code");
-        } else {
-            json.put("code", code);
+    private JsonNode findMainIntent(JsonNode tree, String code) {
+        for (var main : tree) {
+            if (main.path("main_intent").asString().equals(code)) {
+                return main;
+            }
         }
-        return json.toString();
+        throw new AssertionError("의도 트리에 대분류가 없음: " + code);
+    }
+
+    private String createPredictionJson(String decision, String main, String sub) {
+        return OpenAiStubServer.JSON.createObjectNode()
+                .put("decision", decision)
+                .put("main_intent", main)
+                .put("sub_intent", sub)
+                .toString();
     }
 
     private HttpResponse<String> post(String question) throws Exception {

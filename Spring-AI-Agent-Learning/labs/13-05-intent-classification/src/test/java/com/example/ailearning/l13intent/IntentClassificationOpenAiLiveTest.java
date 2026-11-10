@@ -20,12 +20,12 @@ class IntentClassificationOpenAiLiveTest {
 
     @Test
     @Timeout(90)
-    void 실제_모델로_반품_배송비_문의의_대분류와_소분류를_확인한다() {
-        var result = service.classify("미개봉 상품을 반품하려고 합니다. 반품 배송비는 누가 부담하나요?");
+    void 실제_모델로_반품_수거_문의의_대분류와_소분류를_함께_받는다() {
+        var result = service.classify("반품을 이미 접수했습니다. 택배 기사님이 상품을 가져가는 날짜는 언제인가요?");
         System.out.printf("분류 결과: %s%n", result);
 
         assertThat(result.decision()).isEqualTo(IntentClassificationService.Decision.MATCH);
-        assertThat(result.majorCode()).isEqualTo("RETURN");
-        assertThat(result.minorCode()).isEqualTo("RETURN.FEE");
+        assertThat(result.mainIntent()).isEqualTo("RETURN");
+        assertThat(result.subIntent()).isEqualTo("PICKUP");
     }
 }

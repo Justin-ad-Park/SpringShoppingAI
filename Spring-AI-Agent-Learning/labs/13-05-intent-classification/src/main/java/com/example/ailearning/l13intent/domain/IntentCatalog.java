@@ -1,23 +1,21 @@
 package com.example.ailearning.l13intent.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
-/** 업무에서 관리하는 분류표다. 모델이 새 분류를 추가하지 않는다. */
-public record IntentCatalog(String version, List<Major> majors) {
-    public record Option(String code, String description) {}
-    public record Major(String code, String description, List<Option> children) {}
+/** AWS 예제의 main_intent/sub_intents 트리를 쇼핑 업무에 맞춰 표현한다. */
+public record IntentCatalog(String version, List<MainIntent> intents) {
+    public record MainIntent(@JsonProperty("main_intent") String mainIntent,
+                             String description,
+                             @JsonProperty("sub_intents") List<SubIntent> subIntents) {}
 
-    public List<Option> majorOptions() {
-        return majors.stream()
-                .map(major -> new Option(major.code(), major.description()))
-                .toList();
-    }
+    public record SubIntent(@JsonProperty("sub_intent") String subIntent, String description) {}
 
-    public List<Option> minorOptions(String majorCode) {
-        return majors.stream()
-                .filter(major -> major.code().equals(majorCode))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 대분류입니다."))
-                .children();
+    // FEE처럼 같은 소분류 이름을 여러 업무에서 사용할 수 있으므로 두 코드를 함께 검사한다.
+    public boolean containsPair(String mainIntent, String subIntent) {
+        return intents.stream()
+                .anyMatch(main -> main.mainIntent().equals(mainIntent)
+                        && main.subIntents().stream()
+                                .anyMatch(sub -> sub.subIntent().equals(subIntent)));
     }
 }
