@@ -1,0 +1,11 @@
+dependencies {
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    testImplementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    // 같은 분류표와 프롬프트를 재사용해 모델만 바꾸어 비교합니다.
+    testImplementation project(':Spring-AI-Agent-Learning:labs:13-05-intent-classification')
+}
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

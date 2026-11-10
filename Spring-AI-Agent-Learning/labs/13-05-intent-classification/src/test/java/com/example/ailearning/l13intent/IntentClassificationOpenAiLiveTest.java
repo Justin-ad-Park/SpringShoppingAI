@@ -28,4 +28,15 @@ class IntentClassificationOpenAiLiveTest {
         assertThat(result.mainIntent()).isEqualTo("RETURN");
         assertThat(result.subIntent()).isEqualTo("PICKUP");
     }
+
+    @Test
+    @Timeout(90)
+    void 실제_모델로_환불_입금_문의의_대분류와_소분류를_함께_받는다() {
+        var result = service.classify("반품은 완료됐고 환불금이 계좌에 들어오기까지 며칠 걸리나요?");
+        System.out.printf("분류 결과: %s%n", result);
+
+        assertThat(result.decision()).isEqualTo(IntentClassificationService.Decision.MATCH);
+        assertThat(result.mainIntent()).isEqualTo("REFUND");
+        assertThat(result.subIntent()).isEqualTo("TIMING");
+    }
 }

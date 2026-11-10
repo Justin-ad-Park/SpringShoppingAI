@@ -1,0 +1,37 @@
+[
+  {
+    "id": "refund-timing",
+    "question": "반품을 보냈는데 금액이 계좌에 들어오기까지 며칠 걸리나요?",
+    "expected_decision": "MATCH",
+    "expected_main_intent": "REFUND",
+    "expected_sub_intent": "TIMING"
+  },
+  {
+    "id": "return-withdraw",
+    "question": "이미 배송이 시작되어서 그냥 쓰려고 하니 이미 접수한 환불 요청을 되돌려 주세요.",
+    "expected_decision": "MATCH",
+    "expected_main_intent": "RETURN",
+    "expected_sub_intent": "WITHDRAW"
+  },
+  {
+    "id": "multiple-requests",
+    "question": "주문을 취소하고 포인트 잔액도 확인해 주세요.",
+    "expected_decision": "MULTIPLE",
+    "expected_main_intent": null,
+    "expected_sub_intent": null
+  },
+  {
+    "id": "received-item-return",
+    "question": "상품을 이미 받았는데 주문 취소하고 싶어요. 반품으로 접수하면 되나요?",
+    "expected_decision": "MATCH",
+    "expected_main_intent": "RETURN",
+    "expected_sub_intent": "REQUEST"
+  },
+  {
+    "id": "out-of-scope",
+    "question": "내일 서울 날씨가 어떤가요?",
+    "expected_decision": "OUT_OF_SCOPE",
+    "expected_main_intent": null,
+    "expected_sub_intent": null
+  }
+]

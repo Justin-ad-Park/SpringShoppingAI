@@ -54,13 +54,14 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
 | 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
 | 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
+| 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.IntentModelQualityOpenAiLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
 ### 실습 폴더 이름과 정렬
 
 `Spring-AI-Agent-Learning/labs`의 실행 모듈은 `단원번호-읽기순서-영문이름` 형식으로 만듭니다.
-두 번호는 항상 두 자리로 적어 이름 오름차순이 교육 순서와 같도록 합니다.
+두 번호는 항상 두 자리로 적어 이름 오름차순이 교육 순서와 같도록 합니다. 13-6 모델 품질 비교는 13-5의 분류 구현을 재사용하므로 테스트 전용 Gradle 의존성이 있는 별도 Live 모듈입니다.
 
 - 본 단원의 기본 실습은 읽기순서 `00`을 사용합니다. 예: `05-00-tool-calling`.
 - 소주제·선택 보충 실습은 해당 소주제의 읽기 번호를 사용합니다. 예: 02장 보충 4는 `02-04-multiple-models`, 보충 5는 `02-05-model-timeout-retry`, 05장 보충 5는 `05-05-tool-call-limits`.

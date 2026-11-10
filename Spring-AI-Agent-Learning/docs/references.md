@@ -54,3 +54,16 @@ SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유
 | [Spring AI Output Converters](https://docs.spring.io/spring-ai/reference/api/structured-output/converters.html) | 구조화 응답 변환의 역할과 한계 | .entity()로 모델 응답을 record로 받는 구현 근거. 형식 변환과 코드 조합의 업무 검증을 구분합니다. |
 
 AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특정 상용 쇼핑몰의 도입 실적이나 이 저장소 샘플의 인증 근거가 아닙니다. 보험 분류를 쇼핑 분류로 바꾸고 한글 설명·보류 정책·JSON 반환·Java 검증을 추가한 자체 실습으로 사용합니다. SageMaker 배포와 파인튜닝 절차는 이번 구현 범위에 넣지 않습니다.
+
+## 13-6 OpenAI 모델 품질 비교 참고 자료
+
+확인일: 2026-11-10. [13-6 교재](lessons/13-shopping-agent/06-intent-quality-evaluation.md)와 [Live 실습](../labs/13-06-intent-quality-evaluation/README.md)의 모델 ID·표준 가격·용도 설명을 확인한 자료입니다.
+
+| 자료 | 확인한 내용 | 이 실습에서의 사용 |
+|---|---|---|
+| [GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-luna) | 비용 민감·대량 처리 용도, Chat Completions·구조화 응답 지원, 입력 $0.10·출력 $0.50/백만 토큰 | 저가 기준 모델 |
+| [GPT-5.6 Luna](https://developers.openai.com/api/docs/models/gpt-5.6-luna) | 비용 민감·대량 처리 용도, 입력 $0.20·출력 $1.20/백만 토큰 | 이전 세대 저비용 모델 |
+| [GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini) | mini 모델, 입력 $0.75·출력 $4.50/백만 토큰 | mini 등급 비교 모델 |
+| [OpenAI API 가격표](https://developers.openai.com/api/docs/pricing) | 표준·캐시·배치 등 가격 구분 | 실습 표는 표준 입력·출력 가격만 발췌 |
+
+가격·모델 접근 권한은 바뀔 수 있습니다. 가격표는 예상 단가 비교용이며 테스트 실행 비용을 계산하지 않습니다. 평가 결과는 교육용 다섯 문항의 정답 일치율이지 OpenAI가 보증한 모델 품질 순위나 전체 서비스 정확도가 아닙니다.

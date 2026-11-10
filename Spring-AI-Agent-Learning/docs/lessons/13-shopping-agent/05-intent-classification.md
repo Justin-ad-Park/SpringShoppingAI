@@ -290,7 +290,7 @@ NatWest의 Lex 봇 분리는 **대규모 의도를 업무별로 나누는 근거
 
 [로컬 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationLocalModelTest.java)는 후보 축소·코드 소속 검사·보류 처리·입력/모델 오류를 확인합니다. 모델이 어떤 응답을 반환할지 미리 정한 테스트이므로 실제 한국어 문의를 올바르게 분류했는지 평가하지는 않습니다.
 
-[Live 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationOpenAiLiveTest.java)는 실제 모델의 명확한 반품 수거 일정 문의 한 사례를 확인합니다. 전체 40개 의도의 품질 검증은 아닙니다.
+[Live 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationOpenAiLiveTest.java)는 반품 수거 일정과 환불 입금 시점 문의 두 사례의 대분류·소분류를 확인합니다. 전체 40개 의도의 품질 검증은 아닙니다. 같은 질문 세트로 여러 모델을 비교하는 실습은 [13-6](06-intent-quality-evaluation.md)에서 별도로 다룹니다.
 
 ```bash
 # 실제 OpenAI 호출이며 API 사용량이 발생합니다.

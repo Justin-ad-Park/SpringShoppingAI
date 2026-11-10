@@ -46,7 +46,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 
 
-13장 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다. 상용 사례와 분류 품질 평가도 함께 읽습니다. 기본 통합 상담과 분리된 실습입니다.
+13장 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다. 상용 사례를 함께 읽습니다. 모델별 품질 평가는 [13-6 보충](lessons/13-shopping-agent/06-intent-quality-evaluation.md)에서 별도로 다룹니다. 기본 통합 상담과 분리된 실습입니다.
 
 ## 설명 수업과 실행 모듈의 대응
 
@@ -65,17 +65,18 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-02-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
 | [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
 | [13-5 계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md) | `13-05-intent-classification` | AWS 기반 JSON 의도 트리·단일 요청·코드 조합 단위 테스트·로컬/Live 테스트 |
+| [13-6 모델별 의도 분류 품질 비교](lessons/13-shopping-agent/06-intent-quality-evaluation.md) | `13-06-intent-quality-evaluation` | 동일 질문 세트로 저비용 OpenAI 모델 3종을 비교하는 Live 평가 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.
-기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.
-단원마다 test와 bootJar 검증 후 커밋합니다. 실습용 가짜 HTTP 모델은 [공통 test-support](../test-support/README.md)가 제공합니다. 실습은 테스트 의존성으로만 사용하며 다른 단원의 실행 코드를 가져오지 않습니다.
+기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다. 단, 13-6은 13-5의 같은 의도 분류 구현을 모델별로 비교하는 실습이므로 해당 모듈을 테스트 의존성으로 재사용합니다.
+실행 가능한 모듈은 test와 bootJar를 확인합니다. 13-6처럼 Live 테스트만 제공하는 비교 모듈은 테스트 소스 컴파일과 문서 연결을 확인하고, 사용자가 Live를 실행해 실제 결과를 확인합니다. 실습용 가짜 HTTP 모델은 [공통 test-support](../test-support/README.md)가 제공하며 로컬 테스트 의존성으로만 사용합니다.
 
 Workflow와 Agent는 같은 상품 검색·배송비 조회 도구로 비교합니다.
 비교 요청, 프롬프트, 실습 순서와 완료 질문은 [06장 Workflow와 Agent](lessons/06-workflow-agent.md#workflow와-agent-비교-수업)에서 확인하세요.
 
 ## 구현 범위와 선택 심화
 
-04~13은 각각 독립 실행 가능한 모듈로 구현했습니다. 07은 이전 메시지를 직접 조립하며 아직 Advisor를 사용하지 않습니다.
+04~13의 기본 실습은 각각 독립 실행 가능한 모듈로 구현했습니다. 13-6은 모델 비교 테스트 전용 모듈입니다. 07은 이전 메시지를 직접 조립하며 아직 Advisor를 사용하지 않습니다.
 08 Advisor → 09 임베딩과 검색 → 10 RAG → 11 MCP → 12 평가 → 13 통합 순서로 확장합니다.
 단원마다 구현·테스트·커밋을 마친 뒤 다음으로 넘어갔습니다.
 그림은 [다이어그램 공통 기준](diagram-guide.md)을 적용하고, 앞으로 배울 코드에 의존하지 않습니다.

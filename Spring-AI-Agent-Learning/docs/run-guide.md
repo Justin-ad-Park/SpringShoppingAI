@@ -24,7 +24,7 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 | `10-00-rag`, `10-04-rag-advisor`, `12-00-evaluation`, `13-00-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-04-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
-`13-05-intent-classification`은 `OPENAI_API_KEY`·`OPENAI_MODEL`을 사용하는 13장 선택 보충입니다. [실행 안내](../labs/13-05-intent-classification/README.md)를 따르며 임베딩 모델은 사용하지 않습니다.
+`13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13장 선택 보충입니다. 둘 다 `OPENAI_API_KEY`가 필요하며 임베딩 모델은 사용하지 않습니다. 13-5는 기본 `OPENAI_MODEL`을 사용하고, 13-6은 테스트 코드에 적은 세 모델 ID를 각각 요청하므로 해당 모델 접근 권한이 필요합니다. [13-5 실행 안내](../labs/13-05-intent-classification/README.md)와 [13-6 실행 안내](../labs/13-06-intent-quality-evaluation/README.md)를 따릅니다.
 
 두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.
 모델 ID는 계정에서 접근 가능하고 해당 실습의 기능을 지원하는 값을 사용합니다.
