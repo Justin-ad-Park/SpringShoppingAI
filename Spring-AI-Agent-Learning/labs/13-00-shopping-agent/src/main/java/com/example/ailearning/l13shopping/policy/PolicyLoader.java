@@ -1,4 +1,4 @@
-package com.example.ailearning.l13shopping;
+package com.example.ailearning.l13shopping.policy;
 
 import org.springframework.ai.document.Document;
 import org.springframework.core.io.ClassPathResource;
@@ -11,7 +11,7 @@ import java.util.Map;
 /** 읽기 → 제목 단위 분할 → 출처 메타데이터 부여. 짧은 학습 문서 전용이다. */
 public final class PolicyLoader {
     private PolicyLoader() {}
-    public static List<Document> load() throws IOException {
+    public static List<Document> loadDocuments() throws IOException {
         String markdown;
         try (var input = new ClassPathResource("policies.md").getInputStream()) {
             markdown = new String(input.readAllBytes(), StandardCharsets.UTF_8);

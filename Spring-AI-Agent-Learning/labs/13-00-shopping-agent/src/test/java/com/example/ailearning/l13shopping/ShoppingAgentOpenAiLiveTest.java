@@ -34,11 +34,13 @@ class ShoppingAgentOpenAiLiveTest {
         assertThat(first.offers()).isNotEmpty();
 
         // When: 같은 대화에서 예산 변경 요청
-        CounselService.Reply next = service.chat("live-user", "counsel-demo", "예산을 40000원으로 바꿔줘.");
+        CounselService.Reply next = service.chat(
+                "live-user", "counsel-demo", "앞서 말한 음료 추천 조건은 유지하고 예산만 40000원으로 바꿔줘.");
 
         // Then: 후속 응답과 변경된 예산 검증
         System.out.printf("후속 상담과 도구 기록: %s%n", next);
         assertThat(next.status()).isEqualTo("VERIFIED");
+        assertThat(next.criteria().category()).isEqualTo("음료");
         assertThat(next.criteria().totalBudget()).isEqualTo(40000);
     }
 }

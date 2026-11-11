@@ -1,4 +1,5 @@
-package com.example.ailearning.l13shopping;
+package com.example.ailearning.l13shopping.policy;
+
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.*;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,9 @@ public class PolicySearch {
     public PolicySearch(EmbeddingModel embedding) throws IOException {
         store = SimpleVectorStore.builder(embedding)
                 .build();
-        store.add(PolicyLoader.load());
+        store.add(PolicyLoader.loadDocuments());
     }
-    public List<Source> search(String question) {
+    public List<PolicySearchResult> searchPolicies(String question) {
         return store
                 .similaritySearch(SearchRequest.builder()
                         .query(question)
@@ -21,7 +22,7 @@ public class PolicySearch {
                         .similarityThreshold(0.65)
                         .build())
                 .stream()
-                .map(Source::from)
+                .map(PolicySearchResult::fromDocument)
                 .toList();
     }
 }

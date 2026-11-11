@@ -2,57 +2,68 @@ package com.example.ailearning.l13shopping;
 
 import com.example.ailearning.l13shopping.domain.Intent;
 import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
-
-import com.example.ailearning.l13shopping.support.*;
-import org.springframework.ai.chat.memory.*;
-import org.springframework.ai.chat.messages.*;
-import org.springframework.stereotype.Service;
+import com.example.ailearning.l13shopping.policy.PolicySearchResult;
+import com.example.ailearning.l13shopping.support.LimitedAgentRequestExecutor;
+import com.example.ailearning.l13shopping.support.RunState;
+import com.example.ailearning.l13shopping.workflow.CounselResult;
+import com.example.ailearning.l13shopping.workflow.CounselWorkflow;
 import java.util.List;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CounselService {
     public record Reply(String status, String answer, Intent criteria, List<ProductPriceDetails> offers,
-                        List<Source> sources, int storedMessages, RunState.Snapshot trace) {}
-    private final CounselWorkflow workflow;
+            List<PolicySearchResult> sources, int storedMessages, RunState.Snapshot trace) {}
+
+    private final CounselWorkflow counselWorkflow;
     private final LimitedAgentRequestExecutor limitedAgentRequestExecutor;
-    private final ChatMemory memory = MessageWindowChatMemory.builder()
+    private final ChatMemory conversationMemory = MessageWindowChatMemory.builder()
             .maxMessages(6)
             .build();
-    public CounselService(CounselWorkflow workflow, LimitedAgentRequestExecutor limitedAgentRequestExecutor) {
-        this.workflow = workflow;
+
+    public CounselService(CounselWorkflow counselWorkflow,
+            LimitedAgentRequestExecutor limitedAgentRequestExecutor) {
+        this.counselWorkflow = counselWorkflow;
         this.limitedAgentRequestExecutor = limitedAgentRequestExecutor;
     }
 
     public synchronized Reply chat(String owner, String conversationId, String question) {
-        String key = owner + ":" + conversationId;
-        List<Message> previous = List.copyOf(memory.get(key));
-        var outcome = limitedAgentRequestExecutor.executeWithLimits(
-                runState -> workflow.execute(question, previous, runState));
-        if (!outcome.succeeded()) {
-            return failed(key, outcome.trace(), outcome.failureStatus());
+        String conversationKey = owner + ":" + conversationId;
+        List<Message> previousMessages = List.copyOf(conversationMemory.get(conversationKey));
+        var executionOutcome = limitedAgentRequestExecutor.executeWithLimits(
+                runState -> counselWorkflow.processCounselRequest(question, previousMessages, runState));
+        if (!executionOutcome.succeeded()) {
+            return createFailureReply(conversationKey, executionOutcome.trace(), executionOutcome.failureStatus());
         }
-        CounselWorkflow.Draft draft = outcome.result();
-        if (List.of("VERIFIED", "NEEDS_INPUT", "NO_RESULTS", "NO_CONTEXT").contains(draft.status())) {
-            memory.add(key, List.of(new UserMessage(question), new AssistantMessage(draft.answer())));
+
+        CounselResult counselResult = executionOutcome.result();
+        if (List.of("VERIFIED", "NEEDS_INPUT", "NO_RESULTS", "NO_CONTEXT").contains(counselResult.status())) {
+            conversationMemory.add(conversationKey,
+                    List.of(new UserMessage(question), new AssistantMessage(counselResult.answer())));
         }
-        return new Reply(draft.status(), draft.answer(), draft.intent(), draft.offers(), draft.sources(),
-                memory.get(key).size(), outcome.trace());
+        return new Reply(counselResult.status(), counselResult.answer(), counselResult.intent(),
+                counselResult.offers(), counselResult.sources(), conversationMemory.get(conversationKey).size(),
+                executionOutcome.trace());
     }
 
-    private Reply failed(String key, RunState.Snapshot trace, String status) {
+    private Reply createFailureReply(String conversationKey, RunState.Snapshot trace, String status) {
         return new Reply(status, "실행 실패 또는 상한 도달. 이전 대화는 유지합니다.", null,
-                List.of(), List.of(), memory.get(key).size(), trace);
+                List.of(), List.of(), conversationMemory.get(conversationKey).size(), trace);
     }
 
     public synchronized List<String> history(String owner, String conversationId) {
-        return memory
-                .get(owner + ":" + conversationId)
+        return conversationMemory.get(owner + ":" + conversationId)
                 .stream()
                 .map(Message::getText)
                 .toList();
     }
 
     public synchronized void clear(String owner, String conversationId) {
-        memory.clear(owner + ":" + conversationId);
+        conversationMemory.clear(owner + ":" + conversationId);
     }
 }

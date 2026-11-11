@@ -3,6 +3,8 @@ package com.example.ailearning.l13shopping;
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
 import com.example.ailearning.testsupport.OpenAiStubServer;
+import com.example.ailearning.l13shopping.workflow.CounselResult;
+import com.example.ailearning.l13shopping.workflow.CounselWorkflow;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
 import org.junit.jupiter.api.*;
@@ -66,12 +68,13 @@ class ShoppingAgentLocalModelTest {
     void 상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다() {
         // 의도 추출 → 도구 선택 → 검증을 동기 호출한다. 저장과 스레드 대기는 서비스의 별도 책임이다.
         RunState run = new RunState(8, 5000);
-        var draft = workflow.execute("배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘", List.of(), run);
-        output.printValue("동기 상담 결과", draft);
+        CounselResult counselResult = workflow.processCounselRequest(
+                "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘", List.of(), run);
+        output.printValue("동기 상담 결과", counselResult);
 
-        assertThat(draft.status()).isEqualTo("VERIFIED");
-        assertThat(draft.offers().getFirst().total()).isEqualTo(15000);
-        assertThat(draft.sources().getFirst().id()).isEqualTo("return-sealed");
+        assertThat(counselResult.status()).isEqualTo("VERIFIED");
+        assertThat(counselResult.offers().getFirst().total()).isEqualTo(15000);
+        assertThat(counselResult.sources().getFirst().id()).isEqualTo("return-sealed");
         assertThat(run.snapshot().toolExecutions()).isEqualTo(3);
     }
 
@@ -79,7 +82,7 @@ class ShoppingAgentLocalModelTest {
     void 실행기는_의도_추출과_도구_루프를_합쳐_모델_요청_상한을_검사한다() {
         var requestExecutor = new LimitedAgentRequestExecutor(1, 5000);
         var executionOutcome = requestExecutor.executeWithLimits(
-                runState -> workflow.execute("배송비 포함 30000원 음료 추천", List.of(), runState));
+                runState -> workflow.processCounselRequest("배송비 포함 30000원 음료 추천", List.of(), runState));
         output.printValue("모델 상한 결과", executionOutcome);
 
         assertThat(executionOutcome.succeeded()).isFalse();

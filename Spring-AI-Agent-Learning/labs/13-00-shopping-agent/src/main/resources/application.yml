@@ -19,7 +19,7 @@ spring:
       embedding:
         max-retries: 0
         options:
-          model: ${OPENAI_EMBEDDING_MODEL}
+          model: ${OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
     tools:
       limits:
         max-total-tool-calls: 6

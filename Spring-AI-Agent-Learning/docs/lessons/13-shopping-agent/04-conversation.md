@@ -113,7 +113,7 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 
 <details><summary>보충: 타임아웃 이후 저장을 막는 구현</summary>
 
-`CounselService.chat()`은 이전 대화의 복사본을 `CounselWorkflow.execute()`에 전달합니다.
+`CounselService.chat()`은 이전 대화의 복사본을 `CounselWorkflow.processCounselRequest()`에 전달합니다.
 `LimitedAgentRequestExecutor`가 에이전트 요청을 실행하고 별도 스레드의 대기·시간 초과 취소를 담당합니다. `RunState`는 모델 요청 수와 마감 시간을 검사하며 도구 실행 수를 기록합니다. 도구 상한은 Spring AI가 검사합니다. 작업 스레드는 메모리를 수정하지 않으며,
 결과를 기다리는 호출자 스레드가 위 저장 정책에 맞는 응답만 저장합니다.
 타임아웃 뒤 늦게 완료된 작업이 대화를 변경하지 않게 하기 위한 구성입니다.

@@ -4,76 +4,53 @@
 
 **이번 목표:** 상품 총액과 출처 ID를 실제 도구 기록으로 검증합니다.
 
-**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다. TurnFacts에서 찾지 못하는 ID는 거절합니다.
+**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다. `CounselRequestFacts`에서 찾지 못하는 ID는 거절합니다.
 
 ## 3.2 모델이 반환한 ID도 검사하기
 
-`Selection`에는 `productIds`, `sourceIds`만 있습니다. 자연어 답변 문장은 받지 않습니다.
-아래 `verify()`가 실제 도구 결과와 비교합니다. 검증 후 `createAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
+`CandidateEvidenceSelection`에는 `productIds`, `sourceIds`만 있습니다. 자연어 답변 문장은 받지 않습니다.
+`CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다. 검증 후 `createVerifiedAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
 
 ```java
-    private Draft verify(Intent intent, Selection selected, TurnFacts facts) {
-        if (selected == null || selected.productIds() == null || selected.sourceIds() == null) {
-            throw new IllegalArgumentException("선택 형식이 올바르지 않습니다.");
+    public CounselResult verifySelection(Intent requestIntent,
+            CandidateEvidenceSelection candidateSelection, CounselRequestFacts requestFacts) {
+        if (hasInvalidSelection(candidateSelection)) {
+            return verificationFailed(requestIntent);
         }
 
-        boolean shopping = intent.task().equals("SHOPPING");
-        List<ProductPriceDetails> offers = new ArrayList<>();
-        for (String id : selected.productIds().stream().distinct().toList()) {
-            ProductPriceDetails offer = facts.offers.get(id);
-            // 상품 추천에서 이번 요청에 실제로 가격을 조회한 상품만 검증한다.
-            if (!shopping || offer == null) {
-                return invalid(intent);
+        List<ProductPriceDetails> verifiedOffers = new ArrayList<>();
+        for (String productId : candidateSelection.productIds().stream().distinct().toList()) {
+            ProductPriceDetails priceDetails = requestFacts.priceDetailsFor(productId);
+            if (!isValidProductSelection(requestIntent.task().equals("SHOPPING"), requestIntent, priceDetails)) {
+                return verificationFailed(requestIntent);
             }
+            verifiedOffers.add(priceDetails);
+        }
 
-            boolean withinBudget = offer.total() <= intent.totalBudget();
-            boolean categoryMatches = intent.category() == null
-                    || offer.product().category().equals(intent.category());
-            if (!withinBudget || !categoryMatches) {
-                return invalid(intent);
+        // 정책 ID도 이번 요청의 검색 결과에서 찾아야 답변 근거로 사용할 수 있다.
+        List<PolicySearchResult> verifiedSources = new ArrayList<>();
+        for (String sourceId : candidateSelection.sourceIds().stream().distinct().toList()) {
+            PolicySearchResult policyResult = requestFacts.policyResultFor(sourceId);
+            if (policyResult == null) {
+                return verificationFailed(requestIntent);
             }
-            offers.add(offer);
+            verifiedSources.add(policyResult);
         }
 
-        List<Source> sources = new ArrayList<>();
-        for (String id : selected.sourceIds().stream().distinct().toList()) {
-            Source source = facts.sources.get(id);
-            if (source == null) {
-                return invalid(intent);
-            }
-            sources.add(source);
+        if (requestIntent.task().equals("SHOPPING") && verifiedOffers.isEmpty()) {
+            String resultStatus = hasNoAffordableProduct(requestIntent, requestFacts)
+                    ? "NO_RESULTS" : "NO_VERIFIED_OFFER";
+            return new CounselResult(resultStatus, "현재 조건에서 확인된 추천 상품이 없습니다.",
+                    requestIntent, List.of(), List.of());
         }
-        if (shopping && offers.isEmpty()) {
-            boolean noAffordableProduct = facts.productSearched && facts.lastProducts
-                    .stream()
-                    .allMatch(product -> {
-                        ProductPriceDetails checked = facts.offers.get(product.id());
-                        return checked != null && checked.total() > intent.totalBudget();
-                    });
-            String status = noAffordableProduct ? "NO_RESULTS" : "NO_VERIFIED_OFFER";
-            return new Draft(status, "현재 조건에서 확인된 추천 상품이 없습니다.", intent, List.of(), List.of());
+        if (requestIntent.task().equals("POLICY") && verifiedSources.isEmpty()) {
+            String resultStatus = requestFacts.policySearchPerformed() && !requestFacts.hasPolicySearchResults()
+                    ? "NO_CONTEXT" : "NO_VERIFIED_SOURCE";
+            return new CounselResult(resultStatus, "확인할 수 있는 정책 근거가 없습니다.",
+                    requestIntent, List.of(), List.of());
         }
-        if (intent.task().equals("POLICY") && sources.isEmpty()) {
-            String status = facts.policySearched && facts.sources.isEmpty() ? "NO_CONTEXT" : "NO_VERIFIED_SOURCE";
-            return new Draft(status, "확인할 수 있는 정책 근거가 없습니다.", intent, List.of(), List.of());
-        }
-        String answer = createAnswer(offers, sources);
-        return new Draft("VERIFIED", answer, intent, List.copyOf(offers), List.copyOf(sources));
-    }
-
-    private String createAnswer(List<ProductPriceDetails> offers, List<Source> sources) {
-        // 자유 생성 문장 대신 검증한 실제 총액과 정책 원문으로 표시한다.
-        String answer = offers
-                .stream()
-                .map(offer -> offer.product().name() + " 총 " + offer.total() + "원")
-                .collect(java.util.stream.Collectors.joining(" / "));
-        if (!sources.isEmpty()) {
-            String policyText = sources.stream()
-                    .map(Source::text)
-                    .collect(java.util.stream.Collectors.joining(" / "));
-            answer += "\n정책 근거: " + policyText;
-        }
-        return answer.strip();
+        return new CounselResult("VERIFIED", createVerifiedAnswer(verifiedOffers, verifiedSources),
+                requestIntent, verifiedOffers, verifiedSources);
     }
 ```
 
@@ -103,7 +80,7 @@
 <details>
 <summary>해설</summary>
 
-`verify()`가 선택 ID를 `facts.offers`·`facts.sources`에서 찾고, 조회한 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
+`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselRequestFacts.priceDetailsFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
 
 </details>
 
