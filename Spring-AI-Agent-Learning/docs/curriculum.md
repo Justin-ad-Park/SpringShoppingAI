@@ -27,6 +27,8 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 
 ## 학습 지도
 
+00장 선택 읽기 [Spring AI와 LangChain 비교](lessons/00-llm-and-spring-ai/01-SpringAIvsLangChain.md)에서는 기능·생태계·운영 조건을 기준으로 프레임워크를 선택하고 혼합 구성을 검토하는 방법을 설명합니다.
+
 | 묶음 | 단원 | 새 개념과 실습 | 완료 기준 | 현재 상태 |
 | --- | --- | --- | --- | --- |
 | 기초 | 00 LLM과 Spring AI | 모델·토큰·메시지·환각, 호출 흐름 그리기 | Spring AI와 모델의 역할 구분 | 교재 완성 |

@@ -13,6 +13,8 @@
 
 [공통 학습 방법](../learning-guide.md)
 
+프레임워크 선택 배경은 선택 읽기 [Spring AI와 LangChain 비교](00-llm-and-spring-ai/01-SpringAIvsLangChain.md)와 [이 쇼핑몰에서 Spring AI를 선택한 이유](00-llm-and-spring-ai/02-WhySpringAI.md)를 참고하세요.
+
 코드 실행이나 API 키가 필요 없습니다.
 
 ## 이번 수업의 목표

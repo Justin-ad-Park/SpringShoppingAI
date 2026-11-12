@@ -17,6 +17,8 @@
 이번 목표는 프로젝트를 열고 **실제 API 키 없이 테스트를 통과시키는 것**입니다.
 실제 모델 호출은 02장에서 합니다.
 
+프레임워크 선택 기준이 궁금하다면 선택 읽기 [Spring AI와 LangChain 비교](00-llm-and-spring-ai/01-SpringAIvsLangChain.md)를 참고하세요.
+
 ## 1. 프로젝트 위치와 Java 확인
 
 macOS/Linux 터미널 기준입니다. SpringShoppingAI 저장소를 내려받은 폴더로 이동하세요.
