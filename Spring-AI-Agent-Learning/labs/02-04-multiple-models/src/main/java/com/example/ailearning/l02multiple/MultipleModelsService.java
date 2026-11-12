@@ -6,18 +6,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MultipleModelsService {
-    private final ChatClient openAi;
-    private final ChatClient anthropic;
+    private final ChatClient openAiChatClient;
+    private final ChatClient anthropicChatClient;
 
     public MultipleModelsService(
-            @Qualifier("openAiChatClient") ChatClient openAi,
-            @Qualifier("anthropicChatClient") ChatClient anthropic) {
-        this.openAi = openAi;
-        this.anthropic = anthropic;
+            @Qualifier("openAiChatClient") ChatClient openAiChatClient,
+            @Qualifier("anthropicChatClient") ChatClient anthropicChatClient) {
+        this.openAiChatClient = openAiChatClient;
+        this.anthropicChatClient = anthropicChatClient;
     }
 
     public String askOpenAi(String question) {
-        return openAi
+        return openAiChatClient
                 .prompt()
                 .user(question)
                 .call()
@@ -25,7 +25,7 @@ public class MultipleModelsService {
     }
 
     public String askAnthropic(String question) {
-        return anthropic
+        return anthropicChatClient
                 .prompt()
                 .user(question)
                 .call()

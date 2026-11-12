@@ -8,8 +8,8 @@
 
 ```java
 @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
-public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String question) {
-    return service.extract(question);
+public SearchCriteria extractCriteria(@RequestBody @NotBlank @Size(max = 2000) String question) {
+    return criteriaService.extractCriteria(question);
 }
 ```
 

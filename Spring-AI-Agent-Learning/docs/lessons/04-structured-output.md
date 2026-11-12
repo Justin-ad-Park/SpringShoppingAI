@@ -65,16 +65,16 @@ public record SearchCriteria(String category, Integer maxPrice) {
 
 ## 2. 문자열과 record로 응답받기
 
-같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extract()`는 record로 받아 검증합니다.
+같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extractCriteria()`는 record로 받아 검증합니다.
 
 ### 2.1. 먼저 정상 흐름 읽기
 
-다음은 `extract()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `client`는 생성자로 만든 ChatClient이고, `SYSTEM_INSTRUCTION`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extract()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
+다음은 `extractCriteria()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `chatClient`는 생성자로 만든 ChatClient이고, `CRITERIA_EXTRACTION_INSTRUCTION`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extractCriteria()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
 
 ```java
-SearchCriteria criteria = client
+SearchCriteria criteria = chatClient
         .prompt()
-        .system(SYSTEM_INSTRUCTION)
+        .system(CRITERIA_EXTRACTION_INSTRUCTION)
         .user(question)
         .call()
         .entity(SearchCriteria.class);
@@ -104,34 +104,34 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CriteriaService {
-    static final String SYSTEM_INSTRUCTION = """
+    static final String CRITERIA_EXTRACTION_INSTRUCTION = """
             사용자 요청에서 상품 카테고리(category)와 상품 가격 상한(maxPrice)을 추출하세요.
             category는 음료/생활 중 사용자가 명시한 것만 쓰세요.
             가격은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
             배송비는 계산하지 마세요. 실제 상품을 검색하는 작업도 하지 않습니다.
             """;
-    private final ChatClient client;
+    private final ChatClient chatClient;
 
     public CriteriaService(ChatClient.Builder builder) {
-        client = builder.build();
+        chatClient = builder.build();
     }
 
-    public String text(String question) {
-        return client
+    public String extractCriteriaAsText(String question) {
+        return chatClient
                 .prompt()
-                .system(SYSTEM_INSTRUCTION)
+                .system(CRITERIA_EXTRACTION_INSTRUCTION)
                 .user(question)
                 .call()
                 .content();
     }
 
-    public SearchCriteria extract(String question) {
+    public SearchCriteria extractCriteria(String question) {
         SearchCriteria criteria;
         try {
             // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
-            criteria = client
+            criteria = chatClient
                     .prompt()
-                    .system(SYSTEM_INSTRUCTION)
+                    .system(CRITERIA_EXTRACTION_INSTRUCTION)
                     .user(question)
                     .call()
                     .entity(SearchCriteria.class);
@@ -153,7 +153,7 @@ public class CriteriaService {
 }
 ```
 
-`extract()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
+`extractCriteria()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
 
 - `.content()`는 응답 문자열을 반환합니다.
 - `.entity(SearchCriteria.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다. 반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
@@ -265,13 +265,13 @@ MODEL
 
 ## 확인 질문
 
-1. `text()`와 `extract()`의 반환 타입과 처리 과정은 어떻게 다른가요?
+1. `text()`와 `extractCriteria()`의 반환 타입과 처리 과정은 어떻게 다른가요?
 2. `.entity()` 변환에 성공한 뒤에도 `validate()`를 호출하는 이유는 무엇인가요?
 
 <details>
 <summary>해설</summary>
 
-1. `text()`는 모델의 문자열 답변을 반환합니다. `extract()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
+1. `text()`는 모델의 문자열 답변을 반환합니다. `extractCriteria()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
 2. 객체 변환은 응답 형식을 Java 타입으로 읽는 작업입니다. 허용 카테고리나 예산 범위 같은 업무 규칙은 `validate()`로 별도 확인해야 합니다.
 
 </details>

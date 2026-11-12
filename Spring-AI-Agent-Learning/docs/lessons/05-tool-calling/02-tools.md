@@ -59,16 +59,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ToolChatService {
-    private final ChatClient client;
-    private final ShoppingTools tools;
+    private final ChatClient chatClient;
+    private final ShoppingTools shoppingTools;
 
-    public ToolChatService(ChatClient.Builder builder, ShoppingTools tools) {
-        this.client = builder.build();
-        this.tools = tools;
+    public ToolChatService(ChatClient.Builder builder, ShoppingTools shoppingTools) {
+        this.chatClient = builder.build();
+        this.shoppingTools = shoppingTools;
     }
 
     public String ask(String question) {
-        return client
+        return chatClient
                 .prompt()
                 .system("""
                         가상 상품 상담을 합니다. 가격과 배송비는 도구 결과만 사용하세요.
@@ -77,7 +77,7 @@ public class ToolChatService {
                         상품 조회가 필요 없는 요청에는 도구 없이 답할 수 있습니다.
                         """)
                 .user(question)
-                .tools(tools)
+                .tools(shoppingTools)
                 .call()
                 .content();
     }
@@ -90,9 +90,9 @@ public class ToolChatService {
 
 ```java
 // UserTools에도 @Tool 메서드가 있다고 가정한 예시입니다.
-// client는 위 서비스의 ChatClient 필드입니다.
+// chatClient는 위 서비스의 ChatClient 필드입니다.
 public String ask(String question, ShoppingTools shoppingTools, UserTools userTools) {
-    return client
+    return chatClient
             .prompt()
             .user(question)
             .tools(shoppingTools, userTools)

@@ -80,7 +80,7 @@ class StructuredOutputLocalModelTest {
                 .setResponseText("{\"category\":null,\"maxPrice\":null}");
 
         // When: 실제 서비스를 호출해 응답 변환
-        SearchCriteria criteria = service.extract("선물 추천");
+        SearchCriteria criteria = service.extractCriteria("선물 추천");
         output.printValue("조건 객체", criteria);
 
         // Then: 조건 객체의 필드가 null인지 검증

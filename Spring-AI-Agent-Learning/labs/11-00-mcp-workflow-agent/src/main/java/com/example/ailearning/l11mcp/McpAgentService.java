@@ -1,5 +1,8 @@
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.McpToolExecutor;
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -7,7 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class McpAgentService {
-    private static final String INSTRUCTION = """
+    private static final String MCP_AGENT_INSTRUCTION = """
             TASK:MCP_AGENT
             제공된 MCP 도구 중 필요한 도구와 인자를 선택하세요.
             상품 가격 상한에 맞는 MALL 배송그룹의 재고 있는 상품을 검색하세요.
@@ -19,29 +22,29 @@ public class McpAgentService {
     private final ChatClient chatClient;
     private final ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
-    private final int maxToolCalls;
+    private final int maxToolCallAttempts;
 
     public McpAgentService(ChatClient.Builder builder,
             ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
-            @Value("${learning.mcp.max-tool-calls}") int maxToolCalls) {
+            @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
         this.chatClient = builder.build();
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.objectMapper = objectMapper;
-        this.maxToolCalls = maxToolCalls;
+        this.maxToolCallAttempts = maxToolCallAttempts;
     }
 
-    public McpRunResult agent(String question) {
-        McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, null);
-        String answer = askWithMcpTools(question, toolRun);
-        return new McpRunResult("ANSWERED", answer, toolRun.toolCalls());
+    public McpRunResult run(String question) {
+        McpToolExecutor toolExecutor = new McpToolExecutor(shoppingMcpGateway, objectMapper, maxToolCallAttempts, null);
+        String answer = requestAnswerWithTools(question, toolExecutor);
+        return new McpRunResult("ANSWERED", answer, toolExecutor.toolCalls());
     }
 
-    String askWithMcpTools(String question, McpToolRun toolRun) {
+    String requestAnswerWithTools(String question, McpToolExecutor toolExecutor) {
         return chatClient
                 .prompt()
-                .system(INSTRUCTION)
+                .system(MCP_AGENT_INSTRUCTION)
                 .user(question)
-                .toolCallbacks(toolRun.callbacks())
+                .toolCallbacks(toolExecutor.createToolCallbacks())
                 .call()
                 .content();
     }

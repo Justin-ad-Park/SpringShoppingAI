@@ -10,55 +10,63 @@ import java.util.Set;
 
 @Service
 public class SearchService {
-    public record Hit(String id, String text, String category, Double score) {}
-    public record Comparison(List<Hit> keywordHits, List<Hit> vectorHits) {}
-    public record Vector(int dimensions, float[] values) {}
-    private final EmbeddingModel embedding;
-    private final SimpleVectorStore store;
+    public record SearchHit(String id, String text, String category, Double score) {}
+    public record SearchComparison(List<SearchHit> keywordHits, List<SearchHit> vectorHits) {}
+    public record EmbeddingVector(int dimensions, float[] values) {}
+    private final EmbeddingModel embeddingModel;
+    private final SimpleVectorStore policyVectorStore;
 
-    public SearchService(EmbeddingModel embedding) {
-        this.embedding = embedding;
-        store = SimpleVectorStore.builder(embedding)
+    public SearchService(EmbeddingModel embeddingModel) {
+        this.embeddingModel = embeddingModel;
+        policyVectorStore = SimpleVectorStore.builder(embeddingModel)
                 .build();
-        store.add(PolicyDocuments.all()); // 시작 시 문서를 임베딩해 인메모리 저장소에 적재한다.
+        policyVectorStore.add(PolicyDocuments.createDocuments()); // 시작 시 문서를 임베딩해 인메모리 저장소에 적재한다.
     }
 
-    public Vector embed(String text) {
-        float[] values = embedding.embed(text);
-        return new Vector(values.length, values);
+    public EmbeddingVector embed(String text) {
+        float[] vectorValues = embeddingModel.embed(text);
+        return new EmbeddingVector(vectorValues.length, vectorValues);
     }
 
-    public Comparison search(String query, int topK, double threshold, String category) {
+    public SearchComparison compareSearchResults(String query, int topK, double threshold, String category) {
         if (category != null && !Set.of("shipping", "returns")
                 .contains(category))
             throw new IllegalArgumentException("category는 shipping/returns입니다.");
-        List<Hit> keyword = PolicyDocuments.all()
+        List<SearchHit> keywordHits = searchByKeyword(query, category);
+        List<SearchHit> vectorHits = searchByVector(query, topK, threshold, category);
+        return new SearchComparison(keywordHits, vectorHits);
+    }
+
+    private List<SearchHit> searchByKeyword(String query, String category) {
+        return PolicyDocuments.createDocuments()
                 .stream()
-                .filter(doc -> category == null || category.equals(doc
+                .filter(document -> category == null || category.equals(document
                                 .getMetadata()
                                 .get("category")))
-                .filter(doc -> doc
+                .filter(document -> document
                         .getText()
                         .contains(query))
-                .map(this::view)
+                .map(this::toSearchHit)
                 .toList();
-        var request = SearchRequest.builder()
+    }
+
+    private List<SearchHit> searchByVector(String query, int topK, double threshold, String category) {
+        var vectorSearchRequest = SearchRequest.builder()
                 .query(query)
                 .topK(topK)
                 .similarityThreshold(threshold);
         // 허용 목록으로 검사한 메타데이터 값만 필터에 사용한다.
-        if (category != null) request.filterExpression("category == '" + category + "'");
-        List<Hit> semantic = store
-                .similaritySearch(request.build())
+        if (category != null) vectorSearchRequest.filterExpression("category == '" + category + "'");
+        return policyVectorStore
+                .similaritySearch(vectorSearchRequest.build())
                 .stream()
-                .map(this::view)
+                .map(this::toSearchHit)
                 .toList();
-        return new Comparison(keyword, semantic);
     }
 
-    private Hit view(Document doc) {
-        return new Hit(doc.getId(), doc.getText(), (String) doc
+    private SearchHit toSearchHit(Document document) {
+        return new SearchHit(document.getId(), document.getText(), (String) document
                 .getMetadata()
-                .get("category"), doc.getScore());
+                .get("category"), document.getScore());
     }
 }

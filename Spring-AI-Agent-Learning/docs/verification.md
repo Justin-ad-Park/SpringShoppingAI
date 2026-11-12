@@ -530,3 +530,11 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 13장 제한: `spring.ai.openai.timeout`은 OpenAI API 요청 한 건의 제한, `learning.limits.timeout-ms`는 사용자 요청 전체의 시간 제한, `learning.limits.max-model-calls`는 Workflow 단계 전체의 모델 호출 제한으로 구분해 설명했습니다. 도구 호출 상한은 `spring.ai.tools.limits.max-total-tool-calls`를 사용하고 `RunState`는 허용되어 실제 실행된 호출의 trace만 기록합니다. 모델 호출 수 집계용 `CountedChatModel`을 사용할 때 자동 구성 `ToolCallingManager`를 `ToolCallingAdvisor`에 연결해 application 설정이 실제 적용되도록 했습니다. 기존 `LimitedCounselExecutor`는 `ShoppingAgentRequestLimitExecutor`로 이름을 명확히 했습니다.
 - 검증: 교육 실습 18개 `application.yml`을 Ruby YAML parser로 읽었고, 교재 로컬 링크 576개 오류 0개와 `git diff --check`를 확인했습니다. `ShoppingAgentLocalModelTest` 11개, 05-05 도구 상한 테스트 6개, 02-05 재시도·타임아웃 로컬 테스트 8개가 통과했습니다. 13장 상한 테스트에서는 Spring AI가 네 번째 도구 실행 뒤의 실행을 차단하고, trace에 실제 실행 네 건만 기록하는 것을 확인했습니다.
 - 실제 외부 호출: 02-05 모듈 검증 명령에서 `ModelRequestOpenAiLiveTest` 한 건이 테스트 선택 필터에도 실행되어 OpenAI API 요청 한 번이 발생했고, 정상 답변을 받았습니다. 따라서 이 검증 묶음에는 외부 모델 호출이 포함되어 있습니다. 다른 테스트는 로컬 stub을 사용했습니다. 커밋은 하지 않았습니다.
+
+
+## 역할을 드러내는 이름과 필요한 책임 분리 — 2026-11-12
+
+- 기존 13장 변경을 `659b35d`로 커밋한 뒤 02~12장을 검토했다. 짧고 명확한 흐름은 유지하고, 09의 검색 방식 비교, 10·12의 RAG 검색/생성/출처 검증, 11의 MCP 콜백 실행/검사/기록, 12의 평가 집계/문항 판정만 분리했다. 모호한 내부 변수·타입·메서드 이름을 정리하고 HTTP/JSON/도구 계약은 유지했다.
+- 13개 변경 모듈의 UnitTest·LocalModelTest를 클래스 필터로 실행해 JUnit XML 기준 83개 통과, 실패 0·오류 0·건너뜀 0을 확인했다. 11장은 로컬 MCP 서버, 나머지 모델 호출은 HTTP stub으로 검증했다. Live 코드는 컴파일했으며 실제 외부 API 호출은 하지 않았다.
+- 교재의 전체 Java 파일 발췌 28개가 실제 소스와 일치했다. 변경된 Mermaid 3개가 문법 파서에서 통과했다. 이름·패키지 기준의 하네스 통합, 모듈별 테스트 수·명령·검토 한계는 [적용 기록](../../education-harness/reports/2026-11-12-naming-and-package-layout.md)을 참고한다.
+- 작업 중 별도로 추가된 13장의 CounselToolResults 편집은 보존했으며 위 후속 수정·검증 집계에 포함하지 않았다. 후속 변경은 커밋하지 않았다. 모델 판단 품질·외부 모델 연결·화면 렌더링·학습자 이해도·독립 세션 하네스 행동 평가는 이번 범위에서 검증하지 않았다.

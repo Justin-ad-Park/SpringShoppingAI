@@ -12,31 +12,31 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdvisorRagService {
-    private final ChatClient client;
+    private final ChatClient chatClient;
 
     public AdvisorRagService(ChatClient.Builder builder, EmbeddingModel embeddingModel) {
         // 시작 시: 읽기 → 분할 → 저장. 작은 파일은 한 조각일 수도 있습니다.
-        var reader = new TextReader(new ClassPathResource("return-policy.txt"));
-        var splitter = TokenTextSplitter.builder()
+        var policyReader = new TextReader(new ClassPathResource("return-policy.txt"));
+        var tokenTextSplitter = TokenTextSplitter.builder()
                 .build();
-        var store = SimpleVectorStore.builder(embeddingModel)
+        var policyVectorStore = SimpleVectorStore.builder(embeddingModel)
                 .build();
-        store.add(splitter.apply(reader.get()));
+        policyVectorStore.add(tokenTextSplitter.apply(policyReader.get()));
 
         // 질문 시: Advisor가 검색 결과를 프롬프트에 추가합니다.
-        var advisor = QuestionAnswerAdvisor.builder(store)
+        var questionAnswerAdvisor = QuestionAnswerAdvisor.builder(policyVectorStore)
                 .searchRequest(SearchRequest.builder()
                         .topK(1)
                         .similarityThreshold(0.7)
                         .build())
                 .build();
-        client = builder
-                .defaultAdvisors(advisor)
+        chatClient = builder
+                .defaultAdvisors(questionAnswerAdvisor)
                 .build();
     }
 
     public String answer(String question) {
-        return client
+        return chatClient
                 .prompt()
                 .user(question)
                 .call()

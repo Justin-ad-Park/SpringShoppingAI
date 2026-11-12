@@ -14,7 +14,7 @@ curl http://127.0.0.1:8106/api/mcp/shipping-policy
 
 ## 도구 목록을 실행 가능한 객체로 연결하기
 
-[전체 소스: ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/ShoppingMcpGateway.java)
+[전체 소스: ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/tools/ShoppingMcpGateway.java)
 
 서버 도구마다 callback 하나를 만들고, 각 callback이 같은 MCP 클라이언트를 통해 호출을 전달합니다.
 
@@ -40,7 +40,7 @@ classDiagram
 ```java
 McpSyncClient mcpClient = mcpClients.getFirst();
 for (var tool : mcpClient.listTools().tools()) {
-    callbacks.put(tool.name(), new SyncMcpToolCallback(mcpClient, tool));
+    toolCallbacksByName.put(tool.name(), new SyncMcpToolCallback(mcpClient, tool));
 }
 ```
 
@@ -50,15 +50,15 @@ for (var tool : mcpClient.listTools().tools()) {
 직접 호출하는 메서드 전체입니다.
 
 ```java
-public JsonNode call(String toolName, Map<String, Object> arguments) {
-    String response = getToolCallback(toolName)
+public JsonNode callTool(String toolName, Map<String, Object> arguments) {
+    String toolResponse = getToolCallback(toolName)
             .call(objectMapper.writeValueAsString(arguments));
-    return readJsonToolResult(response);
+    return parseToolResult(toolResponse);
 }
 ```
 
 `getShippingPolicy`는 인자가 없으므로 `Map.of()`를 전달합니다. 이 `.call()`은 **도구 호출**이며 `ChatClient.call()`의 모델 호출과 다른 메서드입니다.
-`readJsonToolResult()`는 MCP의 `content` 안에 담긴 JSON 텍스트를 꺼내는 보조 코드입니다. 현재 서버의 JSON 텍스트 하나인 결과만 처리하며 이미지나 복수 content를 처리하는 범용 구현은 아닙니다.
+`parseToolResult()`는 MCP의 `content` 안에 담긴 JSON 텍스트를 꺼내는 보조 코드입니다. 현재 서버의 JSON 텍스트 하나인 결과만 처리하며 이미지나 복수 content를 처리하는 범용 구현은 아닙니다.
 
 ## 확인 질문
 

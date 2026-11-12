@@ -25,7 +25,7 @@ class EvaluationOpenAiLiveTest {
     @Test
     @Timeout(180)
     void 실제_OpenAI_답변을_고정_사례로_평가하고_사용량을_출력한다() {
-        EvaluationRunner.Report report = service.run();
+        EvaluationRunner.EvaluationReport report = service.run();
 
         System.out.printf("전체 %d개, 통과 %d개, 비율 %.2f%n", report.total(), report.passed(), report.passRate());
         for (var result : report.cases()) {

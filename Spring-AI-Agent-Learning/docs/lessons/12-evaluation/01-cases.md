@@ -49,62 +49,66 @@ flowchart TD
 ## 평가 코드
 
 읽는 순서: evaluation-cases.json → [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java) → [RagService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java) → [EvaluationController](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationController.java).
-PolicyLoader·Source·정책 파일은 10에서 배운 것과 같은 역할입니다.
+`policy` 패키지의 PolicyLoader·PolicySearch·PolicySearchResult는 10장에서 배운 문서 적재·검색·검색 결과를 맡습니다. RagService는 그 검색 결과를 받아 모델에 답변을 요청하고 출처를 확인합니다.
 
 ```java
 package com.example.ailearning.l12evaluation;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
+import com.example.ailearning.l12evaluation.policy.PolicySearchResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class EvaluationRunner {
     public record EvaluationCase(String id, String question, String expectedStatus,
-                                 List<String> expectedSourceIds, String expectedText) {}
-    public record CaseResult(String id, boolean passed, List<String> failures, RagService.Run actual) {}
-    public record Report(int total, int passed, double passRate, List<CaseResult> cases) {}
-    private final RagService service;
-    private final List<EvaluationCase> cases;
+            List<String> expectedSourceIds, String expectedText) {}
+    public record EvaluationCaseResult(String id, boolean passed, List<String> failures,
+            RagService.RagRunResult actual) {}
+    public record EvaluationReport(int total, int passed, double passRate, List<EvaluationCaseResult> cases) {}
 
-    public EvaluationRunner(RagService service, ObjectMapper mapper) throws IOException {
-        this.service = service;
+    private final RagService ragService;
+    private final List<EvaluationCase> evaluationCases;
+
+    public EvaluationRunner(RagService ragService, ObjectMapper objectMapper) throws IOException {
+        this.ragService = ragService;
         try (var input = new ClassPathResource("evaluation-cases.json").getInputStream()) {
-            cases = List.of(mapper.readValue(input, EvaluationCase[].class));
+            evaluationCases = List.of(objectMapper.readValue(input, EvaluationCase[].class));
         }
     }
 
-    public Report run() {
-        var results = new ArrayList<CaseResult>();
-        for (var example : cases) {
-            RagService.Run actual = service.answer(example.question());
-            var reply = actual.reply();
-            var failures = new ArrayList<String>();
-            if (!reply.status().equals(example.expectedStatus())) {
-                failures.add("상태 불일치");
-            }
-
-            var sourceIds = reply.sources()
-                    .stream()
-                    .map(Source::id)
-                    .toList();
-            if (!sourceIds.containsAll(example.expectedSourceIds())) {
-                failures.add("expected source ID missing");
-            }
-            if (!reply.answer().contains(example.expectedText())) {
-                failures.add("expected text missing");
-            }
-
-            results.add(new CaseResult(example.id(), failures.isEmpty(), List.copyOf(failures), actual));
-        }
-        int passed = (int) results
-                .stream()
-                .filter(CaseResult::passed)
+    public EvaluationReport run() {
+        List<EvaluationCaseResult> caseResults = evaluationCases.stream()
+                .map(this::evaluateCase)
+                .toList();
+        int passedCaseCount = (int) caseResults.stream()
+                .filter(EvaluationCaseResult::passed)
                 .count();
-        return new Report(results.size(), passed, (double) passed / results.size(), List.copyOf(results));
+        return new EvaluationReport(caseResults.size(), passedCaseCount,
+                (double) passedCaseCount / caseResults.size(), caseResults);
+    }
+
+    /** 문의 한 건을 실행하고 기대한 상태·출처·본문과 대조한다. */
+    private EvaluationCaseResult evaluateCase(EvaluationCase evaluationCase) {
+        RagService.RagRunResult actualResult = ragService.answer(evaluationCase.question());
+        RagService.Reply actualReply = actualResult.reply();
+        List<String> failures = new ArrayList<>();
+        if (!actualReply.status().equals(evaluationCase.expectedStatus())) {
+            failures.add("상태 불일치");
+        }
+        List<String> actualSourceIds = actualReply.sources().stream()
+                .map(PolicySearchResult::id)
+                .toList();
+        if (!actualSourceIds.containsAll(evaluationCase.expectedSourceIds())) {
+            failures.add("expected source ID missing");
+        }
+        if (!actualReply.answer().contains(evaluationCase.expectedText())) {
+            failures.add("expected text missing");
+        }
+        return new EvaluationCaseResult(evaluationCase.id(), failures.isEmpty(), List.copyOf(failures), actualResult);
     }
 }
 ```

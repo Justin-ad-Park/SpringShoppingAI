@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SameProviderModelsService {
-    private final ChatClient openAi;
+    private final ChatClient openAiChatClient;
 
     public SameProviderModelsService(
-            @Qualifier("openAiChatClient") ChatClient openAi) {
-        this.openAi = openAi;
+            @Qualifier("openAiChatClient") ChatClient openAiChatClient) {
+        this.openAiChatClient = openAiChatClient;
     }
 
     public String ask(String question, String modelId) {
-        return openAi
+        return openAiChatClient
                 .prompt()
                 .user(question)
                 .options(OpenAiChatOptions.builder()

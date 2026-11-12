@@ -26,12 +26,12 @@ flowchart LR
 [AdvisorRagService](../../../labs/10-04-rag-advisor/src/main/java/com/example/ailearning/l10advisor/AdvisorRagService.java)의 생성자에서 아래 부분만 먼저 읽습니다.
 
 ```java
-        var reader = new TextReader(new ClassPathResource("return-policy.txt"));
-        var splitter = TokenTextSplitter.builder()
+        var policyReader = new TextReader(new ClassPathResource("return-policy.txt"));
+        var tokenTextSplitter = TokenTextSplitter.builder()
                 .build();
-        var store = SimpleVectorStore.builder(embeddingModel)
+        var policyVectorStore = SimpleVectorStore.builder(embeddingModel)
                 .build();
-        store.add(splitter.apply(reader.get()));
+        policyVectorStore.add(tokenTextSplitter.apply(policyReader.get()));
 ```
 
 `ClassPathResource`는 애플리케이션에 포함한 리소스 파일을 찾는 Spring 타입입니다.

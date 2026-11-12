@@ -27,8 +27,8 @@ public class CriteriaController {
     // 필드와 생성자 생략
 
     @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
-    public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.extract(question);
+    public SearchCriteria extractCriteria(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return criteriaService.extractCriteria(question);
     }
 }
 ```
@@ -41,7 +41,7 @@ public class CriteriaController {
 | `@RequestBody` | 요청 본문을 읽어 `question` 값으로 준비 |
 | `@NotBlank`, `@Size(max = 2000)` | 준비한 질문이 공백뿐이지 않은지, 길이가 제한 이내인지 검사할 규칙 |
 
-따라서 기본 실행 설정에서는 `POST http://127.0.0.1:8094/api/criteria`가 `extract()` 메서드에 연결됩니다. 주소만 입력해 브라우저로 여는 GET 요청과는 다릅니다.
+따라서 기본 실행 설정에서는 `POST http://127.0.0.1:8094/api/criteria`가 `extractCriteria()` 메서드에 연결됩니다. 주소만 입력해 브라우저로 여는 GET 요청과는 다릅니다.
 
 ## 메서드가 선택되어도 곧바로 본문이 실행되지는 않습니다
 

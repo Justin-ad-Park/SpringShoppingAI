@@ -10,30 +10,30 @@ import java.util.List;
 
 @RestController
 public class MemoryController {
-    private final MemoryChatService service;
-    public MemoryController(MemoryChatService service) { this.service = service; }
+    private final MemoryChatService memoryChatService;
+    public MemoryController(MemoryChatService memoryChatService) { this.memoryChatService = memoryChatService; }
 
     @PostMapping(value = "/api/memory/{conversationId}", consumes = MediaType.TEXT_PLAIN_VALUE)
     public MemoryReply chat(@PathVariable @Pattern(regexp = "[a-zA-Z0-9_-]{1,40}") String conversationId,
             @RequestBody @NotBlank @Size(max = 2000) String question, HttpSession session) {
-        return service.chat(session.getId(), conversationId, question);
+        return memoryChatService.chat(session.getId(), conversationId, question);
     }
 
     @GetMapping("/api/memory/{conversationId}")
     public List<MessageView> history(@PathVariable @Pattern(regexp = "[a-zA-Z0-9_-]{1,40}") String conversationId,
             HttpSession session) {
-        return service.history(session.getId(), conversationId);
+        return memoryChatService.history(session.getId(), conversationId);
     }
 
     @DeleteMapping("/api/memory/{conversationId}")
     public void clear(@PathVariable @Pattern(regexp = "[a-zA-Z0-9_-]{1,40}") String conversationId,
             HttpSession session) {
-        service.clear(session.getId(), conversationId);
+        memoryChatService.clear(session.getId(), conversationId);
     }
 
     @PostMapping(value = "/api/stateless", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String stateless(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.stateless(question);
+    public String chatWithoutMemory(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return memoryChatService.chatWithoutMemory(question);
     }
 }

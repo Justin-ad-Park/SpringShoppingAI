@@ -39,7 +39,7 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
     private ProductSelectionCriteria extractProductSelectionCriteria(String question) {
         ProductSelectionCriteria criteria = chatClient
                 .prompt()
-                .system(EXTRACT_CATEGORY_BUDGET)
+                .system(PRODUCT_CRITERIA_EXTRACTION_INSTRUCTION)
                 .user(question)
                 .call()
                 .entity(ProductSelectionCriteria.class);
@@ -48,9 +48,9 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
         return criteria;
     }
 
-    private ExecutionResult workflow(String question) {
+    private ExecutionResult runWorkflow(String question) {
         ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
-        if (criteria.totalBudget() == null) return needsBudget();
+        if (criteria.totalBudget() == null) return createBudgetQuestion();
         List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
         List<ProductPriceDetails> offers = products
                 .stream()

@@ -4,7 +4,7 @@
 
 **이번 목표:** 상품 총액과 출처 ID를 실제 도구 기록으로 검증합니다.
 
-**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다. `CounselRequestFacts`에서 찾지 못하는 ID는 거절합니다.
+**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다. `CounselToolResults`에서 찾지 못하는 ID는 거절합니다.
 
 ## 3.2 모델이 반환한 ID도 검사하기
 
@@ -13,14 +13,14 @@
 
 ```java
     public CounselResult verifySelection(Intent requestIntent,
-            CandidateEvidenceSelection candidateSelection, CounselRequestFacts requestFacts) {
+            CandidateEvidenceSelection candidateSelection, CounselToolResults toolResults) {
         if (hasInvalidSelection(candidateSelection)) {
             return verificationFailed(requestIntent);
         }
 
         List<ProductPriceDetails> verifiedOffers = new ArrayList<>();
         for (String productId : candidateSelection.productIds().stream().distinct().toList()) {
-            ProductPriceDetails priceDetails = requestFacts.priceDetailsFor(productId);
+            ProductPriceDetails priceDetails = toolResults.priceDetailsFor(productId);
             if (!isValidProductSelection(requestIntent.task().equals("SHOPPING"), requestIntent, priceDetails)) {
                 return verificationFailed(requestIntent);
             }
@@ -30,7 +30,7 @@
         // 정책 ID도 이번 요청의 검색 결과에서 찾아야 답변 근거로 사용할 수 있다.
         List<PolicySearchResult> verifiedSources = new ArrayList<>();
         for (String sourceId : candidateSelection.sourceIds().stream().distinct().toList()) {
-            PolicySearchResult policyResult = requestFacts.policyResultFor(sourceId);
+            PolicySearchResult policyResult = toolResults.policyResultFor(sourceId);
             if (policyResult == null) {
                 return verificationFailed(requestIntent);
             }
@@ -38,13 +38,13 @@
         }
 
         if (requestIntent.task().equals("SHOPPING") && verifiedOffers.isEmpty()) {
-            String resultStatus = hasNoAffordableProduct(requestIntent, requestFacts)
+            String resultStatus = hasNoAffordableProduct(requestIntent, toolResults)
                     ? "NO_RESULTS" : "NO_VERIFIED_OFFER";
             return new CounselResult(resultStatus, "현재 조건에서 확인된 추천 상품이 없습니다.",
                     requestIntent, List.of(), List.of());
         }
         if (requestIntent.task().equals("POLICY") && verifiedSources.isEmpty()) {
-            String resultStatus = requestFacts.policySearchPerformed() && !requestFacts.hasPolicySearchResults()
+            String resultStatus = toolResults.policySearchPerformed() && !toolResults.hasPolicySearchResults()
                     ? "NO_CONTEXT" : "NO_VERIFIED_SOURCE";
             return new CounselResult(resultStatus, "확인할 수 있는 정책 근거가 없습니다.",
                     requestIntent, List.of(), List.of());
@@ -80,7 +80,7 @@
 <details>
 <summary>해설</summary>
 
-`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselRequestFacts.priceDetailsFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
+`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailsFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
 
 </details>
 

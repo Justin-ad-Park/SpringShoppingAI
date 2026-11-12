@@ -5,21 +5,21 @@ import com.example.ailearning.l13shopping.domain.Product;
 import com.example.ailearning.l13shopping.domain.ProductCatalog;
 import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
 import com.example.ailearning.l13shopping.support.RunState;
-import com.example.ailearning.l13shopping.workflow.CounselRequestFacts;
+import com.example.ailearning.l13shopping.workflow.CounselToolResults;
 import org.springframework.ai.tool.annotation.Tool;
 import java.util.List;
 
 public class ProductTools {
     private final ProductCatalog productCatalog;
     private final Intent intent;
-    private final CounselRequestFacts requestFacts;
+    private final CounselToolResults toolResults;
     private final RunState runState;
 
     public ProductTools(ProductCatalog productCatalog, Intent intent,
-            CounselRequestFacts requestFacts, RunState runState) {
+            CounselToolResults toolResults, RunState runState) {
         this.productCatalog = productCatalog;
         this.intent = intent;
-        this.requestFacts = requestFacts;
+        this.toolResults = toolResults;
         this.runState = runState;
     }
 
@@ -29,7 +29,7 @@ public class ProductTools {
         List<Product> foundProducts = productCatalog.search(intent.category(), intent.totalBudget());
 
         runState.check();
-        requestFacts.recordProductSearch(foundProducts);
+        toolResults.recordProductSearch(foundProducts);
         runState.recordToolResult("searchProducts", foundProducts);
         return foundProducts;
     }
@@ -40,7 +40,7 @@ public class ProductTools {
         ProductPriceDetails priceDetails = productCatalog.calculatePriceDetails(productId);
 
         runState.check();
-        requestFacts.recordPriceLookup(productId, priceDetails);
+        toolResults.recordPriceLookup(productId, priceDetails);
         runState.recordToolResult("calculateShipping", priceDetails);
         return priceDetails;
     }

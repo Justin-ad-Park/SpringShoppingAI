@@ -9,34 +9,34 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CriteriaService {
-    static final String SYSTEM_INSTRUCTION = """
+    static final String CRITERIA_EXTRACTION_INSTRUCTION = """
             사용자 요청에서 상품 카테고리(category)와 상품 가격 상한(maxPrice)을 추출하세요.
             category는 음료/생활 중 사용자가 명시한 것만 쓰세요.
             가격은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
             배송비는 계산하지 마세요. 실제 상품을 검색하는 작업도 하지 않습니다.
             """;
-    private final ChatClient client;
+    private final ChatClient chatClient;
 
     public CriteriaService(ChatClient.Builder builder) {
-        client = builder.build();
+        chatClient = builder.build();
     }
 
-    public String text(String question) {
-        return client
+    public String extractCriteriaAsText(String question) {
+        return chatClient
                 .prompt()
-                .system(SYSTEM_INSTRUCTION)
+                .system(CRITERIA_EXTRACTION_INSTRUCTION)
                 .user(question)
                 .call()
                 .content();
     }
 
-    public SearchCriteria extract(String question) {
+    public SearchCriteria extractCriteria(String question) {
         SearchCriteria criteria;
         try {
             // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
-            criteria = client
+            criteria = chatClient
                     .prompt()
-                    .system(SYSTEM_INSTRUCTION)
+                    .system(CRITERIA_EXTRACTION_INSTRUCTION)
                     .user(question)
                     .call()
                     .entity(SearchCriteria.class);

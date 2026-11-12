@@ -19,19 +19,19 @@
 ## 먼저 A와 B의 순서만 관찰하기
 
 Advisor 클래스를 작성하는 것만으로는 호출에 참여하지 않습니다. 요청에 `.advisors(...)`로 등록해야 합니다.
-다음은 등록 원리를 보여주는 부분 예제입니다. `client`는 앞 단원처럼 만든 ChatClient이고, `TraceAdvisor` 전체 코드는 아래에 있습니다.
+다음은 등록 원리를 보여주는 부분 예제입니다. `chatClient`는 앞 단원처럼 만든 ChatClient이고, `TraceAdvisor` 전체 코드는 아래에 있습니다.
 메모리와 도구는 등록하지 않아 A·B의 순서에만 집중할 수 있습니다.
 
 ```java
-var steps = new java.util.ArrayList<String>();
-String answer = client
+var advisorSteps = new java.util.ArrayList<String>();
+String answer = chatClient
         .prompt()
         .user("안녕하세요.")
-        .advisors(new TraceAdvisor("A", 0, steps),
-                new TraceAdvisor("B", 10, steps))
+        .advisors(new TraceAdvisor("A", 0, advisorSteps),
+                new TraceAdvisor("B", 10, advisorSteps))
         .call()
         .content();
-System.out.println(steps); // [A:before, B:before, B:after, A:after]
+System.out.println(advisorSteps); // [A:before, B:before, B:after, A:after]
 ```
 
 실행 모듈의 등록 위치는 [AdvisorChatService.chat()](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)입니다.
@@ -70,13 +70,13 @@ import org.springframework.ai.chat.client.advisor.api.*;
 import java.util.List;
 
 /** before는 다음 처리를 호출하기 전, after는 반환되거나 실패한 뒤에 기록한다. */
-public record TraceAdvisor(String name, int order, List<String> steps) implements CallAdvisor {
-    public String getName() { return name; }
-    public int getOrder() { return order; }
+public record TraceAdvisor(String advisorName, int advisorOrder, List<String> advisorSteps) implements CallAdvisor {
+    public String getName() { return advisorName; }
+    public int getOrder() { return advisorOrder; }
     public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
-        steps.add(name + ":before");
+        advisorSteps.add(advisorName + ":before");
         try { return chain.nextCall(request); }
-        finally { steps.add(name + ":after"); }
+        finally { advisorSteps.add(advisorName + ":after"); }
     }
 }
 ```

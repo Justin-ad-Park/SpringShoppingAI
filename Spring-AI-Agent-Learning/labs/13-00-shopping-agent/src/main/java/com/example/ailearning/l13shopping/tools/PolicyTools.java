@@ -3,18 +3,18 @@ package com.example.ailearning.l13shopping.tools;
 import com.example.ailearning.l13shopping.policy.PolicySearch;
 import com.example.ailearning.l13shopping.policy.PolicySearchResult;
 import com.example.ailearning.l13shopping.support.RunState;
-import com.example.ailearning.l13shopping.workflow.CounselRequestFacts;
+import com.example.ailearning.l13shopping.workflow.CounselToolResults;
 import org.springframework.ai.tool.annotation.Tool;
 import java.util.List;
 
 public class PolicyTools {
     private final PolicySearch policySearch;
-    private final CounselRequestFacts requestFacts;
+    private final CounselToolResults toolResults;
     private final RunState runState;
 
-    public PolicyTools(PolicySearch policySearch, CounselRequestFacts requestFacts, RunState runState) {
+    public PolicyTools(PolicySearch policySearch, CounselToolResults toolResults, RunState runState) {
         this.policySearch = policySearch;
-        this.requestFacts = requestFacts;
+        this.toolResults = toolResults;
         this.runState = runState;
     }
 
@@ -24,7 +24,7 @@ public class PolicyTools {
         List<PolicySearchResult> searchResults = policySearch.searchPolicies(question);
 
         runState.check();
-        requestFacts.recordPolicySearch(searchResults);
+        toolResults.recordPolicySearch(searchResults);
         runState.recordToolResult("searchPolicy", searchResults);
         return searchResults;
     }

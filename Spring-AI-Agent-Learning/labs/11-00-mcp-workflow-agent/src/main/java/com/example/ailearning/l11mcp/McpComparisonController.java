@@ -1,5 +1,7 @@
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
@@ -31,7 +33,7 @@ public class McpComparisonController {
 
     @GetMapping("/shipping-policy")
     public JsonNode shippingPolicy() {
-        return shoppingMcpGateway.call("getShippingPolicy", Map.of());
+        return shoppingMcpGateway.callTool("getShippingPolicy", Map.of());
     }
 
     @PostMapping(value = "/{mode:workflow|agent|hybrid}", consumes = MediaType.TEXT_PLAIN_VALUE)
@@ -39,7 +41,7 @@ public class McpComparisonController {
             @RequestBody @NotBlank @Size(max = 2000) String question) {
         return switch (mode) {
             case "workflow" -> workflowService.run(question);
-            case "agent" -> agentService.agent(question);
+            case "agent" -> agentService.run(question);
             case "hybrid" -> hybridService.run(question);
             default -> throw new IllegalArgumentException("지원하지 않는 실행 방식입니다.");
         };

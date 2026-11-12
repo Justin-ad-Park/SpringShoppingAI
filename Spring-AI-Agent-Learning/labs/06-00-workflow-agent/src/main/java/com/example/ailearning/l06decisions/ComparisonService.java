@@ -14,12 +14,12 @@ import java.util.List;
 @Service
 public class ComparisonService {
     private static final Logger log = LoggerFactory.getLogger(ComparisonService.class);
-    static final String EXTRACT_CATEGORY_BUDGET = """
+    static final String PRODUCT_CRITERIA_EXTRACTION_INSTRUCTION = """
             TASK:EXTRACT
             명시한 상품 카테고리(category: 음료/생활)와 배송비 포함 총예산(totalBudget)을 추출하세요.
             예산은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
             """;
-    static final String AGENT_GOAL = """
+    static final String SHOPPING_AGENT_INSTRUCTION = """
             TASK:AGENT
             배송비 포함 예산에 맞는 선물을 추천하세요. 실제 가격은 제공된 도구 결과만 쓰세요.
             필요에 따라 상품 검색과 배송비 조회를 선택하고 결과에 따라 다음 행동을 결정하세요.
@@ -37,15 +37,15 @@ public class ComparisonService {
     public RunResult run(ExecutionMode mode, String question) {
         try {
             ExecutionResult result = switch (mode) {
-                case WORKFLOW -> workflow(question);
-                case AGENT -> agent(question);
-                case HYBRID -> hybrid(question);
+                case WORKFLOW -> runWorkflow(question);
+                case AGENT -> runAgent(question);
+                case HYBRID -> runHybrid(question);
             };
             return new RunResult(mode, result.status(), result.answer(), result.offers());
         } catch (RuntimeException error) {
-            Throwable causeType = error;
-            while (causeType.getCause() != null) causeType = causeType.getCause();
-            log.warn("Comparison failed: stage={}, errorType={}", mode, causeType.getClass().getSimpleName());
+            Throwable rootCause = error;
+            while (rootCause.getCause() != null) rootCause = rootCause.getCause();
+            log.warn("Comparison failed: stage={}, errorType={}", mode, rootCause.getClass().getSimpleName());
             return new RunResult(mode, "FAILED", "모델 연결과 응답 형식을 확인하세요.", List.of());
         }
     }
@@ -53,7 +53,7 @@ public class ComparisonService {
     private ProductSelectionCriteria extractProductSelectionCriteria(String question) {
         ProductSelectionCriteria criteria = chatClient
                 .prompt()
-                .system(EXTRACT_CATEGORY_BUDGET)
+                .system(PRODUCT_CRITERIA_EXTRACTION_INSTRUCTION)
                 .user(question)
                 .call()
                 .entity(ProductSelectionCriteria.class);
@@ -62,9 +62,9 @@ public class ComparisonService {
         return criteria;
     }
 
-    private ExecutionResult workflow(String question) {
+    private ExecutionResult runWorkflow(String question) {
         ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
-        if (criteria.totalBudget() == null) return needsBudget();
+        if (criteria.totalBudget() == null) return createBudgetQuestion();
         List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
         List<ProductPriceDetails> offers = products
                 .stream()
@@ -81,11 +81,11 @@ public class ComparisonService {
         return new ExecutionResult("COMPLETED", answer, offers);
     }
 
-    private ExecutionResult agent(String question) {
+    private ExecutionResult runAgent(String question) {
         ShoppingTools shoppingTools = new ShoppingTools(productCatalog);
         String answer = chatClient
                 .prompt()
-                .system(AGENT_GOAL)
+                .system(SHOPPING_AGENT_INSTRUCTION)
                 .user(question)
                 .tools(shoppingTools)
                 .call()
@@ -94,37 +94,37 @@ public class ComparisonService {
         return new ExecutionResult("COMPLETED", answer, shoppingTools.getPriceDetails());
     }
 
-    private ExecutionResult hybrid(String question) {
+    private ExecutionResult runHybrid(String question) {
         ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
-        if (criteria.totalBudget() == null) return needsBudget();
+        if (criteria.totalBudget() == null) return createBudgetQuestion();
         BudgetShoppingTools shoppingTools = new BudgetShoppingTools(productCatalog, criteria);
         chatClient
                 .prompt()
-                .system(AGENT_GOAL)
+                .system(SHOPPING_AGENT_INSTRUCTION)
                 .user(question + "\n코드로 확정한 조건: " + criteria)
                 .tools(shoppingTools)
                 .call()
                 .content();
-        List<ProductPriceDetails> eligible = shoppingTools
+        List<ProductPriceDetails> verifiedOffers = shoppingTools
                 .getPriceDetails()
                 .stream()
                 .filter(offer -> criteria.category() == null || offer.product().category().equals(criteria.category()))
                 .filter(offer -> offer.total() <= criteria.totalBudget())
                 .toList();
-        if (eligible.isEmpty()) {
-            return new ExecutionResult("NO_VERIFIED_OFFER", "검증된 예산 안의 후보가 없습니다.", eligible);
+        if (verifiedOffers.isEmpty()) {
+            return new ExecutionResult("NO_VERIFIED_OFFER", "검증된 예산 안의 후보가 없습니다.", verifiedOffers);
         }
 
         // 최종 후보와 표시 문장은 코드로 확정한다. 미조회·예산 초과 상품은 포함하지 않는다.
-        List<String> productIds = eligible
+        List<String> productIds = verifiedOffers
                 .stream()
                 .map(offer -> offer.product().id())
                 .toList();
         String answer = "Java 검증 후보: " + productIds;
-        return new ExecutionResult("COMPLETED", answer, eligible);
+        return new ExecutionResult("COMPLETED", answer, verifiedOffers);
     }
 
-    private ExecutionResult needsBudget() { return new ExecutionResult("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }
+    private ExecutionResult createBudgetQuestion() { return new ExecutionResult("NEEDS_INPUT", "배송비 포함 예산을 알려주세요.", List.of()); }
 
     private record ExecutionResult(String status, String answer, List<ProductPriceDetails> offers) {}
 }

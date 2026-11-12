@@ -1,5 +1,7 @@
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
@@ -55,7 +57,7 @@ class McpComparisonLocalModelTest {
     @Test
     void 모델_없이_실제_MCP의_도구_목록과_배송_정책을_조회한다() {
         List<String> names = shoppingMcpGateway.listToolNames();
-        JsonNode policy = shoppingMcpGateway.call("getShippingPolicy", Map.of());
+        JsonNode policy = shoppingMcpGateway.callTool("getShippingPolicy", Map.of());
         output.printValue("발견한 MCP 도구", names);
         output.printValue("배송 정책", policy);
         assertThat(names).contains("searchProducts", "quoteCart", "getShippingPolicy", "getCart");
@@ -204,7 +206,7 @@ class McpComparisonLocalModelTest {
     @Test
     void 실제_MCP_서버의_도구_실패가_성공_결과로_변환되지_않는다() {
         RuntimeException error = catchThrowableOfType(RuntimeException.class,
-                () -> shoppingMcpGateway.call("quoteCart",
+                () -> shoppingMcpGateway.callTool("quoteCart",
                         Map.of("scenario", "empty", "additionalProductIds", List.of("unknown"))));
         output.printValue("MCP 도구 실패", error);
         assertThat(error).isNotNull();

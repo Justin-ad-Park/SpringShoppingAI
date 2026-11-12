@@ -31,6 +31,9 @@ sequenceDiagram
 ```java
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.McpToolExecutor;
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import com.example.ailearning.l11mcp.domain.SearchConditions;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -42,50 +45,50 @@ import java.util.Map;
 
 @Service
 public class McpWorkflowService {
-    private final SearchConditionExtractor conditionExtractor;
+    private final SearchConditionExtractor searchConditionExtractor;
     private final ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
-    private final int maxToolCalls;
+    private final int maxToolCallAttempts;
 
-    public McpWorkflowService(SearchConditionExtractor conditionExtractor,
+    public McpWorkflowService(SearchConditionExtractor searchConditionExtractor,
             ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
-            @Value("${learning.mcp.max-tool-calls}") int maxToolCalls) {
-        this.conditionExtractor = conditionExtractor;
+            @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
+        this.searchConditionExtractor = searchConditionExtractor;
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.objectMapper = objectMapper;
-        this.maxToolCalls = maxToolCalls;
+        this.maxToolCallAttempts = maxToolCallAttempts;
     }
 
     public McpRunResult run(String question) {
-        SearchConditions conditions = conditionExtractor.extract(question);
-        if (!conditions.isComplete()) {
+        SearchConditions searchConditions = searchConditionExtractor.extract(question);
+        if (!searchConditions.isComplete()) {
             return new McpRunResult("NEEDS_INPUT", "카테고리와 상품 가격 상한을 알려주세요.", List.of());
         }
-        McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, null);
-        JsonNode products = toolRun.call("searchProducts", conditions.searchArguments());
-        List<String> productIds = McpToolRun.readProductIds(products);
+        McpToolExecutor toolExecutor = new McpToolExecutor(shoppingMcpGateway, objectMapper, maxToolCallAttempts, null);
+        JsonNode products = toolExecutor.executeTool("searchProducts", searchConditions.searchArguments());
+        List<String> productIds = McpToolExecutor.readProductIds(products);
         if (productIds.isEmpty()) {
-            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolRun.toolCalls());
+            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolExecutor.toolCalls());
         }
-        JsonNode quote = toolRun.call("quoteCart",
+        JsonNode cartQuote = toolExecutor.executeTool("quoteCart",
                 Map.of("scenario", "empty", "additionalProductIds", productIds));
-        if (!quote.path("valid").asBoolean()) {
+        if (!cartQuote.path("valid").asBoolean()) {
             throw new IllegalStateException("장바구니 금액을 계산할 수 없습니다.");
         }
-        boolean overBudget = conditions.totalBudget() != null
-                && quote.path("total").asLong() > conditions.totalBudget();
+        boolean overBudget = searchConditions.totalBudget() != null
+                && cartQuote.path("total").asLong() > searchConditions.totalBudget();
         return new McpRunResult(overBudget ? "OVER_BUDGET" : "COMPLETED",
-                "상품 ID: " + productIds + ", 배송비 포함 총액: " + quote.path("total").asLong() + "원",
-                toolRun.toolCalls());
+                "상품 ID: " + productIds + ", 배송비 포함 총액: " + cartQuote.path("total").asLong() + "원",
+                toolExecutor.toolCalls());
     }
 }
 ```
 
-`toolRun.call()`의 이름과 호출 위치가 코드에 정해져 있습니다. 조건 추출 프롬프트에는 도구 목록을 보내지 않습니다.
+`toolExecutor.executeTool()`의 이름과 호출 위치가 코드에 정해져 있습니다. 조건 추출 프롬프트에는 도구 목록을 보내지 않습니다.
 `productIds`는 검색 결과에서 얻으므로 상품이 두 개여도 모두 계산에 전달합니다. 상품 ID를 예상값으로 하드코딩하지 않습니다.
 `SearchConditions.searchArguments()`는 같은 배송그룹의 재고 있는 상품을 최대 20개 검색합니다. 이 범위는 현재 서버의 계산 조건에 맞춘 실습 범위입니다.
 
-`McpToolRun`은 요청별 기록과 호출 횟수 제한을 담당하는 제공 코드입니다. 지금은 `call()`과 결과의 `toolCalls`만 따라가세요. 조건 고정 기능은 11-5에서 읽습니다.
+`McpToolExecutor`은 요청별 기록과 호출 횟수 제한을 담당하는 제공 코드입니다. 지금은 `executeTool()`과 결과의 `toolCalls`만 따라가세요. 조건 고정 기능은 11-5에서 읽습니다.
 
 ## 실행
 

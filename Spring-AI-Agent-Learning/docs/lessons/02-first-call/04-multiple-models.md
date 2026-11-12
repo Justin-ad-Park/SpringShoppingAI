@@ -154,18 +154,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MultipleModelsService {
-    private final ChatClient openAi;
-    private final ChatClient anthropic;
+    private final ChatClient openAiChatClient;
+    private final ChatClient anthropicChatClient;
 
     public MultipleModelsService(
-            @Qualifier("openAiChatClient") ChatClient openAi,
-            @Qualifier("anthropicChatClient") ChatClient anthropic) {
-        this.openAi = openAi;
-        this.anthropic = anthropic;
+            @Qualifier("openAiChatClient") ChatClient openAiChatClient,
+            @Qualifier("anthropicChatClient") ChatClient anthropicChatClient) {
+        this.openAiChatClient = openAiChatClient;
+        this.anthropicChatClient = anthropicChatClient;
     }
 
     public String askOpenAi(String question) {
-        return openAi
+        return openAiChatClient
                 .prompt()
                 .user(question)
                 .call()
@@ -173,7 +173,7 @@ public class MultipleModelsService {
     }
 
     public String askAnthropic(String question) {
-        return anthropic
+        return anthropicChatClient
                 .prompt()
                 .user(question)
                 .call()
@@ -204,20 +204,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/multi-chat")
 public class MultipleModelsController {
-    private final MultipleModelsService service;
+    private final MultipleModelsService multipleModelsService;
 
-    public MultipleModelsController(MultipleModelsService service) {
-        this.service = service;
+    public MultipleModelsController(MultipleModelsService multipleModelsService) {
+        this.multipleModelsService = multipleModelsService;
     }
 
     @PostMapping(value = "/openai", consumes = "text/plain", produces = "text/plain;charset=UTF-8")
     public String openAi(@RequestBody @NotBlank String question) {
-        return service.askOpenAi(question);
+        return multipleModelsService.askOpenAi(question);
     }
 
     @PostMapping(value = "/anthropic", consumes = "text/plain", produces = "text/plain;charset=UTF-8")
     public String anthropic(@RequestBody @NotBlank String question) {
-        return service.askAnthropic(question);
+        return multipleModelsService.askAnthropic(question);
     }
 }
 ```
@@ -299,15 +299,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SameProviderModelsService {
-    private final ChatClient openAi;
+    private final ChatClient openAiChatClient;
 
     public SameProviderModelsService(
-            @Qualifier("openAiChatClient") ChatClient openAi) {
-        this.openAi = openAi;
+            @Qualifier("openAiChatClient") ChatClient openAiChatClient) {
+        this.openAiChatClient = openAiChatClient;
     }
 
     public String ask(String question, String modelId) {
-        return openAi
+        return openAiChatClient
                 .prompt()
                 .user(question)
                 .options(OpenAiChatOptions.builder()

@@ -51,5 +51,5 @@ curl http://127.0.0.1:8106/api/mcp/workflow \
 ## 코드 읽기 순서
 
 ShoppingMcpGateway의 목록·직접 호출 → SearchConditionExtractor → McpWorkflowService → McpAgentService → McpHybridService 순서입니다.
-McpToolRun은 기록·상한을 제공하는 보조 코드이며, 조건 고정 부분은 하이브리드 수업에서 읽습니다.
+McpToolExecutor은 기록·상한을 제공하는 보조 코드이며, 조건 고정 부분은 하이브리드 수업에서 읽습니다.
 연결 실패는 shopping-mcp 실행 여부와 URL, 포트 충돌을 확인하세요. IDE에서 새 모듈의 Run 아이콘이 없으면 루트 Gradle 프로젝트를 다시 동기화합니다.

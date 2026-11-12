@@ -22,7 +22,7 @@ flowchart TD
     A3 --> A9[Java: 응답 반환]
 ```
 
-Agent에 전달하는 프롬프트의 핵심은 다음과 같습니다. 실제 문자열은 서비스의 `AGENT_GOAL`에 있습니다.
+Agent에 전달하는 프롬프트의 핵심은 다음과 같습니다. 실제 문자열은 서비스의 `SHOPPING_AGENT_INSTRUCTION`에 있습니다.
 
 ```text
 배송비 포함 예산에 맞는 선물을 추천하세요.
@@ -35,11 +35,11 @@ Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형
 위 프롬프트는 **목표와 행동 기준**을 지시합니다. 단어만 바꾼 것이 아니라 실행 구조도 다릅니다.
 
 ```java
-    private ExecutionResult agent(String question) {
+    private ExecutionResult runAgent(String question) {
         ShoppingTools shoppingTools = new ShoppingTools(productCatalog);
         String answer = chatClient
                 .prompt()
-                .system(AGENT_GOAL)
+                .system(SHOPPING_AGENT_INSTRUCTION)
                 .user(question)
                 .tools(shoppingTools)
                 .call()

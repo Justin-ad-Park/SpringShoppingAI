@@ -7,7 +7,7 @@
 |---|---|
 | 문장·목표·설명 순서 | [목표와 배치](../rules/authoring.md#목표에-맞는-설명과-배치), [쉬운 표현과 문서 분리](../rules/authoring.md#쉬운-표현과-문서-분리) |
 | 코드 예제 | [설명 근거](../rules/authoring.md#설명의-근거와-동작-범위), [실행 예제](../rules/authoring.md#실행-가능한-예제) |
-| 이름·책임 정리 | [이름과 코드 표현](../rules/authoring.md#읽기-쉬운-이름과-코드-표현), [리팩터링](../rules/authoring.md#동작을-보존하는-리팩터링) |
+| 이름·패키지·책임 정리 | [이름 기준](../rules/naming.md), [리팩터링](../rules/authoring.md#동작을-보존하는-리팩터링) |
 | 파일 이동·문서 분리 | [변경과 완료](../rules/authoring.md#변경과-완료), [문서 분리](../rules/authoring.md#쉬운-표현과-문서-분리) |
 | 설정 통일 | 프로젝트 설정의 실행 정책·명령 |
 

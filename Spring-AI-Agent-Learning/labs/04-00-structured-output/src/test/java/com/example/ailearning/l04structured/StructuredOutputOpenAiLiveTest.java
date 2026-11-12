@@ -28,10 +28,10 @@ class StructuredOutputOpenAiLiveTest {
     @Timeout(180)
     void 실제_OpenAI_응답을_문자열과_record로_받고_검증한다() {
         String question = "음료 중 15000원 이하 선물을 찾아줘.";
-        String text = service.text(question);
+        String text = service.extractCriteriaAsText(question);
         System.out.printf("문자열 응답: %s%n", text);
 
-        SearchCriteria criteria = service.extract(question);
+        SearchCriteria criteria = service.extractCriteria(question);
         System.out.printf("검증된 조건: %s%n", criteria);
 
         assertThat(text).isNotBlank();

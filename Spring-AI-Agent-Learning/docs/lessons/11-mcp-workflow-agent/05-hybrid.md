@@ -24,6 +24,9 @@ flowchart TD
 ```java
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.McpToolExecutor;
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import com.example.ailearning.l11mcp.domain.SearchConditions;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -34,48 +37,48 @@ import java.util.List;
 
 @Service
 public class McpHybridService {
-    private final SearchConditionExtractor conditionExtractor;
+    private final SearchConditionExtractor searchConditionExtractor;
     private final McpAgentService agentService;
     private final ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
-    private final int maxToolCalls;
+    private final int maxToolCallAttempts;
 
-    public McpHybridService(SearchConditionExtractor conditionExtractor, McpAgentService agentService,
+    public McpHybridService(SearchConditionExtractor searchConditionExtractor, McpAgentService agentService,
             ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
-            @Value("${learning.mcp.max-tool-calls}") int maxToolCalls) {
-        this.conditionExtractor = conditionExtractor;
+            @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
+        this.searchConditionExtractor = searchConditionExtractor;
         this.agentService = agentService;
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.objectMapper = objectMapper;
-        this.maxToolCalls = maxToolCalls;
+        this.maxToolCallAttempts = maxToolCallAttempts;
     }
 
     public McpRunResult run(String question) {
-        SearchConditions conditions = conditionExtractor.extract(question);
-        if (!conditions.isComplete()) {
+        SearchConditions searchConditions = searchConditionExtractor.extract(question);
+        if (!searchConditions.isComplete()) {
             return new McpRunResult("NEEDS_INPUT", "카테고리와 상품 가격 상한을 알려주세요.", List.of());
         }
-        McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, conditions);
-        agentService.askWithMcpTools(question, toolRun);
-        if (toolRun.searchedWithoutResults()) {
-            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolRun.toolCalls());
+        McpToolExecutor toolExecutor = new McpToolExecutor(shoppingMcpGateway, objectMapper, maxToolCallAttempts, searchConditions);
+        agentService.requestAnswerWithTools(question, toolExecutor);
+        if (toolExecutor.hasEmptyProductSearchResult()) {
+            return new McpRunResult("NO_RESULTS", "조건에 맞는 상품이 없습니다.", toolExecutor.toolCalls());
         }
-        JsonNode quote = toolRun.lastQuote();
-        if (quote == null || !quote.path("valid").asBoolean()) {
-            return new McpRunResult("UNVERIFIED", "전체 상품의 금액 계산을 확인하지 못했습니다.", toolRun.toolCalls());
+        JsonNode cartQuote = toolExecutor.getLastCartQuote();
+        if (cartQuote == null || !cartQuote.path("valid").asBoolean()) {
+            return new McpRunResult("UNVERIFIED", "전체 상품의 금액 계산을 확인하지 못했습니다.", toolExecutor.toolCalls());
         }
-        long total = quote.path("total").asLong();
-        if (conditions.totalBudget() != null && total > conditions.totalBudget()) {
-            return new McpRunResult("OVER_BUDGET", "배송비 포함 " + total + "원으로 총예산을 초과합니다.", toolRun.toolCalls());
+        long cartTotal = cartQuote.path("total").asLong();
+        if (searchConditions.totalBudget() != null && cartTotal > searchConditions.totalBudget()) {
+            return new McpRunResult("OVER_BUDGET", "배송비 포함 " + cartTotal + "원으로 총예산을 초과합니다.", toolExecutor.toolCalls());
         }
         // 모델의 최종 문장 대신 실제 MCP 결과로 표시할 금액을 확정한다.
-        return new McpRunResult("VERIFIED", "배송비 포함 총액: " + total + "원", toolRun.toolCalls());
+        return new McpRunResult("VERIFIED", "배송비 포함 총액: " + cartTotal + "원", toolExecutor.toolCalls());
     }
 
 }
 ```
 
-Agent와 같은 `askWithMcpTools()`를 재사용하지만 `McpToolRun`에 `conditions`를 전달합니다. 이 값이 있으면 도구 실행 전 검증을 추가합니다.
+Agent와 같은 `requestAnswerWithTools()`를 재사용하지만 `McpToolExecutor`에 `searchConditions`를 전달합니다. 이 값이 있으면 도구 실행 전 검증을 추가합니다.
 
 | 지점 | Java가 하는 일 | 여전히 모델이 하는 일 |
 |---|---|---|
@@ -83,8 +86,8 @@ Agent와 같은 `askWithMcpTools()`를 재사용하지만 `McpToolRun`에 `condi
 | 계산 전 | 검색 결과 전체의 ID인지 확인하고 빈 데모 장바구니로 고정 | 검색 결과를 읽고 계산 도구의 인자를 구성 |
 | 응답 전 | 계산 성공·총예산 확인, 실제 금액으로 문장 작성 | 도구 선택 반복과 종료 요청 |
 
-[보조 코드 McpToolRun](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpToolRun.java)의 `restrictArguments()`에서 실제 연결을 확인합니다.
-`McpToolRun`의 `new ToolCallback() { ... }`는 인터페이스의 구현 객체를 그 자리에서 만드는 Java 익명 클래스입니다. `getToolDefinition()`은 모델에 보낼 도구 정보를, `call()`은 실제 실행을 담당합니다. `call()`에서 검사 → 원격 호출 → 결과 기록 순서를 추가합니다.
+[보조 코드 McpToolExecutor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/tools/McpToolExecutor.java)의 `buildRestrictedArguments()`에서 실제 연결을 확인합니다.
+`McpToolExecutor`의 `new ToolCallback() { ... }`는 인터페이스의 구현 객체를 그 자리에서 만드는 Java 익명 클래스입니다. `getToolDefinition()`은 모델에 보낼 도구 정보를, `call()`은 실제 실행을 담당합니다. `call()`이 `executeAndRecordToolCall()`에 위임하고, 그 메서드가 상한·인자 검사 → 원격 호출 → 결과 기록 순서를 수행합니다.
 
 검색 ID와 계산 ID의 집합·개수가 모두 같아야 하므로 일부 누락·중복·새 ID를 거부합니다.
 이는 이 실습의 “검색 결과 모두 한 개씩 구매” 정책입니다. 부분 추천 서비스라면 다른 정책이 필요합니다.

@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/criteria")
 public class CriteriaController {
-    private final CriteriaService service;
+    private final CriteriaService criteriaService;
 
-    public CriteriaController(CriteriaService service) {
-        this.service = service;
+    public CriteriaController(CriteriaService criteriaService) {
+        this.criteriaService = criteriaService;
     }
 
     @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
-    public SearchCriteria extract(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.extract(question);
+    public SearchCriteria extractCriteria(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return criteriaService.extractCriteria(question);
     }
 
     @PostMapping(value = "/text", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String text(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.text(question);
+    public String extractCriteriaAsText(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return criteriaService.extractCriteriaAsText(question);
     }
 }

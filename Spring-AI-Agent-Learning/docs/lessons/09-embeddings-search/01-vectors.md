@@ -38,12 +38,12 @@ sequenceDiagram
 ```
 
 [SearchService.java](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/SearchService.java)의 `embed()` 메서드 발췌입니다.
-`embedding`은 생성자로 주입받은 `EmbeddingModel`입니다. 반환 자료형 `Vector`는 배열 길이인 `dimensions`와 배열 자체인 `values`를 담는 record입니다.
+`embeddingModel`은 생성자로 주입받은 `EmbeddingModel`입니다. 반환 자료형 `EmbeddingVector`는 배열 길이인 `dimensions`와 배열 자체인 `values`를 담는 record입니다.
 
 ```java
-public Vector embed(String text) {
-    float[] values = embedding.embed(text);
-    return new Vector(values.length, values);
+public EmbeddingVector embed(String text) {
+    float[] vectorValues = embeddingModel.embed(text);
+    return new EmbeddingVector(vectorValues.length, vectorValues);
 }
 ```
 

@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ObservedChatService {
-    private final ChatClient client;
-    public ObservedChatService(ChatClient.Builder builder) { client = builder.build(); }
+    private final ChatClient chatClient;
+    public ObservedChatService(ChatClient.Builder builder) { chatClient = builder.build(); }
 
     public String ask(String question) {
-        return client
+        return chatClient
                 .prompt()
                 .user(question)
                 .call()

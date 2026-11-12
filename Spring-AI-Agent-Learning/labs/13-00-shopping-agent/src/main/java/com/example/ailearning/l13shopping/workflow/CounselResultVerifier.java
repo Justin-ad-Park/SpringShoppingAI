@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CounselResultVerifier {
     public CounselResult verifySelection(Intent requestIntent,
-            CandidateEvidenceSelection candidateSelection, CounselRequestFacts requestFacts) {
+            CandidateEvidenceSelection candidateSelection, CounselToolResults toolResults) {
         if (hasInvalidSelection(candidateSelection)) {
             return verificationFailed(requestIntent);
         }
@@ -21,7 +21,7 @@ public class CounselResultVerifier {
         boolean shoppingRequest = requestIntent.task().equals("SHOPPING");
         List<ProductPriceDetails> verifiedOffers = new ArrayList<>();
         for (String productId : candidateSelection.productIds().stream().distinct().toList()) {
-            ProductPriceDetails priceDetails = requestFacts.priceDetailsFor(productId);
+            ProductPriceDetails priceDetails = toolResults.priceDetailsFor(productId);
             if (!isValidProductSelection(shoppingRequest, requestIntent, priceDetails)) {
                 return verificationFailed(requestIntent);
             }
@@ -30,7 +30,7 @@ public class CounselResultVerifier {
 
         List<PolicySearchResult> verifiedSources = new ArrayList<>();
         for (String sourceId : candidateSelection.sourceIds().stream().distinct().toList()) {
-            PolicySearchResult policyResult = requestFacts.policyResultFor(sourceId);
+            PolicySearchResult policyResult = toolResults.policyResultFor(sourceId);
             if (policyResult == null) {
                 return verificationFailed(requestIntent);
             }
@@ -38,7 +38,7 @@ public class CounselResultVerifier {
         }
 
         if (shoppingRequest && verifiedOffers.isEmpty()) {
-            String resultStatus = hasNoAffordableProduct(requestIntent, requestFacts)
+            String resultStatus = hasNoAffordableProduct(requestIntent, toolResults)
                     ? "NO_RESULTS"
                     : "NO_VERIFIED_OFFER";
             return new CounselResult(resultStatus, "현재 조건에서 확인된 추천 상품이 없습니다.",
@@ -47,7 +47,7 @@ public class CounselResultVerifier {
 
         boolean policyRequest = requestIntent.task().equals("POLICY");
         if (policyRequest && verifiedSources.isEmpty()) {
-            String resultStatus = requestFacts.policySearchPerformed() && !requestFacts.hasPolicySearchResults()
+            String resultStatus = toolResults.policySearchPerformed() && !toolResults.hasPolicySearchResults()
                     ? "NO_CONTEXT"
                     : "NO_VERIFIED_SOURCE";
             return new CounselResult(resultStatus, "확인할 수 있는 정책 근거가 없습니다.",
@@ -76,17 +76,17 @@ public class CounselResultVerifier {
         return withinBudget && categoryMatches;
     }
 
-    private boolean hasNoAffordableProduct(Intent requestIntent, CounselRequestFacts requestFacts) {
-        if (!requestFacts.productSearchPerformed()) {
+    private boolean hasNoAffordableProduct(Intent requestIntent, CounselToolResults toolResults) {
+        if (!toolResults.productSearchPerformed()) {
             return false;
         }
-        return requestFacts.lastProductSearchResults().stream()
-                .allMatch(product -> isVerifiedAndOverBudget(product, requestIntent, requestFacts));
+        return toolResults.lastProductSearchResults().stream()
+                .allMatch(product -> isVerifiedAndOverBudget(product, requestIntent, toolResults));
     }
 
     private boolean isVerifiedAndOverBudget(Product product, Intent requestIntent,
-            CounselRequestFacts requestFacts) {
-        ProductPriceDetails priceDetails = requestFacts.priceDetailsFor(product.id());
+            CounselToolResults toolResults) {
+        ProductPriceDetails priceDetails = toolResults.priceDetailsFor(product.id());
         return priceDetails != null && priceDetails.total() > requestIntent.totalBudget();
     }
 

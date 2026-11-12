@@ -29,6 +29,9 @@ sequenceDiagram
 ```java
 package com.example.ailearning.l11mcp;
 
+import com.example.ailearning.l11mcp.tools.McpToolExecutor;
+import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +39,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class McpAgentService {
-    private static final String INSTRUCTION = """
+    private static final String MCP_AGENT_INSTRUCTION = """
             TASK:MCP_AGENT
             제공된 MCP 도구 중 필요한 도구와 인자를 선택하세요.
             상품 가격 상한에 맞는 MALL 배송그룹의 재고 있는 상품을 검색하세요.
@@ -48,37 +51,37 @@ public class McpAgentService {
     private final ChatClient chatClient;
     private final ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
-    private final int maxToolCalls;
+    private final int maxToolCallAttempts;
 
     public McpAgentService(ChatClient.Builder builder,
             ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
-            @Value("${learning.mcp.max-tool-calls}") int maxToolCalls) {
+            @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
         this.chatClient = builder.build();
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.objectMapper = objectMapper;
-        this.maxToolCalls = maxToolCalls;
+        this.maxToolCallAttempts = maxToolCallAttempts;
     }
 
-    public McpRunResult agent(String question) {
-        McpToolRun toolRun = new McpToolRun(shoppingMcpGateway, objectMapper, maxToolCalls, null);
-        String answer = askWithMcpTools(question, toolRun);
-        return new McpRunResult("ANSWERED", answer, toolRun.toolCalls());
+    public McpRunResult run(String question) {
+        McpToolExecutor toolExecutor = new McpToolExecutor(shoppingMcpGateway, objectMapper, maxToolCallAttempts, null);
+        String answer = requestAnswerWithTools(question, toolExecutor);
+        return new McpRunResult("ANSWERED", answer, toolExecutor.toolCalls());
     }
 
-    String askWithMcpTools(String question, McpToolRun toolRun) {
+    String requestAnswerWithTools(String question, McpToolExecutor toolExecutor) {
         return chatClient
                 .prompt()
-                .system(INSTRUCTION)
+                .system(MCP_AGENT_INSTRUCTION)
                 .user(question)
-                .toolCallbacks(toolRun.callbacks())
+                .toolCallbacks(toolExecutor.createToolCallbacks())
                 .call()
                 .content();
     }
 }
 ```
 
-`.toolCallbacks(toolRun.callbacks())`로 검색과 계산 도구를 제공합니다. 서버가 제공하는 쿠폰·적립금까지 모델에 전부 노출하지 않습니다.
-`McpToolRun`은 서버에서 발견한 도구 설명·스키마를 유지하고, 실행 때 기록과 상한을 추가합니다. 연결별 이름 접두사는 이 실습에서 원래 도구 이름으로 맞추며, 실행은 같은 원격 callback에 전달합니다.
+`.toolCallbacks(toolExecutor.createToolCallbacks())`로 검색과 계산 도구를 제공합니다. 서버가 제공하는 쿠폰·적립금까지 모델에 전부 노출하지 않습니다.
+`McpToolExecutor`은 서버에서 발견한 도구 설명·스키마를 유지하고, 실행 때 기록과 상한을 추가합니다. 연결별 이름 접두사는 이 실습에서 원래 도구 이름으로 맞추며, 실행은 같은 원격 callback에 전달합니다.
 
 프롬프트의 “모두 계산하세요”는 모델에 대한 지시입니다. 이 단계에는 검색 결과 전체가 실제 계산되었는지 강제하는 Java 검증이 없습니다.
 `ANSWERED`는 답변을 받았다는 뜻이며 금액·요청 이행을 검증했다는 뜻은 아닙니다.

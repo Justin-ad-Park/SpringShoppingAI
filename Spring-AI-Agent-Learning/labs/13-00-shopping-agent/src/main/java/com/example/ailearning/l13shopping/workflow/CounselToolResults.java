@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /** 한 상담 요청에서 도구가 실제로 조회한 결과를 모아 둔다. */
-public final class CounselRequestFacts {
+public final class CounselToolResults {
     private final Map<String, ProductPriceDetails> priceDetailsByProductId = new LinkedHashMap<>();
     private final Map<String, PolicySearchResult> policyResultsById = new LinkedHashMap<>();
     private boolean productSearchPerformed;

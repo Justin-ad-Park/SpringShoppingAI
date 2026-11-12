@@ -14,11 +14,11 @@ import java.util.List;
 @RequestMapping("/api/tools")
 public class ToolController {
     private final ProductCatalog productCatalog;
-    private final ToolChatService service;
+    private final ToolChatService toolChatService;
 
-    public ToolController(ProductCatalog productCatalog, ToolChatService service) {
+    public ToolController(ProductCatalog productCatalog, ToolChatService toolChatService) {
         this.productCatalog = productCatalog;
-        this.service = service;
+        this.toolChatService = toolChatService;
     }
 
     // 일반 Java 호출: LLM을 거치지 않는다.
@@ -34,6 +34,6 @@ public class ToolController {
     @PostMapping(value = "/chat", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)
     public String chat(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.ask(question);
+        return toolChatService.ask(question);
     }
 }

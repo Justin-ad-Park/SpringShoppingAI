@@ -14,7 +14,7 @@ public class SearchConditionExtractor {
     }
 
     public SearchConditions extract(String question) {
-        SearchConditions conditions = chatClient
+        SearchConditions searchConditions = chatClient
                 .prompt()
                 .system("""
                         TASK:MCP_EXTRACT
@@ -25,10 +25,10 @@ public class SearchConditionExtractor {
                 .user(question)
                 .call()
                 .entity(SearchConditions.class);
-        if (conditions == null) {
+        if (searchConditions == null) {
             throw new IllegalStateException("검색 조건이 비었습니다.");
         }
-        conditions.validate();
-        return conditions;
+        searchConditions.validate();
+        return searchConditions;
     }
 }

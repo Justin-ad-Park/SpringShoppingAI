@@ -23,11 +23,11 @@
         }
 
         runState.enterStage(WorkflowStage.TOOLS);
-        CounselRequestFacts requestFacts = new CounselRequestFacts();
+        CounselToolResults toolResults = new CounselToolResults();
         CandidateEvidenceSelection candidateSelection = selectEvidenceWithTools(
-                conversationMessages, requestIntent, requestFacts, runState);
+                conversationMessages, requestIntent, toolResults, runState);
         runState.enterStage(WorkflowStage.VERIFY);
-        return counselResultVerifier.verifySelection(requestIntent, candidateSelection, requestFacts);
+        return counselResultVerifier.verifySelection(requestIntent, candidateSelection, toolResults);
     }
 
     private Intent extractRequestIntent(List<Message> conversationMessages, RunState runState) {

@@ -55,12 +55,12 @@ public class CounselWorkflow {
         }
 
         runState.enterStage(WorkflowStage.TOOLS);
-        CounselRequestFacts requestFacts = new CounselRequestFacts();
+        CounselToolResults toolResults = new CounselToolResults();
         CandidateEvidenceSelection candidateSelection = selectEvidenceWithTools(
-                conversationMessages, requestIntent, requestFacts, runState);
+                conversationMessages, requestIntent, toolResults, runState);
 
         runState.enterStage(WorkflowStage.VERIFY);
-        return counselResultVerifier.verifySelection(requestIntent, candidateSelection, requestFacts);
+        return counselResultVerifier.verifySelection(requestIntent, candidateSelection, toolResults);
     }
 
     private Intent extractRequestIntent(List<Message> conversationMessages, RunState runState) {
@@ -84,7 +84,7 @@ public class CounselWorkflow {
     }
 
     private CandidateEvidenceSelection selectEvidenceWithTools(List<Message> conversationMessages,
-            Intent requestIntent, CounselRequestFacts requestFacts, RunState runState) {
+            Intent requestIntent, CounselToolResults toolResults, RunState runState) {
         var selectionConverter = new BeanOutputConverter<>(CandidateEvidenceSelection.class);
         var selectionRequest = createCountedChatClient(runState)
                 .prompt()
@@ -97,9 +97,9 @@ public class CounselWorkflow {
                 """ + "\n" + selectionConverter.getFormat())
                 .messages(conversationMessages)
                 .user("Java 확정 조건: " + requestIntent)
-                .tools(new PolicyTools(policySearch, requestFacts, runState));
+                .tools(new PolicyTools(policySearch, toolResults, runState));
         if (requestIntent.task().equals("SHOPPING")) {
-            selectionRequest.tools(new ProductTools(productCatalog, requestIntent, requestFacts, runState));
+            selectionRequest.tools(new ProductTools(productCatalog, requestIntent, toolResults, runState));
         }
 
         // 형식 지침을 모델 요청에 포함하되, 변환보다 먼저 도구 상한 응답을 검사한다.

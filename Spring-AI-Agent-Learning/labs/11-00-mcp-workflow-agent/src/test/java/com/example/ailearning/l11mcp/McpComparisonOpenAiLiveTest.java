@@ -45,7 +45,7 @@ class McpComparisonOpenAiLiveTest {
     @Test
     @Timeout(120)
     void 실제_OpenAI가_MCP_검색과_계산_도구를_선택한다() {
-        McpRunResult result = agentService.agent(QUESTION);
+        McpRunResult result = agentService.run(QUESTION);
         System.out.println(result);
         assertThat(result.answer()).isNotBlank();
         assertThat(result.toolCalls()).extracting(McpRunResult.ToolCall::name).contains("searchProducts", "quoteCart");
