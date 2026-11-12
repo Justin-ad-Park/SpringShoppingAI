@@ -26,7 +26,7 @@ public class ProductCatalog {
                 .toList();
     }
 
-    public ProductPriceDetails calculatePriceDetails(String productId) {
+    public ProductPriceDetail calculatePriceDetail(String productId) {
         Product product = products
                 .stream()
                 .filter(item -> item
@@ -35,6 +35,6 @@ public class ProductCatalog {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
         int shippingFee = product.price() >= 30000 ? 0 : 3000;
-        return new ProductPriceDetails(product, shippingFee, Math.addExact(product.price(), shippingFee));
+        return new ProductPriceDetail(product, shippingFee, Math.addExact(product.price(), shippingFee));
     }
 }

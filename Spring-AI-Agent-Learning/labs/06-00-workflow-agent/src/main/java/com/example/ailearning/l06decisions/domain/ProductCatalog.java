@@ -26,7 +26,7 @@ public class ProductCatalog {
                 .toList();
     }
 
-    public ProductPriceDetail calculatePriceDetails(String productId) {
+    public ProductPriceDetail calculatePriceDetail(String productId) {
         Product product = products
                 .stream()
                 .filter(item -> item

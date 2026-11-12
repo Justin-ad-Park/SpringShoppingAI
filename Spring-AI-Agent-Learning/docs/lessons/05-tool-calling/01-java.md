@@ -4,7 +4,7 @@
 
 **이번 목표:** 가격과 배송비의 출처를 일반 Java 코드에서 찾습니다.
 
-**코드 읽기 안내:** 먼저 Product와 ProductPriceDetails를 읽습니다. 모델을 연결하기 전에 상품 P01의 총액 15000원을 손으로 계산하세요.
+**코드 읽기 안내:** 먼저 Product와 ProductPriceDetail를 읽습니다. 모델을 연결하기 전에 상품 P01의 총액 15000원을 손으로 계산하세요.
 
 ## 왜 도구가 필요한가?
 
@@ -30,14 +30,14 @@ classDiagram
     class ToolController
     class ProductCatalog {
         +search(category, maxPrice) List
-        +calculatePriceDetails(productId) ProductPriceDetails
+        +calculatePriceDetail(productId) ProductPriceDetail
     }
     class Product
-    class ProductPriceDetails
+    class ProductPriceDetail
     ToolController --> ProductCatalog : 직접 호출 경로
     ProductCatalog --> Product : 상품 조회
-    ProductCatalog --> ProductPriceDetails : 배송비 포함 총액 반환
-    ProductPriceDetails --> Product : 상품 정보 포함
+    ProductCatalog --> ProductPriceDetail : 배송비 포함 총액 반환
+    ProductPriceDetail --> Product : 상품 정보 포함
 ```
 
 [ProductCatalog.java](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductCatalog.java)의 전체 코드입니다.
@@ -71,7 +71,7 @@ public class ProductCatalog {
                 .toList();
     }
 
-    public ProductPriceDetails calculatePriceDetails(String productId) {
+    public ProductPriceDetail calculatePriceDetail(String productId) {
         Product product = products
                 .stream()
                 .filter(item -> item
@@ -80,13 +80,13 @@ public class ProductCatalog {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
         int shippingFee = product.price() >= 30000 ? 0 : 3000;
-        return new ProductPriceDetails(product, shippingFee, Math.addExact(product.price(), shippingFee));
+        return new ProductPriceDetail(product, shippingFee, Math.addExact(product.price(), shippingFee));
     }
 }
 ```
 
-`search()`는 일반 Java 필터입니다. `calculatePriceDetails()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
-[Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/Product.java)와 [ProductPriceDetails](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductPriceDetails.java)는 04장에서 배운 record입니다.
+`search()`는 일반 Java 필터입니다. `calculatePriceDetail()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
+[Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/Product.java)와 [ProductPriceDetail](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductPriceDetail.java)는 04장에서 배운 record입니다.
 
 
 ## 상품 기능만 테스트하기

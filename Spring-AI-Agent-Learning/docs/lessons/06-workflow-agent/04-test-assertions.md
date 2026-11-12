@@ -7,7 +7,7 @@
 
 ## 1. 검증 메서드 지도: 표 순서대로 읽기
 
-AssertJ는 **반환된 값**, Mockito는 **이미 실행된 호출 기록**을 검사합니다. 이 페이지에서 연결한 06장 테스트의 검증 메서드를 아래 순서대로 설명합니다. `search`, `calculatePriceDetails` 등은 검사 대상인 업무 메서드입니다.
+AssertJ는 **반환된 값**, Mockito는 **이미 실행된 호출 기록**을 검사합니다. 이 페이지에서 연결한 06장 테스트의 검증 메서드를 아래 순서대로 설명합니다. `search`, `calculatePriceDetail` 등은 검사 대상인 업무 메서드입니다.
 
 | 라이브러리 | 메서드·표현 | 기능 | 설명 절 |
 |---|---|---|---|
@@ -161,7 +161,7 @@ verify(productCatalog, atLeastOnce()).search("음료", 30000);
 ### never: 지정한 호출이 없어야 함
 
 ```java
-verify(productCatalog, never()).calculatePriceDetails("P01");
+verify(productCatalog, never()).calculatePriceDetail("P01");
 ```
 
 P01의 금액을 조회한 기록이 0회여야 통과합니다. 이 구문만으로 P02 등 다른 상품의 조회까지 금지하지는 않습니다. 모든 문자열 인자의 조회를 검사할 때는 아래 `anyString()`을 사용합니다.
@@ -170,9 +170,9 @@ P01의 금액을 조회한 기록이 0회여야 통과합니다. 이 구문만�
 
 ```java
 verify(productCatalog, atLeastOnce()).search(any(), any());
-verify(productCatalog, atLeastOnce()).calculatePriceDetails(anyString());
+verify(productCatalog, atLeastOnce()).calculatePriceDetail(anyString());
 verify(productCatalog, atLeastOnce()).search(eq("음료"), any());
-verify(productCatalog, never()).calculatePriceDetails(anyString());
+verify(productCatalog, never()).calculatePriceDetail(anyString());
 ```
 
 - `any()`는 인자가 어떤 값이어도 해당 호출로 셉니다. null도 포함합니다. 첫 줄은 카테고리·가격을 특정하지 않고 검색이 한 번 이상 실행됐는지 확인합니다.
@@ -198,8 +198,8 @@ verifyNoInteractions(productCatalog);
 ```java
 var order = inOrder(productCatalog);
 order.verify(productCatalog).search("음료", 30000);
-order.verify(productCatalog).calculatePriceDetails("P01");
-order.verify(productCatalog).calculatePriceDetails("P02");
+order.verify(productCatalog).calculatePriceDetail("P01");
+order.verify(productCatalog).calculatePriceDetail("P02");
 verifyNoMoreInteractions(productCatalog);
 ```
 
@@ -224,8 +224,8 @@ verifyNoMoreInteractions(productCatalog);
 | 모델에 공개한 도구 | 내부 카탈로그 호출 |
 |---|---|
 | Agent의 `searchProducts` | `search` |
-| Agent의 `calculateShipping` | `calculatePriceDetails` |
-| Hybrid의 `findProductsWithinBudget` | 확정 조건으로 `search`, 후보마다 `calculatePriceDetails`, 총액 필터 |
+| Agent의 `calculateShipping` | `calculatePriceDetail` |
+| Hybrid의 `findProductsWithinBudget` | 확정 조건으로 `search`, 후보마다 `calculatePriceDetail`, 총액 필터 |
 
 ### 정상·누락·빈 결과·오류 케이스
 

@@ -18,7 +18,7 @@ package com.example.ailearning.l05tools;
 
 import com.example.ailearning.l05tools.domain.Product;
 import com.example.ailearning.l05tools.domain.ProductCatalog;
-import com.example.ailearning.l05tools.domain.ProductPriceDetails;
+import com.example.ailearning.l05tools.domain.ProductPriceDetail;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
@@ -39,7 +39,7 @@ public class ShoppingTools {
     }
 
     @Tool(description = "존재하는 상품 ID의 국내 기본 배송비와 총액을 조회합니다. 가격을 직접 입력하지 말고 검색 결과의 상품 ID를 사용하세요.")
-    public ProductPriceDetails calculateShipping(String productId) { return productCatalog.calculatePriceDetails(productId); }
+    public ProductPriceDetail calculateShipping(String productId) { return productCatalog.calculatePriceDetail(productId); }
 }
 ```
 

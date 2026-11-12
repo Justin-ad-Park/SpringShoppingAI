@@ -49,7 +49,7 @@ Controller는 `@PathVariable ExecutionMode mode`로 받습니다. URL과 응답 
 
 각 테스트는 공통 메서드에서 요청·결과와 `ToolCallPrinter.printMockitoDetails(productCatalog)` 호출 기록을 출력합니다.
 `@MockitoSpyBean`은 실제 카탈로그를 사용하면서 실행 기록을 남깁니다.
-Agent의 `ProductTools.searchProducts`·`calculateShipping`은 각각 카탈로그의 `search`·`calculatePriceDetails`를 호출합니다.
+Agent의 `ProductTools.searchProducts`·`calculateShipping`은 각각 카탈로그의 `search`·`calculatePriceDetail`를 호출합니다.
 Hybrid의 `BudgetProductTools.findProductsWithinBudget`는 고정 조건으로 검색·가격 계산 후 총액을 필터링합니다.
 도구는 조회 결과를 반환하며 추천 목록을 저장하는 상태를 갖지 않습니다. `ProductPriceDetail`은 상품 한 건의 금액 정보입니다.
 

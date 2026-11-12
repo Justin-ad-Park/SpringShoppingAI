@@ -2,7 +2,7 @@ package com.example.ailearning.l05tools;
 
 import com.example.ailearning.l05tools.domain.Product;
 import com.example.ailearning.l05tools.domain.ProductCatalog;
-import com.example.ailearning.l05tools.domain.ProductPriceDetails;
+import com.example.ailearning.l05tools.domain.ProductPriceDetail;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -29,7 +29,7 @@ public class ToolController {
     }
 
     @GetMapping("/shipping/{productId}")
-    public ProductPriceDetails shipping(@PathVariable String productId) { return productCatalog.calculatePriceDetails(productId); }
+    public ProductPriceDetail shipping(@PathVariable String productId) { return productCatalog.calculatePriceDetail(productId); }
 
     @PostMapping(value = "/chat", consumes = MediaType.TEXT_PLAIN_VALUE,
             produces = MediaType.TEXT_PLAIN_VALUE)

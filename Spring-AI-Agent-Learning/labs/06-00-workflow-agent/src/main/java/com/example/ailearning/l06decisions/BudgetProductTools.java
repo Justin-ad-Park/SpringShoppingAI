@@ -20,7 +20,7 @@ public class BudgetProductTools {
     public List<ProductPriceDetail> findProductsWithinBudget() {
         return productCatalog.search(searchCondition.category(), searchCondition.totalBudget())
                 .stream()
-                .map(product -> productCatalog.calculatePriceDetails(product.id()))
+                .map(product -> productCatalog.calculatePriceDetail(product.id()))
                 .filter(detail -> detail.total() <= searchCondition.totalBudget())
                 .toList();
     }

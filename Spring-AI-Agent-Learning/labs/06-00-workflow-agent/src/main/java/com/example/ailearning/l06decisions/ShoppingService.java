@@ -68,7 +68,7 @@ public class ShoppingService {
         List<Product> products = productCatalog.search(searchCondition.category(), searchCondition.totalBudget());
         List<ProductPriceDetail> candidates = products
                 .stream()
-                .map(product -> productCatalog.calculatePriceDetails(product.id()))
+                .map(product -> productCatalog.calculatePriceDetail(product.id()))
                 .filter(priceDetail -> priceDetail.total() <= searchCondition.totalBudget())
                 .toList();
         if (candidates.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.");

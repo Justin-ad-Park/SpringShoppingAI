@@ -23,6 +23,6 @@ public class ProductTools {
 
     @Tool(description = "상품 한 개의 정보와 배송비, 배송비 포함 총액을 반환합니다.")
     public ProductPriceDetail calculateShipping(String productId) {
-        return productCatalog.calculatePriceDetails(productId);
+        return productCatalog.calculatePriceDetail(productId);
     }
 }

@@ -45,7 +45,7 @@ class ProductCatalogUnitTest {
 
     @Test
     void 존재하지_않는_상품_ID를_거부한다() {
-        Throwable error = catchThrowable(() -> productCatalog.calculatePriceDetails("invented"));
+        Throwable error = catchThrowable(() -> productCatalog.calculatePriceDetail("invented"));
 
         output.printValue("상품 ID 검증 결과", error);
         assertThat(error).isInstanceOf(IllegalArgumentException.class);
@@ -53,9 +53,9 @@ class ProductCatalogUnitTest {
 
     @Test
     void 삼만원_이상_상품은_배송비가_무료다() {
-        var priceDetails = productCatalog.calculatePriceDetails("P03");
+        var priceDetail = productCatalog.calculatePriceDetail("P03");
 
-        output.printValue("텀블러 배송비와 총액", priceDetails);
-        assertThat(priceDetails.shippingFee()).isZero();
+        output.printValue("텀블러 배송비와 총액", priceDetail);
+        assertThat(priceDetail.shippingFee()).isZero();
     }
 }

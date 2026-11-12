@@ -59,8 +59,8 @@ class WorkflowAgentLocalModelTest {
 
         var order = inOrder(productCatalog);
         order.verify(productCatalog).search("음료", 30000);
-        order.verify(productCatalog).calculatePriceDetails("P01");
-        order.verify(productCatalog).calculatePriceDetails("P02");
+        order.verify(productCatalog).calculatePriceDetail("P01");
+        order.verify(productCatalog).calculatePriceDetail("P02");
         verifyNoMoreInteractions(productCatalog);
         assertThat(result.path("status").asString()).isEqualTo("COMPLETED");
         assertThat(MODEL.chat().getRequests()).hasSize(2);
@@ -87,8 +87,8 @@ class WorkflowAgentLocalModelTest {
         assertThat(MODEL.chat().getRequests().getFirst().path("tools").size()).isEqualTo(2);
         assertThat(MODEL.chat().getRequests().getLast().path("messages").toString()).contains("tool", "31000", "15000");
         verify(productCatalog).search("음료", 30000);
-        verify(productCatalog).calculatePriceDetails("P01");
-        verify(productCatalog).calculatePriceDetails("P02");
+        verify(productCatalog).calculatePriceDetail("P01");
+        verify(productCatalog).calculatePriceDetail("P02");
     }
 
     @Test
@@ -110,8 +110,8 @@ class WorkflowAgentLocalModelTest {
         assertThat(MODEL.chat().getRequests().getLast().path("messages").toString())
                 .contains("P01", "15000").doesNotContain("P02", "31000", "P03");
         verify(productCatalog).search("음료", 30000);
-        verify(productCatalog).calculatePriceDetails("P01");
-        verify(productCatalog).calculatePriceDetails("P02");
+        verify(productCatalog).calculatePriceDetail("P01");
+        verify(productCatalog).calculatePriceDetail("P02");
     }
 
     @org.junit.jupiter.params.ParameterizedTest
@@ -131,7 +131,7 @@ class WorkflowAgentLocalModelTest {
         assertThat(result.path("status").asString()).isEqualTo("NO_RESULTS");
         assertThat(MODEL.chat().getRequests()).hasSize(1);
         verify(productCatalog).search("음료", 1000);
-        verify(productCatalog, never()).calculatePriceDetails(anyString());
+        verify(productCatalog, never()).calculatePriceDetail(anyString());
     }
 
     @Test
@@ -148,7 +148,7 @@ class WorkflowAgentLocalModelTest {
         assertThat(toolResult.path("role").asString()).isEqualTo("tool");
         assertThat(toolResult.path("content").asString()).isEqualTo("[]");
         verify(productCatalog).search("음료", 1000);
-        verify(productCatalog, never()).calculatePriceDetails(anyString());
+        verify(productCatalog, never()).calculatePriceDetail(anyString());
     }
 
     @Test
@@ -159,7 +159,7 @@ class WorkflowAgentLocalModelTest {
         JsonNode result = post("AGENT", "어떤 음료 상품들이 있나요? 이름만 알려 주세요.");
         assertThat(result.path("answer").asString()).contains("허브티", "커피");
         verify(productCatalog).search("음료", null);
-        verify(productCatalog, never()).calculatePriceDetails(anyString());
+        verify(productCatalog, never()).calculatePriceDetail(anyString());
     }
 
     @Test

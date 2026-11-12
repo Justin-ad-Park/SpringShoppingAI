@@ -41,8 +41,8 @@ class WorkflowAgentOpenAiLiveTest {
 
         var order = inOrder(productCatalog);
         order.verify(productCatalog).search("음료", 30000);
-        order.verify(productCatalog).calculatePriceDetails("P01");
-        order.verify(productCatalog).calculatePriceDetails("P02");
+        order.verify(productCatalog).calculatePriceDetail("P01");
+        order.verify(productCatalog).calculatePriceDetail("P02");
         verifyNoMoreInteractions(productCatalog);
         assertCompleted(result);
     }
@@ -53,7 +53,7 @@ class WorkflowAgentOpenAiLiveTest {
 
         // 실제 모델은 재검색하거나 여러 상품을 비교할 수 있어 순서·횟수를 고정하지 않습니다.
         verify(productCatalog, atLeastOnce()).search(any(), any());
-        verify(productCatalog, atLeastOnce()).calculatePriceDetails(anyString());
+        verify(productCatalog, atLeastOnce()).calculatePriceDetail(anyString());
         assertCompleted(result);
     }
 
@@ -62,8 +62,8 @@ class WorkflowAgentOpenAiLiveTest {
         RunResult result = run(ExecutionMode.HYBRID, SHOPPING_QUESTION);
 
         verify(productCatalog, atLeastOnce()).search("음료", 30000);
-        verify(productCatalog, atLeastOnce()).calculatePriceDetails("P01");
-        verify(productCatalog, atLeastOnce()).calculatePriceDetails("P02");
+        verify(productCatalog, atLeastOnce()).calculatePriceDetail("P01");
+        verify(productCatalog, atLeastOnce()).calculatePriceDetail("P02");
         assertCompleted(result);
 
         // 위 verify는 상품·금액을 조회했는지만 확인합니다.
@@ -85,7 +85,7 @@ class WorkflowAgentOpenAiLiveTest {
         RunResult result = run(ExecutionMode.AGENT, "어떤 음료 상품들이 있나요? 이름만 알려 주세요.");
 
         verify(productCatalog, atLeastOnce()).search(eq("음료"), any());
-        verify(productCatalog, never()).calculatePriceDetails(anyString());
+        verify(productCatalog, never()).calculatePriceDetail(anyString());
         assertCompleted(result);
     }
 
@@ -102,7 +102,7 @@ class WorkflowAgentOpenAiLiveTest {
         RunResult result = run(ExecutionMode.HYBRID, "음료 선물을 추천해 주세요. 배송비까지 천 원 이하면 좋겠어요.");
 
         verify(productCatalog, atLeastOnce()).search("음료", 1000);
-        verify(productCatalog, never()).calculatePriceDetails(anyString());
+        verify(productCatalog, never()).calculatePriceDetail(anyString());
         assertCompleted(result);
     }
 

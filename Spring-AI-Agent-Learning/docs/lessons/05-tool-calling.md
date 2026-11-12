@@ -32,7 +32,7 @@ Spring AI는 도구의 설명을 모델에 전달하고, 모델이 요청한 기
 
 ## 실습 안내
 
-`Product`·`ProductCatalog`·`ProductPriceDetails`는 상품 데이터와 검색·가격 계산을 담아 [domain 패키지](../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+`Product`·`ProductCatalog`·`ProductPriceDetail`는 상품 데이터와 검색·가격 계산을 담아 [domain 패키지](../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
 
 선수 지식: 04장의 구조화 데이터, 기존 Controller/Service, 프롬프트.
 이번에는 **이미 작성한 Java 기능을 모델이 요청할 수 있게 연결**합니다.
