@@ -12,7 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 // 실제 OpenAI를 호출합니다. 저장소 루트 .env를 사용하며 API 사용량이 발생합니다.
@@ -53,6 +57,25 @@ class ToolCallingOpenAiLiveTest {
         ToolCallPrinter.printMockitoDetails(shoppingTools);
 
         assertThat(answer).isNotBlank();
+        // 상품 ID가 주어졌으므로 P02의 가격·배송비·총액을 반환하는 도구 호출을 확인한다.
+        // atLeastOnce()는 같은 도구를 다시 호출하더라도 최소 한 번 실행했으면 통과한다.
+        verify(shoppingTools, atLeastOnce()).calculateShipping("P02");
+    }
+
+    @Test
+    @Timeout(180)
+    void 실제_OpenAI에_카테고리로_배송비를_질문한다() {
+        String answer = service.ask("음료 카테고리의 가장 비싼 상품의 가격과 배송비 포함 총액을 도구로 확인해줘.");
+        System.out.printf("답변: %s%n", answer);
+
+        // Mock 상세 내역 출력
+        ToolCallPrinter.printMockitoDetails(shoppingTools);
+
+        assertThat(answer).isNotBlank();
+        // 음료 검색 여부를 확인한다. 질문에 가격 상한이 없으므로 maxPrice 인자는 고정하지 않는다.
+        verify(shoppingTools, atLeastOnce()).searchProducts(eq("음료"), any());
+        // 현재 상품 데이터에서 가장 비싼 음료는 P02(커피, 28000원)다.
+        verify(shoppingTools, atLeastOnce()).calculateShipping("P02");
     }
 
     @Test
