@@ -13,7 +13,7 @@
 
 - 메서드는 조회·생성·변환·검증·실행·출력을 구분합니다. 예를 들어 `createConversationKey`, `parseToolResult`, `verifyCitations`, `executeTool`처럼 무엇을 처리하는지 읽히게 합니다. `create`, `get`, `set`, `print`는 예시이며 언어와 기존 API의 관례를 우선합니다. 프롬프트 상수는 `SYSTEM`보다 `CRITERIA_EXTRACTION_INSTRUCTION`처럼 목적을 표시합니다.
 - 타입은 객체가 가진 책임이나 전달하는 자료를 나타냅니다. `Selection`, `Draft`, `Source`만으로 선택 대상·검증 전후·검색 자료를 구분하기 어렵다면 `CandidateEvidenceSelection`, `UnverifiedAnswer`, `PolicySearchResult`처럼 구체화합니다. 상태 이름이 실제 검사보다 넓은 성공이나 완성도를 암시하지 않게 합니다.
-- 클래스의 동작과 이름·설명을 맞춥니다. `Executor`는 작업 실행, `Workflow`는 처리 순서 조정처럼 실제 책임으로 판단합니다. `@Service`라는 애너테이션만을 이유로 모든 클래스에 `Service`를 붙이지 않으며, 명확한 `ProductCatalog` 같은 도메인 이름은 유지합니다.
+- 클래스의 동작과 이름·설명을 맞춥니다. 이름과 동작이 어긋나면 이름 변경과 책임 변경을 함께 검토하되, 실제 수정은 요청된 범위와 동작 계약을 따릅니다. 조회·계산에 상태 변경이 섞인 문제를 여러 동작을 나열하는 이름으로 덮지 않습니다. 교육용 비교 예제도 업무 객체에는 업무 역할을 나타내는 이름을 사용합니다. `Executor`는 작업 실행, `Workflow`는 처리 순서 조정처럼 실제 책임으로 판단합니다. `@Service`라는 애너테이션만을 이유로 모든 클래스에 `Service`를 붙이지 않으며, 명확한 `ProductCatalog` 같은 도메인 이름은 유지합니다.
 - 닫힌 종류·단계·중단 원인을 여러 곳에서 문자열로 주고받아 오타나 값 추적을 어렵게 한다면 Enum을 검토합니다. 설명은 값별 의미와 전이를 짧게 보충합니다. 외부 프로토콜의 문자열이나 단일 위치의 단순 값까지 일괄 Enum으로 바꾸지 않습니다.
 - 수량·제한은 세는 대상과 증가 시점을 드러냅니다. `clients`, `maxModels` 대신 실제 의미에 맞는 `clientCreations`, `modelRequestAttempts`, `maxModelRequestAttempts`를 씁니다. 성공 뒤 증가하는 완료 수와 요청 전 증가하는 시도 수를 구분합니다. 시간은 단위와 기준을 표시합니다. `timeoutMs`는 허용 기간, `deadlineNanos`는 마감 시각이며 서로 바꿔 부르지 않습니다.
 
