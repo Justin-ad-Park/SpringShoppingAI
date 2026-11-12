@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = "spring.ai.mcp.server.enabled=false")
 class McpComparisonOpenAiLiveTest {
     private static final McpTestServer MCP = new McpTestServer();
-    private static final String QUESTION = "음료 중 상품 가격 15000원 이하인 MALL 상품을 모두 한 개씩 구매할 때 배송비 포함 총액을 알려줘. 총예산은 30000원이야.";
+    private static final String QUESTION = "1만 5천 원 이하인 음료를 찾고 있어요. 쇼핑몰에서 묶음 배송하는 상품을 종류별로 하나씩 모두 사면 배송비까지 얼마인가요? 총예산은 3만 원이에요.";
     @Autowired McpWorkflowService workflowService;
     @Autowired McpAgentService agentService;
     @Autowired McpHybridService hybridService;
@@ -49,7 +49,10 @@ class McpComparisonOpenAiLiveTest {
         System.out.println(result);
         assertThat(result.answer()).isNotBlank();
         assertThat(result.toolCalls()).extracting(McpRunResult.ToolCall::name).contains("searchProducts", "quoteCart");
-        assertThat(result.toolCalls().getLast().result().path("total").asLong()).isEqualTo(25400);
+        // 모델이 계산 후 재검색할 수도 있으므로 마지막 호출의 종류를 가정하지 않습니다.
+        assertThat(result.toolCalls())
+                .filteredOn(call -> call.name().equals("quoteCart"))
+                .anySatisfy(call -> assertThat(call.result().path("total").asLong()).isEqualTo(25400));
     }
 
     @Test

@@ -49,7 +49,7 @@
 ./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*OpenAiLiveTest'
 ```
 
-실제 모델 선택은 비결정적이므로 테스트가 실패하면 출력의 도구 인자와 결과부터 확인합니다. 금액 assertions는 고정된 서버 상품·배송 정책 기준입니다.
+실제 모델 선택은 비결정적이므로 테스트가 실패하면 출력의 도구 인자와 결과부터 확인합니다. Agent는 마지막 호출을 계산 도구로 가정하지 않고, `quoteCart` 호출 기록 중 기대 총액이 있는지 검사합니다. 금액 assertions는 고정된 서버 상품·배송 정책 기준입니다.
 전체 `test`에도 Live가 포함되므로 로컬 검증은 반드시 클래스 필터를 사용합니다.
 
 ## 실패와 제한

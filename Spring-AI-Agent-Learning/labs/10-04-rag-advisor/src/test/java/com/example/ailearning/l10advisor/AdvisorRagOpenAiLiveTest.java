@@ -24,9 +24,11 @@ class AdvisorRagOpenAiLiveTest {
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI에_RAG_Advisor가_검색한_문서를_전달한다() {
+    void 실제_OpenAI로_RAG_Advisor의_답변을_받는다() {
         String answer = service.answer("미개봉 상품의 반품 기간은 며칠인가요?");
         System.out.printf("RAG Advisor 답변: %s%n", answer);
+        // 이 Live 테스트는 응답 수신만 확인합니다. 검색 문서의 실제 전달은
+        // AdvisorRagLocalModelTest의 모델 요청 메시지 검사에서 확인합니다.
         assertThat(answer).isNotBlank();
     }
 }

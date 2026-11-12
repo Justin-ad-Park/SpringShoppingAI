@@ -2,7 +2,7 @@ package com.example.ailearning.l13shopping.workflow;
 
 import com.example.ailearning.l13shopping.domain.Intent;
 import com.example.ailearning.l13shopping.domain.Product;
-import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
+import com.example.ailearning.l13shopping.domain.ProductPriceDetail;
 import com.example.ailearning.l13shopping.policy.PolicySearchResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,13 @@ public class CounselResultVerifier {
         }
 
         boolean shoppingRequest = requestIntent.task().equals("SHOPPING");
-        List<ProductPriceDetails> verifiedOffers = new ArrayList<>();
+        List<ProductPriceDetail> verifiedOffers = new ArrayList<>();
         for (String productId : candidateSelection.productIds().stream().distinct().toList()) {
-            ProductPriceDetails priceDetails = toolResults.priceDetailsFor(productId);
-            if (!isValidProductSelection(shoppingRequest, requestIntent, priceDetails)) {
+            ProductPriceDetail priceDetail = toolResults.priceDetailFor(productId);
+            if (!isValidProductSelection(shoppingRequest, requestIntent, priceDetail)) {
                 return verificationFailed(requestIntent);
             }
-            verifiedOffers.add(priceDetails);
+            verifiedOffers.add(priceDetail);
         }
 
         List<PolicySearchResult> verifiedSources = new ArrayList<>();
@@ -66,13 +66,13 @@ public class CounselResultVerifier {
     }
 
     private boolean isValidProductSelection(boolean shoppingRequest, Intent requestIntent,
-            ProductPriceDetails priceDetails) {
-        if (!shoppingRequest || priceDetails == null) {
+            ProductPriceDetail priceDetail) {
+        if (!shoppingRequest || priceDetail == null) {
             return false;
         }
-        boolean withinBudget = priceDetails.total() <= requestIntent.totalBudget();
+        boolean withinBudget = priceDetail.total() <= requestIntent.totalBudget();
         boolean categoryMatches = requestIntent.category() == null
-                || priceDetails.product().category().equals(requestIntent.category());
+                || priceDetail.product().category().equals(requestIntent.category());
         return withinBudget && categoryMatches;
     }
 
@@ -86,11 +86,11 @@ public class CounselResultVerifier {
 
     private boolean isVerifiedAndOverBudget(Product product, Intent requestIntent,
             CounselToolResults toolResults) {
-        ProductPriceDetails priceDetails = toolResults.priceDetailsFor(product.id());
-        return priceDetails != null && priceDetails.total() > requestIntent.totalBudget();
+        ProductPriceDetail priceDetail = toolResults.priceDetailFor(product.id());
+        return priceDetail != null && priceDetail.total() > requestIntent.totalBudget();
     }
 
-    private String createVerifiedAnswer(List<ProductPriceDetails> verifiedOffers,
+    private String createVerifiedAnswer(List<ProductPriceDetail> verifiedOffers,
             List<PolicySearchResult> verifiedSources) {
         String productAnswer = verifiedOffers.stream()
                 .map(offer -> offer.product().name() + " 총 " + offer.total() + "원")

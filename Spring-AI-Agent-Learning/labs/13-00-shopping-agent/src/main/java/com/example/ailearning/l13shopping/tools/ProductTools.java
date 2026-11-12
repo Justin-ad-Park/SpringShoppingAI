@@ -3,7 +3,7 @@ package com.example.ailearning.l13shopping.tools;
 import com.example.ailearning.l13shopping.domain.Intent;
 import com.example.ailearning.l13shopping.domain.Product;
 import com.example.ailearning.l13shopping.domain.ProductCatalog;
-import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
+import com.example.ailearning.l13shopping.domain.ProductPriceDetail;
 import com.example.ailearning.l13shopping.support.RunState;
 import com.example.ailearning.l13shopping.workflow.CounselToolResults;
 import org.springframework.ai.tool.annotation.Tool;
@@ -35,13 +35,13 @@ public class ProductTools {
     }
 
     @Tool(description = "상품 ID로 실제 상품 가격과 배송비 포함 총액을 확인합니다.")
-    public ProductPriceDetails calculateShipping(String productId) {
+    public ProductPriceDetail calculateShipping(String productId) {
         runState.beginToolExecution("calculateShipping", productId);
-        ProductPriceDetails priceDetails = productCatalog.calculatePriceDetails(productId);
+        ProductPriceDetail priceDetail = productCatalog.calculatePriceDetail(productId);
 
         runState.check();
-        toolResults.recordPriceLookup(productId, priceDetails);
-        runState.recordToolResult("calculateShipping", priceDetails);
-        return priceDetails;
+        toolResults.recordPriceLookup(productId, priceDetail);
+        runState.recordToolResult("calculateShipping", priceDetail);
+        return priceDetail;
     }
 }

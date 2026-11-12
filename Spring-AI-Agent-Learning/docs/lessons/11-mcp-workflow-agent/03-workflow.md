@@ -95,7 +95,7 @@ public class McpWorkflowService {
 ```bash
 curl http://127.0.0.1:8106/api/mcp/workflow \
   -H 'Content-Type: text/plain; charset=UTF-8' \
-  --data-binary '음료 중 15000원 이하를 모두 한 개씩 구매, 배송비 포함 총예산 30000원'
+  --data-binary '1만 5천 원 이하인 음료를 찾고 있어요. 쇼핑몰에서 묶음 배송하는 상품을 종류별로 하나씩 모두 사면 배송비까지 얼마인가요? 총예산은 3만 원이에요.'
 ```
 
 기본 데이터에서는 `COMPLETED`, 검색·계산 기록 두 개, 총액 25,400원이 나옵니다. 실제 모델이 조건을 다르게 추출하면 결과도 달라지므로 기록의 조건을 함께 확인하세요.

@@ -22,7 +22,7 @@ curl http://127.0.0.1:8106/api/mcp/tools
 curl http://127.0.0.1:8106/api/mcp/shipping-policy
 curl http://127.0.0.1:8106/api/mcp/workflow \
   -H 'Content-Type: text/plain; charset=UTF-8' \
-  --data-binary '음료 15000원 이하 모두 한 개씩 구매, 배송비 포함 총예산 30000원'
+  --data-binary '1만 5천 원 이하인 음료를 찾고 있어요. 쇼핑몰에서 묶음 배송하는 상품을 종류별로 하나씩 모두 사면 배송비까지 얼마인가요? 총예산은 3만 원이에요.'
 ```
 
 마지막 경로를 `/agent`, `/hybrid`로 바꾸어 비교합니다. 실제 성공한 호출은 `toolCalls`에 표시됩니다.
@@ -50,6 +50,6 @@ curl http://127.0.0.1:8106/api/mcp/workflow \
 
 ## 코드 읽기 순서
 
-ShoppingMcpGateway의 목록·직접 호출 → SearchConditionExtractor → McpWorkflowService → McpAgentService → McpHybridService 순서입니다.
+ShoppingMcpController의 HTTP 진입점 → ShoppingMcpGateway의 목록·직접 호출 → SearchConditionExtractor → McpWorkflowService → McpAgentService → McpHybridService 순서입니다.
 McpToolExecutor은 기록·상한을 제공하는 보조 코드이며, 조건 고정 부분은 하이브리드 수업에서 읽습니다.
 연결 실패는 shopping-mcp 실행 여부와 URL, 포트 충돌을 확인하세요. IDE에서 새 모듈의 Run 아이콘이 없으면 루트 Gradle 프로젝트를 다시 동기화합니다.

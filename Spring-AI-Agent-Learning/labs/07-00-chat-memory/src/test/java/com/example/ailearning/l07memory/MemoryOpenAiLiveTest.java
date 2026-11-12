@@ -36,7 +36,11 @@ class MemoryOpenAiLiveTest {
         // Then: 응답과 이전 대화 전달·저장 메시지 수 검증
         assertThat(first.answer()).isNotBlank();
         assertThat(next.answer()).isNotBlank();
-        assertThat(next.sentMessages()).hasSize(4);
+        assertThat(next.sentMessages()).extracting(MessageView::role)
+                .containsExactly("system", "user", "assistant", "user");
+        // 모델이 생성한 문구를 고정하지 않고, 첫 응답이 다음 요청에 그대로 포함됐는지 확인합니다.
+        assertThat(next.sentMessages()).extracting(MessageView::content)
+                .containsSubsequence("내 이름은 민수야.", first.answer(), "내 이름이 뭐야?");
         assertThat(next.storedMessages()).isEqualTo(4);
     }
 }

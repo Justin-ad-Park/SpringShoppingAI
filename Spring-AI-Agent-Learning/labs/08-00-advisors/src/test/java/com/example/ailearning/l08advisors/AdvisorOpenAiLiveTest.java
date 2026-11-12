@@ -24,11 +24,13 @@ class AdvisorOpenAiLiveTest {
 
     @Test
     @Timeout(180)
-    void 실제_OpenAI_요청에서_Advisor_순서와_메모리를_확인한다() {
-        AdvisorChatService.Reply result = service.chat("live-user", "advisor-demo", "도구로 허브티 가격을 확인해줘.", true);
+    void 실제_OpenAI_호출의_Advisor_전후_기록과_저장_개수를_확인한다() {
+        AdvisorChatService.Reply result = service.chat("live-user", "advisor-demo", "허브티 가격은 얼마인가요?", true);
         System.out.printf("답변과_Advisor_순서: %s%n", result);
         assertThat(result.answer()).isNotBlank();
         assertThat(result.steps()).startsWith("A:before").endsWith("A:after");
+        // 반복 횟수는 고정하지 않고, 안쪽 Advisor의 전후 기록도 확인합니다.
+        assertThat(result.steps()).containsSubsequence("A:before", "B:before", "B:after", "A:after");
         assertThat(result.storedMessages()).isEqualTo(2);
     }
 }

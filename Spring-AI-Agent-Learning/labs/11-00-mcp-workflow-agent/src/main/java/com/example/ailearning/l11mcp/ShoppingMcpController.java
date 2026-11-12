@@ -12,13 +12,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mcp")
-public class McpComparisonController {
+public class ShoppingMcpController {
     private final ShoppingMcpGateway shoppingMcpGateway;
     private final McpWorkflowService workflowService;
     private final McpAgentService agentService;
     private final McpHybridService hybridService;
 
-    public McpComparisonController(ShoppingMcpGateway shoppingMcpGateway,
+    public ShoppingMcpController(ShoppingMcpGateway shoppingMcpGateway,
             McpWorkflowService workflowService, McpAgentService agentService, McpHybridService hybridService) {
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.workflowService = workflowService;
@@ -37,7 +37,7 @@ public class McpComparisonController {
     }
 
     @PostMapping(value = "/{mode:workflow|agent|hybrid}", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public McpRunResult compare(@PathVariable String mode,
+    public McpRunResult chat(@PathVariable String mode,
             @RequestBody @NotBlank @Size(max = 2000) String question) {
         return switch (mode) {
             case "workflow" -> workflowService.run(question);

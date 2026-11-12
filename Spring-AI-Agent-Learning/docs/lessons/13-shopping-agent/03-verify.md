@@ -8,6 +8,7 @@
 
 ## 3.2 모델이 반환한 ID도 검사하기
 
+`ProductPriceDetail`은 상품 한 건의 금액 정보이며, 여러 상품은 `List<ProductPriceDetail>`로 표현합니다.
 `CandidateEvidenceSelection`에는 `productIds`, `sourceIds`만 있습니다. 자연어 답변 문장은 받지 않습니다.
 `CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다. 검증 후 `createVerifiedAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
 
@@ -18,13 +19,13 @@
             return verificationFailed(requestIntent);
         }
 
-        List<ProductPriceDetails> verifiedOffers = new ArrayList<>();
+        List<ProductPriceDetail> verifiedOffers = new ArrayList<>();
         for (String productId : candidateSelection.productIds().stream().distinct().toList()) {
-            ProductPriceDetails priceDetails = toolResults.priceDetailsFor(productId);
-            if (!isValidProductSelection(requestIntent.task().equals("SHOPPING"), requestIntent, priceDetails)) {
+            ProductPriceDetail priceDetail = toolResults.priceDetailFor(productId);
+            if (!isValidProductSelection(requestIntent.task().equals("SHOPPING"), requestIntent, priceDetail)) {
                 return verificationFailed(requestIntent);
             }
-            verifiedOffers.add(priceDetails);
+            verifiedOffers.add(priceDetail);
         }
 
         // 정책 ID도 이번 요청의 검색 결과에서 찾아야 답변 근거로 사용할 수 있다.
@@ -80,7 +81,7 @@
 <details>
 <summary>해설</summary>
 
-`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailsFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
+`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
 
 </details>
 
