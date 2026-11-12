@@ -42,7 +42,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 04 구조화 응답 | `04-00-structured-output` | `com.example.ailearning.l04structured.StructuredOutputLocalModelTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
 | 05 도구 호출 | `05-00-tool-calling` | `com.example.ailearning.l05tools.ToolCallingLocalModelTest`<br>`com.example.ailearning.l05tools.domain.ProductCatalogUnitTest` | `com.example.ailearning.l05tools.ToolCallingOpenAiLiveTest` |
 | 05 보충 5 도구 제한 | `05-05-tool-call-limits` | `com.example.ailearning.l05limits.ToolLimitLocalModelTest` | `com.example.ailearning.l05limits.ToolLimitOpenAiLiveTest` |
-| 06 Workflow·Agent | `06-00-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
+| 06 Workflow·Agent | `06-00-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest`<br>`com.example.ailearning.l06decisions.BudgetProductToolsUnitTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
 | 07 대화 메모리 | `07-00-chat-memory` | `com.example.ailearning.l07memory.MemoryLocalModelTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
 | 08 Advisor | `08-00-advisors` | `com.example.ailearning.l08advisors.AdvisorLocalModelTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
 | 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
@@ -103,7 +103,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 위치 | 두는 코드 | 현재 예시와 구분 기준 |
 |---|---|---|
 | 실습 기본 패키지 | HTTP 진입점과 간단한 애플리케이션 서비스 | Controller, 작은 ChatService. 요청·응답 DTO는 해당 흐름 옆에 둘 수 있음 |
-| `domain` | 업무 데이터·조건·규칙·계산·업무 검증 | Product, ProductSelectionCriteria, ProductCatalog. Spring 빈 여부로 분류하지 않으며, 이 패키지에서 ChatClient·벡터 저장소·도구 어댑터를 참조하지 않음 |
+| `domain` | 업무 데이터·조건·규칙·계산·업무 검증 | Product, ProductSearchCondition, ProductCatalog. Spring 빈 여부로 분류하지 않으며, 이 패키지에서 ChatClient·벡터 저장소·도구 어댑터를 참조하지 않음 |
 | `workflow` | 여러 단계를 조정하는 흐름과 요청별 자료 | CounselWorkflow, CounselToolResults, CandidateEvidenceSelection, CounselResultVerifier. 업무 조건 자체는 domain을 사용 |
 | `tools` | 모델에 공개할 도구와 실제 업무 객체의 연결 | ProductTools, PolicyTools. 도구 스키마와 매개변수 이름은 외부 계약으로 확인 |
 | `policy` 등 기능 패키지 | 문서 적재·벡터 검색·검색 결과처럼 함께 읽는 연동 기능 | PolicyLoader, PolicySearch, PolicySearchResult. 검색 결과 DTO는 Spring 빈이 아니어도 domain으로 옮기지 않음 |

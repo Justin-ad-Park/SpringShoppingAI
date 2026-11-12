@@ -4,7 +4,7 @@
 
 **이번 목표:** 모델에 목표와 도구를 제공하고, 모델이 필요한 도구와 인자를 선택해 요청을 처리하는 Agent를 구현합니다.
 
-**코드 읽기 안내:** agent()의 .tools(...)가 핵심입니다. 다음 메서드를 코드가 직접 호출하는지 모델의 요청을 기다리는지 구분합니다.
+**코드 읽기 안내:** runAgent()의 .tools(...)가 핵심입니다. 다음 메서드를 코드가 직접 호출하는지 모델의 요청을 기다리는지 구분합니다.
 
 ## Agent: 모델이 다음 행동을 선택한다
 
@@ -34,67 +34,63 @@ Agent에 전달하는 프롬프트의 핵심은 다음과 같습니다. 실제 �
 Workflow의 추출 프롬프트는 “카테고리와 총예산을 정해진 형태로 추출”이라는 **현재 단계의 작업**을 지시합니다.
 위 프롬프트는 **목표와 행동 기준**을 지시합니다. 단어만 바꾼 것이 아니라 실행 구조도 다릅니다.
 
+다음은 [ShoppingService.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingService.java)의 Agent 실행 메서드입니다.
+
 ```java
     private ExecutionResult runAgent(String question) {
-        ShoppingTools shoppingTools = new ShoppingTools(productCatalog);
         String answer = chatClient
                 .prompt()
                 .system(SHOPPING_AGENT_INSTRUCTION)
                 .user(question)
-                .tools(shoppingTools)
+                .tools(new ProductTools(productCatalog))
                 .call()
                 .content();
-        // 실제 조회한 금액이다. 모델의 추천 문장이나 예산 준수를 검증한 결과는 아니다.
-        return new ExecutionResult("COMPLETED", answer, shoppingTools.getPriceDetails());
+        return new ExecutionResult("COMPLETED", answer);
     }
 ```
 
-`ShoppingTools`는 05장과 같은 `searchProducts`·`calculateShipping` 도구를 제공합니다. 내부에서는 각각 `ProductCatalog.search()`·`calculatePriceDetails()`를 호출합니다. 도구 객체는 요청마다 새로 만들고, 조회한 금액을 `priceDetails`에 보관합니다. 이 목록은 모델이 실제로 조회한 값이며, 예산 검증을 통과한 최종 추천 목록은 아닙니다.
+`ProductTools`는 상품 검색과 배송비 조회를 모델에 공개합니다. 두 메서드는 조회한 값을 반환하며, 호출 결과를 필드에 쌓지 않습니다.
 
-05장의 도구는 요청별 조회 기록을 필드에 보관하지 않아 Spring 빈으로 공유했습니다. 06장은 `priceDetails`가 요청마다 달라지므로 새 객체를 만듭니다. Agent라고 해서 반드시 도구를 `new`로 생성해야 하는 것은 아닙니다.
-
-[ShoppingTools.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingTools.java)의 전체 코드입니다.
+[ProductTools.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ProductTools.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l06decisions;
 
 import com.example.ailearning.l06decisions.domain.Product;
 import com.example.ailearning.l06decisions.domain.ProductCatalog;
-import com.example.ailearning.l06decisions.domain.ProductPriceDetails;
-
+import com.example.ailearning.l06decisions.domain.ProductPriceDetail;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import java.util.ArrayList;
 import java.util.List;
 
-/** 요청마다 새로 만든다. 조회한 금액이 다른 요청에 섞이지 않게 한다. */
-public class ShoppingTools {
+/** 상품 검색과 배송비 조회를 모델에 제공하는 상태 없는 도구입니다. */
+public class ProductTools {
     private final ProductCatalog productCatalog;
-    private final List<ProductPriceDetails> priceDetails = new ArrayList<>();
 
-    public ShoppingTools(ProductCatalog productCatalog) {
+    public ProductTools(ProductCatalog productCatalog) {
         this.productCatalog = productCatalog;
     }
 
-    @Tool(description = "상품 검색. category는 음료/생활, maxPrice는 상품 가격 상한. 배송비는 별도로 조회하세요.")
+    @Tool(description = "카테고리와 상품 가격 상한으로 상품을 검색합니다. 가격에 배송비는 포함되지 않습니다.")
     public List<Product> searchProducts(@ToolParam(required = false) String category,
             @ToolParam(required = false) Integer maxPrice) {
         return productCatalog.search(category, maxPrice);
     }
 
-    @Tool(description = "검색한 상품 ID의 배송비와 배송비 포함 총액을 조회합니다.")
-    public ProductPriceDetails calculateShipping(String productId) {
-        ProductPriceDetails productPriceDetails = productCatalog.calculatePriceDetails(productId);
-        priceDetails.add(productPriceDetails);
-        return productPriceDetails;
-    }
-
-    /** 이번 요청에서 실제 조회한 금액을 반환한다. 최종 후보 검증에 사용한다. */
-    public List<ProductPriceDetails> getPriceDetails() {
-        return List.copyOf(priceDetails);
+    @Tool(description = "상품 한 개의 정보와 배송비, 배송비 포함 총액을 반환합니다.")
+    public ProductPriceDetail calculateShipping(String productId) {
+        return productCatalog.calculatePriceDetails(productId);
     }
 }
 ```
+
+`@ToolParam(required = false)`는 모델이 해당 인자를 생략해도 된다는 뜻입니다. 카테고리나 가격 상한을 지정하지 않은 검색도 가능합니다.
+`searchProducts`의 가격 상한은 **상품 가격** 기준입니다. 배송비 포함 예산을 판단하려면 `calculateShipping`이 반환한 `total`을 확인해야 합니다.
+
+예를 들어 “친구에게 줄 음료 선물을 찾고 있어요. 배송비까지 3만 원 안에서 추천해 주세요.”에는 검색 후 배송비를 확인할 수 있습니다.
+“어떤 음료 상품들이 있나요? 이름만 알려 주세요.”에는 검색만으로 답할 수 있습니다. “안녕하세요!”에는 도구가 필요하지 않습니다.
+고객은 원하는 내용을 말하고, 모델이 등록된 도구의 설명을 보고 필요한 조회를 고릅니다.
+
 모델이 도구를 요청하지 않으면 `.tools()`를 등록했어도 조회가 발생하지 않습니다.
 `.call().content()` 한 번에서 모델 요청은 여러 번 발생할 수 있습니다.
 

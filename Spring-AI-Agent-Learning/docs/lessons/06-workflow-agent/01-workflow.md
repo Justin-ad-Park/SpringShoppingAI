@@ -11,7 +11,7 @@
 요청: “배송비 포함 3만원 이하인 음료 선물을 추천해줘.”
 가상 상품은 05와 같습니다. 허브티 총 15000원, 커피 총 31000원, 텀블러 총 35000원입니다.
 **커피는 상품 가격 28000원이지만 배송비를 더하면 예산을 초과**합니다.
-이번 `ProductSelectionCriteria.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
+이번 `ProductSearchCondition.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
 배송 정책은 국내 기본 배송으로 고정하며 지역/주소는 입력받지 않습니다.
 
 ## Workflow: 코드가 순서를 보장한다
@@ -33,38 +33,38 @@ flowchart TD
 Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 조건 값을 추출하지만, 검색·배송비 계산·설명 단계를 실행할 순서는 Java가 정합니다.
 프롬프트에 “검색하라”라고 써서 순서를 강제하는 것이 아닙니다.
 
-[ComparisonService.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ComparisonService.java)의 조건 추출과 Workflow 메서드입니다.
+[ShoppingService.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingService.java)의 조건 추출과 Workflow 메서드입니다.
 
 ```java
-    private ProductSelectionCriteria extractProductSelectionCriteria(String question) {
-        ProductSelectionCriteria criteria = chatClient
+    private ProductSearchCondition extractProductSearchCondition(String question) {
+        ProductSearchCondition searchCondition = chatClient
                 .prompt()
-                .system(PRODUCT_CRITERIA_EXTRACTION_INSTRUCTION)
+                .system(PRODUCT_SEARCH_CONDITION_EXTRACTION_INSTRUCTION)
                 .user(question)
                 .call()
-                .entity(ProductSelectionCriteria.class);
-        if (criteria == null) throw new IllegalStateException("조건이 비었습니다.");
-        criteria.validate();
-        return criteria;
+                .entity(ProductSearchCondition.class);
+        if (searchCondition == null) throw new IllegalStateException("조건이 비었습니다.");
+        searchCondition.validate();
+        return searchCondition;
     }
 
     private ExecutionResult runWorkflow(String question) {
-        ProductSelectionCriteria criteria = extractProductSelectionCriteria(question);
-        if (criteria.totalBudget() == null) return createBudgetQuestion();
-        List<Product> products = productCatalog.search(criteria.category(), criteria.totalBudget());
-        List<ProductPriceDetails> offers = products
+        ProductSearchCondition searchCondition = extractProductSearchCondition(question);
+        if (searchCondition.totalBudget() == null) return createBudgetQuestion();
+        List<Product> products = productCatalog.search(searchCondition.category(), searchCondition.totalBudget());
+        List<ProductPriceDetail> candidates = products
                 .stream()
                 .map(product -> productCatalog.calculatePriceDetails(product.id()))
-                .filter(productPriceDetails -> productPriceDetails.total() <= criteria.totalBudget())
+                .filter(priceDetail -> priceDetail.total() <= searchCondition.totalBudget())
                 .toList();
-        if (offers.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.", offers);
+        if (candidates.isEmpty()) return new ExecutionResult("NO_RESULTS", "예산 안의 후보가 없습니다.");
         String answer = chatClient
                 .prompt()
                 .system("TASK:SUMMARY\nJava가 검증한 후보만 설명하세요.")
-                .user("질문: " + question + "\n확정 후보: " + offers)
+                .user("질문: " + question + "\n확정 후보: " + candidates)
                 .call()
                 .content();
-        return new ExecutionResult("COMPLETED", answer, offers);
+        return new ExecutionResult("COMPLETED", answer);
     }
 ```
 

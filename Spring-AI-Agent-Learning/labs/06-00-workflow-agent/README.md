@@ -8,7 +8,7 @@
 저장소 루트에서 실행합니다. 실제 외부 API를 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests '*WorkflowAgentLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests '*BudgetProductToolsUnitTest' --tests '*WorkflowAgentLocalModelTest'
 ./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootJar
 ```
 
@@ -24,24 +24,41 @@ curl http://127.0.0.1:8096/api/compare/WORKFLOW \
 ./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests '*WorkflowAgentOpenAiLiveTest'
 ```
 
-경로의 `WORKFLOW`를 `AGENT`, `HYBRID`로 바꿔 비교합니다. 응답은 `mode`, `status`, `answer`, `offers`입니다. Agent의 offers는 실제 조회한 금액이며 최종 예산 준수는 보장하지 않습니다. 혼합 방식은 조회 사실을 다시 검증해 확정한 후보만 반환합니다.
+경로의 `WORKFLOW`를 `AGENT`, `HYBRID`로 바꿔 같은 고객 요청을 비교합니다. 응답은 `mode`, `status`, `answer`입니다.
+`COMPLETED`는 실행 완료이며, 상품 존재나 최종 답변의 사실성을 검증했다는 뜻은 아닙니다.
+예산 누락은 `NEEDS_INPUT`, Workflow의 후보 없음은 `NO_RESULTS`, 실행 예외는 `FAILED`입니다.
+Hybrid는 빈 조회 결과도 모델이 설명하므로 그 경우 `COMPLETED`입니다.
 
-Java에서는 `service.run(ExecutionMode.WORKFLOW, question)`처럼 Enum으로 실행 방식을 지정합니다. `ExecutionMode`는 정해진 선택지인 `WORKFLOW`, `AGENT`, `HYBRID`를 하나의 타입으로 묶습니다. Controller는 `@PathVariable ExecutionMode mode`로 값을 직접 받고, 서비스는 Enum 상수로 분기합니다. URL과 JSON 응답도 같은 대문자 이름을 사용하므로 별도의 대소문자 변환 메서드가 필요 없습니다. 소문자나 정의하지 않은 값은 Spring MVC가 HTTP 400으로 거부합니다. 예를 들어 응답은 `"mode":"WORKFLOW"` 형태입니다.
+Java에서는 `service.run(ExecutionMode.WORKFLOW, question)`으로 실행 방식을 지정합니다.
+Controller는 `@PathVariable ExecutionMode mode`로 받습니다. URL과 응답 모두 `WORKFLOW`, `AGENT`, `HYBRID` 대문자를 사용하며 소문자나 정의하지 않은 값은 HTTP 400입니다.
 
-`WorkflowAgentOpenAiLiveTest`는 같은 질문을 세 개의 독립 테스트로 비교합니다.
+### 실제 모델 테스트에서 비교하는 요청
 
-| 테스트 | 검증·출력 내용 |
+기본 질문은 “친구에게 줄 음료 선물을 찾고 있어요. 배송비까지 3만 원 안에서 추천해 주세요.”입니다.
+고객 질문에는 도구명이나 상품 ID, 도구 호출 순서를 넣지 않습니다.
+
+| 테스트 | 검증 내용 |
 |---|---|
-| Workflow | Java가 실행하는 `search(음료, 30000)` → P01 가격 계산 → P02 가격 계산 순서와 최종 P01 후보 검증 |
-| Agent | 모델이 선택한 도구가 실제로 수행한 검색·계산 기록 출력. 선택 순서·횟수를 고정하지 않음 |
-| 혼합 방식 | 실제 검색의 고정 조건과 최종 후보의 조회 여부·카테고리·배송비 포함 예산 검증, 실제 호출 기록 출력 |
+| Workflow 선물 추천 | 조건 해석 후 검색 → P01 계산 → P02 계산의 고정 순서 |
+| Agent 선물 추천 | 실제 검색·배송비 계산 실행, 순서와 반복 횟수는 모델 선택 |
+| Hybrid 선물 추천 | 확정 카테고리·예산으로 조회 도구 실행 |
+| Workflow 예산 누락 | 조회 전에 추가 입력 요청 |
+| Agent 상품 이름 질문 | 검색 실행, 불필요한 배송비 조회 없음 |
+| Agent 인사 | 상품 조회 없이 응답 |
+| Hybrid 천 원 예산 | 빈 검색 결과를 설명, 가격 계산 없음 |
 
-세 테스트는 `ProductCatalog`에 `@MockitoSpyBean`을 두고 `ToolCallPrinter.printMockitoDetails(productCatalog)`를 출력합니다. Workflow는 카탈로그를 직접 호출하며, Agent·혼합 방식의 도구는 내부에서 같은 카탈로그를 호출합니다. 05장과 같은 도구 이름인 `searchProducts`·`calculateShipping`을 사용하며, 내부에서 카탈로그의 `search`·`calculatePriceDetails`를 각각 호출합니다. Agent 테스트는 두 카탈로그 메서드가 각각 한 번 이상 실행됐는지 검증합니다. 도구 객체 자체의 호출 인자 기록과는 다르며, 특히 혼합 방식에서는 Java가 고정한 검색 인자가 출력됩니다.
-`InOrder`는 이미 실행된 기록을 검증하며 실행 순서를 지정하지 않습니다. 실제 모델이 필요한 조회를 생략하거나 조건 추출에 실패하면 Live 테스트도 실패할 수 있습니다.
+각 테스트는 공통 메서드에서 요청·결과와 `ToolCallPrinter.printMockitoDetails(productCatalog)` 호출 기록을 출력합니다.
+`@MockitoSpyBean`은 실제 카탈로그를 사용하면서 실행 기록을 남깁니다.
+Agent의 `ProductTools.searchProducts`·`calculateShipping`은 각각 카탈로그의 `search`·`calculatePriceDetails`를 호출합니다.
+Hybrid의 `BudgetProductTools.findProductsWithinBudget`는 고정 조건으로 검색·가격 계산 후 총액을 필터링합니다.
+도구는 조회 결과를 반환하며 추천 목록을 저장하는 상태를 갖지 않습니다. `ProductPriceDetail`은 상품 한 건의 금액 정보입니다.
 
-테스트의 `extracting`, `containsExactly`, `allSatisfy`, `verify`, `atLeastOnce`가 낯설면 [06장 보충: 테스트 검증 코드 읽기](../../docs/lessons/06-workflow-agent/04-test-assertions.md)를 참고하세요.
+Live 테스트는 실제 모델의 해석·도구 사용을 검사합니다. 모델이 필요한 조회를 생략하면 실패할 수 있습니다.
+예산 필터·경계값은 `BudgetProductToolsUnitTest`, 모델에 전달되는 상품·금액과 도구 연결은 `WorkflowAgentLocalModelTest`로 별도 검증합니다.
+이 검사는 최종 자연어 답변 전체의 사실성 평가까지 포함하지 않습니다.
 
-모델 호출 수는 로컬 테스트 서버의 요청 목록으로 확인합니다. 자체 RunState나 CountedChatModel은 사용하지 않습니다.
+검증문이 낯설면 [06장 보충: 테스트 검증 코드 읽기](../../docs/lessons/06-workflow-agent/04-test-assertions.md)를 참고하세요.
+모델 HTTP 요청 수는 로컬 테스트의 `MODEL.chat().getRequests()`로 확인합니다. 기본 고정 시나리오는 Workflow 2회, Agent 4회, Hybrid 3회이며 실제 모델의 횟수는 달라질 수 있습니다.
 
 실행 제한은 앞 단원의 보충 실습에서 확인합니다. 각각 별도 모듈입니다.
 

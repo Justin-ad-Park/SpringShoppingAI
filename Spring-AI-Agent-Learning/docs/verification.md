@@ -538,3 +538,40 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 13개 변경 모듈의 UnitTest·LocalModelTest를 클래스 필터로 실행해 JUnit XML 기준 83개 통과, 실패 0·오류 0·건너뜀 0을 확인했다. 11장은 로컬 MCP 서버, 나머지 모델 호출은 HTTP stub으로 검증했다. Live 코드는 컴파일했으며 실제 외부 API 호출은 하지 않았다.
 - 교재의 전체 Java 파일 발췌 28개가 실제 소스와 일치했다. 변경된 Mermaid 3개가 문법 파서에서 통과했다. 이름·패키지 기준의 하네스 통합, 모듈별 테스트 수·명령·검토 한계는 [적용 기록](../../education-harness/reports/2026-11-12-naming-and-package-layout.md)을 참고한다.
 - 작업 중 별도로 추가된 13장의 CounselToolResults 편집은 보존했으며 위 후속 수정·검증 집계에 포함하지 않았다. 후속 변경은 커밋하지 않았다. 모델 판단 품질·외부 모델 연결·화면 렌더링·학습자 이해도·독립 세션 하네스 행동 평가는 이번 범위에서 검증하지 않았다.
+
+
+## 06장 상품 조회와 추천 목록 추가 분리 — 2026-11-12
+
+- 범위: `06-00-workflow-agent`와 06장 교재·README·프로젝트 테스트 대응표. 다른 단원의 같은 타입은 변경하지 않았습니다.
+- 단건 타입: `ProductPriceDetails`를 `ProductPriceDetail`로 변경했습니다. 상품·배송비·총액 JSON 필드와 계산 규칙은 유지했습니다.
+- 도구 계약: `ShoppingListTools.calculateShipping`은 한 건만 반환하고 목록을 변경하지 않습니다. `addProducts(String... productIds)`가 모델이 선택한 상품을 추천 목록에 추가합니다. JSON에서는 한 개도 여러 개도 `productIds` 문자열 배열로 전달합니다. 빈 배열은 거부하고 같은 ID는 중복 추가하지 않습니다. 잘못된 ID가 섞인 일괄 요청은 일부만 반영하지 않습니다.
+- 결과 의미: Agent의 `offers`는 모델이 추가한 목록입니다. Hybrid는 이 목록에서 카테고리·배송비 포함 총예산을 검증합니다. 조회만 한 상품은 추천 결과에 포함하지 않습니다. 실제 장바구니·주문 변경은 없습니다.
+- 검증 환경: Java 21, Spring Boot 4.0.9, Spring AI 2.0.2. 버전 기준은 루트 `build.gradle`입니다.
+- 실행 명령: `./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests com.example.ailearning.l06decisions.ShoppingListToolsUnitTest --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootJar`
+- 실행 결과: 단위 테스트 5개·로컬 모델 테스트 13개 통과, 실패 0·오류 0·건너뜀 0, JAR 빌드 성공. 한 개·여러 개의 실제 도구 배열 인자 전달과 Spy 인자 캡처를 확인했습니다. 첫 추가 테스트 컴파일에서 ToolCallbacks import 오류를 수정한 후 재검증했습니다.
+- Live 테스트: 기존 3개를 새 목록 의미에 맞추고, 배송비만 조회·두 상품 중 하나 선택·한 배열로 여러 상품 추가 3개를 추가했습니다. 테스트 소스 컴파일은 통과했습니다.
+- 문서 검사: 수정 범위의 로컬 링크 55개와 코드 블록 균형, 전체 코드로 제시한 도구 클래스 2개의 소스 일치를 확인했습니다. Mermaid 3개 문법 검사와 `git diff --check`를 통과했습니다. 그림 렌더링은 별도로 확인하지 않았습니다.
+- 검토 방식: 한 에이전트가 코드·테스트·문서를 대조했습니다. 조회와 목록 변경의 구분, 추가 요청의 중복·실패 정책, 모델 선택과 Java 최종 검증의 차이를 확인했습니다.
+- 실제 외부 모델 호출: 미실행. 추가 Live 테스트의 모델 지시 준수·비용·응답 시간은 미검증입니다. 커밋하지 않았습니다.
+
+### 후속 수정: 조회 결과 객체를 그대로 추천 목록에 추가 — 2026-11-12
+
+- `addProducts`를 `ProductPriceDetail... productPriceDetails`로 변경했습니다. 상품 ID로 재조회하던 로직은 제거하고 입력 객체를 그대로 보관합니다. 객체와 상품 ID의 필수 항목, 빈 배열, 중복 상품 처리는 유지합니다.
+- 모델 도구 스키마는 문자열 배열에서 객체 배열로 변경했습니다. 로컬 고정 응답·도구 스키마 검사·가변 인자 캡처·Live 프롬프트와 검증을 새 계약에 맞췄습니다.
+- 같은 로컬 검증 명령으로 단위 테스트 5개·로컬 모델 테스트 13개 통과, 실패 0·오류 0·건너뜀 0, JAR 빌드 성공을 확인했습니다. 추가 시 카탈로그 호출이 없고 전달한 객체가 보관되는지도 검사했습니다. Live 테스트는 컴파일만 확인했고 실제 외부 API는 호출하지 않았습니다.
+- 문서 로컬 링크 41개, JSON 예시 파싱, 코드 블록 균형, 전체 도구 예제와 소스 일치를 확인했습니다. `git diff --check`를 통과했습니다.
+- 검증 한계: 모델 도구 인자는 Java 객체 참조가 아니라 JSON으로 재전달됩니다. 현재 추가 도구는 원본 조회값과의 일치 여부를 별도 확인하지 않으며, Hybrid의 금액·카테고리 검사는 전달된 객체를 기준으로 합니다. 이 차이를 교재에 명시했습니다. 커밋하지 않았습니다.
+
+
+### 후속 수정: 자연스러운 고객 요청으로 세 실행 방식 비교 — 2026-11-12
+
+- 범위: 06장 실행 코드·로컬/Live 테스트·README·메인/소수업 문서, 학습 방법의 06장 과제, 프로젝트 테스트 대응표를 수정했습니다. 다른 실습 모듈의 코드는 변경하지 않았습니다.
+- 구조: `addProducts`와 추천 목록 상태를 제거했습니다. Agent는 `ProductTools`의 검색·배송비 조회를 선택합니다. Hybrid는 조건 추출·검증 후 `BudgetProductTools.findProductsWithinBudget()`을 제공하며, 도구 안에서 실제 조회 금액으로 예산을 검사합니다. 모델 답변을 결과 객체에 담아 반환합니다.
+- 응답 계약: `/api/compare/{mode}`와 실행 방식 이름은 유지했습니다. 응답은 `mode`, `status`, `answer`로 단순화하고 `offers`를 제거했습니다. `COMPLETED`는 실행 완료이며 추천 품질 검증 상태가 아닙니다. Hybrid는 빈 도구 결과를 설명해도 `COMPLETED`입니다.
+- Live 시나리오: 동일한 자연어 선물 추천 질문으로 세 방식을 비교하고 예산 누락·상품 이름 질문·인사·후보 없음까지 총 7개를 구성했습니다. 고객 질문에서 도구명·상품 ID·객체 배열 전달 지시를 제거했습니다. 고정 순서는 Workflow에서, 필요한 조회 여부는 Agent/Hybrid에서 검사합니다.
+- 검증 기준: 버전 선언은 루트 `build.gradle`의 Java 21 / Spring Boot 4.0.9 / Spring AI 2.0.2입니다.
+- 실행 명령: `./gradlew :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:test --tests com.example.ailearning.l06decisions.BudgetProductToolsUnitTest --tests com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest :Spring-AI-Agent-Learning:labs:06-00-workflow-agent:bootJar`
+- 결과: XML 기준 단위 테스트 5개·로컬 모델 테스트 11개 통과, 실패 0·오류 0·건너뜀 0. 마지막 코드 수정 후 테스트를 다시 실행했으며 JAR 빌드도 성공했습니다. Live 테스트 소스는 컴파일만 확인했습니다.
+- 문서 검사: 수정 범위의 로컬 링크·앵커 70개 오류 0, 코드 블록 균형과 전체 도구 예제 2개의 소스 일치, Mermaid 3개 문법 검사, `git diff --check`를 통과했습니다. 다이어그램은 문법과 코드 흐름을 대조했으며 실제 렌더링은 확인하지 않았습니다.
+- 검토 방식: 한 에이전트가 코드·테스트·문서를 대조했습니다. 결과를 저장하는 도구 상태가 없는지, 고객 질문이 도구 사용을 지시하지 않는지, 확정 조건과 배송비 포함 경계값 및 모델에 전달되는 상품 정보가 검증되는지 확인했습니다.
+- 실제 외부 모델 호출: 미실행. Live 시나리오의 실제 모델 판단·응답 품질·비용·지연은 미검증입니다. 단위/로컬 테스트는 최종 자연어의 모든 사실성을 보장하지 않습니다. 커밋하지 않았습니다.

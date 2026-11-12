@@ -6,13 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class ComparisonController {
-    private final ComparisonService service;
-    public ComparisonController(ComparisonService service) { this.service = service; }
+public class ShoppingAgentController {
+    private final ShoppingService shoppingService;
+    public ShoppingAgentController(ShoppingService shoppingService) { this.shoppingService = shoppingService; }
 
     @PostMapping(value = "/api/compare/{mode}", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public RunResult compare(@PathVariable ExecutionMode mode,
+    public RunResult recommend(@PathVariable ExecutionMode mode,
             @RequestBody @NotBlank @Size(max = 2000) String question) {
-        return service.run(mode, question);
+        return shoppingService.run(mode, question);
     }
 }
