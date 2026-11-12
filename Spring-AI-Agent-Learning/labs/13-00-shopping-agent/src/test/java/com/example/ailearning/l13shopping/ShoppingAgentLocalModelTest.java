@@ -124,6 +124,8 @@ class ShoppingAgentLocalModelTest {
             // Then: 이전 카테고리와 새 예산을 함께 적용한 결과·저장 이력 검증
             assertThat(revised.at("/criteria/category").asString()).isEqualTo("생활");
             assertThat(revised.at("/criteria/totalBudget").asInt()).isEqualTo(40000);
+            // Java 접근자는 intent지만 기존 JSON 필드 criteria는 유지합니다.
+            assertThat(revised.path("intent").isMissingNode()).isTrue();
             assertThat(revised.at("/offers/0/product/id").asString()).isEqualTo("P03");
             assertThat(revised.path("storedMessages").asInt()).isEqualTo(6);
         }

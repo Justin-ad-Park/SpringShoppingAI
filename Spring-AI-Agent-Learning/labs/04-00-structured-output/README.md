@@ -26,3 +26,5 @@
 ```
 
 IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
+
+내부 코드는 `ProductSearchCondition`, `SearchConditionExtractor`, `SearchConditionController`를 사용합니다. 기존 호출 경로인 `/api/criteria`와 `/api/criteria/text`는 유지합니다.

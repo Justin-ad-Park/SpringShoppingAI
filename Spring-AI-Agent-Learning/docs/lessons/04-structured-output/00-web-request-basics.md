@@ -12,23 +12,23 @@
 | Servlet | 웹 서버가 HTTP 요청 처리를 맡기는 Java 객체의 규약 |
 | DispatcherServlet | Servlet의 하나로, Spring MVC의 요청 처리를 시작하는 객체 |
 | Spring MVC | 요청에 맞는 메서드 선택, 입력값 준비·검증, Controller 실행과 응답 처리를 담당하는 웹 프레임워크 |
-| CriteriaController | 입력 검증을 통과한 질문을 서비스에 전달하는 직접 작성한 클래스 |
+| SearchConditionController | 입력 검증을 통과한 질문을 서비스에 전달하는 직접 작성한 클래스 |
 
 Tomcat이 현재 API 요청의 처리를 등록된 `DispatcherServlet`에 맡기면, Spring MVC가 담당 Controller 메서드를 찾아 실행을 준비합니다. 이 환경을 실습 코드에서 직접 생성하거나 연결할 필요는 없습니다.
 
 ## 요청은 어느 메서드와 연결될까?
 
-[CriteriaController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
+[SearchConditionController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionController.java)의 실제 코드 발췌입니다.
 
 ```java
 @RestController
 @RequestMapping("/api/criteria")
-public class CriteriaController {
+public class SearchConditionController {
     // 필드와 생성자 생략
 
     @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
-    public SearchCriteria extractCriteria(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return criteriaService.extractCriteria(question);
+    public ProductSearchCondition extractSearchCondition(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return searchConditionExtractor.extractSearchCondition(question);
     }
 }
 ```
@@ -41,7 +41,7 @@ public class CriteriaController {
 | `@RequestBody` | 요청 본문을 읽어 `question` 값으로 준비 |
 | `@NotBlank`, `@Size(max = 2000)` | 준비한 질문이 공백뿐이지 않은지, 길이가 제한 이내인지 검사할 규칙 |
 
-따라서 기본 실행 설정에서는 `POST http://127.0.0.1:8094/api/criteria`가 `extractCriteria()` 메서드에 연결됩니다. 주소만 입력해 브라우저로 여는 GET 요청과는 다릅니다.
+따라서 기본 실행 설정에서는 `POST http://127.0.0.1:8094/api/criteria`가 `extractSearchCondition()` 메서드에 연결됩니다. 주소만 입력해 브라우저로 여는 GET 요청과는 다릅니다.
 
 ## 메서드가 선택되어도 곧바로 본문이 실행되지는 않습니다
 
@@ -51,7 +51,7 @@ flowchart TD
     T --> M["Spring MVC: DispatcherServlet에서 요청 처리 시작"]
     M --> P["담당 메서드 선택·질문 문자열 준비"]
     P --> V{"MVC: 입력 규칙을 만족하는가?"}
-    V -->|통과| B["CriteriaController.extract 본문 실행"]
+    V -->|통과| B["SearchConditionController.extract 본문 실행"]
     V -->|실패| E["HTTP 400: Controller 본문 실행 안 됨"]
 ```
 

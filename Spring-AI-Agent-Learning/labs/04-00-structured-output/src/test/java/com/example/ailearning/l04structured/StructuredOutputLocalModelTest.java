@@ -1,6 +1,6 @@
 package com.example.ailearning.l04structured;
 
-import com.example.ailearning.l04structured.domain.SearchCriteria;
+import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
@@ -29,7 +29,7 @@ class StructuredOutputLocalModelTest {
     private int port;
 
     @Autowired
-    private CriteriaService service;
+    private SearchConditionExtractor service;
 
     private final TestOutput output = new TestOutput();
 
@@ -80,12 +80,12 @@ class StructuredOutputLocalModelTest {
                 .setResponseText("{\"category\":null,\"maxPrice\":null}");
 
         // When: 실제 서비스를 호출해 응답 변환
-        SearchCriteria criteria = service.extractCriteria("선물 추천");
-        output.printValue("조건 객체", criteria);
+        ProductSearchCondition searchCondition = service.extractSearchCondition("선물 추천");
+        output.printValue("조건 객체", searchCondition);
 
         // Then: 조건 객체의 필드가 null인지 검증
-        assertThat(criteria.category()).isNull();
-        assertThat(criteria.maxPrice()).isNull();
+        assertThat(searchCondition.category()).isNull();
+        assertThat(searchCondition.maxPrice()).isNull();
     }
 
     /** entity() 변환 예외를 서비스에서 ResponseStatusException으로 바꾸고 500를 지정하는 경로다. */
@@ -103,7 +103,7 @@ class StructuredOutputLocalModelTest {
         assertThat(response.statusCode()).isEqualTo(500);
     }
 
-    /** criteria.validate()의 IllegalArgumentException을 서비스에서 ResponseStatusException으로 바꾸고 422를 지정하는 경로다. */
+    /** searchCondition.validate()의 IllegalArgumentException을 서비스에서 ResponseStatusException으로 바꾸고 422를 지정하는 경로다. */
     @Test
     void 변환에_성공해도_허용되지_않는_값은_거부한다() throws Exception {
         // Given: 모델이 반환할 음수 가격 설정

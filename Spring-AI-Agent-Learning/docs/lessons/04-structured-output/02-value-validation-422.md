@@ -1,6 +1,6 @@
 # 2. validate()의 예외가 HTTP 422가 되는 과정
 
-이 사례는 JSON을 `SearchCriteria`로 변환한 **다음**에 발생합니다. JSON 형식이 맞아도 애플리케이션에서 허용하는 값인지 별도로 확인합니다. 웹 요청의 역할 구분은 [00 보충 문서](00-web-request-basics.md)에 있습니다.
+이 사례는 JSON을 `ProductSearchCondition`로 변환한 **다음**에 발생합니다. JSON 형식이 맞아도 애플리케이션에서 허용하는 값인지 별도로 확인합니다. 웹 요청의 역할 구분은 [00 보충 문서](00-web-request-basics.md)에 있습니다.
 
 ## 1. 값 검증 실패를 재현하기
 
@@ -10,7 +10,7 @@
 {"category":"음료","maxPrice":-1}
 ```
 
-생성된 record의 가격은 `-1`입니다. [SearchCriteria](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/SearchCriteria.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
+생성된 record의 가격은 `-1`입니다. [ProductSearchCondition](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/ProductSearchCondition.java)의 `validate()`는 이 값을 거부합니다. 실제 코드 발췌입니다.
 
 ```java
 if (maxPrice != null && maxPrice < 0) {
@@ -22,15 +22,15 @@ if (maxPrice != null && maxPrice < 0) {
 
 ## 2. 서비스에서 422 지정하기
 
-[CriteriaService](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)는 변환에 성공하고 결과가 `null`이 아닌 것을 확인한 뒤 다음 코드를 실행합니다. 실제 코드 발췌입니다.
+[SearchConditionExtractor](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionExtractor.java)는 변환에 성공하고 결과가 `null`이 아닌 것을 확인한 뒤 다음 코드를 실행합니다. 실제 코드 발췌입니다.
 
 ```java
 try {
-    criteria.validate();
+    searchCondition.validate();
 } catch (IllegalArgumentException error) {
     throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, error.getMessage());
 }
-return criteria;
+return searchCondition;
 ```
 
 `validate()`가 던진 예외가 이 `catch`에 잡히면, 서비스는 **새 `ResponseStatusException`에 `HttpStatus.UNPROCESSABLE_ENTITY`를 지정**합니다. 이 상수의 숫자 값이 **422**입니다.
@@ -43,7 +43,7 @@ return criteria;
 
 다만 HTTP 표준의 422는 **요청 내용**에 관한 상태이고, 이 실습에서 검증하는 값은 **모델이 생성한 결과**입니다. 따라서 이 매핑은 학습용 API의 선택이며, 모델이 잘못 생성한 값까지 사용자 요청 오류로 보아야 한다는 뜻은 아닙니다. 실제 API에서는 실패가 사용자 조건 때문인지 모델 응답 때문인지에 따라 422 또는 500 등의 정책을 정해야 합니다. `IllegalArgumentException` 자체가 422를 결정하지는 않습니다.
 
-`criteria.validate()`는 모델 호출·변환을 감싼 첫 번째 `try` 바깥에 있습니다. 따라서 여기서 발생한 예외는 변환 실패를 처리하는 첫 번째 `catch`가 아니라, 위의 별도 `catch`에서 422로 바뀝니다.
+`searchCondition.validate()`는 모델 호출·변환을 감싼 첫 번째 `try` 바깥에 있습니다. 따라서 여기서 발생한 예외는 변환 실패를 처리하는 첫 번째 `catch`가 아니라, 위의 별도 `catch`에서 422로 바뀝니다.
 
 ## 3. HTTP 응답과 테스트 결과 확인하기
 

@@ -40,7 +40,7 @@ class ShoppingAgentOpenAiLiveTest {
         // Then: 후속 응답과 변경된 예산 검증
         System.out.printf("후속 상담과 도구 기록: %s%n", next);
         assertThat(next.status()).isEqualTo("VERIFIED");
-        assertThat(next.criteria().category()).isEqualTo("음료");
-        assertThat(next.criteria().totalBudget()).isEqualTo(40000);
+        assertThat(next.intent().category()).isEqualTo("음료");
+        assertThat(next.intent().totalBudget()).isEqualTo(40000);
     }
 }

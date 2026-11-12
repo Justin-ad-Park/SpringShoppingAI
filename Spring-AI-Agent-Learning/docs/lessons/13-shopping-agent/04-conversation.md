@@ -83,6 +83,8 @@ curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/d
 | 미개봉 반품 기간만 질문 | 예산 없이 정책 도구 사용. 상품 도구는 미제공 |
 | 정책 근거가 검색되지 않음 | `NO_CONTEXT`로 보류. 모델 선택·검색 결과에 따라 달라짐 |
 
+`CounselService.Reply.intent()`는 추출한 업무 종류와 조건을 반환합니다. 기존 API와의 호환성을 위해 JSON 필드 이름은 `@JsonProperty("criteria")`로 유지합니다.
+
 `FAILED`, `VERIFY_FAILED`, `NO_VERIFIED_OFFER`, `NO_VERIFIED_SOURCE`는 HTTP 200 응답의 업무 상태입니다.
 `MODEL_LIMIT`, `TOOL_LIMIT`, `TIMEOUT`, `CANCELLED`도 응답 `status`로 확인합니다.
 공백·2000자 초과 질문과 잘못된 대화 ID는 Controller에서 HTTP 400으로 거부합니다.

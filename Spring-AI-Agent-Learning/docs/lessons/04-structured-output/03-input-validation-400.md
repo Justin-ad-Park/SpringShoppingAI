@@ -4,18 +4,18 @@
 
 ## 1. 공백 질문으로 실패 재현하기
 
-[CriteriaController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaController.java)의 실제 코드 발췌입니다.
+[SearchConditionController](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionController.java)의 실제 코드 발췌입니다.
 
 ```java
 @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
-public SearchCriteria extractCriteria(@RequestBody @NotBlank @Size(max = 2000) String question) {
-    return criteriaService.extractCriteria(question);
+public ProductSearchCondition extractSearchCondition(@RequestBody @NotBlank @Size(max = 2000) String question) {
+    return searchConditionExtractor.extractSearchCondition(question);
 }
 ```
 
 `@RequestBody`는 요청 본문을 질문 문자열로 읽으라는 선언입니다. `@NotBlank`는 `null`, 빈 문자열, 공백만 있는 문자열을 허용하지 않는 입력 규칙입니다. 테스트가 보내는 `"   "`는 이 규칙을 위반합니다.
 
-현재 실습은 Validation Starter를 사용하므로 MVC가 검증기를 통해 이 규칙을 검사할 수 있습니다. 공백 질문은 검사에서 실패하여 Controller 본문의 `service.extract(question)`까지 도달하지 않습니다. 모델 호출·응답 변환·`criteria.validate()`도 실행되지 않습니다.
+현재 실습은 Validation Starter를 사용하므로 MVC가 검증기를 통해 이 규칙을 검사할 수 있습니다. 공백 질문은 검사에서 실패하여 Controller 본문의 `service.extract(question)`까지 도달하지 않습니다. 모델 호출·응답 변환·`searchCondition.validate()`도 실행되지 않습니다.
 
 ## 2. 400은 누가 지정할까?
 
@@ -127,7 +127,7 @@ BAD_REQUEST(400, Series.CLIENT_ERROR, "Bad Request")
 
 ### Controller의 중단점에서 멈추지 않는 이유
 
-`CriteriaController.extract()`의 `return service.extract(question);`에 중단점을 찍어도, 공백 질문으로는 멈추지 않습니다. Spring MVC가 **메서드 본문 실행 전에** `@NotBlank` 위반을 발견하고 예외를 던지기 때문입니다.
+`SearchConditionController.extract()`의 `return service.extract(question);`에 중단점을 찍어도, 공백 질문으로는 멈추지 않습니다. Spring MVC가 **메서드 본문 실행 전에** `@NotBlank` 위반을 발견하고 예외를 던지기 때문입니다.
 
 이 경로를 확인하려면 Controller 본문 대신 **예외가 던져지는 순간에 멈추는 예외 중단점(Exception Breakpoint)**을 사용합니다.
 

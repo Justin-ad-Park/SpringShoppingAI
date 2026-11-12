@@ -1,6 +1,6 @@
 package com.example.ailearning.l04structured;
 
-import com.example.ailearning.l04structured.domain.SearchCriteria;
+import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,20 +22,20 @@ class StructuredOutputOpenAiLiveTest {
         TestNamePrinter.printTestName(testInfo);
     }
 
-    @Autowired CriteriaService service;
+    @Autowired SearchConditionExtractor service;
 
     @Test
     @Timeout(180)
     void 실제_OpenAI_응답을_문자열과_record로_받고_검증한다() {
         String question = "음료 중 15000원 이하 선물을 찾아줘.";
-        String text = service.extractCriteriaAsText(question);
+        String text = service.extractSearchConditionAsText(question);
         System.out.printf("문자열 응답: %s%n", text);
 
-        SearchCriteria criteria = service.extractCriteria(question);
-        System.out.printf("검증된 조건: %s%n", criteria);
+        ProductSearchCondition searchCondition = service.extractSearchCondition(question);
+        System.out.printf("검증된 조건: %s%n", searchCondition);
 
         assertThat(text).isNotBlank();
-        assertThat(criteria.category()).isEqualTo("음료");
-        assertThat(criteria.maxPrice()).isEqualTo(15000);
+        assertThat(searchCondition.category()).isEqualTo("음료");
+        assertThat(searchCondition.maxPrice()).isEqualTo(15000);
     }
 }

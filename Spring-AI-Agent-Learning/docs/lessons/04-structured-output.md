@@ -22,7 +22,7 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 실습 안내
 
-상품 검색 조건과 검증 규칙을 담는 `SearchCriteria`를 [domain 패키지](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+상품 검색 조건과 검증 규칙을 담는 `ProductSearchCondition`를 [domain 패키지](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
 
 **실행 코드·설정·테스트:** [labs/04-00-structured-output](../../labs/04-00-structured-output/README.md)
 
@@ -38,7 +38,7 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 1. 결과를 담을 record
 
-[SearchCriteria.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/SearchCriteria.java)의 전체 코드입니다.
+[ProductSearchCondition.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/ProductSearchCondition.java)의 전체 코드입니다.
 `category`는 상품 카테고리, `maxPrice`는 상품 한 개의 가격 상한(원)입니다.
 
 ```java
@@ -47,7 +47,7 @@ package com.example.ailearning.l04structured.domain;
 import java.util.Set;
 
 /** null은 사용자가 조건을 말하지 않았다는 뜻이다. 0이나 기본 예산으로 채우지 않는다. */
-public record SearchCriteria(String category, Integer maxPrice) {
+public record ProductSearchCondition(String category, Integer maxPrice) {
     public void validate() {
         if (category != null && !Set.of("음료", "생활")
                 .contains(category)) {
@@ -65,24 +65,24 @@ public record SearchCriteria(String category, Integer maxPrice) {
 
 ## 2. 문자열과 record로 응답받기
 
-같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extractCriteria()`는 record로 받아 검증합니다.
+같은 추출 지시를 사용하되, `text()`는 문자열로 받고 `extractSearchCondition()`는 record로 받아 검증합니다.
 
 ### 2.1. 먼저 정상 흐름 읽기
 
-다음은 `extractCriteria()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `chatClient`는 생성자로 만든 ChatClient이고, `CRITERIA_EXTRACTION_INSTRUCTION`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extractCriteria()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
+다음은 `extractSearchCondition()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `chatClient`는 생성자로 만든 ChatClient이고, `SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extractSearchCondition()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
 
 ```java
-SearchCriteria criteria = chatClient
+ProductSearchCondition searchCondition = chatClient
         .prompt()
-        .system(CRITERIA_EXTRACTION_INSTRUCTION)
+        .system(SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE)
         .user(question)
         .call()
-        .entity(SearchCriteria.class);
-criteria.validate();
-return criteria;
+        .entity(ProductSearchCondition.class);
+searchCondition.validate();
+return searchCondition;
 ```
 
-1. Spring AI가 모델을 호출하고 응답을 `SearchCriteria`로 변환합니다.
+1. Spring AI가 모델을 호출하고 응답을 `ProductSearchCondition`로 변환합니다.
 2. Java의 `validate()`가 변환된 카테고리·가격을 업무 규칙으로 검사합니다.
 3. 두 단계를 통과한 객체를 반환합니다.
 
@@ -90,12 +90,12 @@ return criteria;
 
 ### 2.2. 실패 처리까지 포함한 전체 코드
 
-[CriteriaService.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 전체 코드입니다. 정상 흐름에 모델 호출·변환 실패, 빈 응답, 업무 검증 실패 처리를 추가합니다.
+[SearchConditionExtractor.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionExtractor.java)의 전체 코드입니다. 정상 흐름에 모델 호출·변환 실패, 빈 응답, 업무 검증 실패 처리를 추가합니다.
 
 ```java
 package com.example.ailearning.l04structured;
 
-import com.example.ailearning.l04structured.domain.SearchCriteria;
+import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.HttpStatus;
@@ -103,8 +103,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class CriteriaService {
-    static final String CRITERIA_EXTRACTION_INSTRUCTION = """
+public class SearchConditionExtractor {
+    static final String SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE = """
             사용자 요청에서 상품 카테고리(category)와 상품 가격 상한(maxPrice)을 추출하세요.
             category는 음료/생활 중 사용자가 명시한 것만 쓰세요.
             가격은 원 단위 정수입니다. 말하지 않은 필드는 null로 두세요.
@@ -112,52 +112,52 @@ public class CriteriaService {
             """;
     private final ChatClient chatClient;
 
-    public CriteriaService(ChatClient.Builder builder) {
+    public SearchConditionExtractor(ChatClient.Builder builder) {
         chatClient = builder.build();
     }
 
-    public String extractCriteriaAsText(String question) {
+    public String extractSearchConditionAsText(String question) {
         return chatClient
                 .prompt()
-                .system(CRITERIA_EXTRACTION_INSTRUCTION)
+                .system(SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE)
                 .user(question)
                 .call()
                 .content();
     }
 
-    public SearchCriteria extractCriteria(String question) {
-        SearchCriteria criteria;
+    public ProductSearchCondition extractSearchCondition(String question) {
+        ProductSearchCondition searchCondition;
         try {
             // Spring AI가 형식 지시를 추가하고 응답을 record로 변환한다.
-            criteria = chatClient
+            searchCondition = chatClient
                     .prompt()
-                    .system(CRITERIA_EXTRACTION_INSTRUCTION)
+                    .system(SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE)
                     .user(question)
                     .call()
-                    .entity(SearchCriteria.class);
+                    .entity(ProductSearchCondition.class);
         } catch (RuntimeException error) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "모델 호출 또는 응답 변환에 실패했습니다.", error);
         }
-        if (criteria == null) {
+        if (searchCondition == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "모델 응답이 비었습니다.");
         }
         try {
             // Java 객체로 바뀌었어도 업무 규칙은 별도로 검사한다.
-            criteria.validate();
+            searchCondition.validate();
         } catch (IllegalArgumentException error) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, error.getMessage());
         }
-        return criteria;
+        return searchCondition;
     }
 }
 ```
 
-`extractCriteria()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
+`extractSearchCondition()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
 
 - `.content()`는 응답 문자열을 반환합니다.
-- `.entity(SearchCriteria.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다. 반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
-- `criteria.validate()`는 변환된 값이 허용 범위에 있는지 검사합니다. 예를 들어 가격이 `-1`이면 숫자로 변환할 수는 있지만 검증에서 거부합니다.
+- `.entity(ProductSearchCondition.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다. 반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
+- `searchCondition.validate()`는 변환된 값이 허용 범위에 있는지 검사합니다. 예를 들어 가격이 `-1`이면 숫자로 변환할 수는 있지만 검증에서 거부합니다.
 
 **객체로 변환됐다는 사실만으로 올바른 값이라고 판단할 수는 없습니다.** 검증을 통과한 양수 가격도 사용자가 말한 금액과 다를 수 있습니다.
 
@@ -167,16 +167,16 @@ public class CriteriaService {
 
 ```mermaid
 sequenceDiagram
-    participant Controller as Java CriteriaController
-    participant Service as Java CriteriaService
+    participant Controller as Java SearchConditionController
+    participant Service as Java SearchConditionExtractor
     participant AI as Spring AI ChatClient
     participant Model as 외부 모델
     Controller->>Service: extract(question)
-    Service->>AI: entity(SearchCriteria.class)
+    Service->>AI: entity(ProductSearchCondition.class)
     AI->>Model: 질문과 추출 지시 및 응답 형식 지시
     Model-->>AI: JSON 형태 응답
-    AI-->>Service: SearchCriteria 객체
-    Service->>Service: criteria.validate()
+    AI-->>Service: ProductSearchCondition 객체
+    Service->>Service: searchCondition.validate()
     Service-->>Controller: 검증한 객체 반환
 ```
 
@@ -202,7 +202,7 @@ curl -sS http://127.0.0.1:8094/api/criteria \
   --data-raw '음료 중 1만5천원 이하 선물을 찾아줘.'
 ```
 
-첫 경로의 Java 반환 타입은 `String`, 두 번째는 `SearchCriteria`입니다. 두 번째 경로는 record를 다음과 같은 HTTP JSON으로 반환합니다.
+첫 경로의 Java 반환 타입은 `String`, 두 번째는 `ProductSearchCondition`입니다. 두 번째 경로는 record를 다음과 같은 HTTP JSON으로 반환합니다.
 
 ```json
 {"category":"음료","maxPrice":15000}
@@ -265,13 +265,13 @@ MODEL
 
 ## 확인 질문
 
-1. `text()`와 `extractCriteria()`의 반환 타입과 처리 과정은 어떻게 다른가요?
+1. `text()`와 `extractSearchCondition()`의 반환 타입과 처리 과정은 어떻게 다른가요?
 2. `.entity()` 변환에 성공한 뒤에도 `validate()`를 호출하는 이유는 무엇인가요?
 
 <details>
 <summary>해설</summary>
 
-1. `text()`는 모델의 문자열 답변을 반환합니다. `extractCriteria()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
+1. `text()`는 모델의 문자열 답변을 반환합니다. `extractSearchCondition()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
 2. 객체 변환은 응답 형식을 Java 타입으로 읽는 작업입니다. 허용 카테고리나 예산 범위 같은 업무 규칙은 `validate()`로 별도 확인해야 합니다.
 
 </details>

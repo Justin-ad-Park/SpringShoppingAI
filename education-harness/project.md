@@ -127,7 +127,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 ## Java 코드 형식과 테스트 출력
 
 - Java 코드와 문서 예제의 Fluent 호출은 receiver 또는 정적 생성 호출을 첫 줄에 두고, 이어지는 호출은 일정하게 들여써 단계마다 줄바꿈합니다.
-- 단순한 AssertJ 검증은 `assertThat(criteria.maxPrice()).isEqualTo(15000);`처럼 한 줄로 유지합니다. 짧은 접근 체인은 함께 두고, 복합 람다와 여러 검증이 있는 블록은 압축하지 않습니다.
+- 단순한 AssertJ 검증은 `assertThat(searchCondition.maxPrice()).isEqualTo(15000);`처럼 한 줄로 유지합니다. 짧은 접근 체인은 함께 두고, 복합 람다와 여러 검증이 있는 블록은 압축하지 않습니다.
 - 결과 JSON을 보여줄 때는 생성 메서드 Javadoc의 `<pre>{@code ...}</pre>`를 활용할 수 있습니다.
 - 테스트 메서드명은 읽기 쉬운 한글과 밑줄로 작성합니다.
 - 이 과정의 테스트 출력은 각 클래스의 `@BeforeEach`에서 `TestNamePrinter.printTestName(testInfo)`를 한 번 호출하는 방식으로 통일합니다. 이 메서드가 실제 메서드명과 `\n===== [ 테스트명 ] ======\n` 형식을 관리하고, 이후 `TestOutput`·`System.out`은 결과만 출력합니다.

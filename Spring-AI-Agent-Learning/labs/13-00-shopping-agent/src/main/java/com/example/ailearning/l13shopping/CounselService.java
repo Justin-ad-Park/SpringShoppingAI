@@ -1,6 +1,7 @@
 package com.example.ailearning.l13shopping;
 
 import com.example.ailearning.l13shopping.domain.Intent;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.example.ailearning.l13shopping.domain.ProductPriceDetails;
 import com.example.ailearning.l13shopping.policy.PolicySearchResult;
 import com.example.ailearning.l13shopping.support.LimitedAgentRequestExecutor;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CounselService {
-    public record Reply(String status, String answer, Intent criteria, List<ProductPriceDetails> offers,
+    public record Reply(String status, String answer, @JsonProperty("criteria") Intent intent, List<ProductPriceDetails> offers,
             List<PolicySearchResult> sources, int storedMessages, RunState.Snapshot trace) {}
 
     private final CounselWorkflow counselWorkflow;

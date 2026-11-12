@@ -12,22 +12,22 @@ MODEL
         .setResponseText("이것은 JSON이 아닙니다.");
 ```
 
-모델 응답은 받았지만 `.entity(SearchCriteria.class)`가 이 문자열을 record로 변환하지 못합니다. Spring AI가 사용하는 JSON 변환기 내부에서 예외가 발생하고, 서비스의 `catch (RuntimeException error)`까지 전달됩니다.
+모델 응답은 받았지만 `.entity(ProductSearchCondition.class)`가 이 문자열을 record로 변환하지 못합니다. Spring AI가 사용하는 JSON 변환기 내부에서 예외가 발생하고, 서비스의 `catch (RuntimeException error)`까지 전달됩니다.
 
-이 입력에서 발생하는 `StreamReadException`은 `RuntimeException`의 하위 클래스라서 해당 `catch`에 잡힙니다. 변환에 실패했으므로 `criteria.validate()`는 실행되지 않습니다.
+이 입력에서 발생하는 `StreamReadException`은 `RuntimeException`의 하위 클래스라서 해당 `catch`에 잡힙니다. 변환에 실패했으므로 `searchCondition.validate()`는 실행되지 않습니다.
 
 ## 2. 서비스에서 500 지정하기
 
-[CriteriaService](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/CriteriaService.java)의 실제 코드 발췌입니다.
+[SearchConditionExtractor](../../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionExtractor.java)의 실제 코드 발췌입니다.
 
 ```java
 try {
-    criteria = chatClient
+    searchCondition = chatClient
             .prompt()
-            .system(CRITERIA_EXTRACTION_INSTRUCTION)
+            .system(SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE)
             .user(question)
             .call()
-            .entity(SearchCriteria.class);
+            .entity(ProductSearchCondition.class);
 } catch (RuntimeException error) {
     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
             "모델 호출 또는 응답 변환에 실패했습니다.", error);
@@ -69,7 +69,7 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(500);
 
 | 단계 | 실행하는 코드 | 역할 |
 |---|---|---|
-| 1 | `CriteriaService.extractCriteria()` → `.entity(SearchCriteria.class)` | 모델 응답을 `SearchCriteria`로 요청 |
+| 1 | `SearchConditionExtractor.extractSearchCondition()` → `.entity(ProductSearchCondition.class)` | 모델 응답을 `ProductSearchCondition`로 요청 |
 | 2 | `DefaultChatClient.DefaultCallResponseSpec.entity()` | `BeanOutputConverter`를 만들고 모델 호출·변환 처리로 전달 |
 | 3 | `doSingleWithBeanOutputConverter()` → `outputConverter.convert(stringResponse)` | 모델 응답 문자열을 변환기에 전달 |
 | 4 | `BeanOutputConverter.convert()` → `jsonMapper.readValue(...)` | Jackson으로 JSON을 읽어 record 생성. 잘못된 JSON이면 여기서 파싱 예외 발생 |
@@ -125,7 +125,7 @@ java.lang.RuntimeException
 
 Java의 `catch`는 지정한 타입의 하위 클래스도 잡습니다. 따라서 `StreamReadException` 객체도 `catch (RuntimeException error)`에 잡힙니다. **이름이 정확히 `RuntimeException`인 객체를 새로 던져야 하는 것은 아닙니다.**
 
-이 경로의 `BeanOutputConverter.convert()`와 Spring AI의 `entity()` 처리는 이 파싱 예외를 잡아 다른 예외로 바꾸지 않습니다. 예외가 호출 경로를 거슬러 `CriteriaService.extractCriteria()`의 `catch`까지 전파됩니다. 그곳의 `error`가 이 `StreamReadException` 객체를 가리킵니다.
+이 경로의 `BeanOutputConverter.convert()`와 Spring AI의 `entity()` 처리는 이 파싱 예외를 잡아 다른 예외로 바꾸지 않습니다. 예외가 호출 경로를 거슬러 `SearchConditionExtractor.extractSearchCondition()`의 `catch`까지 전파됩니다. 그곳의 `error`가 이 `StreamReadException` 객체를 가리킵니다.
 
 즉, **Jackson이 파싱 예외를 던지고 → Spring AI 호출 밖으로 전파되고 → 서비스가 잡아 HTTP 상태가 있는 예외로 바꿉니다.** `entity()`가 HTTP 500를 직접 만들지는 않습니다.
 
