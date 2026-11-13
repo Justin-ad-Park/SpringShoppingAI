@@ -44,9 +44,9 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 05 보충 5 도구 제한 | `05-05-tool-call-limits` | `com.example.ailearning.l05limits.ToolLimitLocalModelTest` | `com.example.ailearning.l05limits.ToolLimitOpenAiLiveTest` |
 | 06 Workflow·Agent | `06-00-workflow-agent` | `com.example.ailearning.l06decisions.WorkflowAgentLocalModelTest`<br>`com.example.ailearning.l06decisions.BudgetProductToolsUnitTest` | `com.example.ailearning.l06decisions.WorkflowAgentOpenAiLiveTest` |
 | 07 대화 메모리 | `07-00-chat-memory` | `com.example.ailearning.l07memory.MemoryLocalModelTest`<br>`com.example.ailearning.l07memory.MemoryBuilderUnitTest` | `com.example.ailearning.l07memory.MemoryOpenAiLiveTest` |
-| 07 저장소 보충: JDBC | `07-01-JDBC` | `com.example.ailearning.l07jdbc.JdbcMemoryLocalModelTest` | 없음 |
-| 07 저장소 보충: 선택 | `07-02-Redis-Selection` | `com.example.ailearning.l07selection.InMemorySelectionLocalModelTest` | `com.example.ailearning.l07selection.RedisMemoryRepositoryLiveTest` (Redis만 호출) |
-| 07 저장소 보충: 런타임 | `07-03-runtime-memory` | 없음 (Redis 필요) | `com.example.ailearning.l07runtime.IntentMemoryRedisLiveTest` (실제 Redis + 고정 응답 모델) |
+| 07 저장소 보충: JDBC | `07-02-JDBC` | `com.example.ailearning.l07jdbc.JdbcMemoryLocalModelTest` | 없음 |
+| 07 저장소 보충: 선택 | `07-03-Redis-Selection` | `com.example.ailearning.l07selection.InMemorySelectionLocalModelTest` | `com.example.ailearning.l07selection.RedisMemoryRepositoryLiveTest` (Redis만 호출) |
+| 07 저장소 보충: 런타임 | `07-07-runtime-memory` | 없음 (Redis 필요) | `com.example.ailearning.l07runtime.IntentMemoryRedisLiveTest` (실제 Redis + 고정 응답 모델) |
 | 08 Advisor | `08-00-advisors` | `com.example.ailearning.l08advisors.AdvisorLocalModelTest` | `com.example.ailearning.l08advisors.AdvisorOpenAiLiveTest` |
 | 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
 | 10 RAG | `10-00-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
@@ -127,7 +127,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 `LocalModelTest`는 실제 로컬 LLM이 아니라 고정 응답 HTTP 대역을 사용하는 테스트입니다. 현재 과정의 이름을 변경하면 과거 검증 기록의 옛 이름은 이력으로 보존합니다.
 
-07-1의 저장소 확장은 사용자 지정 이름인 `07-01-JDBC`, `07-02-Redis-Selection`에서 독립 실행합니다. 기본 모듈에는 외부 저장소 의존성이 없습니다. 고정 테스트 설정은 YAML에 두고 실행 시 결정되는 모델 대역 주소만 DynamicPropertySource로 지정합니다. Redis Live는 Redis Stack만 호출하며 OpenAI는 호출하지 않습니다.
+07-2·07-3의 저장소 확장은 `07-02-JDBC`, `07-03-Redis-Selection`에서 독립 실행합니다. 기본 모듈에는 외부 저장소 의존성이 없습니다. 고정 테스트 설정은 YAML에 두고 실행 시 결정되는 모델 대역 주소만 DynamicPropertySource로 지정합니다. Redis Live는 Redis Stack만 호출하며 OpenAI는 호출하지 않습니다.
 
 ## Java 코드 형식과 테스트 출력
 

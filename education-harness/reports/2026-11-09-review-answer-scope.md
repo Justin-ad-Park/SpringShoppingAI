@@ -38,7 +38,7 @@
 
 ### 3. ‘쿠키가 다르다’의 대상 — 중간
 
-위치: [07-4](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/04-isolation.md) 89행 5번.
+위치: [07-5](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/05-isolation.md) 89행 5번.
 
 현재 질문은 모든 쿠키 차이가 대화 격리를 만든다고 읽힐 수 있습니다. 이 예제에서 소유자를 구분하는 값은 서버의 HTTP 세션 ID입니다. 해설에는 서로 다른 세션 소유자라는 조건이 있으나 질문에서도 명확히 해야 합니다.
 

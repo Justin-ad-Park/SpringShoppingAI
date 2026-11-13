@@ -3,7 +3,7 @@
 [교재와 쿠키 실험](../../docs/lessons/07-chat-memory.md)을 먼저 읽습니다.
 읽는 순서: MessageView/MemoryReply → MemoryChatService → MemoryController.
 이 모듈에는 도구·MCP·RAG·Advisor 연결이 없습니다. ChatMemory에서 읽은 이전 메시지를 직접 프롬프트에 담습니다.
-`MemoryChatService.chat()`은 메시지 구성 → 모델 호출 → 응답 검증 → 저장 → 응답 변환 순서를 조정합니다. 각 단계는 같은 클래스의 별도 메서드로 분리하며, [서비스 설명](../../docs/lessons/07-chat-memory/03-store.md#chat은-처리-순서를-조정합니다)에서 구현을 확인합니다.
+`MemoryChatService.chat()`은 메시지 구성 → 모델 호출 → 응답 검증 → 저장 → 응답 변환 순서를 조정합니다. 각 단계는 같은 클래스의 별도 메서드로 분리하며, [서비스 설명](../../docs/lessons/07-chat-memory/04-store.md#chat은-처리-순서를-조정합니다)에서 구현을 확인합니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
@@ -14,7 +14,7 @@
 포트 8097. POST `/api/stateless`는 기억 없음, POST `/api/memory/demo`는 세션별 기억을 사용합니다.
 GET/DELETE `/api/memory/demo`는 현재 세션의 해당 대화만 조회/삭제합니다. POST 본문은 text/plain입니다.
 bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 로컬 테스트에는 실제 키가 필요 없습니다.
-저장은 JVM 메모리뿐이며 서버 재시작 시 사라집니다. 저장 6개, 전송 최대 8개 메시지를 구분하세요.
+저장은 JVM 메모리뿐이며 서버 재시작 시 사라집니다. 응답의 `storedMessageCount`는 해당 대화에 현재 보관된 메시지 개수입니다. 사용자 질문·모델 답변을 각각 1개로 세며, 누적 저장 횟수가 아닙니다. 저장 6개, 전송 최대 8개 메시지를 구분하세요.
 
 ## 테스트 선택과 결과 확인
 
@@ -35,9 +35,9 @@ IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 �
 
 이 모듈은 외부 저장소 없는 기본 메모리만 사용합니다.
 
-- [07-01-JDBC](../07-01-JDBC/README.md): DB 자동 구성과 저장·재조회
-- [07-02-Redis-Selection](../07-02-Redis-Selection/README.md): YAML로 Redis 또는 InMemory 선택
-- [07-03-runtime-memory](../07-03-runtime-memory/README.md): 의도 분류 후 Enum으로 요청마다 메모리 선택
+- [07-02-JDBC](../07-02-JDBC/README.md): DB 자동 구성과 저장·재조회
+- [07-03-Redis-Selection](../07-03-Redis-Selection/README.md): YAML로 Redis 또는 InMemory 선택
+- [07-07-runtime-memory](../07-07-runtime-memory/README.md): 의도 분류 후 Enum으로 요청마다 메모리 선택
 
 기본 빌더의 저장소 생성·공유 동작은 `MemoryBuilderUnitTest`에서 확인합니다.
 

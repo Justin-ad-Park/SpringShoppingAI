@@ -70,18 +70,18 @@ classDiagram
 
 이 교재가 사용하는 **Spring AI 2.0.2 기준**의 목록입니다.
 
-| 구현체 | 저장 위치 | 알아둘 특징 |
-|---|---|---|
-| `InMemoryChatMemoryRepository` | JVM 메모리 | 기본 저장소. 프로세스 종료 시 사라지고 서버 간 자동 공유되지 않음 |
-| `JdbcChatMemoryRepository` | PostgreSQL·MySQL 등 관계형 DB | JDBC로 메시지 저장. DB 연결·드라이버·스키마 준비 필요 |
-| `CassandraChatMemoryRepository` | Cassandra | Cassandra에 대화 메시지를 보관 |
-| `Neo4jChatMemoryRepository` | Neo4j | 그래프 DB에 메시지와 관계를 보관 |
-| `MongoChatMemoryRepository` | MongoDB | 문서형 DB에 대화 메시지를 보관 |
-| `RedisChatMemoryRepository` | Redis Stack | Redis Query Engine·RedisJSON이 필요하며 만료 시간(TTL) 설정 지원 |
+| 구현체 | 저장 위치 | 용도 | 알아둘 특징 |
+|---|---|---|---|
+| `InMemoryChatMemoryRepository` | JVM 메모리 | 개발·테스트 또는 단일 프로세스에서 영속성이 필요 없는 대화 | 기본 저장소. 프로세스 종료 시 사라지고 서버 간 자동 공유되지 않음 |
+| `JdbcChatMemoryRepository` | PostgreSQL·MySQL 등 관계형 DB | 이미 관계형 DB(RDB)를 사용하며 익숙한 SQL·운영 방식으로 대화를 보관할 때 | JDBC로 메시지 저장. DB 연결·드라이버·스키마 준비 필요 |
+| `CassandraChatMemoryRepository` | Cassandra | 대규모 쓰기와 분산 저장, 만료 시간(TTL)에 따른 자동 정리가 필요할 때 | Cassandra에 대화 메시지를 보관 |
+| `Neo4jChatMemoryRepository` | Neo4j | 이미 그래프 DB를 사용하며 대화를 다른 그래프 데이터와 연결해 분석·활용할 때 | 그래프 DB에 메시지와 관계를 보관. 업무 데이터와의 연결·분석은 별도 구현 필요 |
+| `MongoChatMemoryRepository` | MongoDB | 이미 MongoDB를 사용하며 대화를 문서형 데이터로 보관할 때 | 문서형 DB에 대화 메시지를 보관 |
+| `RedisChatMemoryRepository` | Redis Stack | 여러 서버가 대화를 공유하며 빠른 조회·저장과 TTL 기반 만료가 필요할 때 | Redis Query Engine·RedisJSON이 필요하며 만료 시간(TTL) 설정 지원 |
 
 InMemory 외의 저장소는 해당 의존성과 외부 저장소 연결 설정이 필요합니다. 여기서는 이름을 외우기보다 기존 인프라·보관 기간·메시지 지원 범위에 맞춰 저장 위치를 선택할 수 있다는 점을 이해합니다. 데이터가 재시작 후 유지되는지는 저장소의 영속화 설정까지 확인해야 합니다.
 
-기본 실습은 InMemory를 사용하고, [JDBC 저장소 연결](01-jdbcRepository.md)과 [YAML로 Redis 또는 InMemory 선택](02-RepositorySelection.md)은 별도 소주제에서 실행합니다. [07-5](05-production-memory.md)는 영구 이력·동시 요청 같은 운영 설계를 다룹니다. 다른 저장소를 학습 순서대로 모두 설치할 필요는 없습니다.
+기본 실습은 InMemory를 사용하고, [JDBC 저장소 연결](02-jdbcRepository.md)과 [YAML로 Redis 또는 InMemory 선택](03-RepositorySelection.md)은 별도 소주제에서 실행합니다. [07-6](06-production-memory.md)는 영구 이력·동시 요청 같은 운영 설계를 다룹니다. 다른 저장소를 학습 순서대로 모두 설치할 필요는 없습니다.
 
 별도로 Azure Cosmos DB 팀이 관리하는 외부 모듈의 `CosmosDBChatMemoryRepository`도 있습니다. 위의 Spring AI 기본 제공 구현체와 구분합니다. 출처와 저장소별 설정은 [공식 Chat Memory의 Memory Storage 절](https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_storage)에서 확인합니다. 필요한 경우 인터페이스를 직접 구현해 다른 저장소에 연결할 수도 있습니다.
 
@@ -160,7 +160,7 @@ ChatMemory memory = MessageWindowChatMemory.builder()
 
 ## 대화 의도로 실행 중 저장소를 선택하려면
 
-[07-03-runtime-memory](../../../labs/07-03-runtime-memory/README.md)는 간단한 대화에는 InMemory, 상품 추천에는 Redis를 사용합니다. 두 메모리를 함께 준비하고, 의도 분류 결과를 `MemoryStorage` Enum으로 바꿔 `chat(storage, ...)`에 전달합니다.
+[07-07-runtime-memory](../../../labs/07-07-runtime-memory/README.md)는 간단한 대화에는 InMemory, 상품 추천에는 Redis를 사용합니다. 두 메모리를 함께 준비하고, 의도 분류 결과를 `MemoryStorage` Enum으로 바꿔 `chat(storage, ...)`에 전달합니다.
 07-02가 시작 시 한 저장소를 고르는 것과 달리, 07-03은 같은 실행 안에서 요청마다 고릅니다. 선택한 한 메모리에서 이전 대화를 조회하고 그 메모리에만 새 대화를 저장합니다. 실제 코드·고객 입력·두 저장소의 격리 검증은 해당 README에서 이어서 읽습니다.
 
 ## 서비스에서 사용하는 메서드
@@ -197,4 +197,4 @@ API 계약의 근거: [Spring AI 2.0.2의 메모리 소스](https://github.com/s
 
 </details>
 
-[이전](../07-chat-memory.md) · [다음](03-store.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)
+[이전](../07-chat-memory.md) · [다음](04-store.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)

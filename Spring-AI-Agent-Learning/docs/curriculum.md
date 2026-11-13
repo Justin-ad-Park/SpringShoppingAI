@@ -39,7 +39,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 도구 | 05 Tool Calling | 일반 Java 상품 서비스 → @Tool → 호출 결과 | 모델은 요청, 애플리케이션은 실행함을 설명 | [교재·실습 완성](lessons/05-tool-calling.md) |
 | 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·혼합 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
 | 보충 | [02-5 모델 통신](lessons/02-first-call/05-model-timeout-retry.md) · [05-5 도구 제한](lessons/05-tool-calling/05-tool-call-limits.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
-| 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-1의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
+| 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-2·07-3의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 호출 전후 처리, 체인과 순서, 메모리 연결 | 도구 루프와 함께 동작하는 위치 설명 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
@@ -60,9 +60,9 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-00-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
 | 02장 보충 4: 여러 모델 | `02-04-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
 | 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
-| [07-1 JDBC 저장소](lessons/07-chat-memory/01-jdbcRepository.md) | `07-01-JDBC` | YAML·JDBC 자동 구성, 대화 재전달·SQL 저장·재조회 테스트 |
-| [07-1 Redis/InMemory 선택](lessons/07-chat-memory/02-RepositorySelection.md) | `07-02-Redis-Selection` | YAML 기반 시작 시 저장소 선택, InMemory 로컬·Redis Live 테스트 |
-| [07 의도별 런타임 선택](../labs/07-03-runtime-memory/README.md) | `07-03-runtime-memory` | 의도 분류·Enum 파라미터·두 저장소의 대화 격리, Redis + 모델 대역 테스트 |
+| [07-2 JDBC 저장소](lessons/07-chat-memory/02-jdbcRepository.md) | `07-02-JDBC` | YAML·JDBC 자동 구성, 대화 재전달·SQL 저장·재조회 테스트 |
+| [07-3 Redis/InMemory 선택](lessons/07-chat-memory/03-RepositorySelection.md) | `07-03-Redis-Selection` | YAML 기반 시작 시 저장소 선택, InMemory 로컬·Redis Live 테스트 |
+| [07-7 의도별 런타임 선택](../labs/07-07-runtime-memory/README.md) | `07-07-runtime-memory` | 의도 분류·Enum 파라미터·두 저장소의 대화 격리, Redis + 모델 대역 테스트 |
 | [05 보충 5](lessons/05-tool-calling/05-tool-call-limits.md) | `05-05-tool-call-limits` | 반복 도구 요청·전체 상한·요청별 초기화 검증, 별도 Live 테스트 |
 | [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md) | `02-05-model-timeout-retry` | 정상·지연·429·500·400 응답과 재시도 횟수 검증, 별도 Live 테스트 |
 | [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-04-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
@@ -96,7 +96,7 @@ RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 
 | 읽을 시점 | 소주제 | 학습할 구분 |
 |---|---|---|
-| 07장 이후 | [07-5 대화 저장과 재사용](lessons/07-chat-memory/05-production-memory.md) | 최근 문맥·전체 이력·업무 상태와 영구 저장 |
+| 07장 이후 | [07-6 대화 저장과 재사용](lessons/07-chat-memory/06-production-memory.md) | 최근 문맥·전체 이력·업무 상태와 영구 저장 |
 | 10장 이후 | [10-6 상용 RAG](lessons/10-rag/06-production-rag.md) | 자료 갱신과 적재·검색·생성별 실패 |
 | 11장 이후 | [11-7 원격 도구](lessons/11-mcp-workflow-agent/07-production-mcp.md) | 발견·실행·업무 성공, 권한과 재시도 |
 | 12장 이후 | [12-6 평가 운영](lessons/12-evaluation/06-production-evaluation.md) | 반복 평가·오류 분모·품질과 운영 지표 |

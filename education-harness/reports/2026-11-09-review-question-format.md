@@ -55,8 +55,8 @@
 | [06-workflow-agent/03-hybrid.md](../../Spring-AI-Agent-Learning/docs/lessons/06-workflow-agent/03-hybrid.md) | 159행: 제목, 접힌 답 없음 |
 | [06-workflow-agent/04-test-assertions.md](../../Spring-AI-Agent-Learning/docs/lessons/06-workflow-agent/04-test-assertions.md) | 93행: 번호 대응 |
 | [07-chat-memory/01-messages.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/01-messages.md) | 59행: 제목, 접힌 답 없음 |
-| [07-chat-memory/02-store.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/03-store.md) | 143행: 제목, 접힌 답 없음 |
-| [07-chat-memory/03-isolation.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/04-isolation.md) | 89행: 번호 대응; 107행: 제목, 접힌 답 없음 |
+| [07-chat-memory/02-store.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/04-store.md) | 143행: 제목, 접힌 답 없음 |
+| [07-chat-memory/03-isolation.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/05-isolation.md) | 89행: 번호 대응; 107행: 제목, 접힌 답 없음 |
 | [08-advisors/01-chain.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/01-chain.md) | 88행: 제목, 접힌 답 없음 |
 | [08-advisors/02-memory-loop.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/02-memory-loop.md) | 103행: 제목, 접힌 답 없음 |
 | [08-advisors/03-observe.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/03-observe.md) | 72행: 번호 대응; 87행: 제목, 접힌 답 없음 |

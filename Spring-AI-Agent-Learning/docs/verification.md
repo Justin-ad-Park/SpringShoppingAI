@@ -675,3 +675,13 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - Redis 실행: 이번 작업에서 만든 임시 Redis Stack 7.4.0-v3에 CHAT_MEMORY_REDIS_URL을 지정하고, 07-02의 RedisMemoryRepositoryLiveTest 1개와 07-03의 IntentMemoryRedisLiveTest 3개를 실행했습니다. 총 4개 통과(실패·오류·건너뜀 0, XML 확인), 07-03 bootJar 성공. 로그는 /private/tmp/l07-refactor-redis.log입니다. 기존 Redis는 변경하지 않고 임시 컨테이너만 종료·제거했습니다.
 - 정적 검사: 관련 Markdown 11개의 로컬 링크·앵커 99개 오류 0, 코드 블록 균형, 기본 서비스 전체 코드와 문서 발췌 일치, git diff --check 통과. 새로운 그림은 추가하지 않았습니다.
 - 미검증: 실제 OpenAI 호출·모델 답변 품질, 외부 PostgreSQL, 서버 재시작 후 영속성과 다중 서버 동시 갱신은 검증하지 않았습니다. 한 에이전트가 관점을 바꿔 검토했으며 별도 독립 검토는 아닙니다. 이번 변경은 커밋하지 않았습니다.
+
+
+## 07장 소주제와 실행 모듈 번호 정렬 — 2026-11-13
+
+- 번호 변경 전 개선 사항은 0a33e57로 먼저 커밋했습니다. 이후 번호 정렬 변경은 별도로 남겼습니다.
+- 문서: 01-messages는 유지하고 JDBC 02, RepositorySelection 03, store 04, isolation 05, production-memory 06으로 이동했습니다. 제목·목차·이전/다음 링크와 다른 단원의 참조를 갱신했습니다.
+- 모듈: 07-01-JDBC→07-02-JDBC, 07-02-Redis-Selection→07-03-Redis-Selection, 런타임 선택은 목차의 선택 7에 맞춰 07-03-runtime-memory→07-07-runtime-memory로 변경했습니다. settings.gradle·교육 계획·하네스 프로젝트 표·README·Java 실행 안내·YAML 주석을 새 경로로 맞췄습니다. 포트·패키지·Redis 컨테이너/볼륨 이름·저장 데이터 접두사는 변경하지 않았습니다.
+- 검증: 새 Gradle 경로의 JdbcMemoryLocalModelTest 4개, InMemorySelectionLocalModelTest 3개와 세 이동 모듈 bootJar 성공(/private/tmp/l07-renumber-build.log). 실제 임시 Redis Stack에서 RedisMemoryRepositoryLiveTest 1개, IntentMemoryRedisLiveTest 3개 통과(/private/tmp/l07-renumber-redis.log). 실패·오류·건너뜀 0. OpenAI 호출은 없습니다. 이번 검증용 컨테이너만 정리했습니다.
+- 정적 검사: 관련 Markdown 15개의 로컬 링크·앵커 151개 오류 0, 네 Redis 스크립트 bash -n, 새 경로의 두 Compose 설정 검사와 git diff --check 통과. 과거 검증 기록의 당시 명령·경로는 이력으로 보존합니다.
+- 미검증: 실제 OpenAI, IntelliJ 화면의 Gradle 재동기화는 실행하지 않았습니다. 이번 번호 변경은 커밋하지 않았습니다.

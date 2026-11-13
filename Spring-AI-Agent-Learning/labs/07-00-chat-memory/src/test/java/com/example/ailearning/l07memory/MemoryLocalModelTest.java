@@ -61,7 +61,7 @@ class MemoryLocalModelTest {
             assertThat(messages.get(1).path("content").asString()).isEqualTo("예산은 3만원입니다.");
             assertThat(messages.get(2).path("role").asString()).isEqualTo("assistant");
             assertThat(messages.get(3).path("content").asString()).isEqualTo("음료로 추천해줘.");
-            assertThat(json(response).path("storedMessages").asInt()).isEqualTo(4);
+            assertThat(json(response).path("storedMessageCount").asInt()).isEqualTo(4);
         }
     }
     @Test void 메모리_없는_요청은_이전_대화를_전달하지_않는다() throws Exception {
