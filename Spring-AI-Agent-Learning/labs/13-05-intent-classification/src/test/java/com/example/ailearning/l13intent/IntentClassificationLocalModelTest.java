@@ -3,6 +3,8 @@ package com.example.ailearning.l13intent;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,9 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IntentClassificationLocalModelTest {
     private static final OpenAiStubServer MODEL = new OpenAiStubServer();
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @Value("${local.server.port}")
     private int port;
@@ -165,13 +167,6 @@ class IntentClassificationLocalModelTest {
     }
 
     private HttpResponse<String> post(String question) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/intents"))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question))
-                .build();
-        try (var http = HttpClient.newHttpClient()) {
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            return output.printHttpResponse(response);
-        }
+        return appClient.postText("/api/intents", question);
     }
 }

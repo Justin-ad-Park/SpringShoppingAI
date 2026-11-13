@@ -4,16 +4,15 @@ import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +31,9 @@ class StructuredOutputLocalModelTest {
     private SearchConditionExtractor service;
 
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -137,16 +139,6 @@ class StructuredOutputLocalModelTest {
     }
 
     private HttpResponse<String> postQuestion(String question) throws Exception {
-        var request = HttpRequest.newBuilder(
-                        URI.create("http://127.0.0.1:" + port + "/api/criteria"))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question))
-                .build();
-
-        try (var http = HttpClient.newHttpClient()) {
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            output.printHttpResponse(response);
-            return response;
-        }
+        return appClient.postText("/api/criteria", question);
     }
 }

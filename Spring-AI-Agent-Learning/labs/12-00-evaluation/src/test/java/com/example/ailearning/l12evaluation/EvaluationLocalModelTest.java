@@ -2,20 +2,24 @@ package com.example.ailearning.l12evaluation;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"spring.config.import=", "spring.ai.openai.timeout=500ms"})
 class EvaluationLocalModelTest {
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -144,26 +148,13 @@ class EvaluationLocalModelTest {
     }
 
     tools.jackson.databind.JsonNode run() throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/run"))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .build();
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            output.printHttpResponse(response);
-            assertThat(response.statusCode()).isEqualTo(200);
-            return OpenAiStubServer.JSON.readTree(response.body());
-        }
+        var response = appClient.post("/api/evaluation/run");
+        assertThat(response.statusCode()).isEqualTo(200);
+        return OpenAiStubServer.JSON.readTree(response.body());
     }
 
     HttpResponse<String> post(String question) throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/evaluation/ask"))
-                    .header("Content-Type", "text/plain; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString(question))
-                    .build();
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            return output.printHttpResponse(response);
-        }
+        return appClient.postText("/api/evaluation/ask", question);
     }
 
     private static OpenAiStubServer createModelServer() {

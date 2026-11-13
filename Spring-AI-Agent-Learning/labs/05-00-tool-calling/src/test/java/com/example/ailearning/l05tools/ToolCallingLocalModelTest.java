@@ -2,22 +2,26 @@ package com.example.ailearning.l05tools;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class ToolCallingLocalModelTest {
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -113,25 +117,11 @@ class ToolCallingLocalModelTest {
     }
 
     HttpResponse<String> get(String path) throws Exception {
-        return send(HttpRequest.newBuilder(uri(path))
-                        .GET()
-                        .build());
+        return appClient.get("/api/tools" + path);
     }
 
     HttpResponse<String> post(String question) throws Exception {
-        return send(HttpRequest.newBuilder(uri("/chat"))
-                        .header("Content-Type", "text/plain; charset=UTF-8")
-                        .POST(HttpRequest.BodyPublishers.ofString(question))
-                        .build());
+        return appClient.postText("/api/tools/chat", question);
     }
 
-    URI uri(String path) {
-        return URI.create("http://127.0.0.1:" + port + "/api/tools" + path);
-    }
-
-    HttpResponse<String> send(HttpRequest request) throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(request, HttpResponse.BodyHandlers.ofString()));
-        }
-    }
 }

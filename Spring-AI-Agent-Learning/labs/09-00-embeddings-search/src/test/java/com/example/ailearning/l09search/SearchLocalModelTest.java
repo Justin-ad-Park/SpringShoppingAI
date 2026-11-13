@@ -2,7 +2,9 @@ package com.example.ailearning.l09search;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import java.net.*;
-import java.net.http.*;
+import java.net.http.HttpResponse;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
         properties = "spring.config.import=")
 class SearchLocalModelTest {
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -62,13 +67,8 @@ class SearchLocalModelTest {
 
     @Test
     void 텍스트를_임베딩한_벡터를_반환한다() throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            var response = output.printHttpResponse(http.send(HttpRequest.newBuilder(uri("/api/embedding"))
-                                    .header("Content-Type", "text/plain; charset=UTF-8")
-                                    .POST(HttpRequest.BodyPublishers.ofString("배송"))
-                                    .build(), HttpResponse.BodyHandlers.ofString()));
-            assertThat(json(response).path("dimensions").asInt()).isEqualTo(3);
-        }
+        var response = appClient.postText("/api/embedding", "배송");
+        assertThat(json(response).path("dimensions").asInt()).isEqualTo(3);
     }
 
     @ParameterizedTest(name = "{index}: {0}")
@@ -78,13 +78,9 @@ class SearchLocalModelTest {
     }
 
     HttpResponse<String> search(String query, String options) throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            return output.printHttpResponse(http.send(HttpRequest.newBuilder(uri("/api/search?query=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + options))
-                            .GET()
-                            .build(), HttpResponse.BodyHandlers.ofString()));
-        }
+        return appClient.get("/api/search?query=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + options);
     }
-    URI uri(String path) { return URI.create("http://127.0.0.1:" + port + path); }
+
     tools.jackson.databind.JsonNode json(HttpResponse<String> response) { return OpenAiStubServer.JSON.readTree(response.body()); }
 
     private static OpenAiStubServer createModelServer() {

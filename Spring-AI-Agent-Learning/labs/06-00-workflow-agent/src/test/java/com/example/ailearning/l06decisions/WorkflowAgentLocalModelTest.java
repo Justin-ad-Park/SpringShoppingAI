@@ -3,6 +3,7 @@ package com.example.ailearning.l06decisions;
 import com.example.ailearning.l06decisions.domain.ProductCatalog;
 
 import com.example.ailearning.testsupport.*;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,8 +11,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import tools.jackson.databind.JsonNode;
-import java.net.URI;
-import java.net.http.*;
 import static com.example.ailearning.testsupport.OpenAiChatStub.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -20,8 +19,11 @@ import static org.mockito.Mockito.*;
         "spring.config.import=", "spring.ai.openai.max-retries=0"})
 class WorkflowAgentLocalModelTest {
     static final OpenAiStubServer MODEL = new OpenAiStubServer();
-    static final HttpClient HTTP = HttpClient.newHttpClient();
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
+
     @Value("${local.server.port}") int port;
     @MockitoSpyBean ProductCatalog productCatalog;
 
@@ -42,7 +44,6 @@ class WorkflowAgentLocalModelTest {
 
     @AfterAll
     static void 종료() {
-        HTTP.close();
         MODEL.close();
     }
 
@@ -178,11 +179,7 @@ class WorkflowAgentLocalModelTest {
 
     @Test
     void 소문자_실행_방식은_모델_호출_전에_거부한다() throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/compare/workflow"))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString("음료 추천"))
-                .build();
-        var response = output.printHttpResponse(HTTP.send(request, HttpResponse.BodyHandlers.ofString()));
+        var response = appClient.postText("/api/compare/workflow", "음료 추천");
 
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
@@ -190,11 +187,7 @@ class WorkflowAgentLocalModelTest {
     }
 
     JsonNode post(String mode, String question) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/compare/" + mode))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question))
-                .build();
-        var response = output.printHttpResponse(HTTP.send(request, HttpResponse.BodyHandlers.ofString()));
+        var response = appClient.postText("/api/compare/" + mode, question);
         output.printValue("모델 서버가 받은 요청 수", MODEL.chat().getRequests().size());
         assertThat(response.statusCode()).isEqualTo(200);
         JsonNode result = OpenAiStubServer.JSON.readTree(response.body());

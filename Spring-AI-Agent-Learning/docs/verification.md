@@ -685,3 +685,15 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 검증: 새 Gradle 경로의 JdbcMemoryLocalModelTest 4개, InMemorySelectionLocalModelTest 3개와 세 이동 모듈 bootJar 성공(/private/tmp/l07-renumber-build.log). 실제 임시 Redis Stack에서 RedisMemoryRepositoryLiveTest 1개, IntentMemoryRedisLiveTest 3개 통과(/private/tmp/l07-renumber-redis.log). 실패·오류·건너뜀 0. OpenAI 호출은 없습니다. 이번 검증용 컨테이너만 정리했습니다.
 - 정적 검사: 관련 Markdown 15개의 로컬 링크·앵커 151개 오류 0, 네 Redis 스크립트 bash -n, 새 경로의 두 Compose 설정 검사와 git diff --check 통과. 과거 검증 기록의 당시 명령·경로는 이력으로 보존합니다.
 - 미검증: 실제 OpenAI, IntelliJ 화면의 Gradle 재동기화는 실행하지 않았습니다. 이번 번호 변경은 커밋하지 않았습니다.
+
+
+## LocalModel 테스트의 HTTP 호출 공통화 — 2026-11-13
+
+- 범위: 실습 앱에 JDK HttpClient로 요청하던 LocalModel 테스트 16개 클래스를 수정했습니다. HTTP를 사용하지 않고 서비스를 직접 검사하는 테스트와 Live 클래스, 운영 코드는 변경하지 않았습니다.
+- 구조: test-support의 LocalTestHttpClient가 로컬 앱 주소 구성, GET·DELETE·텍스트/JSON/본문 없는 POST, 응답 출력과 연결 자원 종료를 담당합니다. JUnit RegisterExtension으로 테스트별 종료를 연결하며, RANDOM_PORT는 요청 시점에 읽습니다. 별도 상위 테스트 클래스나 전략 계층은 추가하지 않았습니다.
+- 상태 보존: 기본 클라이언트는 쿠키를 저장하지 않습니다. 메모리·Advisor·쇼핑 테스트는 newSession()과 try-with-resources로 사용자별 CookieManager를 분리했습니다. 가상 이름 변수 alice/bob은 userABrowser/userBBrowser로 바꾸고, 기존 입력 문자열과 검증은 유지했습니다. 상태 코드·JSON 변환·업무 검증·모델 요청 횟수 검증은 해당 테스트에 남겼습니다.
+- 실행: 각 변경 모듈의 test 태스크에 해당 LocalModelTest 클래스만 --tests로 지정했습니다. 전체 저장소 test나 Live 클래스는 실행하지 않았습니다. 공통 모듈은 :Spring-AI-Agent-Learning:test-support:test로 실행했습니다.
+- 결과: XML 기준 LocalModel 105개(02장 7, 04장 5, 05장 5, 06장 11, 07장 7, 08장 5, 09장 7, 10장 9, 11장 13, 12장 11, 13장 25), 공통 지원 도구 17개(기존 11 + 새 HTTP 클라이언트 회귀 6) 모두 통과했습니다. 실패·오류·건너뜀 0. 변경 전후 각 테스트의 @Test·@ParameterizedTest·assertThat·verify 사용 개수도 대조했습니다.
+- 새 회귀 검증: GET·DELETE 경로/쿼리, UTF-8 텍스트·JSON·빈 POST 구분, 기본 요청의 쿠키 미보관, 사용자 세션 간 쿠키 격리, 오류 상태/본문 그대로 반환 및 1회 출력, 종료 콜백 이후 추가 요청 차단을 실제 로컬 HTTP 서버로 검사했습니다.
+- 정적 검사: LocalModel 테스트에서 직접 HttpRequest를 만들거나 HttpClient를 생성·send하는 중복 코드가 남지 않았음을 확인했습니다. test-support README에 역할 구분과 등록·요청·세션 예제를 설명했고 로컬 링크 6개 오류 0, git diff --check 통과했습니다. 테스트 이후 정리는 import·주석·줄바꿈만 변경했습니다.
+- 한계: 실제 OpenAI·Anthropic API는 호출하지 않았으며 모델 품질·운영 인프라를 검증한 결과가 아닙니다. 11장 MCP는 기존 테스트 서버를 로컬에서 실행했습니다. 변경은 커밋하지 않았습니다.

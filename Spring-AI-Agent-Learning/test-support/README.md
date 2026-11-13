@@ -1,6 +1,6 @@
 # 학습용 공통 테스트 도구
 
-로컬 HTTP 모델 서버와 결과 출력을 제공합니다. 실제 모델을 호출하거나 답변 내용을 판단하지 않습니다.
+로컬 HTTP 모델 서버, 실습 앱 호출 클라이언트와 결과 출력을 제공합니다. 실제 모델을 호출하거나 답변 내용을 판단하지 않습니다.
 각 실습은 `testImplementation project(':Spring-AI-Agent-Learning:test-support')`로만 참조합니다.
 실행 JAR과 Live 테스트의 모델 연결에는 포함되지 않습니다.
 
@@ -50,11 +50,70 @@ classDiagram
 | `AnthropicStubServer` | 다중 제공 업체 실습의 Anthropic 응답·기록 |
 | `TestNamePrinter` | 테스트 시작 시 빈 줄과 이름을 한 번 출력 |
 | `TestOutput` | 이름을 반복하지 않고 실제 결과 출력 |
+| `LocalTestHttpClient` | 실습 앱의 GET·POST·DELETE 호출, 결과 출력, 사용자별 쿠키와 연결 자원 관리 |
 | `ToolCallPrinter` | `printToolCalls(spy)`로 실행 횟수·이름·인자를 순서대로 출력하고, `printMockitoDetails(spy)`로 Mockito 상세 내역 출력 |
 
 채팅과 임베딩은 같은 서버 주소를 사용하지만 설정과 기록은 각 객체에서 관리합니다.
 채팅 요청은 시작 시 설정을 스냅샷으로 읽어 응답 생성·지연 중 설정 변경의 영향을 받지 않습니다.
 토큰 수는 `TokenUsage`의 `input`·`output`으로 구분합니다. 임베딩 usage는 프로토콜 확인용 고정 3토큰입니다.
+
+## 실습 앱 호출과 모델 응답 대역 구분하기
+
+LocalModel 테스트의 요청은 **테스트 → 실습 앱 → 모델 대역 서버**로 이어집니다.
+`LocalTestHttpClient`는 첫 번째 구간에서 실제 Controller에 HTTP 요청을 보냅니다.
+`OpenAiStubServer`는 두 번째 구간에서 Spring AI가 보낸 모델 요청을 받고 준비한 응답을 돌려줍니다.
+따라서 공통 HTTP 클라이언트는 `ChatClient`를 대신하지 않으며, 실제 Spring AI 연결과 도구 루프는 그대로 실행됩니다.
+
+[LocalTestHttpClient](src/main/java/com/example/ailearning/testsupport/LocalTestHttpClient.java)는 JDK HttpClient의 요청 생성·전송을 감싼 작은 어댑터입니다.
+단원별 상위 테스트 클래스를 상속하지 않고 다음 필드를 구성합니다. 기존 LocalModel 테스트에서 발췌한 등록 예시입니다.
+
+```java
+@Value("${local.server.port}")
+int port;
+
+private final TestOutput output = new TestOutput();
+
+@RegisterExtension
+final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
+```
+
+`@RegisterExtension`은 JUnit에 테스트 보조 객체를 등록하는 애너테이션입니다.
+이 객체의 종료 콜백이 테스트마다 연결 자원을 닫으므로 별도 `@AfterEach`가 필요 없습니다.
+`RANDOM_PORT`는 테스트 객체를 생성한 뒤 주입되기 때문에, `() -> this.port`로 실제 요청 시점에 포트를 읽습니다.
+모델 대역 서버의 설정·초기화·종료는 각 테스트 클래스가 계속 담당합니다.
+
+```java
+// 요청 경로와 본문만 지정한다. 응답 출력은 공통 도구가 한 번 수행한다.
+var response = appClient.postText("/api/tools/chat", "15000원 이하 음료");
+
+// 응답의 의미를 판단하는 검증은 해당 단원의 테스트에 남긴다.
+assertThat(response.statusCode()).isEqualTo(200);
+assertThat(MODEL.chat().getRequests()).hasSize(2);
+```
+
+| 호출 | 사용하는 요청 |
+|---|---|
+| `get(path)` | 조회. 인코딩한 쿼리 문자열도 경로에 포함 가능 |
+| `postText(path, text)` | UTF-8 일반 텍스트 본문 |
+| `postJson(path, json)` | JSON 문자열 본문 |
+| `post(path)` | 본문 없는 POST |
+| `delete(path)` | 삭제 |
+
+기본 클라이언트는 쿠키를 저장하지 않습니다. 대화 메모리처럼 후속 요청에 같은 사용자 세션이 필요하면 `newSession()`을 사용합니다.
+각 세션은 자기 CookieManager를 가지므로 다른 사용자의 대화 쿠키가 섞이지 않습니다.
+세션은 아래처럼 `try` 범위에서 사용하고 닫습니다.
+
+```java
+try (var userABrowser = appClient.newSession(); var userBBrowser = appClient.newSession()) {
+    userABrowser.postText("/api/memory/demo", "예산은 3만원입니다.");
+    var response = userABrowser.postText("/api/memory/demo", "음료를 추천해줘.");
+    var otherUserHistory = userBBrowser.get("/api/memory/demo");
+    // 이어서 이 단원의 대화 전달·세션 격리를 검증한다.
+}
+```
+
+공통 도구는 오류 상태와 본문도 그대로 반환합니다. 정상·실패 여부의 assertion, JSON 변환, 모델 호출 횟수 검증은 각 테스트에 둡니다.
+업무 의도가 드러나는 `postQuestion(question)` 같은 짧은 보조 메서드는 유지할 수 있으며, HTTP 요청 구성은 공통 도구에 위임합니다.
 
 ## 후속 단원에서 사용하는 설정
 
@@ -105,4 +164,4 @@ void 테스트_이름_출력(TestInfo testInfo) {
 ./gradlew :Spring-AI-Agent-Learning:test-support:test
 ```
 
-외부 API 키 없이 텍스트·순차 응답·usage·임베딩·오류·초기화·설정 변경·서버 격리를 검증합니다.
+외부 API 키 없이 텍스트·순차 응답·usage·임베딩·오류·초기화·설정 변경·서버 격리를 검증합니다. 공통 HTTP 클라이언트는 요청 형식·한글 본문·오류 응답·쿠키 공유/격리·종료 콜백을 별도 로컬 HTTP 서버로 검증합니다.

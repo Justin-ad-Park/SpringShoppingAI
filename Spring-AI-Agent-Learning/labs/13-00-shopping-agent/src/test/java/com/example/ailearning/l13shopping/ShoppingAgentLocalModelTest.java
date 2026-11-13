@@ -2,11 +2,13 @@ package com.example.ailearning.l13shopping;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.l13shopping.workflow.CounselResult;
 import com.example.ailearning.l13shopping.workflow.CounselWorkflow;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;
-import java.net.*;
-import java.net.http.*;
 import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.ai.tools.limits.max-total-tool-calls=4", "learning.limits.timeout-ms=1000"})
 class ShoppingAgentLocalModelTest {
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -94,8 +97,8 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 상품과_배송비와_정책을_조회해_검증한_값으로_답한다() throws Exception {
-        try (var alice = browser()) {
-            var body = post(alice, "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘");
+        try (var userABrowser = appClient.newSession()) {
+            var body = post(userABrowser, "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘");
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
             assertThat(body.at("/offers/0/product/id").asString()).isEqualTo("P01");
             assertThat(body.at("/offers/0/total").asInt()).isEqualTo(15000);
@@ -108,18 +111,18 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다() throws Exception {
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // Given: 예산과 카테고리가 담긴 첫 대화 저장
-            post(alice, "배송비 포함 30000원 음료 추천");
+            post(userABrowser, "배송비 포함 30000원 음료 추천");
 
             // When: 예산은 유지한 채 카테고리만 변경
-            var none = post(alice, "생활로만 바꿔");
+            var none = post(userABrowser, "생활로만 바꿔");
 
             // Then: 변경 조건의 검색 결과가 없는지 확인
             assertThat(none.path("status").asString()).isEqualTo("NO_RESULTS");
 
             // When: 같은 대화에서 예산을 다시 변경
-            var revised = post(alice, "예산을 40000원으로 바꿔");
+            var revised = post(userABrowser, "예산을 40000원으로 바꿔");
 
             // Then: 이전 카테고리와 새 예산을 함께 적용한 결과·저장 이력 검증
             assertThat(revised.at("/criteria/category").asString()).isEqualTo("생활");
@@ -150,9 +153,9 @@ class ShoppingAgentLocalModelTest {
                     }
                     return selection(List.of(), List.of());
                 });
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // When: 배송비 포함 예산으로 상담 요청
-            var body = post(alice, "배송비 포함 13000원 음료 추천");
+            var body = post(userABrowser, "배송비 포함 13000원 음료 추천");
 
             // Then: 추천 결과 없음과 대화 저장 상태 검증
             assertThat(body.path("status").asString()).isEqualTo("NO_RESULTS");
@@ -162,8 +165,8 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 예산이_없으면_도구_사용_전에_추가_질문을_한다() throws Exception {
-        try (var alice = browser()) {
-            var body = post(alice, "선물 추천");
+        try (var userABrowser = appClient.newSession()) {
+            var body = post(userABrowser, "선물 추천");
             assertThat(body.path("status").asString()).isEqualTo("NEEDS_INPUT");
             assertThat(body.at("/trace/toolExecutions").asInt()).isZero();
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
@@ -172,9 +175,9 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 정책_질문에는_상품_도구를_제공하지_않고_없는_근거는_만들지_않는다() throws Exception {
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // When: 정책만 질문
-            var body = post(alice, "미개봉 반품 기간");
+            var body = post(userABrowser, "미개봉 반품 기간");
 
             // Then: 상품 도구 없이 정책 도구만 제공
             assertThat(body.path("status").asString()).isEqualTo("VERIFIED");
@@ -182,7 +185,7 @@ class ShoppingAgentLocalModelTest {
             assertThat(tools.toString()).contains("searchPolicy").doesNotContain("searchProducts");
 
             // When: 정책 자료에 없는 주제로 후속 질문
-            var unknown = post(alice, "우주 여행 정책");
+            var unknown = post(userABrowser, "우주 여행 정책");
 
             // Then: 없는 정책을 만들어 답하지 않고 보류
             assertThat(unknown.path("status").asString()).isEqualTo("NO_CONTEXT");
@@ -191,7 +194,7 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 확인하지_않은_ID와_예산_초과_선택은_거부하고_저장하지_않는다() throws Exception {
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // Given: 배송비 포함 예산을 초과한 상품을 선택하도록 모델 설정
             MODEL
                     .chat()
@@ -206,7 +209,7 @@ class ShoppingAgentLocalModelTest {
                     });
 
             // When: 예산 초과 선택을 포함한 상담 실행
-            var expensive = post(alice, "30000원 음료 추천");
+            var expensive = post(userABrowser, "30000원 음료 추천");
 
             // Then: 선택 검증에 실패하고 대화가 저장되지 않는지 확인
             assertThat(expensive.path("status").asString()).isEqualTo("VERIFY_FAILED");
@@ -218,7 +221,7 @@ class ShoppingAgentLocalModelTest {
                     .setResponseFunction(request -> isIntent(request) ? intent("POLICY", null, "null") : selection(List.of(), List.of("invented")));
 
             // When: 정책 상담 실행
-            var unknownSource = post(alice, "반품");
+            var unknownSource = post(userABrowser, "반품");
 
             // Then: 확인하지 않은 출처를 선택한 답변 거부
             assertThat(unknownSource.path("status").asString()).isEqualTo("VERIFY_FAILED");
@@ -227,10 +230,10 @@ class ShoppingAgentLocalModelTest {
 
     @Test
     void 실패해도_기존_대화를_유지하고_사용자별로_격리한다() throws Exception {
-        try (var alice = browser(); var bob = browser()) {
-            // Given: Alice와 Bob의 대화를 저장하고 세션 격리 확인
-            post(alice, "30000원 음료 추천");
-            post(bob, "선물 추천");
+        try (var userABrowser = appClient.newSession(); var userBBrowser = appClient.newSession()) {
+            // Given: 사용자 A와 사용자 B의 대화를 저장하고 세션 격리 확인
+            post(userABrowser, "30000원 음료 추천");
+            post(userBBrowser, "선물 추천");
             assertThat(MODEL.chat().getRequests().getLast().path("messages").toString()).doesNotContain("30000원");
 
             // Given: 다음 모델 호출은 HTTP 429로 실패하도록 변경
@@ -238,23 +241,19 @@ class ShoppingAgentLocalModelTest {
                     .chat()
                     .setHttpStatus(429);
 
-            // When: Alice의 후속 상담 요청
-            var failed = post(alice, "조건을 바꿔줘");
+            // When: 사용자 A의 후속 상담 요청
+            var failed = post(userABrowser, "조건을 바꿔줘");
 
             // Then: 실패한 대화는 추가하지 않고 기존 대화 유지
             assertThat(failed.path("status").asString()).isEqualTo("FAILED");
             assertThat(failed.path("storedMessages").asInt()).isEqualTo(2);
 
-            // When: Alice 대화 삭제
-            var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                    .DELETE()
-                    .build();
-            var response = alice.send(request, HttpResponse.BodyHandlers.ofString());
-            output.printHttpResponse(response);
+            // When: 사용자 A 대화 삭제
+            userABrowser.delete("/api/counsel/demo");
 
-            // Then: Alice만 삭제되고 Bob의 대화는 유지되는지 검증
-            assertThat(history(alice).size()).isZero();
-            assertThat(history(bob).size()).isEqualTo(2);
+            // Then: 사용자 A만 삭제되고 사용자 B의 대화는 유지되는지 검증
+            assertThat(history(userABrowser).size()).isZero();
+            assertThat(history(userBBrowser).size()).isEqualTo(2);
         }
     }
 
@@ -265,9 +264,9 @@ class ShoppingAgentLocalModelTest {
                 .chat()
                 .setResponseFunction(request -> isIntent(request) ? intent("SHOPPING", "음료", "30000")
                 : createAssistantToolCallMessage("repeat", "searchProducts", "{}"));
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // When: 상담 API 실행
-            var body = post(alice, "30000원 음료 추천");
+            var body = post(userABrowser, "30000원 음료 추천");
 
             // Then: 도구 상한에서 중단하고 미완성 대화를 저장하지 않았는지 검증
             assertThat(body.path("status").asString()).isEqualTo("TOOL_LIMIT");
@@ -282,14 +281,14 @@ class ShoppingAgentLocalModelTest {
         MODEL
                 .chat()
                 .setResponseDelay(java.time.Duration.ofMillis(1500));
-        try (var alice = browser()) {
+        try (var userABrowser = appClient.newSession()) {
             // When: 상담 API 실행
-            var body = post(alice, "선물 추천");
+            var body = post(userABrowser, "선물 추천");
 
             // Then: 시간 초과 이후에도 늦은 응답이 저장되지 않는지 검증
             assertThat(body.path("status").asString()).isEqualTo("TIMEOUT");
             Thread.sleep(800);
-            assertThat(history(alice).size()).isZero();
+            assertThat(history(userABrowser).size()).isZero();
             assertThat(MODEL.chat().getRequests()).hasSize(1);
         }
     }
@@ -371,33 +370,14 @@ class ShoppingAgentLocalModelTest {
         return createAssistantTextMessage(object.toString());
     }
 
-    HttpClient browser() {
-        return HttpClient.newBuilder()
-                .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
-                .build();
-    }
-
-    URI uri(String path) {
-        return URI.create("http://127.0.0.1:" + port + path);
-    }
-
-    JsonNode post(HttpClient browser, String question) throws Exception {
-        var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question))
-                .build();
-        var response = browser.send(request, HttpResponse.BodyHandlers.ofString());
-        output.printHttpResponse(response);
+    JsonNode post(LocalTestHttpClient userBrowser, String question) throws Exception {
+        var response = userBrowser.postText("/api/counsel/demo", question);
         assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
         return OpenAiStubServer.JSON.readTree(response.body());
     }
 
-    JsonNode history(HttpClient browser) throws Exception {
-        var request = HttpRequest.newBuilder(uri("/api/counsel/demo"))
-                .GET()
-                .build();
-        var response = browser.send(request, HttpResponse.BodyHandlers.ofString());
-        output.printHttpResponse(response);
+    JsonNode history(LocalTestHttpClient userBrowser) throws Exception {
+        var response = userBrowser.get("/api/counsel/demo");
         return OpenAiStubServer.JSON.readTree(response.body());
     }
 

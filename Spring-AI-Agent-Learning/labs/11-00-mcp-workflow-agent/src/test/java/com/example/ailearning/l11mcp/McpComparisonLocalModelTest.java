@@ -5,6 +5,8 @@ import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,8 +17,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;
-import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 import static com.example.ailearning.testsupport.OpenAiChatStub.*;
@@ -27,8 +28,11 @@ import static org.assertj.core.api.Assertions.*;
 class McpComparisonLocalModelTest {
     private static final OpenAiStubServer MODEL = new OpenAiStubServer();
     private static final McpTestServer MCP = new McpTestServer();
-    private final HttpClient httpClient = HttpClient.newHttpClient();
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
+
     @Value("${local.server.port}") int port;
     @Autowired ShoppingMcpGateway shoppingMcpGateway;
 
@@ -116,7 +120,7 @@ class McpComparisonLocalModelTest {
         MODEL
                 .chat()
                 .setResponseFunction(request -> createShoppingToolSequenceResponse(request, 30000, true));
-        HttpResponse<String> response = output.printHttpResponse(request("hybrid", "음료 15000원 이하 모두 구매"));
+        HttpResponse<String> response = request("hybrid", "음료 15000원 이하 모두 구매");
         assertThat(response.statusCode()).isEqualTo(500);
         assertThat(MODEL.chat().getRequests()).hasSize(3);
     }
@@ -186,7 +190,7 @@ class McpComparisonLocalModelTest {
                 .chat()
                 .setResponseFunction(request -> createAssistantToolCallMessage("repeat", "searchProducts",
                 "{\"query\":{\"category\":\"음료\",\"maxPrice\":15000}}"));
-        HttpResponse<String> response = output.printHttpResponse(request("agent", "계속 검색"));
+        HttpResponse<String> response = request("agent", "계속 검색");
         assertThat(response.statusCode()).isEqualTo(500);
         assertThat(MODEL.chat().getRequests()).hasSize(6);
     }
@@ -215,7 +219,7 @@ class McpComparisonLocalModelTest {
 
     @Test
     void 공백_질문은_모델_호출_전에_거부한다() throws Exception {
-        HttpResponse<String> response = output.printHttpResponse(request("agent", "   "));
+        HttpResponse<String> response = request("agent", "   ");
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(MODEL.chat().getRequests()).isEmpty();
     }
@@ -239,14 +243,11 @@ class McpComparisonLocalModelTest {
     }
 
     HttpResponse<String> request(String mode, String question) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/mcp/" + mode))
-                .header("Content-Type", "text/plain; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(question))
-                .build(), HttpResponse.BodyHandlers.ofString());
+        return appClient.postText("/api/mcp/" + mode, question);
     }
 
     JsonNode post(String mode, String question) throws Exception {
-        HttpResponse<String> response = output.printHttpResponse(request(mode, question));
+        HttpResponse<String> response = request(mode, question);
         assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
         return OpenAiStubServer.JSON.readTree(response.body());
     }

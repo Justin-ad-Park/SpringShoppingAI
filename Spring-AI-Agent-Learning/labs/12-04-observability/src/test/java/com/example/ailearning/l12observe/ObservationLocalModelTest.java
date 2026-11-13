@@ -2,21 +2,25 @@ package com.example.ailearning.l12observe;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.LocalTestHttpClient;
 import com.example.ailearning.testsupport.OpenAiStubServer;
 import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class ObservationLocalModelTest {
     private final TestOutput output = new TestOutput();
+
+    @RegisterExtension
+    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -83,32 +87,19 @@ class ObservationLocalModelTest {
     }
 
     double measurement(String metric, String statistic) throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/actuator/metrics/"+metric))
-                    .GET()
-                    .build();
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            output.printHttpResponse(response);
-            if (response.statusCode() == 404) return 0; // 첫 호출 전에는 아직 계측 항목이 없을 수 있습니다.
-            assertThat(response.statusCode()).isEqualTo(200);
-            var measurements = OpenAiStubServer.JSON.readTree(response.body()).path("measurements");
-            for (var value : measurements) {
-                if (value.path("statistic").asString().equals(statistic)) {
-                    return value.path("value").asDouble();
-                }
+        var response = appClient.get("/actuator/metrics/" + metric);
+        if (response.statusCode() == 404) return 0; // 첫 호출 전에는 아직 계측 항목이 없을 수 있습니다.
+        assertThat(response.statusCode()).isEqualTo(200);
+        var measurements = OpenAiStubServer.JSON.readTree(response.body()).path("measurements");
+        for (var value : measurements) {
+            if (value.path("statistic").asString().equals(statistic)) {
+                return value.path("value").asDouble();
             }
-            throw new AssertionError("계측 항목 없음: " + metric + " / " + statistic);
         }
+        throw new AssertionError("계측 항목 없음: " + metric + " / " + statistic);
     }
 
     HttpResponse<String> ask() throws Exception {
-        try (var http = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/observed-chat"))
-                    .header("Content-Type", "text/plain; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString("배송비 기준을 설명해줘"))
-                    .build();
-            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            return output.printHttpResponse(response);
-        }
+        return appClient.postText("/api/observed-chat", "배송비 기준을 설명해줘");
     }
 }
