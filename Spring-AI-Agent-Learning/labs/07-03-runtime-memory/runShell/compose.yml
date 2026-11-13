@@ -1,0 +1,21 @@
+name: learning07-runtime
+
+services:
+  redis:
+    image: redis/redis-stack-server:7.4.0-v3
+    container_name: learning07-runtime-redis
+    ports:
+      - "127.0.0.1:${CHAT_MEMORY_REDIS_PORT:-16380}:6379"
+    environment:
+      REDIS_ARGS: "--appendonly yes --appendfsync everysec"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  redis-data:
+    name: learning07-runtime-redis-data

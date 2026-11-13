@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: ""
+  ai:
+    openai:
+      api-key: local-test-key
+      base-url: http://127.0.0.1:1
+      chat:
+        options:
+          model: learning-model

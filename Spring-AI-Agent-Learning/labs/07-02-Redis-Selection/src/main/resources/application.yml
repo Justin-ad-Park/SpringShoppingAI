@@ -1,0 +1,36 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8108}
+  servlet:
+    session:
+      cookie:
+        name: LEARNING_L07SELECTION_SESSION
+        http-only: true
+        same-site: strict
+spring:
+  application:
+    name: 07-02-redis-selection
+  config:
+    import: "optional:file:.env[.properties]"
+  ai:
+    model:
+      embedding: none
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key: ${OPENAI_API_KEY}
+      timeout: 5s
+      chat:
+        max-retries: 0
+        options:
+          model: ${OPENAI_MODEL}
+learning:
+  memory:
+    # 환경 변수 또는 프로필로 시작 시 저장소 하나를 선택합니다.
+    storage: ${CHAT_MEMORY_STORAGE:in-memory}
+    max-messages: 6
+    redis:
+      uri: ${CHAT_MEMORY_REDIS_URL:redis://127.0.0.1:16379}
+      index-name: ${CHAT_MEMORY_REDIS_INDEX:learning07-memory}
+      key-prefix: ${CHAT_MEMORY_REDIS_PREFIX:learning07-memory:}
+      time-to-live: 24h
+      initialize-schema: ${CHAT_MEMORY_REDIS_INITIALIZE_SCHEMA:true}

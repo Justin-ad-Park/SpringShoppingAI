@@ -1,0 +1,14 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+    implementation 'org.springframework.ai:spring-ai-model-chat-memory-repository-redis'
+    // Spring AI 2.0.2의 RedisClient API와 호환되는 버전입니다.
+    implementation 'redis.clients:jedis:7.4.1'
+}
+
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}
