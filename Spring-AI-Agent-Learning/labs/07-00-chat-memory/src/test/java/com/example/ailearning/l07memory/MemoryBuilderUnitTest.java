@@ -52,6 +52,7 @@ class MemoryBuilderUnitTest {
         assertThat(secondMemory.get("demo"))
                 .extracting(message -> message.getText())
                 .containsExactly("같은 저장소를 사용합니다.");
+        System.out.println("첫 번째 메모리에서 조회: " + firstMemory.get("demo"));
         System.out.println("두 번째 메모리에서 조회: " + secondMemory.get("demo"));
     }
 }
