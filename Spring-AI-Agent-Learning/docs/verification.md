@@ -598,6 +598,63 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 문서 검사: 변경 문서 9개의 로컬 링크·앵커 33개와 코드 블록 균형, git diff --check를 확인했습니다. 기존 이름 검색으로 11·13장 현재 소스·교재의 사용처를 확인했습니다. 그림은 변경하지 않았습니다.
 - 하네스 변경은 별도 요청에 따라 4615be3으로 먼저 커밋했으며, 이번 교육 코드·문서 수정은 커밋하지 않았습니다.
 
+
+## 07~13장 교육 문서 보강 — 2026-11-12
+
+- 범위: 07~13장 메인 문서와 관련 소수업·기본 코드·테스트를 대조하고, 공식 API와 공개 튜토리얼·강의 소개를 조사했습니다. 코드·설정·의존성은 변경하지 않았습니다.
+- 변경: 메인 문서에 목표·핵심 API·사용 흐름·확인 질문·출처를 보강했습니다. 07장은 ChatMemory와 Repository의 책임을 구분하고 빌더의 기본 저장소·메서드 계약을 설명합니다. 08·09장은 기존 실험에 실무 연결 설명을 추가했습니다.
+- 선택 보충: 07-4 대화 저장·재사용, 10-6 RAG 갱신, 11-7 원격 도구 권한·실패, 12-6 평가 운영, 13-7 상용 확장 경계. 모두 설계 문서이며 새 실행 모듈을 제공하지 않습니다. JDBC 연결 코드는 설명용 변경안으로 표시했습니다.
+- 동기화: 08장 실험의 변수명, 12장의 옛 단원 참조와 평가 메서드명, 13장의 변경 전 Workflow 메서드명·결과 명칭을 현재 코드에 맞췄습니다. 교육 계획과 레퍼런스의 읽기 경로를 갱신했습니다.
+- 정적 검증: 07~13장과 교육 계획·레퍼런스의 로컬 링크·앵커 411개 오류 0, 07~13장 문서 43개의 코드 블록·details 균형과 메인 문서 필수 절 확인, 변경된 객체 관계도를 포함한 Mermaid 6개 문법 검사, git diff --check 통과. 관계 그림은 실제 클래스 역할과 대조했으며 렌더링 화면은 확인하지 않았습니다.
+- API 근거: 실제 빌드의 Spring AI 2.0.2와 로컬 소스 JAR의 ChatMemory·Repository·MessageWindowChatMemory 계약을 대조했습니다. 외부 교육 자료의 버전·본문·소개 확인 범위와 사용한 내용을 references.md에 기록했습니다.
+- 미실행: 문서 변경이므로 Gradle 테스트와 Live 호출은 실행하지 않았습니다. JDBC 전환·외부 DB·동시 요청·요약·운영 설계는 구현하거나 검증한 기능이 아닙니다. 외부 예제 실행·강의 영상 전체 시청·상용 쇼핑몰 실제 구성 확인도 수행하지 않았습니다.
+- 한 에이전트가 관점을 바꿔 검토했으며 독립 검토로 기록하지 않습니다. 커밋하지 않았습니다.
+
+
+## 07-1 저장소 생성·자동 구성·실행 중 선택 예제 — 2026-11-13
+
+- 문서: 07-1에 Spring AI 2.0.2의 MessageWindowChatMemory.Builder 실제 소스를 발췌하고 builder 생성 → 기본 InMemory 저장소 생성 → 명시적 저장소 교체 → build 순서를 설명했습니다. 07-4의 저장소 구성 코드는 07-1로 옮겨 JDBC 자동 구성과 InMemory·Redis 선택 예제로 연결했습니다.
+- 코드: 기존 07장 채팅 운영 소스는 유지했습니다. 테스트 패키지 l07repositories에 JDBC 설정, 두 저장소의 명시적 구성, Enum·Map 기반 선택 서비스와 실행 테스트를 추가했습니다. 라이브러리는 테스트 의존성입니다. Redis 저장소 2.0.2의 POM이 선언한 Jedis 7.4.1을 명시해 Boot 기본 7.0과의 API 차이를 해결했습니다.
+- 최종 검증 명령: LEARNING_REDIS_PORT=53122 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07repositories.MemoryBuilderUnitTest --tests com.example.ailearning.l07repositories.JdbcMemoryRepositoryIntegrationTest --tests com.example.ailearning.l07repositories.RedisMemoryRepositoryLiveTest --tests com.example.ailearning.l07memory.MemoryLocalModelTest :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootJar
+- 결과: 최종 소스 컴파일과 테스트 실제 실행 성공. XML 기준 기존 채팅 7개·빌더 2개·JDBC 1개·Redis 1개, 총 11개 통과(실패·오류·건너뜀 0). bootJar는 운영 소스 변경이 없어 up-to-date 결과를 재사용했습니다.
+- 저장소 근거: JDBC는 실제 HSQLDB와 자동 구성된 JdbcChatMemoryRepository로 테이블 메시지 2행과 새 메모리 객체의 재조회를 확인했습니다. Redis는 실제 redis/redis-stack-server:7.4.0-v3를 임시 컨테이너의 루프백 포트에 연결해 실행 중 선택·읽기·쓰기·저장소 간 격리를 확인했습니다. 테스트 대화만 삭제하고 검증 컨테이너도 제거했습니다.
+- 정적 검사: 문서의 JDBC·선택 저장소 설정과 선택 서비스 코드 블록 3개를 실제 Java 소스와 대조했습니다. 07장·실습 README·교육 계획·프로젝트 설정의 로컬 링크·앵커 105개 오류 0, Mermaid 3개 문법, 코드 블록·details 균형, git diff --check를 확인했습니다. 그림 렌더링 화면은 검사하지 않았습니다.
+- 미검증: OpenAI 실제 호출은 하지 않았습니다. JDBC 테스트의 mem DB와 제거되는 Redis 컨테이너는 프로세스·서버 재시작 후 영구 보존을 검증하는 구성이 아닙니다. 운영 권한·동시 갱신·저장소 간 데이터 이전도 구현하지 않았습니다.
+- 기존 사용자 편집과 앞서 작업한 다른 단원 문서 변경을 보존했습니다. 커밋하지 않았습니다.
+
+## 07장 기본·JDBC·Redis 선택 실행 모듈 분리 — 2026-11-13
+
+- 분리 전 07장 문서·저장소 예제는 cfefbf2로 먼저 커밋했습니다. 이후의 모듈 분리 작업은 별도 변경으로 남깁니다. 다른 단원의 기존 편집은 유지했습니다.
+- 범위: 기본 07-00에는 외부 저장소 의존성과 선택 설정을 제거하고 기본 채팅·빌더 동작만 남겼습니다. 사용자 지정 이름인 07-01-JDBC, 07-02-Redis-Selection을 독립 앱으로 등록했습니다. 기본 앱이나 다른 실행 모듈을 import하지 않습니다.
+- 구성: JDBC는 운영 YAML의 DataSource 설정과 Starter 자동 구성을 사용합니다. 기본은 파일 HSQLDB이며 PostgreSQL 접속도 환경 변수로 지정할 수 있습니다. 테스트만 YAML에서 내장 메모리 DB로 바꿉니다. Redis 선택은 시작 시 저장소 하나를 선택하며, InMemory일 때 Redis 클라이언트를 생성하지 않습니다. 실행 중 요청별 선택·자동 이전·연결 실패 시 숨은 대체는 제공하지 않습니다.
+- 코드: 저장소 연결·선택은 src/main, 고정 테스트 설정은 application-test.yml로 옮겼습니다. DynamicPropertySource에는 실행 시 정해지는 모델 대역 주소만 둡니다. 새 두 앱은 주입받은 ChatMemory를 사용해 조회→모델 요청→성공한 질문·답변 저장을 수행합니다. JDBC 기본 스키마의 36자 제한에 맞게 서버 세션과 대화 ID의 조합을 UUID로 변환합니다.
+- 운영 참고 범위: Redis URI·인덱스·키 접두사·TTL, JDBC 접속·스키마 생성 정책을 설정으로 분리했습니다. 세션 재시작 뒤 로그인 사용자 재연결, 전체 영구 이력과 메시지 창의 분리, 다중 서버 동시성은 README에 남은 설계 범위로 명시했습니다. 운영 인증이나 분산 갱신 제어를 완성했다고 표현하지 않습니다.
+- 버전 기준: 루트 build.gradle의 Java 21 / Boot 4.0.9 / Spring AI 2.0.2. Redis는 Spring AI와 호환되는 Jedis 7.4.1을 명시했습니다. 구현은 실제 2.0.2 API 및 공식 Chat Memory 문서와 대조했습니다.
+- 로컬 명령: 아래 각 모듈의 test에 지정 클래스를 --tests로 선택하고 bootJar도 함께 실행했습니다.
+
+| 모듈 | 테스트 클래스 | 실행 결과 |
+|---|---|---:|
+| 07-00-chat-memory | MemoryLocalModelTest, MemoryBuilderUnitTest | 7 + 2개 통과 |
+| 07-01-JDBC | JdbcMemoryLocalModelTest | 4개 통과 |
+| 07-02-Redis-Selection | InMemorySelectionLocalModelTest | 3개 통과 |
+
+- 로컬 검증: 총 16개 통과, 실패·오류·건너뜀 0. 기본/JDBC 결과는 XML, Redis 모듈의 InMemory 선택 3개는 후속 Live 실행 전 콘솔 결과로 확인했습니다. 세 모듈의 JAR 빌드 성공. 기본 모듈 runtimeClasspath에 JDBC·Redis 저장소, Jedis·DB 드라이버가 남지 않은 것도 확인했습니다.
+- 실제 저장소 검증: 격리한 임시 Redis Stack 7.4.0-v3에서 CHAT_MEMORY_REDIS_URL을 지정해 07-02-Redis-Selection:test --tests '*RedisMemoryRepositoryLiveTest'를 실행했습니다. test,redis 프로필로 실제 앱 구성을 올려 저장·조회·삭제 1개 통과, 실패·오류·건너뜀 0(XML). 테스트 대화와 직접 생성한 임시 컨테이너만 정리했습니다. 이 실행은 모델 API를 호출하지 않습니다.
+- 문서 검사: 관련 Markdown 7개, 로컬 링크·앵커 92개 오류 0, 코드 블록 균형, Mermaid 2개 문법, JDBC 전체 설정 예제와 소스 일치, git diff --check를 확인했습니다. 그림 렌더링은 별도 확인하지 않았습니다. 교육 계획·프로젝트 테스트 표·README·07-1의 경로와 시작 시 선택 설명을 맞췄습니다.
+- 미검증: 실제 OpenAI, 외부 PostgreSQL, 파일 DB의 프로세스 재시작과 운영 Redis의 디스크 영속화·다중 서버 갱신은 실행하지 않았습니다. 기존 메모리 앱의 OpenAI Live 테스트는 컴파일만 확인했습니다. 별도 에이전트 없이 한 에이전트가 코드·문서·검증 결과를 대조했습니다.
+
+## 07-03 의도별 런타임 ChatMemory 선택 — 2026-11-13
+
+- 범위: 독립 모듈 07-03-runtime-memory를 추가하고 settings.gradle·교육 계획·07장 목차/저장소 설명·실행 안내·프로젝트 테스트 대응표에 연결했습니다. 기존 07-02의 시작 시 선택은 유지했습니다.
+- 흐름: 모델이 현재 고객 문장을 SMALL_TALK/PRODUCT_SEARCH로 분류하고, Java가 MemoryStorage.IN_MEMORY/REDIS로 매핑해 MemoryChatService.chat(storage, ...)에 전달합니다. ChatMemorySelector가 미리 준비한 두 ChatMemory 중 하나를 선택하며, 해당 요청의 조회와 저장은 같은 객체로 수행합니다. 상품 요청에는 가상 ProductCatalog의 상품가 자료만 제공합니다.
+- 구성: 연결·TTL·창 크기는 운영 YAML과 검증된 ConfigurationProperties에 두었습니다. 두 저장소를 함께 사용하므로 시작 시 Redis Stack이 필요합니다. 테스트에서 빈을 재조립하거나 Redis를 InMemory로 바꾸지 않았습니다. 고객 요청에 저장소명·내부 호출 지시를 넣지 않습니다.
+- 검증 환경: 루트 빌드의 Java 21 / Boot 4.0.9 / Spring AI 2.0.2, Jedis 7.4.1. 별도 임시 컨테이너의 Redis Stack 7.4.0-v3와 고정 HTTP 모델 대역을 사용했습니다.
+- 실행 명령: CHAT_MEMORY_REDIS_URL=<임시 로컬 Redis URI> ./gradlew :Spring-AI-Agent-Learning:labs:07-03-runtime-memory:test --tests '*IntentMemoryRedisLiveTest' :Spring-AI-Agent-Learning:labs:07-03-runtime-memory:bootJar
+- 결과: XML 기준 테스트 3개 통과, 실패 0·오류 0·건너뜀 0. 한 실행의 네 요청에서 IN_MEMORY→REDIS→IN_MEMORY→REDIS 전환, 각 대화의 재전달과 상호 격리, null 분류·빈 답변 시 저장 방지를 확인했습니다. JAR 빌드도 성공했습니다. 테스트 대화와 직접 생성한 임시 컨테이너만 정리했습니다.
+- 문서 검증: 관련 5개 문서의 로컬 링크·앵커 97개 오류 0, 코드 블록 균형, 새 Mermaid 1개 문법, git diff --check를 확인했습니다. 문법 검사와 실제 그림 렌더링은 구분하며 렌더링은 별도로 확인하지 않았습니다. 한 에이전트가 코드·문서·실행 결과를 대조했습니다.
+- 한계: 분류기는 현재 문장만 읽으며 모호한 후속 질문의 문맥 분류·확인 질문은 구현하지 않습니다. 두 저장소 간 자동 이전이나 공통 사용자 프로필 공유도 없습니다. 실제 OpenAI의 분류/추천 품질·비용, Redis 영구 보존과 다중 서버 갱신은 검증하지 않았습니다. OpenAI API 호출은 없었으며 이번 추가는 커밋하지 않았습니다.
+
+
 ## 07장 Redis 실행·종료 스크립트 — 2026-11-13
 
 - 범위: Redis를 사용하는 07-02-Redis-Selection과 07-03-runtime-memory에 runShell/start-redis.sh, stop-redis.sh, compose.yml, README.md를 추가했습니다. 기존 Docker Desktop을 사용하며 Docker를 설치하지 않습니다.

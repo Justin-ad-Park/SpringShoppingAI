@@ -30,31 +30,16 @@ bootRun은 루트 `.env`의 OPENAI_API_KEY와 OPENAI_MODEL을 읽습니다. 로�
 
 IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다. 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
 
-## 선택 예제: 기본 저장소·JDBC 자동 구성·실행 중 Redis 선택
+## 별도로 실행하는 저장소 예제
 
-[07-1의 저장소 연결 예제](../../docs/lessons/07-chat-memory/01-messages.md)를 읽습니다. 예제는 `src/test/java/com/example/ailearning/l07repositories`에 있으며 기본 `MemoryChatService`와 별도 패키지입니다. JDBC와 Redis 라이브러리는 테스트 범위에서만 사용합니다.
+이 모듈은 외부 저장소 없는 기본 메모리만 사용합니다.
 
-| 읽을 코드 | 확인할 동작 |
-|---|---|
-| `MemoryBuilderUnitTest` | 기본 빌더의 저장소는 별개, 같은 저장소를 전달하면 대화 공유 |
-| `JdbcMemoryConfiguration` → `JdbcMemoryRepositoryIntegrationTest` | 실제 HSQLDB·JDBC 자동 구성, 테이블 저장과 새 메모리에서 재조회 |
-| `SelectableMemoryConfiguration` → `MemoryStorage` → `SelectableMemoryService` | 두 저장소를 명시적으로 생성·연결하고 Enum으로 요청마다 선택 |
-| `RedisMemoryRepositoryLiveTest` | 실제 Redis Stack에서 저장·조회하고 InMemory와 대화 격리 확인 |
+- [07-01-JDBC](../07-01-JDBC/README.md): DB 자동 구성과 저장·재조회
+- [07-02-Redis-Selection](../07-02-Redis-Selection/README.md): YAML로 Redis 또는 InMemory 선택
+- [07-03-runtime-memory](../07-03-runtime-memory/README.md): 의도 분류 후 Enum으로 요청마다 메모리 선택
 
-아래 명령은 실제 모델과 외부 Redis 없이 실행합니다. HSQLDB도 `mem:` 주소이므로 프로세스 재시작 후 영구 보존까지 확인하는 테스트는 아닙니다.
+기본 빌더의 저장소 생성·공유 동작은 `MemoryBuilderUnitTest`에서 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07repositories.MemoryBuilderUnitTest --tests com.example.ailearning.l07repositories.JdbcMemoryRepositoryIntegrationTest --tests com.example.ailearning.l07memory.MemoryLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests '*MemoryLocalModelTest' --tests '*MemoryBuilderUnitTest'
 ```
-
-Redis 예제는 실행 중인 Redis Stack이 필요합니다. Docker가 실행된 환경에서:
-
-```bash
-docker run --rm -d --name learning07-redis -p 127.0.0.1:16379:6379 redis/redis-stack-server:7.4.0-v3
-LEARNING_REDIS_PORT=16379 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07repositories.RedisMemoryRepositoryLiveTest
-docker stop learning07-redis
-```
-
-컨테이너는 실습용으로 제거되며 모델 API를 호출하지 않습니다. 호스트·포트는 `LEARNING_REDIS_HOST`·`LEARNING_REDIS_PORT`로 변경할 수 있습니다. 다른 Redis에 연결할 때도 전용 `learning07-memory` 인덱스와 키 접두사를 사용하며 테스트가 만든 대화 ID만 지웁니다.
-
-JDBC 예제와 두 저장소 예제는 각각 필요한 설정만 올립니다. 실제 앱으로 옮기려면 테스트 의존성을 앱 의존성으로 바꾸고, 채팅 서비스가 생성자에서 선택한 `ChatMemory`를 사용하게 연결합니다. 구현 순서는 교재를 따릅니다.

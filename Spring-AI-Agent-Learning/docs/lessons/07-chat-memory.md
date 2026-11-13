@@ -97,12 +97,13 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 | 순서 | 소수업 | 완료 기준 |
 |---|---|---|
-| 1 | [이전 대화와 저장소 생성·연결](07-chat-memory/01-messages.md) | 메시지 재전달과 기본 저장소 생성 위치를 이해합니다. JDBC 자동 구성·InMemory와 Redis 선택은 선택 예제로 실행합니다. |
+| 1 | [이전 대화와 저장소 생성·연결](07-chat-memory/01-messages.md) | 메시지 재전달과 기본 저장소 생성 위치를 이해합니다. JDBC와 Redis/InMemory 선택은 별도 모듈의 선택 예제로 실행합니다. |
 | 2 | [메시지 조회·전달·저장 연결하기](07-chat-memory/02-store.md) | 이전 대화를 조회해 새 질문과 함께 전달하고, 새 답변을 저장하는 흐름을 연결합니다. |
 | 3 | [대화 구분·삭제·메시지 창 관찰](07-chat-memory/03-isolation.md) | 같은 대화 ID라도 소유자가 다르면 분리되는지 확인합니다. |
 | 선택 4 | [상용 서비스의 대화 저장과 재사용](07-chat-memory/04-production-memory.md) | 최근 문맥·전체 이력·업무 상태를 구분하고 영구 저장과 운영 기준을 설명합니다. |
+| 선택 5 | [의도에 따른 런타임 메모리 선택](../../labs/07-03-runtime-memory/README.md) | 분류한 의도를 Enum 파라미터로 전달하고 요청마다 InMemory 또는 Redis를 선택합니다. |
 
-각 소수업은 이 단원의 실습 모듈을 함께 사용합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
+기본 1~3 수업은 `07-00-chat-memory`를 사용합니다. 07-1의 저장소 확장은 독립 앱 [07-01-JDBC](../../labs/07-01-JDBC/README.md), [07-02-Redis-Selection](../../labs/07-02-Redis-Selection/README.md)에서 실행합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
@@ -111,7 +112,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest --tests com.example.ailearning.l07memory.MemoryBuilderUnitTest
 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootRun
 ```

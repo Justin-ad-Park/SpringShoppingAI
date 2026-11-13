@@ -42,7 +42,7 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 실제 모델은 도구 선택 횟수가 달라질 수 있으므로, 먼저 로컬 고정 응답 테스트로 Advisor 위치만 비교합니다.
 
 1. 위 로컬 테스트 명령으로 변경 전 결과를 확인합니다. 콘솔 응답의 `steps`와 테스트의 기대 배열을 함께 읽습니다.
-2. [AdvisorChatService.chat()](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)의 A/B order만 서로 바꿉니다. A를 `loopOrder + 10`, B를 `loopOrder - 10`으로 지정합니다. 질문과 고정 모델 응답은 유지합니다.
+2. [AdvisorChatService.chat()](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorChatService.java)의 A/B order만 서로 바꿉니다. A를 `toolCallingAdvisorOrder + 10`, B를 `toolCallingAdvisorOrder - 10`으로 지정합니다. 질문과 고정 모델 응답은 유지합니다.
 3. 아래 두 테스트에서 `steps`의 기대 배열만 표의 변경 후 값으로 바꿉니다. 다른 검증은 유지합니다. 동작을 바꾸는 실험이므로 기존 순서를 검사하는 기대값도 함께 달라집니다.
 4. 위 명령으로 로컬 테스트를 다시 실행해 실제 `steps`와 예상한 순서·횟수를 비교합니다. Gradle 테스트는 새 애플리케이션을 시작하므로 `bootRun`은 필요 없습니다. `bootRun`으로 실험한다면 소스 변경 후 서버를 종료하고 다시 실행해야 합니다.
 5. Service의 order와 테스트의 기대 배열을 모두 변경 전으로 복원하고 로컬 테스트가 다시 통과하는지 확인합니다.
@@ -56,7 +56,7 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 
 ### 2. 메모리 Advisor의 역할 확인하기
 
-첫 실험을 복원한 뒤 별도로 수행합니다. `AdvisorChatService` 생성자의 메모리 등록인 `.defaultAdvisors(MessageChatMemoryAdvisor.builder(memory).build())`만 임시로 제거합니다.
+첫 실험을 복원한 뒤 별도로 수행합니다. `AdvisorChatService` 생성자의 메모리 등록인 `.defaultAdvisors(MessageChatMemoryAdvisor.builder(conversationMemory).build())`만 임시로 제거합니다.
 같은 테스트 파일의 `메모리_Advisor는_이전_대화를_중복_저장_없이_전달한다`에서 확인할 변경 후 결과는 `storedMessages=0`, 두 번째 모델 요청에 첫 질문이 없음, 전송 메시지 수 2개(system·현재 user)입니다. 이 세 기대값만 바꾸고 해당 메서드를 선택해 실행합니다.
 
 ```bash
@@ -64,10 +64,26 @@ curl -sS -c /tmp/learning08.cookies -b /tmp/learning08.cookies \
 ```
 
 이 실험은 기존 메모리 동작을 의도적으로 없애므로 다른 메모리 테스트의 기대값과도 달라집니다. 해당 메서드만 비교한 뒤 Service와 테스트의 변경을 모두 복원하고 전체 로컬 테스트를 다시 실행합니다.
-현재 구현에서는 `memory.add()`를 수동으로 추가하지 않습니다. 메모리 Advisor가 저장을 담당하는 원래 구성에서, 같은 대화 두 번 요청 후 `storedMessages=4`인지 확인합니다.
+현재 구현에서는 `conversationMemory.add()`를 수동으로 추가하지 않습니다. 메모리 Advisor가 저장을 담당하는 원래 구성에서, 같은 대화 두 번 요청 후 `storedMessages=4`인지 확인합니다.
 
 [AdvisorLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/AdvisorLocalModelTest.java)는 순서, 메모리 재전달/중복 방지, 실패한 호출의 user 메시지 보존, 도구 반복 시 안팎 기록, 세션별 격리·삭제를 로컬 모델 API로 검증합니다.
 Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 장기 저장하는 것은 아닙니다.
+
+## 실무에 연결하기: Advisor에 넣을 처리 고르기
+
+여러 상담 서비스가 같은 방식으로 대화를 전달해야 한다면 메모리 Advisor를 공유할 수 있습니다. 다만 **상품 가격이 예산 이하인지 판단하는 규칙**까지 공통 Advisor에 넣으면 호출 전후 처리와 업무 정책이 섞입니다. 업무 검증은 서비스·도메인에 남겨 책임을 나눕니다.
+
+| 운영 요구 | 확인할 경계 |
+|---|---|
+| 사용자별 대화 | 대화 ID 전달 전에 서버가 소유권 확인 |
+| 실패한 질문 미저장 | 기본 메모리 Advisor의 선저장 정책이 요구와 맞는지 확인 |
+| 실행 시간·횟수 수집 | 전체 요청과 도구 루프 안의 모델 요청을 구분 |
+| 스트리밍 응답 | `CallAdvisor` 구현만으로 `.stream()`까지 처리한다고 가정하지 않음 |
+| 공유 인스턴스 사용 | 이번 요청의 기록 목록을 공유 필드에 저장하지 않음 |
+
+이 예제는 원문 대신 단계 이름을 기록합니다. 원문 로그나 별도 측정 시스템을 추가한다면 필요한 정보와 저장 범위를 먼저 정합니다. 측정 API는 [12-4](../12-evaluation/04-actuator.md), 영구 메모리와 동시 요청은 [07-4](../07-chat-memory/04-production-memory.md)에서 연결합니다.
+
+참고: [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html)의 호출·스트리밍 인터페이스와 [Spring Blog의 2.0 도구 루프 설명](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/)을 참고했습니다. 위의 업무 배치는 이 교재의 설계 제안입니다.
 
 ## 확인 질문
 

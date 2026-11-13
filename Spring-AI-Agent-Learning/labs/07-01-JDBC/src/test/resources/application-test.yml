@@ -1,0 +1,14 @@
+spring:
+  config:
+    import: ""
+  datasource:
+    url: jdbc:hsqldb:mem:learning07-jdbc-test;shutdown=true
+    username: sa
+    password: ""
+  ai:
+    openai:
+      api-key: local-test-key
+      base-url: http://127.0.0.1:1
+      chat:
+        options:
+          model: learning-model

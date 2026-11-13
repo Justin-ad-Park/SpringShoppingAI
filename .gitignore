@@ -10,3 +10,6 @@ __pycache__/
 .DS_Store
 .gradle
 !gradle/wrapper/gradle-wrapper.jar
+
+# 로컬 JDBC 대화 메모리 실습 데이터
+/data/

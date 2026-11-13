@@ -83,7 +83,7 @@ public class AnswerEvaluator {
 3. `evaluate()`는 평가 프롬프트를 만들어 모델을 호출합니다. 단순한 Java 문자열 비교가 아닙니다.
 4. `isPass()`는 평가 응답의 통과 여부입니다. 실제 모델은 같은 답변에도 판정이 달라질 수 있습니다.
 
-`facts()`는 근거와 주장만 사용하므로 질문은 판정 프롬프트에 넣지 않습니다.
+`evaluateFactualConsistency()`는 근거와 주장만 사용하므로 질문은 판정 프롬프트에 넣지 않습니다.
 Controller는 두 요청을 쉽게 비교하도록 같은 Candidate JSON을 받습니다. question 필드도 유효한 문자열로 전달합니다.
 이번 모듈의 API는 학습 편의를 위해 boolean을 반환합니다. 판정 실패·일반적인 NO·평가 형식 오류를 운영 업무에서 모두 같은 이유로 처리해서는 안 됩니다.
 

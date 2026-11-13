@@ -1,4 +1,4 @@
-package com.example.ailearning.l07repositories;
+package com.example.ailearning.l07memory;
 
 import com.example.ailearning.testsupport.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;

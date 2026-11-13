@@ -1,6 +1,6 @@
 # 레퍼런스: 무엇을 언제 읽을까?
 
-검토 갱신: 2026-11-03. 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.
+검토 갱신: 2026-11-12(07~13장 보강 자료). 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.
 한국어 교재를 먼저 읽고 막힌 개념에 해당하는 절만 찾아보세요.
 
 ## 첫 묶음에서 읽을 자료
@@ -24,7 +24,7 @@
 | 07 | [Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html) | 대화 ID·저장·메시지 창을 이해한 뒤 필요한 Repository만 선택 |
 | 08 | [Spring 공식 블로그: Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) | 도구 루프와 Advisor 관계의 설명이 좋음. 처음에는 앞부분만 읽고 고급 확장은 생략 |
 | 09~10 | [Retrieval Augmented Generation](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html) | 검색과 답변 생성을 연결하는 기준. 임베딩·검색 개념을 배운 후 읽기 |
-| 11 | [Evaluation Testing](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html) | 품질 평가와 호출 관측을 분리해서 학습. LLM 평가자의 점수도 절대적인 정답 판정은 아님 |
+| 12 | [Evaluation Testing](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html) | 품질 평가와 호출 관측을 분리해서 학습. LLM 평가자의 점수도 절대적인 정답 판정은 아님 |
 | 11장 | [MCP Overview](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html) | 11장 연결·직접 호출을 학습할 때 원격 도구의 역할 확인 |
 
 ## 블로그·강좌·예제 검토
@@ -35,6 +35,31 @@
 - [Spring Academy 입문 과정](https://spring.academy/courses/spring-ai-intro): 과정 후보로 확인했습니다. 이번에는 강의 본문 전체를 읽지 못해 세부 품질·접근 조건·버전 호환성 검토를 보류했습니다. 필수 자료로 지정하지 않습니다.
 
 입문 흐름 전체를 하나의 블로그에 맡기기보다, 자체 한국어 교재가 선수 지식을 연결하고 공식 자료로 사실을 확인하는 방식을 택했습니다. 블로그의 코드가 짧다는 이유만으로 초보자에게 쉬운 것은 아닙니다.
+
+## 07~13장 보강에 사용한 교육 자료
+
+확인일: 2026-11-12. 아래는 공개 본문·예제 또는 강의 소개를 실제로 확인한 범위입니다. 강의 영상 전체를 시청하거나 외부 예제를 실행한 것으로 기록하지 않습니다. 상용 서비스 설계는 공급사 기능 안내와 공개 기술 예제를 바탕으로 한 교재의 제안이며, 공개 예제를 특정 고객의 운영 사례로 소개하지 않습니다.
+
+| 연결 단원 | 자료·작성 주체 | 반영한 설명 | 확인 범위·주의점 |
+|---|---|---|---|
+| 07 | [Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory) / Manfred Ng, Baeldung | 저장소에서 메모리·ChatClient로 연결하는 설명 순서 | 공개 본문 확인. 1.0.0 코드·세션 범위 선택을 2.0.2의 필수 조건으로 옮기지 않음 |
+| 07 | [Oracle Chat Memory 가이드](https://docs.oracle.com/en/database/oracle/oracle-database/26/aintg/spring-ai-integration-guide/chat-memory.html) / Oracle | 대화 문맥·전체 이력과 JDBC 영구 저장 구분 | 공개 공급사 연동 가이드. 특정 기업의 운영 실적은 아님 |
+| 07 | [Chat Memory in Spring AI 2.0](https://ankurm.com/spring-ai-2-0-chat-memory-jdbc-redis-windowed-conversations/) / Ankur | 저자가 공개한 저장·동시성 실험을 운영 설계 항목과 연결 | 공개 본문 확인. 저자의 2.0.1 실험을 이 저장소에서 재실행하지 않음 |
+| 07 심화 | [Compacting Chat Memory Advisor](https://github.com/danvega/compacting-chat-memory-advisor) / Dan Vega | 오래된 문맥 요약과 최근 메시지 유지 | 공개 README 확인. 기본 MessageWindowChatMemory의 자동 요약 기능이 아님 |
+| 07~13 | [AI for Java Developers 강의 안내](https://www.danvega.dev/newsletter/2025/06/30/ai-for-java-developers-course) / Dan Vega | 대화·검색·도구·운영을 연결하는 학습 경로 | 공개 강의 소개 확인. 영상 전체 시청·버전 호환성 검증은 하지 않음 |
+| 08 | [Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) / Christian Tzolov, Spring Blog | Advisor와 도구 루프 안팎의 책임 | 공개 본문 확인. 실제 API는 2.0.2 실습과 대조 |
+| 09~10 | [AI Meets Spring Petclinic, Part II](https://spring.io/blog/2024/09/27/ai-meets-spring-petclinic-implementing-an-ai-assistant-with-spring-ai-part/) / Oded Shopen, Spring Blog | 업무 질문과 의미 검색·RAG의 연결 | 공개 기술 예제. 2024년 API를 복사하지 않음 |
+| 10 심화 | [Modular RAG](https://spring.io/blog/2026/10/02/spring-ai-modular-rag-typesafe-jev/) / Christian Tzolov, Spring Blog | 검색 결과의 관련성과 답변 근거로서의 유용성 구분 | 공개 본문 확인. 추가 모델·TypeSafe 의존성은 도입하지 않음 |
+| 11 | [Build AI-Powered Apps with MCP Clients in Spring AI](https://www.youtube.com/watch?v=TSFkdlreRMQ) / Dan Vega | 원격 도구 서버와 Spring AI 클라이언트의 연결 학습 경로 | 검색에 노출된 공개 소개 확인. 영상 페이지 본문은 가져오지 못했고 전체 영상은 미검증 |
+| 11 심화 | [MCP Architecture](https://modelcontextprotocol.io/docs/learn/architecture) · [Security Best Practices](https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices) / MCP 프로젝트 | 호스트·클라이언트·서버와 권한 경계 | 공개 본문 확인. 최신 프로토콜 확장·인증 전체를 샘플이 구현한다고 주장하지 않음 |
+| 12 | [Spring AI and Observability](https://ubuntu.com/developers/docs/tutorials/java-advanced/spring-ai/springai-observability/) / Canonical, Ubuntu | RAG 측정과 Prometheus 연결의 구체적인 추가 학습 경로 | 공개 튜토리얼 확인. 기본 실습은 Actuator 조회 범위 유지 |
+| 12 심화 | [Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents) / Anthropic | 사례·반복 실행·복수 평가 기준·실제 결과 구분 | 공개 원저자 기술 글 확인. 내부 평가 인프라 재현은 아님 |
+| 13 | [Building effective agents](https://www.anthropic.com/research/building-effective-agents) / Anthropic | 단순한 구성에서 시작하고 고정 흐름·모델 판단을 구분 | 공개 원저자 글 확인. Spring AI API 설명과 구분 |
+| 13 | [Spring AI for Beginners](https://github.com/microsoft/Spring-AI-for-Beginners) / Microsoft | 기능별 목표에서 RAG·도구·MCP·Agent로 이어지는 교육 구성 | 공개 목차와 Agent 모듈 확인. 전체 실습 실행·Azure 배포는 하지 않음 |
+
+Spring Academy의 [Observability Lab](https://spring.academy/courses/spring-ai-intro/lessons/observability-lab)도 확인했으나 본문을 읽을 수 없어 기술 설명의 근거로 채택하지 않았습니다. 유료 강의 본문이나 확인하지 못한 영상 내용을 추정해서 보강하지 않습니다.
+
+단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다. 새 선택 보충은 [07-4](lessons/07-chat-memory/04-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
 
 ## 버전과 자료를 읽는 기준
 

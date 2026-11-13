@@ -1,0 +1,37 @@
+server:
+  address: 127.0.0.1
+  port: ${LEARNING_PORT:8107}
+  servlet:
+    session:
+      cookie:
+        name: LEARNING_L07JDBC_SESSION
+        http-only: true
+        same-site: strict
+spring:
+  application:
+    name: 07-01-jdbc
+  config:
+    import: "optional:file:.env[.properties]"
+  datasource:
+    url: ${CHAT_MEMORY_JDBC_URL:jdbc:hsqldb:file:./data/learning07-jdbc/chat-memory}
+    username: ${CHAT_MEMORY_JDBC_USERNAME:sa}
+    password: ${CHAT_MEMORY_JDBC_PASSWORD:}
+  ai:
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: ${CHAT_MEMORY_INITIALIZE_SCHEMA:always}
+    model:
+      embedding: none
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key: ${OPENAI_API_KEY}
+      timeout: 5s
+      chat:
+        max-retries: 0
+        options:
+          model: ${OPENAI_MODEL}
+learning:
+  memory:
+    max-messages: 6
