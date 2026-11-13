@@ -3,6 +3,12 @@ dependencies {
     testImplementation project(':Spring-AI-Agent-Learning:test-support')
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    // 저장소 선택 예제는 테스트에서만 실행해 기본 채팅 앱의 자동 구성을 바꾸지 않는다.
+    testImplementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'
+    testImplementation 'org.springframework.ai:spring-ai-model-chat-memory-repository-redis'
+    // Redis 저장소 2.0.2가 요구하는 버전. Boot 기본 Jedis 7.0에는 RedisClient가 없다.
+    testImplementation 'redis.clients:jedis:7.4.1'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
 // 저장소 루트의 .env를 읽도록 실행 위치를 맞춥니다.

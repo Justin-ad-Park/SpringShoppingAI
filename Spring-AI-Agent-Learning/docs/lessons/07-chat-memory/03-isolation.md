@@ -71,7 +71,7 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 
 ## 메시지 창과 토큰 수는 다르다
 
-저장 메시지 상한 6개는 질문·답변 쌍 3회에 해당합니다. system은 저장하지 않습니다.
+이 예제는 매번 사용자 질문 1개와 모델 답변 1개를 저장하므로, 저장 메시지 상한 6개는 최근 대화 3회에 해당합니다. system은 저장하지 않습니다. 도구 메시지 등이 포함된 다른 구성에 이 계산을 그대로 적용하지 않습니다.
 
 | 시점 | 저장된 메시지 | 다음 요청에 전달할 수 있는 메시지 |
 |---|---:|---|
@@ -109,5 +109,7 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 
 보충: [공식 Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html).
 다음 08에서는 지금 직접 작성한 연결 작업을 Advisor로 확장합니다. 이 단원 코드는 08에 의존하지 않습니다.
+
+선택 보충: [07-4 상용 서비스의 대화 저장과 재사용](04-production-memory.md). 로그인 사용자·DB 저장·동시 요청과 긴 대화 처리를 설계할 때 읽습니다.
 
 [이전](02-store.md) · [다음](../07-chat-memory.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)
