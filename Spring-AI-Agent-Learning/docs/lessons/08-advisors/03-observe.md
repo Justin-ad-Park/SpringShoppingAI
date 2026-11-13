@@ -81,7 +81,7 @@ Advisor가 응답의 사실성을 자동 보장하거나 tool 결과 전체를 �
 | 스트리밍 응답 | `CallAdvisor` 구현만으로 `.stream()`까지 처리한다고 가정하지 않음 |
 | 공유 인스턴스 사용 | 이번 요청의 기록 목록을 공유 필드에 저장하지 않음 |
 
-이 예제는 원문 대신 단계 이름을 기록합니다. 원문 로그나 별도 측정 시스템을 추가한다면 필요한 정보와 저장 범위를 먼저 정합니다. 측정 API는 [12-4](../12-evaluation/04-actuator.md), 영구 메모리와 동시 요청은 [07-4](../07-chat-memory/04-production-memory.md)에서 연결합니다.
+이 예제는 원문 대신 단계 이름을 기록합니다. 원문 로그나 별도 측정 시스템을 추가한다면 필요한 정보와 저장 범위를 먼저 정합니다. 측정 API는 [12-4](../12-evaluation/04-actuator.md), 영구 메모리와 동시 요청은 [07-5](../07-chat-memory/05-production-memory.md)에서 연결합니다.
 
 참고: [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html)의 호출·스트리밍 인터페이스와 [Spring Blog의 2.0 도구 루프 설명](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/)을 참고했습니다. 위의 업무 배치는 이 교재의 설계 제안입니다.
 

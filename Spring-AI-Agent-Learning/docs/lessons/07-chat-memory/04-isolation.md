@@ -1,4 +1,4 @@
-# 07-3. 대화 구분·삭제·메시지 창 관찰
+# 07-4. 대화 구분·삭제·메시지 창 관찰
 
 **실행 코드·설정·테스트:** [labs/07-00-chat-memory](../../../labs/07-00-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
@@ -110,6 +110,6 @@ curl -i -X DELETE -b /tmp/learning07-a.cookies http://127.0.0.1:8097/api/memory/
 보충: [공식 Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html).
 다음 08에서는 지금 직접 작성한 연결 작업을 Advisor로 확장합니다. 이 단원 코드는 08에 의존하지 않습니다.
 
-선택 보충: [07-4 상용 서비스의 대화 저장과 재사용](04-production-memory.md). 로그인 사용자·DB 저장·동시 요청과 긴 대화 처리를 설계할 때 읽습니다.
+선택 보충: [07-5 상용 서비스의 대화 저장과 재사용](05-production-memory.md). 로그인 사용자·DB 저장·동시 요청과 긴 대화 처리를 설계할 때 읽습니다.
 
-[이전](02-store.md) · [다음](../07-chat-memory.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)
+[이전](03-store.md) · [다음](../07-chat-memory.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)

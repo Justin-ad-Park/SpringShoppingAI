@@ -49,7 +49,7 @@
 - 도구 실패·시간 초과 뒤 잘못된 완료 상태나 대화가 남지 않는가?
 - 문서·모델 변경 뒤 품질과 비용이 어떻게 달라지는가?
 
-실제 모델 평가에는 한 번의 정상 예제 외에 반복·반례가 필요합니다. [12-6](../12-evaluation/06-production-evaluation.md)의 평가 설계를 사용하고, 의도 분류만 비교할 때는 기존 [13-5](05-intent-classification.md)·[13-6](06-intent-quality-evaluation.md)을 읽습니다. 영구 대화 저장은 [07-4](../07-chat-memory/04-production-memory.md)로 연결합니다.
+실제 모델 평가에는 한 번의 정상 예제 외에 반복·반례가 필요합니다. [12-6](../12-evaluation/06-production-evaluation.md)의 평가 설계를 사용하고, 의도 분류만 비교할 때는 기존 [13-5](05-intent-classification.md)·[13-6](06-intent-quality-evaluation.md)을 읽습니다. 영구 대화 저장은 [07-5](../07-chat-memory/05-production-memory.md)로 연결합니다.
 
 ## 확인 질문
 

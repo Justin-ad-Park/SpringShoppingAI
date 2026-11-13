@@ -663,3 +663,15 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 실행 검증: /tmp에서 두 실행 스크립트를 호출해 정상 기동하고, 재호출 후 컨테이너 ID가 동일함을 확인했습니다. 임시 키를 저장한 뒤 종료·재시작해 값이 유지됨을 확인하고 해당 키만 삭제했습니다. 마지막에는 두 종료 스크립트를 실행했으며 컨테이너·볼륨은 남겨 두었습니다.
 - 테스트·빌드: 두 모듈의 test에서 InMemorySelectionLocalModelTest, RedisMemoryRepositoryLiveTest, IntentMemoryRedisLiveTest를 선택해 실제 실행했습니다. XML 기준 총 7개 통과, 실패·오류·건너뜀 0. 두 모듈 bootJar도 성공했습니다. 실제 Redis와 고정 HTTP 모델을 사용했으며 OpenAI API는 호출하지 않았습니다.
 - 정적 검증: 네 스크립트의 bash -n, 두 Compose 설정 검사, 관련 문서 5개의 로컬 링크·앵커 33개, git diff --check 통과. 운영 환경의 장애 복구·동시 갱신·장기 보존은 검증하지 않았습니다. 커밋하지 않았습니다.
+
+
+## 07장 채팅 서비스의 역할별 메서드 분리 — 2026-11-13
+
+- 검토 범위: 07-00·07-01·07-02·07-03의 운영 Java 코드와 관련 교육 문서·테스트를 대조했습니다. 메시지 구성·모델 호출·저장이 함께 구현된 네 MemoryChatService에 같은 기준을 적용했습니다. Controller·설정·의도 분류기·저장소 선택기·상품 목록은 이번 역할 분리 때문에 추가 클래스로 나누지 않았습니다.
+- 변경: chat()은 처리 순서를 조정하고 createRequestMessages, callModel, validateAnswer, saveConversationTurn으로 구현을 구분했습니다. 기본 앱의 HTTP 응답 변환은 createMemoryReply로 분리했습니다. 메서드 추출을 적용했으며 공통 운영 모듈·인터페이스·디자인 패턴 계층은 추가하지 않았습니다.
+- 보존한 동작: system→이전 대화→현재 질문 순서, 성공한 질문·답변만 저장, 기존 예외 종류·HTTP 상태, synchronized 범위와 세션별 키, 6개 메시지 창을 유지했습니다. 런타임 앱은 한 번 선택한 ChatMemory 객체를 조회와 저장에 함께 사용합니다.
+- 문서: 03-store.md에 짧은 chat()과 역할 표를 먼저 제시하고 전체 코드는 접힌 영역에서 읽도록 변경했습니다. JDBC·저장소 선택 소주제와 네 모듈 README에도 메서드별 역할을 연결했습니다. 앞선 소주제 분리·번호 변경과 사용자 편집은 유지했습니다.
+- 로컬 실행: 07-00의 MemoryLocalModelTest 7개·MemoryBuilderUnitTest 2개, 07-01의 JdbcMemoryLocalModelTest 4개, 07-02의 InMemorySelectionLocalModelTest 3개를 --tests로 선택해 총 16개 통과했습니다. 세 모듈 bootJar도 성공했습니다. 실행 로그는 /private/tmp/l07-refactor-local.log이며 InMemory 선택 결과는 후속 Redis 테스트가 XML을 교체하기 전 콘솔에서 확인했습니다.
+- Redis 실행: 이번 작업에서 만든 임시 Redis Stack 7.4.0-v3에 CHAT_MEMORY_REDIS_URL을 지정하고, 07-02의 RedisMemoryRepositoryLiveTest 1개와 07-03의 IntentMemoryRedisLiveTest 3개를 실행했습니다. 총 4개 통과(실패·오류·건너뜀 0, XML 확인), 07-03 bootJar 성공. 로그는 /private/tmp/l07-refactor-redis.log입니다. 기존 Redis는 변경하지 않고 임시 컨테이너만 종료·제거했습니다.
+- 정적 검사: 관련 Markdown 11개의 로컬 링크·앵커 99개 오류 0, 코드 블록 균형, 기본 서비스 전체 코드와 문서 발췌 일치, git diff --check 통과. 새로운 그림은 추가하지 않았습니다.
+- 미검증: 실제 OpenAI 호출·모델 답변 품질, 외부 PostgreSQL, 서버 재시작 후 영속성과 다중 서버 동시 갱신은 검증하지 않았습니다. 한 에이전트가 관점을 바꿔 검토했으며 별도 독립 검토는 아닙니다. 이번 변경은 커밋하지 않았습니다.

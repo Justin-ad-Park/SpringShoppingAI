@@ -2,9 +2,9 @@
 
 **실행 코드·설정·테스트:** [labs/07-00-chat-memory](../../../labs/07-00-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-**이번 목표:** 이전 대화 재전달의 원리와 기본 저장소의 생성 위치를 이해합니다. 선택 예제에서는 JDBC 자동 구성과 InMemory·Redis 선택을 연결합니다.
+**이번 목표:** 이전 대화 재전달의 원리와 기본 저장소의 생성 위치를 이해합니다. 저장소 연결·선택은 별도 소주제에서 학습합니다.
 
-**코드 읽기 안내:** 먼저 메시지 순서와 빌더 소스를 읽습니다. JDBC·Redis는 선택 예제로, 필요한 저장소 한 가지씩 실행한 뒤 다음으로 넘어갑니다.
+**코드 읽기 안내:** 먼저 메시지 순서와 빌더 소스를 읽습니다. JDBC·Redis 예제는 아래 별도 소주제에서 필요한 저장소 한 가지씩 선택해 학습합니다.
 
 ## “기억한다”는 말의 실제 의미
 
@@ -28,11 +28,11 @@ assistant 문장은 **설명용 예시**입니다. 실제 모델의 문장은 �
 ## 새 용어와 객체 관계
 
 - `ChatMemory`: 대화 ID로 메시지를 저장·조회·삭제하는 Spring AI 인터페이스입니다.
-- `MessageWindowChatMemory`: 최근 일정 개수의 메시지를 유지하는 Spring AI(2.0.2)의 유일한 구현체입니다. 여기서는 6개로 설정합니다.
+- `MessageWindowChatMemory`: 최근 일정 개수의 메시지를 유지하는 Spring AI(2.0.2)의 유일한 구현체입니다. 이 실습의 `MemoryChatService`는 대화별로 유지할 최대 메시지 수를 6개로 설정합니다.
 - `ChatMemoryRepository`: 메시지를 저장·조회하는 인터페이스입니다. 어떤 메시지를 남길지 정하는 정책과 저장 위치를 분리합니다.
 - `InMemoryChatMemoryRepository`: 대화별 메시지를 JVM 메모리에 저장하는 구현체입니다.
 - 대화 ID(conversation ID): 같은 대화를 묶는 이름입니다. 하나의 사용자에게도 여러 대화가 있을 수 있습니다.
-- 서버 세션(HttpSession): 브라우저 쿠키로 이어지는 서버 측 방문자 구분입니다.
+- 서버 세션(`HttpSession`): 서버가 같은 방문자의 요청 사이에 정보를 유지하는 공간입니다. 브라우저는 보통 쿠키에 세션 ID를 담아 요청마다 보내고, 서버는 이 ID로 해당 세션을 찾습니다. 세션 정보는 서버 측에 보관됩니다.
   - 이 학습용 앱에서는 소유자 구분에 사용하며 로그인 인증을 구현한 것은 아닙니다.
 
 ```mermaid
@@ -61,7 +61,7 @@ classDiagram
     InMemoryChatMemoryRepository ..|> ChatMemoryRepository : 구현
 ```
 
-- 저장소 기본 구현은 프로세스 메모리를 사용합니다. 서버를 종료하면 사라집니다.
+- `InMemoryChatMemoryRepository`는 프로세스 메모리를 사용합니다. 서버를 종료하면 사라집니다.
 - ChatMemory는 모델에 보낼 문맥 관리용이며 전체 대화 영구 기록과 다릅니다.
 
 ## Spring AI가 제공하는 대화 저장소 종류
@@ -81,11 +81,11 @@ classDiagram
 
 InMemory 외의 저장소는 해당 의존성과 외부 저장소 연결 설정이 필요합니다. 여기서는 이름을 외우기보다 기존 인프라·보관 기간·메시지 지원 범위에 맞춰 저장 위치를 선택할 수 있다는 점을 이해합니다. 데이터가 재시작 후 유지되는지는 저장소의 영속화 설정까지 확인해야 합니다.
 
-기본 실습은 InMemory를 사용하고, 이 문서의 선택 예제에서 JDBC 자동 구성과 InMemory·Redis 선택을 실행합니다. [07-4](04-production-memory.md)는 영구 이력·동시 요청 같은 운영 설계를 다룹니다. 다른 저장소를 학습 순서대로 모두 설치할 필요는 없습니다.
+기본 실습은 InMemory를 사용하고, [JDBC 저장소 연결](01-jdbcRepository.md)과 [YAML로 Redis 또는 InMemory 선택](02-RepositorySelection.md)은 별도 소주제에서 실행합니다. [07-5](05-production-memory.md)는 영구 이력·동시 요청 같은 운영 설계를 다룹니다. 다른 저장소를 학습 순서대로 모두 설치할 필요는 없습니다.
 
 별도로 Azure Cosmos DB 팀이 관리하는 외부 모듈의 `CosmosDBChatMemoryRepository`도 있습니다. 위의 Spring AI 기본 제공 구현체와 구분합니다. 출처와 저장소별 설정은 [공식 Chat Memory의 Memory Storage 절](https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_storage)에서 확인합니다. 필요한 경우 인터페이스를 직접 구현해 다른 저장소에 연결할 수도 있습니다.
 
-## 생성 코드에서 기본 저장소가 만들어지는 위치 찾기
+## 기본 저장소로 InMemoryChatMemoryRepository가 만들어지는 위치 찾기
 
 기본 실습의 `MemoryChatService`는 다음처럼 메모리를 만듭니다. 저장소를 전달하는 줄은 없습니다.
 
@@ -141,6 +141,9 @@ public static final class Builder {
 
 따라서 저장소 지정 생략은 **빌더가 이미 준비한 InMemory 저장소를 사용하는 것**입니다. Spring이 등록된 빈을 찾아서 넣는 과정은 이 코드에 없습니다.
 
+
+### Spring 빈 없이 저장소 객체를 직접 전달하기
+
 직접 저장소를 연결하려면 다음처럼 전달합니다. `.chatMemoryRepository(repository)`는 빌더의 저장소 필드를 전달받은 객체로 바꿉니다.
 
 ```java
@@ -151,112 +154,9 @@ ChatMemory memory = MessageWindowChatMemory.builder()
         .build();
 ```
 
-서로 다른 빌더의 기본 저장소는 별개입니다. 반대로 같은 `repository`를 두 메모리에 전달하면 같은 저장소를 공유합니다. [MemoryBuilderUnitTest](../../../labs/07-00-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryBuilderUnitTest.java)가 두 경우의 저장·조회 결과를 비교합니다.
+저장소를 지정하지 않고 `MessageWindowChatMemory.builder().build()`를 두 번 호출하면, 각각 별도의 `InMemoryChatMemoryRepository` 객체를 사용합니다. 한쪽에서 저장한 메시지를 다른 쪽에서 조회할 수 없습니다.
 
-## JDBC 자동 구성: 독립 앱으로 저장소 연결하기
-
-JDBC 예제는 [07-01-JDBC](../../../labs/07-01-JDBC/README.md)에서 실행합니다. 기본 `07-00-chat-memory`에는 JDBC 의존성이 없습니다.
-먼저 [application.yml](../../../labs/07-01-JDBC/src/main/resources/application.yml)의 `spring.datasource`와 `spring.ai.chat.memory.repository.jdbc`를 읽습니다. 다음은 실제 YAML의 관련 항목 발췌입니다.
-
-```yaml
-spring:
-  datasource:
-    url: ${CHAT_MEMORY_JDBC_URL:jdbc:hsqldb:file:./data/learning07-jdbc/chat-memory}
-    username: ${CHAT_MEMORY_JDBC_USERNAME:sa}
-    password: ${CHAT_MEMORY_JDBC_PASSWORD:}
-  ai:
-    chat:
-      memory:
-        repository:
-          jdbc:
-            initialize-schema: ${CHAT_MEMORY_INITIALIZE_SCHEMA:always}
-learning:
-  memory:
-    max-messages: 6
-```
-
-`${환경변수:기본값}`은 환경 변수로 값을 바꾸되 없으면 기본값을 사용하는 Spring 설정 문법입니다.
-기본 주소의 `file:`은 파일 DB입니다. 로컬 테스트만 별도의 `application-test.yml`에서 `mem:` 주소로 바꿉니다.
-JDBC Starter는 DataSource → JdbcTemplate → JdbcChatMemoryRepository를 자동 구성합니다. 앱은 아래 설정에서 그 저장소를 받아 보관 정책과 연결합니다.
-
-[JdbcMemoryConfiguration.java](../../../labs/07-01-JDBC/src/main/java/com/example/ailearning/l07jdbc/JdbcMemoryConfiguration.java)의 전체 코드입니다.
-
-```java
-package com.example.ailearning.l07jdbc;
-
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration(proxyBeanMethods = false)
-public class JdbcMemoryConfiguration {
-    @Bean
-    public ChatMemory chatMemory(JdbcChatMemoryRepository repository,
-            @Value("${learning.memory.max-messages}") int maxMessages) {
-        return MessageWindowChatMemory.builder()
-                .chatMemoryRepository(repository)
-                .maxMessages(maxMessages)
-                .build();
-    }
-}
-```
-
-[MemoryChatService](../../../labs/07-01-JDBC/src/main/java/com/example/ailearning/l07jdbc/MemoryChatService.java)는 `ChatMemory`를 생성자로 주입받습니다. 필드에서 새 기본 저장소를 만들지 않습니다.
-이전 메시지를 조회해 모델에 전달하고 성공한 질문·답변만 저장하는 흐름은 기본 실습과 같습니다. 접속 설정·생성 코드는 운영 소스에 있고 테스트는 그 구성을 사용합니다.
-
-실행 명령과 SQL 저장 행·재조회 검증은 [JDBC README](../../../labs/07-01-JDBC/README.md)에 있습니다. 내장 DB 선택, 외부 DB 환경 변수, 스키마 초기화와 운영 마이그레이션의 차이도 함께 확인합니다.
-
-## YAML로 Redis 또는 InMemory 선택하기
-
-별도 앱 [07-02-Redis-Selection](../../../labs/07-02-Redis-Selection/README.md)은 **시작 시 저장소 하나를 선택**합니다. 기본값은 InMemory이고 Redis를 사용하려면 `redis` 프로필이나 환경 변수를 지정합니다.
-
-```yaml
-learning:
-  memory:
-    storage: ${CHAT_MEMORY_STORAGE:in-memory}
-    max-messages: 6
-    redis:
-      uri: ${CHAT_MEMORY_REDIS_URL:redis://127.0.0.1:16379}
-      index-name: ${CHAT_MEMORY_REDIS_INDEX:learning07-memory}
-      key-prefix: ${CHAT_MEMORY_REDIS_PREFIX:learning07-memory:}
-      time-to-live: 24h
-      initialize-schema: ${CHAT_MEMORY_REDIS_INITIALIZE_SCHEMA:true}
-```
-
-위 코드는 [application.yml](../../../labs/07-02-Redis-Selection/src/main/resources/application.yml)의 실제 관련 부분입니다. `application-redis.yml`은 `storage: redis`로 바꿉니다.
-`MemoryProperties`는 설정 값을 타입으로 받고, `@ConditionalOnProperty`는 지정한 값에 맞는 빈만 등록합니다.
-
-| 선택 | 생성하는 저장소 | 실행 조건 |
-|---|---|---|
-| `in-memory` | `InMemoryChatMemoryRepository` | 외부 Redis 없이 실행. 서버 종료 시 소멸 |
-| `redis` | `RedisChatMemoryRepository`와 Redis 클라이언트 | Redis Stack 연결 필요. TTL·Redis 영속화 설정에 따라 보존 |
-
-[MemoryConfiguration.java](../../../labs/07-02-Redis-Selection/src/main/java/com/example/ailearning/l07selection/MemoryConfiguration.java)의 핵심은 다음과 같습니다. Redis의 연결·TTL 설정 부분은 전체 소스에서 읽습니다.
-
-```java
-@Bean
-@ConditionalOnProperty(prefix = "learning.memory", name = "storage", havingValue = "in-memory")
-public ChatMemoryRepository inMemoryRepository() {
-    return new InMemoryChatMemoryRepository();
-}
-
-@Bean
-public ChatMemory chatMemory(ChatMemoryRepository repository, MemoryProperties properties) {
-    return MessageWindowChatMemory.builder()
-            .chatMemoryRepository(repository)
-            .maxMessages(properties.maxMessages())
-            .build();
-}
-```
-
-Redis 쪽 설정 클래스에도 `havingValue = "redis"` 조건이 있어 InMemory를 선택하면 Redis 클라이언트가 생성되지 않습니다. 선택한 저장소에 연결할 수 없으면 시작 실패로 드러내며 임시 메모리로 숨겨 전환하지 않습니다.
-
-이 예제는 요청마다 두 저장소 사이를 바꾸는 라우팅을 구현하지 않습니다. 운영 환경별로 설정을 선택하는 예제이며, 변경 후에는 앱을 재시작합니다. 저장소를 바꾼다고 이전 대화가 자동 복사되지도 않습니다.
-
-Redis 실행·Live 검증 명령은 [선택 예제 README](../../../labs/07-02-Redis-Selection/README.md)에 있습니다. 테스트에서 설정 클래스를 다시 조립하지 않고 실제 앱과 YAML을 사용합니다. 로컬 테스트는 InMemory 선택과 대화 재전달·실패 뒤 상태를, Redis Live 테스트는 실제 저장·조회·삭제를 검사합니다.
+반면 `MessageWindowChatMemory` 객체를 두 개 생성할 때, 각 빌더의 `.chatMemoryRepository(repository)`에 **동일한 저장소 객체**를 인자로 지정하면 두 객체 모두 그 저장소에서 메시지를 저장·조회합니다. 따라서 한쪽에서 저장한 메시지를 다른 쪽에서도 **같은 대화 ID로** 조회할 수 있습니다. [MemoryBuilderUnitTest](../../../labs/07-00-chat-memory/src/test/java/com/example/ailearning/l07memory/MemoryBuilderUnitTest.java)는 이 두 경우를 검증합니다.
 
 ## 대화 의도로 실행 중 저장소를 선택하려면
 
@@ -288,15 +188,13 @@ API 계약의 근거: [Spring AI 2.0.2의 메모리 소스](https://github.com/s
 
 1. 이전 대화를 저장만 하고 다음 프롬프트에 보내지 않으면 모델이 그 대화를 참고할 수 있나요?
 2. JDBC 저장소 빈이 있는 앱에서 `MessageWindowChatMemory.builder().build()`를 직접 호출하면 그 JDBC 저장소를 자동으로 사용하나요?
-3. YAML에서 저장 위치를 InMemory에서 Redis로 바꾸면 언제 적용되며, 이전 대화도 자동으로 옮겨지나요?
 
 <details>
 <summary>해설</summary>
 
 1. 아닙니다. 같은 대화의 이전 user·assistant를 읽어 현재 질문과 함께 전달해야 합니다.
 2. 아닙니다. 이 빌더는 자체 InMemory 저장소를 생성합니다. JDBC를 쓰려면 자동 구성된 저장소를 받아 `.chatMemoryRepository(jdbcRepository)`로 연결한 메모리를 사용해야 합니다.
-3. 앱을 다시 시작할 때 적용됩니다. 이전 대화는 자동으로 복사되지 않으므로 저장소를 유지하거나 별도의 이전 절차를 설계해야 합니다.
 
 </details>
 
-[이전](../07-chat-memory.md) · [다음](02-store.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)
+[이전](../07-chat-memory.md) · [다음](03-store.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)

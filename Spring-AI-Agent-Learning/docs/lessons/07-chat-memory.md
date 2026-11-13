@@ -76,13 +76,13 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 **`ChatMemoryRepository`의 역할과 구현체별 특징은 [07-01의 저장소 종류](07-chat-memory/01-messages.md#spring-ai가-제공하는-대화-저장소-종류)에서 추가로 설명합니다.**
 
-예를 들어 최근 메시지 6개만 참고하면서 서버 재시작 후에도 대화를 이어가려면, 메시지 창은 유지하고 저장소를 JDBC 구현으로 연결할 수 있습니다. 실제 생성 코드와 메서드는 [07-1](07-chat-memory/01-messages.md), 서비스의 호출 흐름은 [07-2](07-chat-memory/02-store.md)에서 설명합니다.
+예를 들어 최근 메시지 6개만 참고하면서 서버 재시작 후에도 대화를 이어가려면, 메시지 창은 유지하고 저장소를 JDBC 구현으로 연결할 수 있습니다. 실제 생성 코드와 메서드는 [07-1](07-chat-memory/01-messages.md), 서비스의 호출 흐름은 [07-3](07-chat-memory/03-store.md)에서 설명합니다.
 
 ## 실무에서 대화를 어떻게 활용할까?
 
 쇼핑 상담 화면에 표시할 전체 대화와 모델에게 다시 보낼 대화는 범위가 다릅니다. 사용자는 처음부터 스크롤해 볼 수 있어도 모델에게는 최근 메시지만 보낼 수 있습니다. 예산처럼 계속 필요한 조건은 메시지 창에서 사라질 수 있으므로, 별도 상담 조건으로 관리할지도 결정해야 합니다.
 
-현재 예제는 메시지의 재전달 원리를 관찰하는 구성입니다. 로그인 사용자에게 대화를 연결하고 DB에 보관하는 방법은 [07-4 상용 서비스의 대화 저장과 재사용](07-chat-memory/04-production-memory.md)에 정리했습니다. 공개 연동 자료와 이 교재의 설계 제안을 구분해서 읽습니다.
+현재 예제는 메시지의 재전달 원리를 관찰하는 구성입니다. 로그인 사용자에게 대화를 연결하고 DB에 보관하는 방법은 [07-5 상용 서비스의 대화 저장과 재사용](07-chat-memory/05-production-memory.md)에 정리했습니다. 공개 연동 자료와 이 교재의 설계 제안을 구분해서 읽습니다.
 
 ## 실습 안내
 
@@ -97,13 +97,15 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 | 순서 | 소수업 | 완료 기준 |
 |---|---|---|
-| 1 | [이전 대화와 저장소 생성·연결](07-chat-memory/01-messages.md) | 메시지 재전달과 기본 저장소 생성 위치를 이해합니다. JDBC와 Redis/InMemory 선택은 별도 모듈의 선택 예제로 실행합니다. |
-| 2 | [메시지 조회·전달·저장 연결하기](07-chat-memory/02-store.md) | 이전 대화를 조회해 새 질문과 함께 전달하고, 새 답변을 저장하는 흐름을 연결합니다. |
-| 3 | [대화 구분·삭제·메시지 창 관찰](07-chat-memory/03-isolation.md) | 같은 대화 ID라도 소유자가 다르면 분리되는지 확인합니다. |
-| 선택 4 | [상용 서비스의 대화 저장과 재사용](07-chat-memory/04-production-memory.md) | 최근 문맥·전체 이력·업무 상태를 구분하고 영구 저장과 운영 기준을 설명합니다. |
-| 선택 5 | [의도에 따른 런타임 메모리 선택](../../labs/07-03-runtime-memory/README.md) | 분류한 의도를 Enum 파라미터로 전달하고 요청마다 InMemory 또는 Redis를 선택합니다. |
+| 1 | [이전 대화와 저장소 생성·연결](07-chat-memory/01-messages.md) | 메시지 재전달과 기본 저장소 생성 위치를 이해합니다. |
+| 3 | [메시지 조회·전달·저장 연결하기](07-chat-memory/03-store.md) | 이전 대화를 조회해 새 질문과 함께 전달하고, 새 답변을 저장하는 흐름을 연결합니다. |
+| 4 | [대화 구분·삭제·메시지 창 관찰](07-chat-memory/04-isolation.md) | 같은 대화 ID라도 소유자가 다르면 분리되는지 확인합니다. |
+| 선택: JDBC | [JDBC 자동 구성으로 저장소 연결](07-chat-memory/01-jdbcRepository.md) | JDBC 저장소 빈을 메시지 창에 연결하고 DB 저장·재조회를 확인합니다. |
+| 선택: 저장소 설정 | [YAML로 Redis 또는 InMemory 선택](07-chat-memory/02-RepositorySelection.md) | 설정에 따라 앱 시작 시 사용할 저장소를 선택합니다. |
+| 선택 5 | [상용 서비스의 대화 저장과 재사용](07-chat-memory/05-production-memory.md) | 최근 문맥·전체 이력·업무 상태를 구분하고 영구 저장과 운영 기준을 설명합니다. |
+| 선택 6 | [의도에 따른 런타임 메모리 선택](../../labs/07-03-runtime-memory/README.md) | 분류한 의도를 Enum 파라미터로 전달하고 요청마다 InMemory 또는 Redis를 선택합니다. |
 
-기본 1~3 수업은 `07-00-chat-memory`를 사용합니다. 07-1의 저장소 확장은 독립 앱 [07-01-JDBC](../../labs/07-01-JDBC/README.md), [07-02-Redis-Selection](../../labs/07-02-Redis-Selection/README.md)에서 실행합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
+기본 대화 수업인 1·3·4는 `07-00-chat-memory`를 사용합니다. JDBC 연결·저장소 선택 소주제는 독립 앱 [07-01-JDBC](../../labs/07-01-JDBC/README.md), [07-02-Redis-Selection](../../labs/07-02-Redis-Selection/README.md)에서 실행합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
@@ -117,7 +119,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:bootRun
 ```
 
-`MemoryLocalModelTest`는 고정 HTTP 응답으로 전송 메시지·대화 격리·저장 정책을 검사합니다. `bootRun` 후 질문하면 실제 모델을 호출하므로 루트 `.env` 설정이 필요하고 API 비용이 발생할 수 있습니다. 실행 입력과 확인할 필드는 [07-3](07-chat-memory/03-isolation.md)에 있습니다.
+`MemoryLocalModelTest`는 고정 HTTP 응답으로 전송 메시지·대화 격리·저장 정책을 검사합니다. `bootRun` 후 질문하면 실제 모델을 호출하므로 루트 `.env` 설정이 필요하고 API 비용이 발생할 수 있습니다. 실행 입력과 확인할 필드는 [07-4](07-chat-memory/04-isolation.md)에 있습니다.
 
 ## 확인 질문
 
@@ -140,6 +142,6 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 - [Manfred Ng / Baeldung — Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory): 저장소에서 ChatClient 연결로 이어지는 튜토리얼의 설명 순서를 참고했습니다. 1.0.0 기반 코드이므로 설정을 그대로 복사하지 않습니다.
 - [Dan Vega — AI for Java Developers 공개 강의 안내](https://www.danvega.dev/newsletter/2025/06/30/ai-for-java-developers-course): 대화 관리가 포함된 강의의 공개 소개를 확인했습니다. 영상 전체를 시청·검증한 자료는 아닙니다.
 
-운영 설계와 심화 예제의 출처·적용 범위는 [선택 보충의 참고 자료](07-chat-memory/04-production-memory.md#참고-자료와-적용-범위)에 모았습니다.
+운영 설계와 심화 예제의 출처·적용 범위는 [선택 보충의 참고 자료](07-chat-memory/05-production-memory.md#참고-자료와-적용-범위)에 모았습니다.
 
 [이전: 06장](06-workflow-agent.md) · [다음: 08장](08-advisors.md) · [전체 교육 계획](../curriculum.md)

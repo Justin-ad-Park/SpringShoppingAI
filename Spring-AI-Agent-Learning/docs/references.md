@@ -59,7 +59,7 @@
 
 Spring Academy의 [Observability Lab](https://spring.academy/courses/spring-ai-intro/lessons/observability-lab)도 확인했으나 본문을 읽을 수 없어 기술 설명의 근거로 채택하지 않았습니다. 유료 강의 본문이나 확인하지 못한 영상 내용을 추정해서 보강하지 않습니다.
 
-단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다. 새 선택 보충은 [07-4](lessons/07-chat-memory/04-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
+단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다. 새 선택 보충은 [07-5](lessons/07-chat-memory/05-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
 
 ## 버전과 자료를 읽는 기준
 

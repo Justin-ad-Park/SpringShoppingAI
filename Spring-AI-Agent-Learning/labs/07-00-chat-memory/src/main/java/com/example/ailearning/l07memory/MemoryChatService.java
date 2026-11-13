@@ -21,27 +21,48 @@ public class MemoryChatService {
             .maxMessages(6)
             .build();
 
-    public MemoryChatService(ChatClient.Builder builder) { chatClient = builder.build(); }
+    public MemoryChatService(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
 
     // 입문용 단일 서버: 같은 대화의 동시 저장 충돌을 막기 위해 요청을 직렬 처리한다.
     public synchronized MemoryReply chat(String owner, String conversationId, String question) {
         String conversationKey = createConversationKey(owner, conversationId);
         UserMessage currentUserMessage = new UserMessage(question);
+        List<Message> requestMessages = createRequestMessages(conversationKey, currentUserMessage);
+        String answer = callModel(requestMessages);
+        validateAnswer(answer);
+        saveConversationTurn(conversationKey, currentUserMessage, answer);
+        return createMemoryReply(answer, requestMessages, conversationKey);
+    }
+
+    private List<Message> createRequestMessages(String conversationKey, UserMessage currentUserMessage) {
         List<Message> requestMessages = new ArrayList<>();
         requestMessages.add(new SystemMessage(SHOPPING_CONVERSATION_INSTRUCTION));
-        requestMessages.addAll(conversationMemory.get(conversationKey)); // 1. 이전 질문·응답 조회
-        requestMessages.add(currentUserMessage);            // 2. 새 질문 추가
+        requestMessages.addAll(conversationMemory.get(conversationKey));
+        requestMessages.add(currentUserMessage);
+        return requestMessages;
+    }
 
-        String answer = chatClient
+    private String callModel(List<Message> requestMessages) {
+        return chatClient
                 .prompt()
                 .messages(requestMessages)
                 .call()
-                .content(); // 3. 함께 전달
+                .content();
+    }
+
+    private void validateAnswer(String answer) {
         if (answer == null || answer.isBlank()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "빈 모델 응답은 저장하지 않습니다.");
         }
-        // 4. 성공한 질문·응답만 저장. 이 다음 호출에서 재사용한다.
+    }
+
+    private void saveConversationTurn(String conversationKey, UserMessage currentUserMessage, String answer) {
         conversationMemory.add(conversationKey, List.of(currentUserMessage, new AssistantMessage(answer)));
+    }
+
+    private MemoryReply createMemoryReply(String answer, List<Message> requestMessages, String conversationKey) {
         return new MemoryReply(answer, requestMessages
                 .stream()
                 .map(MessageView::from)

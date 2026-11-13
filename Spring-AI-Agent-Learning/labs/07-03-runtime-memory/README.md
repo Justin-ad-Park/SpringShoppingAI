@@ -3,6 +3,22 @@
 **목표:** 분류한 대화 의도를 저장소 Enum으로 바꾸고, `chat(storage, ...)`의 Enum 파라미터로 요청마다 메모리를 선택합니다.
 선수 지식은 04장의 구조화 응답, 07장의 직접 메모리 조회·저장, 07-02의 Redis 연결입니다. 다른 실습 모듈을 import하지 않는 독립 앱입니다.
 
+
+## 채팅 처리의 역할 구분
+
+[MemoryChatService](src/main/java/com/example/ailearning/l07runtime/MemoryChatService.java)의 `chat()`은 처리 순서를 조정합니다. 각 단계는 같은 클래스의 별도 메서드로 나눕니다.
+
+| 메서드 | 역할 |
+|---|---|
+| `createRequestMessages(...)` | system 메시지·이전 대화·현재 질문을 순서대로 조합 |
+| `callModel(...)` | 메시지 목록을 모델에 보내고 답변 반환 |
+| `validateAnswer(...)` | null·공백 답변 거부 |
+| `saveConversationTurn(...)` | 현재 질문과 답변을 함께 저장 |
+
+모델 호출이나 응답 검증이 실패하면 저장 메서드를 호출하지 않습니다. `synchronized`는 기존처럼 `chat()` 전체에 적용하며, 조회부터 저장까지 단일 서버에서 순차 처리합니다.
+
+`chat()`에서 `memorySelector.select(storage)`를 한 번 호출하고, 반환된 `ChatMemory` 객체를 메시지 구성과 저장 메서드에 인자로 전달합니다. 따라서 조회한 저장소와 저장할 저장소가 요청 도중 바뀌지 않습니다.
+
 ## 07-02와 무엇이 다른가?
 
 | 예제 | 선택 시점 | 메모리 구성 |

@@ -1,10 +1,10 @@
-# 07-2. 메시지 조회·전달·저장 연결하기
+# 07-3. 메시지 조회·전달·저장 연결하기
 
 **실행 코드·설정·테스트:** [labs/07-00-chat-memory](../../../labs/07-00-chat-memory/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 이전 대화를 조회해 새 질문과 함께 전달하고, 새 답변을 저장하는 흐름을 연결합니다.
 
-**코드 읽기 안내:** 전체 클래스는 참고 코드입니다. 첫 읽기에서는 chat()의 이전 메시지 조회와 성공 후 저장만 따라갑니다.
+**코드 읽기 안내:** 먼저 `chat()`의 처리 순서를 읽고, 아래 표에서 각 메서드의 역할을 확인합니다. 전체 코드는 접힌 영역에서 필요한 메서드부터 읽습니다.
 
 ## 코드 읽는 순서
 
@@ -14,7 +14,36 @@
 2. [MemoryChatService](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryChatService.java): 조회 → 프롬프트 → 호출 → 성공 시 저장
 3. [MemoryController](../../../labs/07-00-chat-memory/src/main/java/com/example/ailearning/l07memory/MemoryController.java): 세션 소유자와 대화 ID 연결
 
-### 서비스 전체 코드
+### chat()은 처리 순서를 조정합니다
+
+`chat()`은 각 단계의 메서드를 순서대로 호출합니다. 메시지 조합·모델 호출·응답 검증·저장 구현은 각각 별도 메서드에 있습니다. 같은 클래스 안에서 **메서드 추출(Extract Method)**을 적용했으며, 별도 인터페이스나 실행 계층을 추가하지 않았습니다.
+
+다음은 실제 `chat()` 메서드입니다.
+
+```java
+    public synchronized MemoryReply chat(String owner, String conversationId, String question) {
+        String conversationKey = createConversationKey(owner, conversationId);
+        UserMessage currentUserMessage = new UserMessage(question);
+        List<Message> requestMessages = createRequestMessages(conversationKey, currentUserMessage);
+        String answer = callModel(requestMessages);
+        validateAnswer(answer);
+        saveConversationTurn(conversationKey, currentUserMessage, answer);
+        return createMemoryReply(answer, requestMessages, conversationKey);
+    }
+```
+
+| 메서드 | 역할 | 대화 저장 여부 |
+|---|---|---|
+| `createRequestMessages(...)` | 이전 메시지를 조회하고 system → 이전 대화 → 현재 질문 순서로 목록 생성 | 저장하지 않음 |
+| `callModel(...)` | 전달받은 메시지 목록으로 모델을 호출하고 답변 반환 | 저장하지 않음 |
+| `validateAnswer(...)` | null·공백 답변이면 예외 발생 | 저장하지 않음 |
+| `saveConversationTurn(...)` | 현재 질문과 답변을 함께 저장 | 저장함 |
+| `createMemoryReply(...)` | 답변·전송 메시지·저장 메시지 수를 HTTP 응답 객체로 변환 | 저장하지 않음 |
+
+`createRequestMessages()`는 메시지 목록만 만들고, `callModel()`은 모델 호출만 수행합니다. 응답 검증을 통과한 뒤에만 `saveConversationTurn()`을 호출합니다. 저장 메서드는 모델을 호출하거나 응답 객체를 만들지 않습니다.
+
+<details>
+<summary>서비스 전체 코드: 각 메서드의 구현 확인</summary>
 
 ```java
 package com.example.ailearning.l07memory;
@@ -40,27 +69,48 @@ public class MemoryChatService {
             .maxMessages(6)
             .build();
 
-    public MemoryChatService(ChatClient.Builder builder) { chatClient = builder.build(); }
+    public MemoryChatService(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
 
     // 입문용 단일 서버: 같은 대화의 동시 저장 충돌을 막기 위해 요청을 직렬 처리한다.
     public synchronized MemoryReply chat(String owner, String conversationId, String question) {
         String conversationKey = createConversationKey(owner, conversationId);
         UserMessage currentUserMessage = new UserMessage(question);
+        List<Message> requestMessages = createRequestMessages(conversationKey, currentUserMessage);
+        String answer = callModel(requestMessages);
+        validateAnswer(answer);
+        saveConversationTurn(conversationKey, currentUserMessage, answer);
+        return createMemoryReply(answer, requestMessages, conversationKey);
+    }
+
+    private List<Message> createRequestMessages(String conversationKey, UserMessage currentUserMessage) {
         List<Message> requestMessages = new ArrayList<>();
         requestMessages.add(new SystemMessage(SHOPPING_CONVERSATION_INSTRUCTION));
-        requestMessages.addAll(conversationMemory.get(conversationKey)); // 1. 이전 질문·응답 조회
-        requestMessages.add(currentUserMessage);            // 2. 새 질문 추가
+        requestMessages.addAll(conversationMemory.get(conversationKey));
+        requestMessages.add(currentUserMessage);
+        return requestMessages;
+    }
 
-        String answer = chatClient
+    private String callModel(List<Message> requestMessages) {
+        return chatClient
                 .prompt()
                 .messages(requestMessages)
                 .call()
-                .content(); // 3. 함께 전달
+                .content();
+    }
+
+    private void validateAnswer(String answer) {
         if (answer == null || answer.isBlank()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "빈 모델 응답은 저장하지 않습니다.");
         }
-        // 4. 성공한 질문·응답만 저장. 이 다음 호출에서 재사용한다.
+    }
+
+    private void saveConversationTurn(String conversationKey, UserMessage currentUserMessage, String answer) {
         conversationMemory.add(conversationKey, List.of(currentUserMessage, new AssistantMessage(answer)));
+    }
+
+    private MemoryReply createMemoryReply(String answer, List<Message> requestMessages, String conversationKey) {
         return new MemoryReply(answer, requestMessages
                 .stream()
                 .map(MessageView::from)
@@ -98,7 +148,9 @@ public class MemoryChatService {
 }
 ```
 
-핵심은 `conversationMemory.get(conversationKey)` → `requestMessages.addAll(...)` → `chatClient.prompt().messages(requestMessages)` → `conversationMemory.add(...)`입니다.
+</details>
+
+실제 Spring AI 연결 지점은 `createRequestMessages()`의 `conversationMemory.get(...)`, `callModel()`의 `.messages(requestMessages)`, `saveConversationTurn()`의 `conversationMemory.add(...)`입니다.
 메모리를 만들어 놓는 것만으로 ChatClient에 연결되지는 않습니다. 이번에는 코드가 명시적으로 연결합니다.
 저장 전에 모델 응답을 확인하므로 실패한 질문만 대화에 남지 않습니다.
 
@@ -167,4 +219,4 @@ API 응답의 `sentMessages`는 이번 프롬프트에 직접 구성한 메시�
 
 </details>
 
-[이전](01-messages.md) · [다음](03-isolation.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)
+[이전](01-messages.md) · [다음](04-isolation.md) · [단원 목차](../07-chat-memory.md) · [학습 방법](../../learning-guide.md)

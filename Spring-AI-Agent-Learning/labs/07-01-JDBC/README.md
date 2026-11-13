@@ -1,7 +1,21 @@
 # JDBC로 대화 메모리 저장
 
-[07-1 저장소 설명](../../docs/lessons/07-chat-memory/01-messages.md)을 읽고 실행합니다.
+[저장소 연결 설명](../../docs/lessons/07-chat-memory/01-jdbcRepository.md)을 읽고 실행합니다.
 이 모듈은 독립 Spring Boot 채팅 앱입니다. 07-00이나 다른 저장소 예제를 import하지 않습니다.
+
+
+## 채팅 처리의 역할 구분
+
+[MemoryChatService](src/main/java/com/example/ailearning/l07jdbc/MemoryChatService.java)의 `chat()`은 처리 순서를 조정합니다. 각 단계는 같은 클래스의 별도 메서드로 나눕니다.
+
+| 메서드 | 역할 |
+|---|---|
+| `createRequestMessages(...)` | system 메시지·이전 대화·현재 질문을 순서대로 조합 |
+| `callModel(...)` | 메시지 목록을 모델에 보내고 답변 반환 |
+| `validateAnswer(...)` | null·공백 답변 거부 |
+| `saveConversationTurn(...)` | 현재 질문과 답변을 함께 저장 |
+
+모델 호출이나 응답 검증이 실패하면 저장 메서드를 호출하지 않습니다. `synchronized`는 기존처럼 `chat()` 전체에 적용하며, 조회부터 저장까지 단일 서버에서 순차 처리합니다.
 
 ## 먼저 읽을 코드
 
@@ -60,4 +74,4 @@ curl -sS -b /tmp/l07jdbc.cookies http://127.0.0.1:8107/api/memory/demo
 
 이 샘플은 서버 세션으로 소유자를 구분합니다. 대화 키는 세션 ID와 대화 ID를 UUID로 변환해 JDBC 기본 컬럼 길이 36자에 맞춥니다. 이는 로그인 인증이나 접근 권한 검사를 대신하지 않습니다.
 서버 재시작으로 세션이 바뀌면 같은 브라우저의 저장된 대화를 자동 복구하지 못합니다. 실제 로그인 사용자에게 재연결하려면 안정적인 사용자 ID와 소유권 확인이 필요합니다.
-최근 6개 메시지의 창과 화면에 표시할 전체 대화 이력은 분리하고, 다중 서버의 대화별 갱신 충돌도 별도 설계합니다. 운영 설계는 [07-4](../../docs/lessons/07-chat-memory/04-production-memory.md)를 참고합니다.
+최근 6개 메시지의 창과 화면에 표시할 전체 대화 이력은 분리하고, 다중 서버의 대화별 갱신 충돌도 별도 설계합니다. 운영 설계는 [07-5](../../docs/lessons/07-chat-memory/05-production-memory.md)를 참고합니다.

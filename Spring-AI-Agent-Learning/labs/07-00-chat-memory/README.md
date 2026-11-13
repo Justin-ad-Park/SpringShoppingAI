@@ -3,6 +3,7 @@
 [교재와 쿠키 실험](../../docs/lessons/07-chat-memory.md)을 먼저 읽습니다.
 읽는 순서: MessageView/MemoryReply → MemoryChatService → MemoryController.
 이 모듈에는 도구·MCP·RAG·Advisor 연결이 없습니다. ChatMemory에서 읽은 이전 메시지를 직접 프롬프트에 담습니다.
+`MemoryChatService.chat()`은 메시지 구성 → 모델 호출 → 응답 검증 → 저장 → 응답 변환 순서를 조정합니다. 각 단계는 같은 클래스의 별도 메서드로 분리하며, [서비스 설명](../../docs/lessons/07-chat-memory/03-store.md#chat은-처리-순서를-조정합니다)에서 구현을 확인합니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash

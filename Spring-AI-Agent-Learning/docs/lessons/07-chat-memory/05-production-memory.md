@@ -1,4 +1,4 @@
-# 07-4. 상용 서비스의 대화 저장과 재사용
+# 07-5. 상용 서비스의 대화 저장과 재사용
 
 ## 이번 수업의 목표
 
@@ -38,7 +38,7 @@
 
 ## 3. 저장소 연결과 운영 설계의 연결
 
-구현체 생성과 Spring 빈 연결 코드는 [07-1의 JDBC 자동 구성](01-messages.md#jdbc-자동-구성-db-저장소를-어디서-받을까)과 [InMemory·Redis 선택](01-messages.md#inmemory와-redis를-함께-구성하고-실행-중-선택하기)으로 옮겼습니다. 기본 저장소 생성 → 자동 구성 → 여러 저장소 선택 순서로 읽고 실행합니다.
+구현체 생성과 Spring 빈 연결 코드는 [JDBC 자동 구성](01-jdbcRepository.md)과 [InMemory·Redis 선택](02-RepositorySelection.md)으로 옮겼습니다. 기본 저장소 생성 → 자동 구성 → 여러 저장소 선택 순서로 읽고 실행합니다.
 
 외부 DB에 메시지를 보관해도 현재 실습의 저장 키는 HTTP 세션 ID를 사용합니다. 서버 재시작으로 세션이 사라지면 같은 키를 다시 찾지 못할 수 있으므로, **저장소 도입과 안정적인 사용자·대화 ID 설계를 함께** 해야 합니다. 여러 저장소를 선택할 때도 같은 대화가 어느 저장소에 있는지 서버에서 유지해야 합니다.
 
@@ -102,4 +102,4 @@ Dan Vega의 [Compacting Chat Memory Advisor 예제](https://github.com/danvega/c
 
 위 자료에서 확인한 기능을 바탕으로 쇼핑 상담의 입력·보관·권한·실패 정책을 구성했습니다. 표의 운영 기준과 쇼핑 시나리오는 이 교재의 설계 제안입니다.
 
-[이전: 07-3](03-isolation.md) · [07장 목차](../07-chat-memory.md) · [다음: 08장 Advisor](../08-advisors.md)
+[이전: 07-4](04-isolation.md) · [07장 목차](../07-chat-memory.md) · [다음: 08장 Advisor](../08-advisors.md)
