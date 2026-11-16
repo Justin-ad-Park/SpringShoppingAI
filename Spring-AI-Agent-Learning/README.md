@@ -7,7 +7,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 ## 이번에 작성한 범위
 
-기초 00~03과 04~13 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.
+기초 00~03과 04~14 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.
 각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
 11장 MCP 실습은 기존 shopping-mcp 서버를 사용합니다. 로컬 테스트가 서버를 자동 실행하며, 수동 실행에서는 두 애플리케이션을 실행합니다.
@@ -16,7 +16,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 ## 한 수업씩 읽는 방법
 
 [초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요. 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.
-04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다. 05~13은 각 단원의 목차에서 소수업으로 나누어 학습합니다.
+04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다. 05~14는 각 단원의 목차에서 소수업으로 나누어 학습합니다.
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -37,10 +37,11 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 12 | [11. MCP Workflow·Agent·하이브리드](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
 | 13 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
 | 14 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
+| 15 | [14. Jev의 Choice·Score·Noul](docs/lessons/14-jev.md) | 의도·시급성·상담원 요청 판단과 Java 정책 연결 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
-처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 13까지 번호 순으로 읽으세요.
+처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 14까지 번호 순으로 읽으세요.
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
 
 ## 추가한 독립 실행 실습
@@ -57,7 +58,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-04-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
 
 각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.
-새 모듈은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
+OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. 14장 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
 첫 호출 모듈의 설정·실행 방식은 유지합니다. 평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
 
 ## 실습 환경

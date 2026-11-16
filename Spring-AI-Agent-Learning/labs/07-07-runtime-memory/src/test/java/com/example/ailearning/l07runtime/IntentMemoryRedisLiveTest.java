@@ -1,7 +1,7 @@
 package com.example.ailearning.l07runtime;
 
-import com.example.ailearning.testsupport.OpenAiStubServer;
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import java.util.Arrays;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantTextMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

@@ -1,10 +1,10 @@
 package com.example.ailearning;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
-import com.example.ailearning.testsupport.TestOutput;
-import com.example.ailearning.testsupport.LocalTestHttpClient;
-import com.example.ailearning.testsupport.OpenAiStubServer;
-import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestOutput;
+import com.example.ailearning.testsupport.http.LocalTestHttpClient;
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantTextMessage;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

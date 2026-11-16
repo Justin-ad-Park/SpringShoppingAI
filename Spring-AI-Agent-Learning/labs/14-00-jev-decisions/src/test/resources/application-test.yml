@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: ""
+  ai:
+    typesafe:
+      api-key: local-test-key
+      base-url: http://127.0.0.1:1
+      model: learning-jev
+      retry:
+        max-retries: 0

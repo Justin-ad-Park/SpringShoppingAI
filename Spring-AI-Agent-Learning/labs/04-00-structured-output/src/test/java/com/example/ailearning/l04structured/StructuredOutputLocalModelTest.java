@@ -2,10 +2,10 @@ package com.example.ailearning.l04structured;
 
 import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
-import com.example.ailearning.testsupport.TestOutput;
-import com.example.ailearning.testsupport.LocalTestHttpClient;
-import com.example.ailearning.testsupport.OpenAiStubServer;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestOutput;
+import com.example.ailearning.testsupport.http.LocalTestHttpClient;
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

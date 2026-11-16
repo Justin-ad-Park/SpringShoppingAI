@@ -1,12 +1,12 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model.internal;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;
 import java.util.List;
 
 /** OpenAI 응답의 JSON 구조만 만든다. 서버 실행과 시나리오 설정은 담당하지 않는다. */
-final class OpenAiResponseBody {
-    record TokenUsage(int input, int output) {}
+public final class OpenAiResponseBody {
+    public record TokenUsage(int input, int output) {}
 
     private OpenAiResponseBody() {}
 
@@ -19,7 +19,7 @@ final class OpenAiResponseBody {
      * }
      * }</pre>
      */
-    static ObjectNode createAssistantTextMessage(String content) {
+    public static ObjectNode createAssistantTextMessage(String content) {
         return StubHttpServer.JSON
                 .createObjectNode()
                 .put("role", "assistant")
@@ -45,7 +45,7 @@ final class OpenAiResponseBody {
      * }
      * }</pre>
      */
-    static ObjectNode createAssistantToolCallMessage(String id, String name, String arguments) {
+    public static ObjectNode createAssistantToolCallMessage(String id, String name, String arguments) {
         var message = StubHttpServer.JSON
                 .createObjectNode()
                 .put("role", "assistant")
@@ -90,7 +90,7 @@ final class OpenAiResponseBody {
      * }
      * }</pre>
      */
-    static ObjectNode createChatResponseBody(JsonNode request, ObjectNode message, TokenUsage usage) {
+    public static ObjectNode createChatResponseBody(JsonNode request, ObjectNode message, TokenUsage usage) {
         var body = StubHttpServer.JSON
                 .createObjectNode()
                 .put("id", "local")
@@ -146,7 +146,7 @@ final class OpenAiResponseBody {
      * }
      * }</pre>
      */
-    static ObjectNode createEmbeddingResponseBody(JsonNode request, List<float[]> vectors) {
+    public static ObjectNode createEmbeddingResponseBody(JsonNode request, List<float[]> vectors) {
         var body = StubHttpServer.JSON
                 .createObjectNode()
                 .put("object", "list")

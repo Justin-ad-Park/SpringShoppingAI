@@ -1,4 +1,9 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model;
+
+import com.example.ailearning.testsupport.model.internal.StubHttpServer;
+import com.example.ailearning.testsupport.model.internal.ChatResponseSettings;
+import com.example.ailearning.testsupport.model.internal.SequentialChatResponder;
+import com.example.ailearning.testsupport.model.internal.OpenAiResponseBody;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;

@@ -1,8 +1,12 @@
 package com.example.ailearning.l06decisions;
 
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import com.example.ailearning.testsupport.output.TestOutput;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.http.LocalTestHttpClient;
+
 import com.example.ailearning.l06decisions.domain.ProductCatalog;
 
-import com.example.ailearning.testsupport.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +15,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import tools.jackson.databind.JsonNode;
-import static com.example.ailearning.testsupport.OpenAiChatStub.*;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

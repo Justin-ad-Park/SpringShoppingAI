@@ -46,6 +46,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 연결 | 11 MCP Workflow·Agent·하이브리드 | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
 | 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
+| 판단 확장 | 14 Jev | Choice 의도 분류·Score 시급성·Noul 상담원 요청, 커뮤니티 Starter와 전용 클라이언트 | 모델 판단값과 Java 처리 기준을 구분 | [교재·실습](lessons/14-jev.md) |
 
 
 13장 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다. 상용 사례를 함께 읽습니다. 모델별 품질 평가는 [13-6 보충](lessons/13-shopping-agent/06-intent-quality-evaluation.md)에서 별도로 다룹니다. 기본 통합 상담과 분리된 실습입니다.
@@ -60,6 +61,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-00-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
 | 02장 보충 4: 여러 모델 | `02-04-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
 | 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
+| [14 Jev의 세 질문 타입](lessons/14-jev.md) | `14-00-jev-decisions` | TypeSafe Starter·세 Service·정책 경계 단위 테스트·고정 응답/실제 Jev 테스트 |
 | [07-2 JDBC 저장소](lessons/07-chat-memory/02-jdbcRepository.md) | `07-02-JDBC` | YAML·JDBC 자동 구성, 대화 재전달·SQL 저장·재조회 테스트 |
 | [07-3 Redis/InMemory 선택](lessons/07-chat-memory/03-RepositorySelection.md) | `07-03-Redis-Selection` | YAML 기반 시작 시 저장소 선택, InMemory 로컬·Redis Live 테스트 |
 | [07-7 의도별 런타임 선택](../labs/07-07-runtime-memory/README.md) | `07-07-runtime-memory` | 의도 분류·Enum 파라미터·두 저장소의 대화 격리, Redis + 모델 대역 테스트 |

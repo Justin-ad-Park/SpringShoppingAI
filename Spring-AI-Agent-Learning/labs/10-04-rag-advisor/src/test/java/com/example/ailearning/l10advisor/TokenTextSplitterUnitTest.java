@@ -1,8 +1,8 @@
 package com.example.ailearning.l10advisor;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
-import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.output.TestOutput;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.ai.document.Document;

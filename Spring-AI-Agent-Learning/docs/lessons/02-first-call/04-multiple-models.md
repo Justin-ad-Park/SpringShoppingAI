@@ -246,7 +246,7 @@ curl http://localhost:8092/api/multi-chat/anthropic \
 ## 7. 테스트는 무엇을 확인할까?
 
 [MultipleProvidersLocalModelTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
-외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/AnthropicStubServer.java)로 바꿉니다. 각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.
+외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/AnthropicStubServer.java)로 바꿉니다. 각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.
 실제 키 대신 테스트용 값을 지정하며 저장소의 `.env`를 읽지 않습니다.
 
 ```bash

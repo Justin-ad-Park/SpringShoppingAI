@@ -1,6 +1,6 @@
 package com.example.ailearning.l12judge;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;

@@ -1,7 +1,7 @@
 package com.example.ailearning.l05limits;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
-import com.example.ailearning.testsupport.ToolCallPrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.output.ToolCallPrinter;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

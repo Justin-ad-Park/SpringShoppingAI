@@ -2,7 +2,7 @@ package com.example.ailearning.l13intent.domain;
 
 import com.example.ailearning.l13intent.domain.IntentCatalog.MainIntent;
 import com.example.ailearning.l13intent.domain.IntentCatalog.SubIntent;
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.params.ParameterizedTest;

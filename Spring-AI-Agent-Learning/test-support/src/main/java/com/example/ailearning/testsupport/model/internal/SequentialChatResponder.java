@@ -1,4 +1,4 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model.internal;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;
@@ -8,11 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /** 준비된 assistant 메시지를 순서대로 반환하며, 모두 사용하면 실패한다. */
-final class SequentialChatResponder implements Function<JsonNode, ObjectNode> {
+public final class SequentialChatResponder implements Function<JsonNode, ObjectNode> {
     private final List<ObjectNode> messagesInResponseOrder;
     private final AtomicInteger nextMessageIndex = new AtomicInteger();
 
-    SequentialChatResponder(ObjectNode... assistantMessages) {
+    public SequentialChatResponder(ObjectNode... assistantMessages) {
         messagesInResponseOrder = Arrays.stream(assistantMessages)
                 .map(ObjectNode::deepCopy)
                 .toList();

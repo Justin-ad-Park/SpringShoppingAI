@@ -3,7 +3,7 @@ package com.example.ailearning.l13intenteval;
 import com.example.ailearning.l13intent.IntentClassificationApplication;
 import com.example.ailearning.l13intent.IntentClassificationService;
 import com.example.ailearning.l13intent.domain.IntentCatalog;
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

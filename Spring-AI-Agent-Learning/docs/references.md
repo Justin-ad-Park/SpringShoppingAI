@@ -92,3 +92,19 @@ AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특
 | [OpenAI API 가격표](https://developers.openai.com/api/docs/pricing) | 표준·캐시·배치 등 가격 구분 | 실습 표는 표준 입력·출력 가격만 발췌 |
 
 가격·모델 접근 권한은 바뀔 수 있습니다. 가격표는 예상 단가 비교용이며 테스트 실행 비용을 계산하지 않습니다. 평가 결과는 교육용 다섯 문항의 정답 일치율이지 OpenAI가 보증한 모델 품질 순위나 전체 서비스 정확도가 아닙니다.
+
+
+## 14장 Jev의 근거 자료
+
+확인일: 2026-11-13. Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니다.
+
+| 자료 | 확인 범위 |
+|---|---|
+| [Spring AI Chat Models](https://docs.spring.io/spring-ai/reference/api/chat/comparison.html) | 본체 2.0.2의 제공 업체 목록 |
+| [Spring AI TypeSafe 프로젝트](https://github.com/spring-ai-community/spring-ai-typesafe) | 커뮤니티 SDK·Starter·Spring AI 연동의 구분 |
+| [Starter](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/) | TypeSafeClient 자동 구성·spring.ai.typesafe 설정 |
+| [Choice](https://docs.typesafe.ai/primitives/choice) · [Score](https://docs.typesafe.ai/primitives/score) · [Noul](https://docs.typesafe.ai/primitives/noul) | 선택지·순서 있는 단계·참일 확률의 의미 |
+| [JevChatModel](https://spring-ai-community.github.io/spring-ai-typesafe/latest/chat/JevChatModel/) | 실험적인 채팅 어댑터의 범위. 기본 실습에는 사용하지 않음 |
+| [제공 업체의 Jev 소개](https://github.com/jevmodel/jev-ai-model) | 비영어 정확도 별도 검증 필요성 |
+
+Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/응답 타입·/v1/systemone 경로·자동 구성·timeout/retry 설정을 대조하고 현재 프로젝트에서 컴파일했습니다. 제공 업체 API나 예제는 실제 호출하지 않았으며 한국어 성능·지연·비용 비교도 하지 않았습니다. 교육 예제의 문의 분류표와 임계값은 이 교재의 실습 정책입니다.

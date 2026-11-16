@@ -1,4 +1,7 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model;
+
+import com.example.ailearning.testsupport.output.TestOutput;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +13,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantTextMessage;
-import static com.example.ailearning.testsupport.OpenAiChatStub.createAssistantToolCallMessage;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantTextMessage;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantToolCallMessage;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StubServerTest {

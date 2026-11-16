@@ -1,4 +1,4 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model.internal;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -18,17 +18,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /** HTTP 수신·기록·전송을 담당한다. 제공 업체별 성공 응답은 등록한 핸들러가 만든다. */
-final class StubHttpServer implements AutoCloseable {
-    static final ObjectMapper JSON = new ObjectMapper();
+public final class StubHttpServer implements AutoCloseable {
+    public static final ObjectMapper JSON = new ObjectMapper();
     private record Request(JsonNode body, Map<String, String> headers) {}
-    record Response(int status, JsonNode body, long delayMs) {}
+    public record Response(int status, JsonNode body, long delayMs) {}
 
     private final Map<String, Function<JsonNode, Response>> routes = new ConcurrentHashMap<>();
     private final Map<String, List<Request>> recorded = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private final HttpServer server;
 
-    StubHttpServer() {
+    public StubHttpServer() {
         try {
             server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         } catch (IOException error) {
@@ -116,7 +116,7 @@ final class StubHttpServer implements AutoCloseable {
      * }
      * }</pre>
      */
-    static JsonNode createErrorResponseBody(String code) {
+    public static JsonNode createErrorResponseBody(String code) {
         var body = JSON.createObjectNode();
         body
                 .putObject("error")
@@ -126,17 +126,17 @@ final class StubHttpServer implements AutoCloseable {
         return body;
     }
 
-    void registerResponseHandler(String path, Function<JsonNode, Response> handler) {
+    public void registerResponseHandler(String path, Function<JsonNode, Response> handler) {
         routes.put(path, handler);
     }
 
-    String getBaseUrl() {
+    public String getBaseUrl() {
         return "http://127.0.0.1:" + server
                 .getAddress()
                 .getPort();
     }
 
-    List<JsonNode> getRequestBodies(String path) {
+    public List<JsonNode> getRequestBodies(String path) {
         return recorded
                 .getOrDefault(path, List.of())
                 .stream()
@@ -144,7 +144,7 @@ final class StubHttpServer implements AutoCloseable {
                 .toList();
     }
 
-    List<String> getRequestHeaderValues(String path, String name) {
+    public List<String> getRequestHeaderValues(String path, String name) {
         String headerName = name.toLowerCase(Locale.ROOT);
         return recorded
                 .getOrDefault(path, List.of())
@@ -155,7 +155,7 @@ final class StubHttpServer implements AutoCloseable {
                 .toList();
     }
 
-    void clearRecordedRequests(String path) {
+    public void clearRecordedRequests(String path) {
         recorded.remove(path);
     }
 

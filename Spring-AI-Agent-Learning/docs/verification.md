@@ -697,3 +697,33 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 새 회귀 검증: GET·DELETE 경로/쿼리, UTF-8 텍스트·JSON·빈 POST 구분, 기본 요청의 쿠키 미보관, 사용자 세션 간 쿠키 격리, 오류 상태/본문 그대로 반환 및 1회 출력, 종료 콜백 이후 추가 요청 차단을 실제 로컬 HTTP 서버로 검사했습니다.
 - 정적 검사: LocalModel 테스트에서 직접 HttpRequest를 만들거나 HttpClient를 생성·send하는 중복 코드가 남지 않았음을 확인했습니다. test-support README에 역할 구분과 등록·요청·세션 예제를 설명했고 로컬 링크 6개 오류 0, git diff --check 통과했습니다. 테스트 이후 정리는 import·주석·줄바꿈만 변경했습니다.
 - 한계: 실제 OpenAI·Anthropic API는 호출하지 않았으며 모델 품질·운영 인프라를 검증한 결과가 아닙니다. 11장 MCP는 기존 테스트 서버를 로컬에서 실행했습니다. 변경은 커밋하지 않았습니다.
+
+
+## test-support 용도별 패키지 분리 — 2026-11-13
+
+- 범위: 공통 지원 클래스 12개를 model·http·output과 model.internal로 이동했습니다. 테스트가 직접 사용하는 OpenAiStubServer·OpenAiChatStub·OpenAiEmbeddingStub·AnthropicStubServer는 model 루트, LocalTestHttpClient는 http 루트, TestNamePrinter·TestOutput·ToolCallPrinter는 output 루트에 배치했습니다. 모델 대역의 HTTP 서버·응답 설정·순차 응답·JSON 생성은 model.internal에 두었습니다.
+- Java 접근 범위: 상위·하위 패키지는 같은 패키지가 아니므로 상위 model에서 호출하는 내부 타입·생성자·메서드에 public을 지정했습니다. 내부 필드와 처리 메서드의 private는 유지했습니다. 실습 테스트가 internal을 직접 import하지 않음을 확인했습니다. 기존 패키지의 별칭 클래스는 남기지 않았습니다.
+- 동기화: 전체 실습의 일반·LocalModel·Unit·Live 테스트 import와 static import, 공통 도구 자체 테스트의 패키지, 현재 교재의 소스 링크를 갱신했습니다. README에 패키지 트리·진입점·지원 구현의 구분을 설명했습니다. 과거 검증 기록의 당시 경로는 유지했습니다.
+- 검증 명령: test-support:test와 20개 실습 모듈의 test에 --tests '*LocalModelTest' --tests '*UnitTest'를 지정해 실행했습니다. 추가로 Redis가 필요한 07-07-runtime-memory와 Live 전용 13-06-intent-quality-evaluation은 compileTestJava만 실행했습니다.
+- 결과: XML 기준 공통 도구 17개 + 실습 LocalModel·Unit 146개 = 총 163개 통과, 실패·오류·건너뜀 0. 일반 실습 태스크에서도 Live 소스 컴파일을 확인했으나 Live 메서드는 실행하지 않았습니다. 실제 모델 API와 Redis는 호출하지 않았으며 11장의 MCP는 기존 로컬 테스트 서버를 사용했습니다.
+- 정적 검사: 12개 이동 클래스의 본문을 이동 전 소스와 비교해 패키지·import·public 접근 범위 외 동작 변경이 없음을 확인했습니다. 이전 루트 패키지 선언·import와 실습의 internal 직접 import가 남지 않았습니다. 변경 문서 3개의 로컬 링크·앵커 30개 오류 0, git diff --check 통과. 별도 독립 검토는 수행하지 않았습니다. 커밋하지 않았습니다.
+
+
+## 14장 Jev의 Choice·Score·Noul — 2026-11-13
+
+- 요청 범위: Jev의 Spring AI 지원 여부를 확인하고 14장 본문·Choice 의도 분류·Score 상담 시급성·Noul 상담원 요청 소주제와 독립 실행 샘플을 작성했습니다. 앞서 진행 중인 다른 단원의 테스트 도구 패키지 이동은 보존하고 이번 단원 밖의 운영 코드는 변경하지 않았습니다.
+- 지원 확인: Spring AI 2.0.2 본체의 Chat Models 목록과 Spring AI Community의 spring-ai-typesafe를 구분했습니다. 커뮤니티 Starter 0.4.0은 Maven Central에서 실제 배포 POM·소스 JAR를 확인했습니다. SDK 소스의 TypeSafeClient, SystemOneRequest, Choice/Score/Noul과 응답 타입, /v1/systemone, TypeSafeAutoConfiguration·Properties를 대조했습니다. 새 단원은 ChatClient나 실험적 JevChatModel 대신 전용 TypeSafeClient를 사용합니다.
+- 구현: 14-00-jev-decisions 앱, 세 Service와 Controller, Java 정책·Enum을 추가했습니다. 모델 판단과 업무 처리 기준을 분리하고 OTHER·낮은 confidence·중간 Noul 확률은 보류 경로로 반환합니다. 실제 주문·검색·상담원 연결은 실행하지 않습니다. 질문 정의와 실제 전체 소스, 단계·확률·점수의 의미를 교육 문서에 연결했습니다.
+- 설정: 기존 Java 21·Boot 4.0.9·Spring AI BOM 2.0.2 유지. Starter/SDK 0.4.0은 새 모듈만 의존하며 runtime dependencyInsight로 Boot 4.0.9 해석을 확인했습니다. 운영 YAML의 TYPESAFE_API_KEY·모델·10초 timeout·재시도 0, 테스트 YAML의 .env import 해제·더미 키·모델을 사용합니다. 동적 대역 주소만 DynamicPropertySource로 등록합니다.
+- 실행 명령: ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
+- 결과: XML 기준 JevLocalModelTest 8개, SupportRoutingPolicyUnitTest 17개, 총 25개 통과(실패·오류·건너뜀 0). 실제 Starter·SDK로 요청 state·criteria·타입·모델·더미 인증, 응답 변환·정책 분기·입력 400·모델 실패/타입 오류 500·재시도 0을 검사했습니다. JAR 빌드 성공. Live 클래스 이름을 JevLiveTest로 정리한 뒤 compileTestJava도 성공했습니다. 로그는 /private/tmp/l14-local-test.log, /private/tmp/l14-live-test-compile.log, /private/tmp/l14-runtime-dependencies.log입니다.
+- 정적 검사: 관련 Markdown 11개, 로컬 링크·앵커 160개 오류 0, 코드 블록·details 균형, 세 Java 발췌와 실제 소스 일치, git diff --check 통과. 새 그림은 추가하지 않았습니다. README·교육 계획·실행 안내·레퍼런스·하네스의 단원 대응표에 연결했습니다.
+- 미검증: 실제 Jev/OpenAI API 호출, 한국어 의미 분류 품질·점수 보정·확률의 실제 정확도·비용·지연 비교는 수행하지 않았습니다. JevLiveTest는 컴파일만 확인했으며 선택 명령과 사용량 발생을 명시했습니다. 한 에이전트가 교육·기술 관점을 바꿔 검토했습니다. 이번 요청은 커밋하지 않았습니다.
+
+
+## 14장 세 기능의 Live 대조 테스트 보강 — 2026-11-16
+
+- 기존 JevLiveTest에 기능별 대조 입력을 추가했습니다. Choice는 상품 추천·배송 문의의 예상 의도를, Score는 일반·마감 임박 문의의 상대적 점수를, Noul은 상담원 연결 요청·비요청의 상대적 확률을 확인합니다. 각 테스트는 고객 문장과 결과를 공통 출력 메서드로 출력하며 정확한 소수 값을 고정하지 않습니다.
+- 세 테스트가 각각 두 번 호출해 전체 실행 시 총 여섯 번의 Jev API 요청이 발생합니다. README에 기능별 선택 명령·키·사용량·모델 판단에 따른 실패 가능성을 설명하고 세 소주제에서 연결했습니다.
+- 검증: ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:compileTestJava 성공(/private/tmp/l14-live-three-primitives-compile.log), git diff --check 통과.
+- 미실행: 실제 Jev API·OpenAI 호출은 하지 않았습니다. 따라서 추가한 의미 분류·상대 점수·상대 확률 검증은 실행 결과가 확인되지 않았습니다. 이번 수정은 커밋하지 않았습니다.

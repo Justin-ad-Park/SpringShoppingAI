@@ -1,4 +1,7 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.http;
+
+import com.example.ailearning.testsupport.output.TestOutput;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;

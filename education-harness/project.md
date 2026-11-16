@@ -58,6 +58,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
 | 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
 | 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.IntentModelQualityOpenAiLiveTest` |
+| 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.JevLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.JevLiveTest` (실제 Jev) |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -126,6 +127,8 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 실제 모델 연결 테스트 | `<주제>OpenAiLiveTest` 또는 `<주제>ProvidersLiveTest` | 실제 OpenAI 또는 여러 제공 업체 API 호출 |
 
 `LocalModelTest`는 실제 로컬 LLM이 아니라 고정 응답 HTTP 대역을 사용하는 테스트입니다. 현재 과정의 이름을 변경하면 과거 검증 기록의 옛 이름은 이력으로 보존합니다.
+
+14장은 Spring AI Community의 TypeSafe Starter 0.4.0과 전용 TypeSafeClient를 사용합니다. 실제 실행은 TYPESAFE_API_KEY·선택 모델 TYPESAFE_DEFAULT_MODEL, 기본 주소는 spring.ai.typesafe.base-url로 설정합니다. JevLocalModelTest는 YAML의 더미 키·모델과 동적 대역 주소를 사용하며, JevLiveTest만 실제 Jev를 호출합니다.
 
 07-2·07-3의 저장소 확장은 `07-02-JDBC`, `07-03-Redis-Selection`에서 독립 실행합니다. 기본 모듈에는 외부 저장소 의존성이 없습니다. 고정 테스트 설정은 YAML에 두고 실행 시 결정되는 모델 대역 주소만 DynamicPropertySource로 지정합니다. Redis Live는 Redis Stack만 호출하며 OpenAI는 호출하지 않습니다.
 

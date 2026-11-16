@@ -4,6 +4,43 @@
 각 실습은 `testImplementation project(':Spring-AI-Agent-Learning:test-support')`로만 참조합니다.
 실행 JAR과 Live 테스트의 모델 연결에는 포함되지 않습니다.
 
+## 용도별 패키지와 읽는 순서
+
+각 용도의 패키지 루트에는 실습 테스트가 직접 사용하는 클래스를 둡니다.
+그 클래스를 구현하는 데 필요한 지원 코드는 하위 `internal` 패키지에 둡니다.
+
+```text
+com.example.ailearning.testsupport
+├── model                       모델 응답과 요청 기록을 다루는 진입점
+│   ├── OpenAiStubServer
+│   ├── OpenAiChatStub
+│   ├── OpenAiEmbeddingStub
+│   ├── AnthropicStubServer
+│   └── internal                모델 대역의 구현 지원
+│       ├── StubHttpServer
+│       ├── ChatResponseSettings
+│       ├── SequentialChatResponder
+│       └── OpenAiResponseBody
+├── http                        실습 앱 API를 호출하는 진입점
+│   └── LocalTestHttpClient
+└── output                      테스트 결과를 출력하는 진입점
+    ├── TestNamePrinter
+    ├── TestOutput
+    └── ToolCallPrinter
+```
+
+테스트에서는 `model`, `http`, `output`의 클래스를 import합니다. 예를 들어 다음 세 가지를 함께 사용할 수 있습니다.
+
+```java
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import com.example.ailearning.testsupport.http.LocalTestHttpClient;
+import com.example.ailearning.testsupport.output.TestOutput;
+```
+
+`MODEL.chat()`으로 받는 `OpenAiChatStub`과 `MODEL.embeddings()`로 받는 `OpenAiEmbeddingStub`도 테스트에서 설정·조회하는 공개 API이므로 `model` 루트에 있습니다.
+`internal`은 응답 설정·순서·JSON·서버 구현을 살펴볼 때만 읽으면 됩니다.
+Java에서는 상위 패키지와 하위 패키지도 서로 다른 패키지이므로, 구현 지원 클래스 중 상위 `model`에서 사용하는 타입과 메서드는 `public`입니다. 실습 테스트는 이 구현 클래스 대신 루트의 API를 사용합니다.
+
 ## 04장에서 먼저 읽을 코드
 
 [04장 로컬 테스트](../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `MODEL`은 테스트들이 공유하는 서버입니다.
@@ -21,8 +58,8 @@ MODEL
 ```
 
 `chat()`은 채팅용 대역을 반환하고, `setResponseText()`는 문자열을 assistant 메시지에 담습니다.
-먼저 테스트의 입력·응답 지정·assertion을 읽고, 내부 동작이 궁금하면 [OpenAiChatStub](src/main/java/com/example/ailearning/testsupport/OpenAiChatStub.java)의 같은 메서드를 따라갑니다.
-OpenAI 응답 본문의 필드 구조는 [OpenAiResponseBody](src/main/java/com/example/ailearning/testsupport/OpenAiResponseBody.java)의 JSON 예시로 확인합니다.
+먼저 테스트의 입력·응답 지정·assertion을 읽고, 내부 동작이 궁금하면 [OpenAiChatStub](src/main/java/com/example/ailearning/testsupport/model/OpenAiChatStub.java)의 같은 메서드를 따라갑니다.
+OpenAI 응답 본문의 필드 구조는 [OpenAiResponseBody](src/main/java/com/example/ailearning/testsupport/model/internal/OpenAiResponseBody.java)의 JSON 예시로 확인합니다.
 
 공유 서버에는 이전 테스트의 설정·요청 기록이 남습니다. 각 테스트 시작 전 `MODEL.chat().resetResponsesAndRequests()`로 채팅 상태를 비운 뒤 필요한 응답을 지정합니다.
 이 초기화는 채팅 사용량 설정과 임베딩 설정·기록을 유지합니다.
@@ -64,7 +101,7 @@ LocalModel 테스트의 요청은 **테스트 → 실습 앱 → 모델 대역 �
 `OpenAiStubServer`는 두 번째 구간에서 Spring AI가 보낸 모델 요청을 받고 준비한 응답을 돌려줍니다.
 따라서 공통 HTTP 클라이언트는 `ChatClient`를 대신하지 않으며, 실제 Spring AI 연결과 도구 루프는 그대로 실행됩니다.
 
-[LocalTestHttpClient](src/main/java/com/example/ailearning/testsupport/LocalTestHttpClient.java)는 JDK HttpClient의 요청 생성·전송을 감싼 작은 어댑터입니다.
+[LocalTestHttpClient](src/main/java/com/example/ailearning/testsupport/http/LocalTestHttpClient.java)는 JDK HttpClient의 요청 생성·전송을 감싼 작은 어댑터입니다.
 단원별 상위 테스트 클래스를 상속하지 않고 다음 필드를 구성합니다. 기존 LocalModel 테스트에서 발췌한 등록 예시입니다.
 
 ```java
@@ -140,7 +177,7 @@ try (var userABrowser = appClient.newSession(); var userBBrowser = appClient.new
 
 `getBaseUrl()`은 OpenAI에는 `/v1`을 포함하고 Anthropic에는 서버 주소만 반환합니다.
 각 테스트 클래스는 공유 서버를 준비하고 `@AfterAll`에서 닫습니다. 인증 헤더는 검증용으로 조회할 수 있지만 출력하지 않습니다.
-[TestNamePrinter](src/main/java/com/example/ailearning/testsupport/TestNamePrinter.java)의 `printTestName(TestInfo)` 한 곳에서 이름 선택과 제목 형식을 관리합니다. 각 클래스의 `@BeforeEach`에서 한 번 호출하며, JUnit이 전달한 `TestInfo`에서 메서드명을 읽습니다. `@DisplayName` 대신 실제 Java 메서드명을 출력합니다.
+[TestNamePrinter](src/main/java/com/example/ailearning/testsupport/output/TestNamePrinter.java)의 `printTestName(TestInfo)` 한 곳에서 이름 선택과 제목 형식을 관리합니다. 각 클래스의 `@BeforeEach`에서 한 번 호출하며, JUnit이 전달한 `TestInfo`에서 메서드명을 읽습니다. `@DisplayName` 대신 실제 Java 메서드명을 출력합니다.
 
 ```java
 @BeforeEach
@@ -158,7 +195,7 @@ void 테스트_이름_출력(TestInfo testInfo) {
 응답 HTTP 200: ...
 ```
 
-[TestOutput](src/main/java/com/example/ailearning/testsupport/TestOutput.java)은 `new TestOutput()`으로 준비하고 이름 없이 결과만 출력합니다. 결과 출력에 테스트 이름·TestInfo를 전달하지 않습니다. 출력 검증에는 `new TestOutput(printStream)`으로 별도 스트림을 주입할 수 있으며 assertion을 대신하지 않습니다.
+[TestOutput](src/main/java/com/example/ailearning/testsupport/output/TestOutput.java)은 `new TestOutput()`으로 준비하고 이름 없이 결과만 출력합니다. 결과 출력에 테스트 이름·TestInfo를 전달하지 않습니다. 출력 검증에는 `new TestOutput(printStream)`으로 별도 스트림을 주입할 수 있으며 assertion을 대신하지 않습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:test-support:test

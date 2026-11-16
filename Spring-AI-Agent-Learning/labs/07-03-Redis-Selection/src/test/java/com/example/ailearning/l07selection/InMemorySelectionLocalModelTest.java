@@ -1,7 +1,7 @@
 package com.example.ailearning.l07selection;
 
-import com.example.ailearning.testsupport.OpenAiStubServer;
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;

@@ -1,4 +1,6 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.model;
+
+import com.example.ailearning.testsupport.model.internal.StubHttpServer;
 
 import tools.jackson.databind.JsonNode;
 import java.util.List;

@@ -2,7 +2,7 @@ package com.example.ailearning.l04structured;
 
 import com.example.ailearning.l04structured.domain.ProductSearchCondition;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;

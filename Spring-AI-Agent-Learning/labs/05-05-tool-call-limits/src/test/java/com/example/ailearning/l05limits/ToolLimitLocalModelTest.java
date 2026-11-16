@@ -1,13 +1,16 @@
 package com.example.ailearning.l05limits;
 
-import com.example.ailearning.testsupport.*;
+import com.example.ailearning.testsupport.model.OpenAiStubServer;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.output.ToolCallPrinter;
+
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-import static com.example.ailearning.testsupport.OpenAiChatStub.*;
+import static com.example.ailearning.testsupport.model.OpenAiChatStub.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

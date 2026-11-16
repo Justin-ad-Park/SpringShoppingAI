@@ -1,6 +1,6 @@
 package com.example.ailearning.l11mcp.domain;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.*;
 import static org.assertj.core.api.Assertions.*;
 

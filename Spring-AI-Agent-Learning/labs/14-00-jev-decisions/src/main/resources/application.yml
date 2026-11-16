@@ -1,0 +1,15 @@
+server:
+  port: 8114
+spring:
+  application:
+    name: learning14-jev-decisions
+  config:
+    import: optional:file:.env[.properties]
+  ai:
+    typesafe:
+      api-key: ${TYPESAFE_API_KEY}
+      base-url: https://api.typesafe.ai
+      model: ${TYPESAFE_DEFAULT_MODEL:jev-latest}
+      timeout: 10s
+      retry:
+        max-retries: 0

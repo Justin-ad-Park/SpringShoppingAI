@@ -2,7 +2,7 @@ package com.example.ailearning.l06decisions;
 
 import com.example.ailearning.l06decisions.domain.ProductCatalog;
 import com.example.ailearning.l06decisions.domain.ProductSearchCondition;
-import com.example.ailearning.testsupport.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;

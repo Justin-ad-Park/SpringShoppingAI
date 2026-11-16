@@ -1,7 +1,7 @@
 package com.example.ailearning.l05tools.domain;
 
-import com.example.ailearning.testsupport.TestNamePrinter;
-import com.example.ailearning.testsupport.TestOutput;
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import com.example.ailearning.testsupport.output.TestOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;

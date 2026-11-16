@@ -1,4 +1,4 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.output;
 
 import org.junit.jupiter.api.TestInfo;
 

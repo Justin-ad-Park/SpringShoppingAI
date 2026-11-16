@@ -138,4 +138,4 @@ Spring AI의 API 타임아웃만으로는 여러 모델 요청과 도구 실행�
 - [Microsoft — Spring AI for Beginners](https://github.com/microsoft/Spring-AI-for-Beginners): 개별 기능을 RAG·도구·MCP·Agent로 연결하는 공개 교육 과정의 학습 구성을 참고했습니다. Azure 배포 코드를 옮긴 것은 아닙니다.
 - [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 확인 범위와 버전 차이를 설명합니다. 13-5·6의 기존 출처는 각 소수업에서 확인합니다.
 
-[이전: 12장](12-evaluation.md) · [전체 교육 계획](../curriculum.md)
+[이전: 12장](12-evaluation.md) · [다음: 14장 Jev](14-jev.md) · [전체 교육 계획](../curriculum.md)

@@ -1,4 +1,6 @@
-package com.example.ailearning.testsupport;
+package com.example.ailearning.testsupport.http;
+
+import com.example.ailearning.testsupport.output.TestOutput;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
