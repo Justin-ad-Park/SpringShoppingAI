@@ -6,10 +6,20 @@
 
 1. [application.yml](src/main/resources/application.yml): 키·주소·모델·타임아웃·재시도 설정.
 2. [ShoppingDecisionController](src/main/java/com/example/ailearning/l14jev/ShoppingDecisionController.java): text/plain 요청을 세 Service에 전달.
-3. [IntentClassificationService](src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java), [SupportPriorityService](src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java), [HumanSupportService](src/main/java/com/example/ailearning/l14jev/HumanSupportService.java): 질문 정의 → 요청 생성 → HTTP 호출 → 타입별 응답 조회.
+3. [IntentClassificationService](src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java), [SupportPriorityService](src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java), [HumanSupportRequestService](src/main/java/com/example/ailearning/l14jev/HumanSupportRequestService.java): 질문 정의 → 요청 생성 → HTTP 호출 → 타입별 응답 조회.
 4. [SupportRoutingPolicy](src/main/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicy.java): 분류 결과를 서비스 처리 기준으로 변환. 상태 변경·업무 도구 실행은 없습니다.
 
 Starter가 `spring.ai.typesafe.*`를 읽어 TypeSafeClient 빈을 등록하고 세 서비스 생성자에 주입합니다. 직접 Client 빈이나 ChatClient.Builder를 만들 필요가 없습니다. `state`는 고객 문장, `questions`는 판단 기준이며 `systemOne()`에서 API를 호출합니다.
+
+## 세 기능의 반환 타입
+
+| 기능 | SDK에서 읽는 결과 | 서비스와 Live 테스트에서 받는 결과 |
+|---|---|---|
+| Choice | `ChoiceAnswer`: 선택 항목·confidence·항목별 확률 | `IntentClassificationResult`: 예측 의도·confidence·확률·확인 질문 필요 여부 |
+| Score | `ScoreAnswer`: 점수·confidence·단계별 확률 | `SupportPriorityResult`: 점수·confidence·확률·상담 우선순위 |
+| Noul | `NoulAnswer`: 참일 확률 | `HumanSupportRequestResult`: 상담원 연결 요청 확률·처리 경로 |
+
+세 결과 record는 각각 해당 Service 안에 선언합니다. SDK 응답과 Java 정책을 적용한 서비스 결과를 구분하며, Live 테스트에서는 명시적인 타입으로 변수를 선언합니다. 요청·SDK 응답·결과를 읽을 때 타입 추론을 사용하지 않습니다.
 
 ## 키 없이 로컬 검증
 

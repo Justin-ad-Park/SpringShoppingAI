@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.JsonNode;
+import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,10 +47,10 @@ class JevLocalModelTest {
                 {"type":"choice","choice":"PRODUCT_SEARCH","confidence":0.85,
                  "probabilities":{"PRODUCT_SEARCH":0.9,"ORDER_DELIVERY":0.04,"RETURN_EXCHANGE":0.03,"OTHER":0.03}}
                 """);
-        var body = post("intent", "3만원 이하의 텀블러를 추천해 주세요.");
-        assertThat(body.path("predictedIntent").asString()).isEqualTo("PRODUCT_SEARCH");
-        assertThat(body.path("clarificationRequired").asBoolean()).isFalse();
-        assertThat(body.path("probabilities").size()).isEqualTo(4);
+        JsonNode decisionJson = post("intent", "3만원 이하의 텀블러를 추천해 주세요.");
+        assertThat(decisionJson.path("predictedIntent").asString()).isEqualTo("PRODUCT_SEARCH");
+        assertThat(decisionJson.path("clarificationRequired").asBoolean()).isFalse();
+        assertThat(decisionJson.path("probabilities").size()).isEqualTo(4);
         JsonNode request = MODEL.requests().getFirst();
         assertThat(request.path("state").asString()).contains("텀블러를 추천");
         assertThat(request.path("model").asString()).isEqualTo("learning-jev");
@@ -72,10 +73,10 @@ class JevLocalModelTest {
                  "legend":{"0":"일반 문의","1":"현재 문제","2":"즉시 확인 필요"},
                  "probabilities":{"0":0.1,"1":0.2,"2":0.7}}
                 """);
-        var body = post("priority", "취소 마감이 오늘인데 아직 처리가 안 됐어요.");
-        assertThat(body.path("score").asDouble()).isEqualTo(1.6);
-        assertThat(body.path("priority").asString()).isEqualTo("HIGH");
-        var question = MODEL.requests().getFirst().path("questions").path("urgency");
+        JsonNode decisionJson = post("priority", "취소 마감이 오늘인데 아직 처리가 안 됐어요.");
+        assertThat(decisionJson.path("score").asDouble()).isEqualTo(1.6);
+        assertThat(decisionJson.path("priority").asString()).isEqualTo("HIGH");
+        JsonNode question = MODEL.requests().getFirst().path("questions").path("urgency");
         assertThat(question.path("type").asString()).isEqualTo("score");
         assertThat(question.path("criteria").isArray()).isTrue();
         assertThat(question.path("criteria").size()).isEqualTo(3);
@@ -84,13 +85,13 @@ class JevLocalModelTest {
     @Test
     void Noul은_참일_확률을_받아_연결_안내_또는_확인_질문을_선택한다() throws Exception {
         respond("human_support", "{\"type\":\"noul\",\"noul\":0.9}");
-        var body = post("human-support", "자동 응답 말고 사람 상담원과 이야기하고 싶어요.");
-        assertThat(body.path("yesProbability").asDouble()).isEqualTo(0.9);
-        assertThat(body.path("action").asString()).isEqualTo("OFFER_HUMAN_SUPPORT");
-        var question = MODEL.requests().getFirst().path("questions").path("human_support");
+        JsonNode decisionJson = post("human-support", "자동 응답 말고 사람 상담원과 이야기하고 싶어요.");
+        assertThat(decisionJson.path("yesProbability").asDouble()).isEqualTo(0.9);
+        assertThat(decisionJson.path("action").asString()).isEqualTo("OFFER_HUMAN_SUPPORT");
+        JsonNode question = MODEL.requests().getFirst().path("questions").path("human_support");
         assertThat(question.path("type").asString()).isEqualTo("noul");
         assertThat(question.path("criteria").has("true")).isTrue();
-        assertThat(body.has("confidence")).isFalse();
+        assertThat(decisionJson.has("confidence")).isFalse();
 
         respond("human_support", "{\"type\":\"noul\",\"noul\":0.5}");
         assertThat(post("human-support", "이 문의는 어떻게 해야 하나요?").path("action").asString())
@@ -122,7 +123,7 @@ class JevLocalModelTest {
     }
 
     private JsonNode post(String endpoint, String message) throws Exception {
-        var response = appClient.postText("/api/jev/" + endpoint, message);
+        HttpResponse<String> response = appClient.postText("/api/jev/" + endpoint, message);
         assertThat(response.statusCode()).isEqualTo(200);
         return JevStubServer.JSON.readTree(response.body());
     }

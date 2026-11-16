@@ -727,3 +727,12 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 세 테스트가 각각 두 번 호출해 전체 실행 시 총 여섯 번의 Jev API 요청이 발생합니다. README에 기능별 선택 명령·키·사용량·모델 판단에 따른 실패 가능성을 설명하고 세 소주제에서 연결했습니다.
 - 검증: ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:compileTestJava 성공(/private/tmp/l14-live-three-primitives-compile.log), git diff --check 통과.
 - 미실행: 실제 Jev API·OpenAI 호출은 하지 않았습니다. 따라서 추가한 의미 분류·상대 점수·상대 확률 검증은 실행 결과가 확인되지 않았습니다. 이번 수정은 커밋하지 않았습니다.
+
+
+## Jev 결과 타입과 명시적 타입 선언 — 2026-11-16
+
+- 기존 전체 변경을 dabdaa7로 먼저 커밋한 뒤 이번 수정만 적용했습니다. 세 서비스의 Result를 IntentClassificationResult·SupportPriorityResult·HumanSupportRequestResult로 구체화했습니다. 상담원 연결 요청을 평가하는 클래스는 HumanSupportRequestService, 공개 메서드는 classifyIntent·assessPriority·assessHumanSupportRequest로 명확히 했습니다.
+- 서비스에서 TypeSafeClient·SystemOneRequest·SystemOneResponse·ChoiceAnswer·ScoreAnswer·NoulAnswer를 명시하고 요청·응답 변수에 대상 이름을 붙였습니다. Live의 여섯 결과 변수와 두 반복문의 타입, 로컬 테스트의 JSON·HTTP 응답 타입도 명시했습니다. 14장 Java 코드·문서에 var 선언이 남지 않았습니다. JSON 필드·HTTP 경로·모델 질문 ID·임계값은 유지했습니다.
+- 교육 자료와 README에서 실제 코드 발췌·변경된 클래스 링크를 맞추고 SDK 응답과 정책 적용 후 서비스 반환 타입의 차이를 설명했습니다. Live 결과 변수 선언만으로 세 서비스가 반환하는 타입을 확인할 수 있습니다.
+- 검증: ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar 성공. XML 기준 8+17=25개 통과(실패·오류·건너뜀 0), Live 테스트 소스도 컴파일했습니다. 로그는 /private/tmp/l14-naming-refactor-final.log입니다.
+- 정적 검사: Markdown 5개, 로컬 링크·앵커 46개 오류 0, Java 발췌 4개와 실제 소스 일치, git diff --check 통과. 실제 Jev·OpenAI API와 Live 의미 판단 검증은 실행하지 않았습니다. 이번 네이밍 수정은 커밋하지 않았습니다.

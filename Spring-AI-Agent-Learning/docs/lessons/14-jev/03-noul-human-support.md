@@ -12,7 +12,7 @@
 
 ## 코드 읽기
 
-[HumanSupportService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/HumanSupportService.java)의 질문 정의입니다.
+[HumanSupportRequestService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/HumanSupportRequestService.java)의 질문 정의입니다.
 
 ```java
 private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
@@ -22,7 +22,23 @@ private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
         .build();
 ```
 
-`instructions`는 판단할 명제, `whenTrue`·`whenFalse`는 참·거짓의 구분 기준입니다. 호출에는 질문 ID `human_support`를 사용하고, 응답은 `client.systemOne(request).noulValue("human_support")`로 읽습니다. 원본 응답의 필드명은 `noul`이며, 고객용 API에서는 의미가 드러나도록 `yesProbability`로 반환합니다.
+`instructions`는 판단할 명제, `whenTrue`·`whenFalse`는 참·거짓의 구분 기준입니다. 호출에는 질문 ID `human_support`를 사용하고, `SystemOneResponse`에서 `NoulAnswer`를 읽고 `value()`로 참일 확률을 얻습니다. 서비스는 확률과 정책의 처리 경로를 담은 `HumanSupportRequestResult`를 반환합니다. 원본 응답의 필드명은 `noul`이며, 고객용 API에서는 의미가 드러나도록 `yesProbability`로 반환합니다.
+
+다음은 실제 `assessHumanSupportRequest()` 메서드입니다.
+
+```java
+    public HumanSupportRequestResult assessHumanSupportRequest(String message) {
+        SystemOneRequest humanSupportRequest = SystemOneRequest.builder()
+                .state(message)
+                .question("human_support", HUMAN_SUPPORT_QUESTION)
+                .build();
+        SystemOneResponse humanSupportResponse = typeSafeClient.systemOne(humanSupportRequest);
+        NoulAnswer humanSupportAnswer = humanSupportResponse.noul("human_support");
+        double yesProbability = humanSupportAnswer.value();
+        HumanSupportAction action = SupportRoutingPolicy.determineHumanSupportAction(yesProbability);
+        return new HumanSupportRequestResult(yesProbability, action);
+    }
+```
 
 [SupportRoutingPolicy](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicy.java)의 실습용 분기 기준은 다음과 같습니다.
 

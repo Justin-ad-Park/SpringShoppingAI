@@ -8,7 +8,7 @@
 
 ## Jev는 무엇을 반환할까?
 
-일반 채팅 모델은 답변 문장을 생성합니다. Jev는 제공한 정보를 질문 기준으로 평가해 정해진 형태의 판단을 반환합니다. 예를 들어 “3만원 이하의 텀블러를 추천해 주세요”를 읽고 상품 검색 의도를 선택합니다. 상품을 직접 검색하거나 고객에게 보여 줄 추천 문장을 작성하는 단계는 별개입니다.
+**Jev(제브)는 TypeSafe AI가 개발한 AI 모델로, 자연어 문장을 생성하는 대신 소프트웨어가 바로 활용할 수 있는 구조화된 판단 결과와 확률을 반환합니다.** 예를 들어 “3만원 이하의 텀블러를 추천해 주세요”를 읽고 상품 검색 의도를 선택합니다. 상품을 직접 검색하거나 고객에게 보여 줄 추천 문장을 작성하는 단계는 별개입니다.
 
 | 기능 | 묻는 내용 | 모델이 반환하는 값 | 이번 쇼핑 예제 |
 |---|---|---|---|
@@ -18,23 +18,20 @@
 
 `confidence`는 Choice·Score의 확률 분포가 얼마나 집중돼 있는지 나타내는 값입니다. 정답률 보증이 아니며, 선택 항목의 확률과 같은 값이라고 가정하지 않습니다. Noul에는 별도 confidence가 없습니다. 0.5는 “중간 정도로 요청함”이 아니라 참·거짓 판단이 불확실하다는 뜻입니다.
 
-## Spring AI에서 지원하는가?
+## Jev를 Spring AI로 사용하기
 
-**Spring AI Community의 별도 프로젝트인 Spring AI TypeSafe로 연동할 수 있습니다.** 확인일은 2026-11-13입니다.
+1. `org.springaicommunity:spring-ai-starter-typesafe:0.4.0` 의존성을 추가합니다.
+2. `spring.ai.typesafe.api-key`와 `spring.ai.typesafe.model`을 설정합니다. 이 실습은 `.env`의 `TYPESAFE_API_KEY`를 읽고 기본 모델로 `jev-latest`를 사용합니다.
+3. Starter가 생성한 `TypeSafeClient` 빈을 서비스 생성자로 주입받고, `typeSafeClient.systemOne(...)`으로 Choice·Score·Noul을 호출합니다.
 
-- Spring AI 2.0.2 본체의 [Chat Models 목록](https://docs.spring.io/spring-ai/reference/api/chat/comparison.html)에는 Jev가 없습니다.
-- [Spring AI TypeSafe](https://github.com/spring-ai-community/spring-ai-typesafe)는 Java SDK와 Starter, Spring AI 연동 기능을 제공합니다. 이 실습은 배포된 `spring-ai-starter-typesafe:0.4.0`을 고정해 사용합니다.
-- Starter가 설정을 읽고 `TypeSafeClient` 빈을 생성합니다. 서비스는 생성자로 이 빈을 주입받습니다. Choice·Score·Noul은 `client.systemOne(...)`으로 호출합니다.
-- 커뮤니티의 `typesafe-spring-ai`에는 평가·Advisor·RAG 연동과 실험적인 `JevChatModel`도 있지만, 이 수업은 세 질문 타입을 직접 배우므로 전용 클라이언트를 사용합니다. OpenAI Starter나 ChatClient는 필요하지 않습니다.
-
-별도 의존성 이름이 `spring.ai.*` 설정을 사용한다고 Spring AI 본체에 포함된 기능은 아닙니다. [Starter 설정](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/)과 [실험적 ChatModel의 범위](https://spring-ai-community.github.io/spring-ai-typesafe/latest/chat/JevChatModel/)를 구분해서 읽습니다.
+설정과 실행 명령은 [실습 README](../../labs/14-00-jev-decisions/README.md), 자동 구성 항목은 [Starter 설정 문서](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/)에서 확인합니다.
 
 ## 요청이 전달되는 순서
 
 1. Controller가 고객 메시지를 받습니다.
 2. 각 Service가 메시지를 `state`, 판단 기준을 `questions`에 넣습니다.
 3. `TypeSafeClient`가 Jev의 `POST /v1/systemone`에 요청을 보냅니다.
-4. Service가 `choice(...)`, `score(...)`, `noulValue(...)`로 응답을 읽습니다.
+4. Service가 `choice(...)`, `score(...)`, `noul(...)`로 응답을 읽습니다.
 5. Java의 `SupportRoutingPolicy`가 확인 질문·우선순위·상담원 연결 안내 여부를 정합니다.
 
 `state`는 판단할 정보, `instructions`는 판단할 질문, `criteria`는 선택지나 평가 기준입니다. 고객 문장에 내부 API 이름이나 도구 호출 지시를 넣지 않습니다. 모델을 호출하는 서비스와 수치로 분기하는 정책을 분리해 읽습니다.

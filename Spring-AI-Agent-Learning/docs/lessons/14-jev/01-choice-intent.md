@@ -19,17 +19,25 @@
 
 ## 코드 읽기
 
-[IntentClassificationService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java)의 `INTENT_QUESTION`이 각 선택지의 설명을 정의합니다. 다음은 `classify()`의 실제 발췌입니다.
+[IntentClassificationService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java)의 `INTENT_QUESTION`이 각 선택지의 설명을 정의합니다. 다음은 `classifyIntent()`의 실제 발췌입니다.
 
 ```java
-var request = SystemOneRequest.builder()
-        .state(message)
-        .question("intent", INTENT_QUESTION)
-        .build();
-var answer = client.systemOne(request).choice("intent");
+    public IntentClassificationResult classifyIntent(String message) {
+        SystemOneRequest intentRequest = SystemOneRequest.builder()
+                .state(message)
+                .question("intent", INTENT_QUESTION)
+                .build();
+        SystemOneResponse intentResponse = typeSafeClient.systemOne(intentRequest);
+        ChoiceAnswer intentAnswer = intentResponse.choice("intent");
+        ShoppingIntent intent = ShoppingIntent.valueOf(intentAnswer.value());
+        boolean clarificationRequired = SupportRoutingPolicy.requiresIntentClarification(intent, intentAnswer.confidence());
+        return new IntentClassificationResult(intent, intentAnswer.confidence(), intentAnswer.probabilities(), clarificationRequired);
+    }
 ```
 
-`var`는 Java가 오른쪽 식에서 지역변수 타입을 추론하는 문법입니다. `intent`는 요청과 응답을 연결할 질문 ID입니다. `.build()`는 요청 객체를 만들고, `systemOne()`을 호출할 때 HTTP 요청이 전송됩니다. Starter가 만든 TypeSafeClient는 서비스 생성자로 주입됩니다.
+`intent`는 요청과 응답을 연결할 질문 ID입니다. `.build()`는 요청 객체를 만들고, `systemOne()`을 호출할 때 HTTP 요청이 전송됩니다. Starter가 만든 TypeSafeClient는 서비스 생성자로 주입됩니다.
+
+`SystemOneResponse`는 Jev API 전체 응답이고, `ChoiceAnswer`는 그 안에서 읽은 의도 선택 결과입니다. 서비스는 선택 의도·confidence·항목별 확률·확인 질문 필요 여부를 담은 `IntentClassificationResult`를 반환합니다.
 
 응답의 선택 항목은 `ShoppingIntent` Enum으로 변환합니다. [SupportRoutingPolicy](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicy.java)는 confidence가 **0.7 미만**이거나 결과가 `OTHER`이면 `clarificationRequired=true`로 정합니다. 모델의 선택 결과와 서비스가 그 선택을 사용해도 되는지는 구분합니다.
 

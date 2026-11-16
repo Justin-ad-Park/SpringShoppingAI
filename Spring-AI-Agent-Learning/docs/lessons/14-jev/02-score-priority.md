@@ -18,15 +18,22 @@
 
 ## 코드 읽기
 
-[SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다. 다음은 `assess()`의 실제 발췌입니다.
+[SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다. 다음은 `assessPriority()`의 실제 발췌입니다.
 
 ```java
-var request = SystemOneRequest.builder()
-        .state(message)
-        .question("urgency", URGENCY_QUESTION)
-        .build();
-var answer = client.systemOne(request).score("urgency");
+    public SupportPriorityResult assessPriority(String message) {
+        SystemOneRequest priorityRequest = SystemOneRequest.builder()
+                .state(message)
+                .question("urgency", URGENCY_QUESTION)
+                .build();
+        SystemOneResponse priorityResponse = typeSafeClient.systemOne(priorityRequest);
+        ScoreAnswer urgencyAnswer = priorityResponse.score("urgency");
+        SupportPriority priority = SupportRoutingPolicy.determinePriority(urgencyAnswer.value(), urgencyAnswer.confidence());
+        return new SupportPriorityResult(urgencyAnswer.value(), urgencyAnswer.confidence(), urgencyAnswer.probabilities(), priority);
+    }
 ```
+
+`SystemOneResponse`에서 `ScoreAnswer`를 읽고 점수·confidence·항목별 확률·Java 정책의 우선순위를 담은 `SupportPriorityResult`를 반환합니다.
 
 모델의 `score`는 단계별 확률을 반영한 값이므로 소수가 가능합니다. 예를 들어 0·1·2 단계의 확률이 각각 0.1·0.2·0.7이면 `0×0.1 + 1×0.2 + 2×0.7 = 1.6`입니다. 이것은 1.6점이며 80%의 정답 확률이라는 뜻은 아닙니다.
 

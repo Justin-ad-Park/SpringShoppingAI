@@ -6,11 +6,13 @@ import java.util.Map;
 import org.springaicommunity.typesafe.TypeSafeClient;
 import org.springaicommunity.typesafe.question.Choice;
 import org.springaicommunity.typesafe.question.SystemOneRequest;
+import org.springaicommunity.typesafe.response.SystemOneResponse;
+import org.springaicommunity.typesafe.response.ChoiceAnswer;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IntentClassificationService {
-    public record Result(ShoppingIntent predictedIntent, double confidence,
+    public record IntentClassificationResult(ShoppingIntent predictedIntent, double confidence,
                          Map<String, Double> probabilities, boolean clarificationRequired) {}
 
     private static final Choice INTENT_QUESTION = Choice.builder()
@@ -20,20 +22,21 @@ public class IntentClassificationService {
             .option("RETURN_EXCHANGE", "구매한 상품의 반품 또는 교환 문의")
             .option("OTHER", "위 항목에 해당하지 않거나 여러 의도가 섞여 하나를 정하기 어려운 요청")
             .build();
-    private final TypeSafeClient client;
+    private final TypeSafeClient typeSafeClient;
 
-    public IntentClassificationService(TypeSafeClient client) {
-        this.client = client;
+    public IntentClassificationService(TypeSafeClient typeSafeClient) {
+        this.typeSafeClient = typeSafeClient;
     }
 
-    public Result classify(String message) {
-        var request = SystemOneRequest.builder()
+    public IntentClassificationResult classifyIntent(String message) {
+        SystemOneRequest intentRequest = SystemOneRequest.builder()
                 .state(message)
                 .question("intent", INTENT_QUESTION)
                 .build();
-        var answer = client.systemOne(request).choice("intent");
-        ShoppingIntent intent = ShoppingIntent.valueOf(answer.value());
-        boolean clarificationRequired = SupportRoutingPolicy.requiresIntentClarification(intent, answer.confidence());
-        return new Result(intent, answer.confidence(), answer.probabilities(), clarificationRequired);
+        SystemOneResponse intentResponse = typeSafeClient.systemOne(intentRequest);
+        ChoiceAnswer intentAnswer = intentResponse.choice("intent");
+        ShoppingIntent intent = ShoppingIntent.valueOf(intentAnswer.value());
+        boolean clarificationRequired = SupportRoutingPolicy.requiresIntentClarification(intent, intentAnswer.confidence());
+        return new IntentClassificationResult(intent, intentAnswer.confidence(), intentAnswer.probabilities(), clarificationRequired);
     }
 }

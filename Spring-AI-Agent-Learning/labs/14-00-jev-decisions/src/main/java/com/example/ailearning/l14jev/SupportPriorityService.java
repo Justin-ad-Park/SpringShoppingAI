@@ -6,11 +6,13 @@ import java.util.Map;
 import org.springaicommunity.typesafe.TypeSafeClient;
 import org.springaicommunity.typesafe.question.Score;
 import org.springaicommunity.typesafe.question.SystemOneRequest;
+import org.springaicommunity.typesafe.response.SystemOneResponse;
+import org.springaicommunity.typesafe.response.ScoreAnswer;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SupportPriorityService {
-    public record Result(double score, double confidence, Map<Integer, Double> probabilities,
+    public record SupportPriorityResult(double score, double confidence, Map<Integer, Double> probabilities,
                          SupportPriority priority) {}
 
     private static final Score URGENCY_QUESTION = Score.of(
@@ -18,19 +20,20 @@ public class SupportPriorityService {
             "일반 상품·정책 문의이며 현재 발생한 문제나 임박한 기한이 없음",
             "배송 지연·상품 하자 등 현재 문제가 있지만 즉시 조치할 기한은 제시되지 않음",
             "오늘까지의 취소 기한·현재 진행 중인 중복 결제 등 즉시 확인이 필요한 사정이 명시됨");
-    private final TypeSafeClient client;
+    private final TypeSafeClient typeSafeClient;
 
-    public SupportPriorityService(TypeSafeClient client) {
-        this.client = client;
+    public SupportPriorityService(TypeSafeClient typeSafeClient) {
+        this.typeSafeClient = typeSafeClient;
     }
 
-    public Result assess(String message) {
-        var request = SystemOneRequest.builder()
+    public SupportPriorityResult assessPriority(String message) {
+        SystemOneRequest priorityRequest = SystemOneRequest.builder()
                 .state(message)
                 .question("urgency", URGENCY_QUESTION)
                 .build();
-        var answer = client.systemOne(request).score("urgency");
-        SupportPriority priority = SupportRoutingPolicy.determinePriority(answer.value(), answer.confidence());
-        return new Result(answer.value(), answer.confidence(), answer.probabilities(), priority);
+        SystemOneResponse priorityResponse = typeSafeClient.systemOne(priorityRequest);
+        ScoreAnswer urgencyAnswer = priorityResponse.score("urgency");
+        SupportPriority priority = SupportRoutingPolicy.determinePriority(urgencyAnswer.value(), urgencyAnswer.confidence());
+        return new SupportPriorityResult(urgencyAnswer.value(), urgencyAnswer.confidence(), urgencyAnswer.probabilities(), priority);
     }
 }
