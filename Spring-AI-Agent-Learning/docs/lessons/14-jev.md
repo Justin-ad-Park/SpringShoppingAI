@@ -20,11 +20,61 @@
 
 ## Jev를 Spring AI로 사용하기
 
-1. `org.springaicommunity:spring-ai-starter-typesafe:0.4.0` 의존성을 추가합니다.
-2. `spring.ai.typesafe.api-key`와 `spring.ai.typesafe.model`을 설정합니다. 이 실습은 `.env`의 `TYPESAFE_API_KEY`를 읽고 기본 모델로 `jev-latest`를 사용합니다.
-3. Starter가 생성한 `TypeSafeClient` 빈을 서비스 생성자로 주입받고, `typeSafeClient.systemOne(...)`으로 Choice·Score·Noul을 호출합니다.
+### 1. build.gradle 의존성
 
-설정과 실행 명령은 [실습 README](../../labs/14-00-jev-decisions/README.md), 자동 구성 항목은 [Starter 설정 문서](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/)에서 확인합니다.
+[실습 build.gradle](../../labs/14-00-jev-decisions/build.gradle)의 의존성입니다. Java·Spring Boot 버전과 공통 테스트 라이브러리는 저장소 루트 빌드 설정을 사용합니다.
+
+```groovy
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springaicommunity:spring-ai-starter-typesafe:0.4.0'
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+}
+```
+
+`spring-ai-starter-typesafe`가 Jev 호출 클라이언트와 자동 구성을 제공합니다. `test-support`는 로컬 테스트의 HTTP 요청·결과 출력에 사용합니다.
+
+### 2. application.yml 설정
+
+실습의 [src/main/resources/application.yml](../../labs/14-00-jev-decisions/src/main/resources/application.yml)입니다.
+
+```yaml
+server:
+  port: 8114
+spring:
+  application:
+    name: learning14-jev-decisions
+  config:
+    import: optional:file:.env[.properties]
+  ai:
+    typesafe:
+      api-key: ${TYPESAFE_API_KEY}
+      base-url: https://api.typesafe.ai
+      model: ${TYPESAFE_DEFAULT_MODEL:jev-latest}
+      timeout: 10s
+      retry:
+        max-retries: 0
+```
+
+`spring.config.import`가 저장소 루트의 `.env`를 읽습니다. 실습의 `bootRun`·`test`는 작업 디렉터리를 저장소 루트로 설정합니다.
+
+- `api-key`: `.env`의 `TYPESAFE_API_KEY`를 사용합니다.
+- `model`: `TYPESAFE_DEFAULT_MODEL`이 있으면 그 값을 사용하고, 없으면 `jev-latest`를 사용합니다.
+- `timeout`: API 요청의 응답 대기 시간을 10초로 설정합니다.
+- `retry.max-retries`: 이 실습은 재시도를 하지 않습니다.
+
+### 3. .env 키 설정
+
+저장소 루트 `.env`에 다음을 추가합니다. 아래 키 예시를 실제 발급받은 값으로 바꿉니다.
+
+```properties
+TYPESAFE_API_KEY=발급받은_Jev_API_키
+TYPESAFE_DEFAULT_MODEL=jev-latest
+```
+
+`TYPESAFE_API_KEY`는 필수이고 `TYPESAFE_DEFAULT_MODEL`은 선택입니다. Choice·Score·Noul은 같은 키와 모델을 사용합니다. `jev-latest`는 모델 별칭이므로 실제 모델 버전은 바뀔 수 있습니다. 실제 키가 담긴 `.env`는 Git에 커밋하지 않습니다.
+
+이 설정을 읽은 Starter가 `TypeSafeClient` 빈을 생성합니다. 서비스는 생성자로 주입받은 `typeSafeClient.systemOne(...)`을 호출합니다. 실행 명령은 [실습 README](../../labs/14-00-jev-decisions/README.md), 자동 구성 항목은 [Starter 설정 문서](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/)에서 확인합니다.
 
 ## 요청이 전달되는 순서
 
