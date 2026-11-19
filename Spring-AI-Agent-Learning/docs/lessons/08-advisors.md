@@ -34,6 +34,96 @@ Advisor는 애플리케이션에서 실행되는 코드이며, 그 이름이 별
 | 개발자가 직접 구현하는 Advisor | 서비스에 필요한 처리를 개발팀이 작성한 클래스 | 08-4의 `TraceAdvisor`: 전후 처리 단계 기록 |
 | Advisor 체인 | 여러 Advisor를 연결해 요청과 응답을 처리하는 구성 | 메모리 Advisor와 로거 Advisor를 같은 ChatClient에 연결 |
 
+### 요청 전 처리와 응답 후 처리는 어떻게 실행될까?
+
+일반적인 동기 호출에서 Advisor는 **요청을 전달하기 전의 작업과, 응답이 돌아온 뒤의 작업**을 하나의 메서드에 작성합니다.<br>
+예를 들어 로거는 요청과 답변을 기록하고, 메모리 Advisor는 이전 대화를 입력에 추가하거나 현재 대화를 저장합니다.
+
+1. **요청 전 처리:** 모델에 전달할 메시지를 준비하거나 요청 내용을 기록합니다.
+2. **다음 처리로 전달:** `chain.nextCall(request)`로 다음 Advisor에 요청을 넘깁니다.<br>
+   체인의 마지막에서는 실제 모델을 호출하며, 현재 Advisor는 결과가 돌아올 때까지 기다립니다.
+3. **응답 후 처리:** 호출이 정상적으로 반환되면 받은 응답을 기록하거나 저장하고, 호출한 쪽으로 응답을 반환합니다.
+
+아래는 전후 처리 위치를 콘솔에 출력하는 **설명용 Advisor 전체 코드**입니다.<br>
+같은 클래스로 A와 B 두 객체를 만들어 등록하겠습니다.
+
+```java
+import org.springframework.ai.chat.client.ChatClientRequest;
+import org.springframework.ai.chat.client.ChatClientResponse;
+import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
+import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
+
+public record ConsoleLogAdvisor(String name, int order) implements CallAdvisor {
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
+    public ChatClientResponse adviseCall(
+            ChatClientRequest request,
+            CallAdvisorChain chain) {
+
+        System.out.println(name + "의 요청 전 처리");
+
+        // 다음 Advisor로 전달하고, 응답이 돌아올 때까지 기다립니다.
+        ChatClientResponse response = chain.nextCall(request);
+
+        System.out.println(name + "의 응답 후 처리");
+        return response;
+    }
+}
+```
+
+`nextCall(...)` 앞에 작성한 코드가 요청 전 처리이고, 정상 반환 뒤에 작성한 코드가 응답 후 처리입니다.<br>
+Spring AI가 전 처리와 후 처리 메서드를 따로 찾아 실행하는 것이 아니라, **하나의 메서드 안에서 다음 처리를 호출하고 돌아와 실행을 이어가는 구조**입니다.
+
+이제 A와 B를 같은 ChatClient에 등록하고 질문을 보냅니다.<br>
+아래는 Spring이 주입한 `ChatClient.Builder builder`를 사용하는 발췌 코드입니다.<br>
+생성자와 서비스 클래스 선언은 생략했으며, `ChatClient`의 import는 `org.springframework.ai.chat.client.ChatClient`입니다.
+
+```java
+ConsoleLogAdvisor advisorA = new ConsoleLogAdvisor("A", 0);
+ConsoleLogAdvisor advisorB = new ConsoleLogAdvisor("B", 10);
+
+ChatClient chatClient = builder
+        .defaultAdvisors(advisorA, advisorB)
+        .build();
+
+String answer = chatClient
+        .prompt()
+        .user("Spring AI가 뭐야?")
+        .call()
+        .content();
+
+System.out.println(answer);
+```
+
+`defaultAdvisors(advisorA, advisorB)`가 두 객체를 이 ChatClient의 모든 요청에 적용하도록 등록합니다.<br>
+`getOrder()`가 반환하는 숫자가 작은 Advisor의 요청 전 처리가 먼저 실행되므로, 여기서는 A(0) → B(10) 순서입니다.<br>
+실제 모델에 연결해 실행하면 API 사용량이 발생합니다.
+
+Advisor가 A → B 순서로 연결되면 요청은 안쪽으로 전달되고, 응답은 호출한 쪽으로 돌아오므로 다음 순서가 됩니다.<br>
+아래의 ‘모델 호출’은 실행 위치를 나타낸 것이며, `ConsoleLogAdvisor`가 출력하는 문장은 아닙니다.
+
+```text
+A의 요청 전 처리
+  B의 요청 전 처리
+    모델 호출
+  B의 응답 후 처리
+A의 응답 후 처리
+```
+
+위 코드에서 `nextCall(...)`이 예외를 던지면 그 아래의 출력은 실행되지 않습니다.<br>
+[08-4의 실제 구현](08-advisors/04-chain.md)은 `finally`에 종료 기록을 남기므로 실패한 경우에도 기록됩니다.<br>
+이때의 종료 기록은 정상 답변을 받았다는 뜻은 아닙니다.<br>
+직접 구현하는 방법과 여러 Advisor의 실행 순서는 08-4에서 이어서 다룹니다.
+
 ### 위 개념을 코드로 표현하는 인터페이스와 메서드
 
 인터페이스는 여러 클래스가 따르는 공통 규칙입니다.<br>
