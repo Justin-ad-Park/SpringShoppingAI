@@ -55,7 +55,14 @@ curl -i http://127.0.0.1:8091/api/chat \
 
 첫 실습에서는 설정과 `ChatService.ask()`의 호출 흐름을 이해하면 충분합니다.<br>
 입력 검증 테스트는 보충, system/user 전달과 대화 기억 테스트는 03장, 인증 헤더 검증은 선택 심화로 읽습니다.<br>
-03장의 system/user 테스트는 서비스 소스를 바꾸지 않고 로컬 고정 응답 서버로 두 메시지의 전달을 확인합니다.<br>
+03장의 [PromptMessagesLocalModelTest](src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)는 서비스 소스를 바꾸지 않고 로컬 고정 응답 서버로 system/user 메시지가 전달되는지 확인합니다.<br>
+두 번째 질문에 이전 대화가 자동으로 포함되지 않는지도 확인합니다.<br>
+아래 명령은 이 두 테스트를 실행하며 실제 OpenAI를 호출하지 않습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests 'com.example.ailearning.l03prompts.PromptMessagesLocalModelTest'
+```
+
 03장 3.3의 기본 시스템 메시지 실습은 별도 `l03prompts` 패키지의 [SystemMessageDefaultsLocalModelTest](src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)에 있습니다.<br>
 기본값 사용·요청별 대체·기본값 유지를 모델에 전달된 메시지로 확인하며 외부 API를 호출하지 않습니다.
 

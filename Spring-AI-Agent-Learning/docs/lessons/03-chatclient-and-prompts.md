@@ -135,12 +135,12 @@ system을 추가한 상태라면 메시지 개수 검사가 실패하므로, 원
 
 ### 3.2. API 키 없이 system/user 전달 확인하기
 
-[FirstChatLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)의 `system과_user_메시지를_한_요청에_함께_전달한다`를 실행합니다.<br>
+[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `system과_user_메시지를_한_요청에_함께_전달한다`를 실행합니다.<br>
 `ChatService` 소스는 원본 그대로 두며, 테스트 안에서 같은 요청 구성에 system을 추가합니다.<br>
 Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*FirstChatLocalModelTest.system과_user_메시지를_한_요청에_함께_전달한다'
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.system과_user_메시지를_한_요청에_함께_전달한다'
 ```
 
 먼저 다음을 예상한 뒤 테스트 코드의 실제 요청 기록과 비교하세요.
@@ -266,7 +266,12 @@ curl -sS http://127.0.0.1:8091/api/chat \
 지금 실행한 `ask()`는 매 요청의 `message`만 전달합니다.<br>
 두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.<br>
 모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.<br>
-[FirstChatLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/FirstChatLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 외부 요청에 현재 질문만 들어갔는지 확인합니다.<br>
+[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 모델 요청에 현재 질문만 들어갔는지 확인합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.다음_요청에_이전_대화를_자동으로_포함하지_않는다'
+```
+
 [07장 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.
 
 ## 5. 이번 실습에서 프롬프트와 코드의 책임
