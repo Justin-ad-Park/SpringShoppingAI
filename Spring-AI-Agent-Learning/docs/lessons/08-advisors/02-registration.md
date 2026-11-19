@@ -8,21 +8,26 @@
 ## default는 무엇의 기본일까?
 
 `defaultAdvisors(...)`는 **이 빌더로 만드는 ChatClient가 사용할 기본 Advisor 목록**입니다.
-그 ChatClient로 새 질문을 보낼 때마다 기본 목록이 적용되므로 매번 같은 Advisor를 전달할 필요가 없습니다.
-Java의 `default` 키워드나 애플리케이션 전체에 적용되는 전역 설정이라는 뜻은 아닙니다.
+- ChatClient로 새 질문을 보낼 때마다 기본 목록이 적용됩니다.
+- 매번 같은 Advisor를 전달할 필요가 없습니다.
+- Java의 `default` 키워드나 애플리케이션 전체에 적용되는 전역 설정이라는 뜻은 아닙니다.
 
-요청을 만드는 `.prompt()` 다음의 `.advisors(Advisor...)`는 **이번 요청의 목록에 Advisor를 추가**합니다.
-기본 목록을 교체하지 않으며, 다음 `.prompt()`로 만드는 요청에는 그 추가가 남지 않습니다.
+## prompt()의 advisors(Advisor ...)는 용도가 무엇인가?
+요청을 만드는 `.prompt()` 다음의 `.advisors(Advisor...)`는 **해당 요청의 목록에 Advisor를 추가**합니다.
+- defaultAdvisors를 대체하지 않고, advisors로 등록한 advisor는 추가로 적용됩니다.
+- 여기서 추가한 Advisor는 해당 `.prompt()`로 구성하는 요청에 적용됩니다.
+- 이 등록은 같은 ChatClient의 다른 `.prompt()`로 구성한 요청에 자동으로 적용되지 않습니다.
 
-| 설정 위치 | 적용 범위 | 적합한 상황 |
-|---|---|---|
+| 설정 위치 | 적용 범위 | 적합한 상황               |
+|---|---|----------------------|
 | `builder.defaultAdvisors(...)` | 생성한 ChatClient의 모든 요청 | 상담 클라이언트에서 항상 메모리 사용 |
-| `chatClient.prompt().advisors(advisor)` | 지금 구성하는 요청만 | 특정 요청에 추가 진단 기능 사용 |
+| `chatClient.prompt().advisors(advisor)` | 지금 구성하는 요청만 | 특정 요청에 추가 처리 기능 사용   |
 
-생성자에 있느냐, 실행 중 호출하느냐보다 **빌더의 기본 설정인지, 현재 요청의 설정인지**가 기준입니다.
-예를 들어 실행 중 새 클라이언트를 만드는 코드에서도 `defaultAdvisors`를 사용하면 그 새 클라이언트의 기본 설정입니다.
 
-“기본 제공 Advisor”와 “기본 등록 Advisor”도 구분하세요. 전자는 Spring AI가 구현한 기능이고, 후자는 내가 모든 요청에 적용하도록 선택한 기능입니다. 직접 구현한 Advisor도 기본 등록할 수 있습니다.
+## 용어 정리
+- “기본 제공 Advisor” : SpringAI에서 기본으로 제공하는 Advisor. [목록 참고](../08-advisors.md#spring-ai-202에서-기본-제공되는-advisor)
+- `defaultAdvisors(...)`(기본 등록) : ChatClient의 모든 요청에 적용할 Advisor를 등록하는 메서드
+  - 기본 제공 Advisor와 직접 구현한 Advisor 모두 등록할 수 있습니다.
 
 ## 같은 로거로 범위만 비교하기
 
@@ -69,25 +74,28 @@ public class Lesson02AdvisorRegistrationService {
 ```
 
 아래는 이 서비스를 주입받은 테스트에서 실행할 호출 순서의 발췌입니다. `service`의 준비와 검증문은 아래 테스트 파일에 있습니다.
-추가 기능을 새로 배우지 않고 등록 범위만 확인하려고 같은 로거를 두 개 사용합니다. 평소 서비스에서 같은 로그를 두 번 남기라는 권장 예시는 아닙니다.
+`additionalAdvisor`는 호출자가 전달하는 Advisor입니다. 어떤 기능이 추가되는지는 전달한 구현 객체에 따라 달라집니다.
+아래 호출에서는 등록 범위만 비교하려고 `SimpleLoggerAdvisor`를 전달합니다.
 
 ```java
 service.chatWithAdditionalAdvisor("추가 로그가 필요한 질문", SimpleLoggerAdvisor.builder().build());
 service.chatWithDefaults("일반 질문");
 ```
 
-| 호출 | 실행되는 로거 | `request:` 로그 수 | 모델 요청 수 |
+| 호출 | 적용되는 Advisor | Advisor 수 | 모델 요청 수 |
 |---|---|---:|---:|
-| 첫 호출 | 기본 로거 + 이번 요청의 추가 로거 | 2 | 1 |
-| 다음 호출 | 기본 로거만 | 1 | 1 |
+| 첫 호출 | 기본 등록 Advisor + 인자로 전달한 additionalAdvisor | 2 | 1 |
+| 다음 호출 | 기본 등록 Advisor | 1 | 1 |
 
-Advisor가 두 개여도 같은 한 번의 모델 호출을 감쌀 수 있습니다. 로거 수와 모델 요청 수를 같다고 보지 않습니다.
-두 로거의 order는 같으므로 둘 사이의 순서는 여기서 검증하지 않습니다. 순서를 지정하는 방법은 [08-4](04-chain.md)에서 다룹니다.
+위 예시처럼 하나의 모델 호출에 여러 Advisor를 적용할 수 있습니다.
+- 여기서는 Advisor의 등록 범위를 비교합니다.
+- 여러 Advisor의 실행 순서를 지정하는 방법은 [08-4](04-chain.md)에서 다룹니다.
 
 ## Spring AI가 적용하는 방식
 
-Spring AI 2.0.2의 `DefaultChatClient` 구현에서 `.prompt()`는 기본 요청 설정을 복사해 새 요청을 만듭니다.
-그 새 요청의 `advisors(Advisor...)`는 목록에 객체를 더합니다. 그래서 기본 기능은 유지되고, 요청별 추가는 그 요청에만 남습니다.
+Spring AI 2.0.2의 `DefaultChatClient` 구현에서 `.prompt()`는 기본 요청 설정을 복사해 새 요청을 만듭니다.<br>
+그 새 요청의 `advisors(Advisor...)`는 목록에 객체를 더합니다. <br>
+그래서 기본 기능은 유지되고, 요청별 추가는 그 요청에만 남습니다. <br>
 IntelliJ에서 `ChatClient` 구현인 `DefaultChatClient.prompt()`와 `DefaultChatClientRequestSpec.advisors(Advisor...)`를 열면 이 동작을 확인할 수 있습니다.
 
 ## 실행과 테스트
@@ -104,7 +112,7 @@ Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 �
 - [Lesson02AdvisorRegistrationOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다. 자연어 답변 문구를 고정하지 않습니다.
 
 
-이 수업은 Service를 직접 주입받아 실행합니다. Advisor는 개발자가 등록하는 Java 객체이므로 추가 로거를 HTTP 요청으로 받는 API는 만들지 않습니다.
+이 수업은 Service를 직접 주입받아 실행합니다. Advisor는 개발자가 등록하는 Java 객체이므로 추가 로거를 HTTP 요청으로 받는 API는 만들지 않습니다.<br>
 로거 설정은 08-1과 같은 application.yml의 DEBUG 설정을 사용합니다.
 
 ## 같은 advisors인데 람다를 받는 코드는 무엇일까?
