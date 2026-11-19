@@ -9,7 +9,7 @@
 | 순서 | 읽고 해볼 것 | 여기서 확인할 것 |
 |---|---|---|
 | 1 | ChatClient·ChatModel·Builder | 클라이언트 생성 위치와 요청에서 재사용하는 위치 찾기 |
-| 2 | 서비스에 응답 원칙 추가 | 실제 모델 응답을 비교하거나, 로컬 테스트로 system/user 전달 확인 |
+| 2 | 요청별·기본 응답 원칙 설정 | system/user 전달 확인 후 `.system(...)`과 `.defaultSystem(...)`의 적용 범위 비교 |
 | 3 | 기억 없는 두 요청 | 두 번째 요청에 이전 메시지가 없음을 확인 |
 
 [공통 학습 방법](../learning-guide.md)
@@ -160,6 +160,87 @@ Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
 이 테스트는 요청 메시지 전달을 확인합니다.<br>
 모델이 문장 수 지시를 이해하거나 지키는지는 실제 모델로 따로 관찰해야 합니다.
 
+### 3.3. 모든 요청에 사용할 기본 시스템 메시지 설정하기
+
+여러 질문에 같은 응답 원칙을 적용하려면, ChatClient를 만들 때 Builder의 `defaultSystem(...)`으로 기본 시스템 메시지를 설정할 수 있습니다.<br>
+요청에서 사용하는 `.system(...)`과 적용 범위를 구분해 봅시다.
+
+| 메서드 | 설정 위치 | 적용 범위 |
+|---|---|---|
+| `.defaultSystem(...)` | ChatClient를 만드는 Builder | 생성한 ChatClient의 요청에서 사용할 기본 시스템 메시지 |
+| `.system(...)` | `.prompt()`로 구성하는 요청 | 현재 요청의 시스템 메시지. 기본 메시지가 있으면 대체 |
+
+#### ① 기본 시스템 메시지 사용하기
+
+아래 코드는 [SystemMessageDefaultsLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)의 `defaultSystem은_기본값을_제공하고_system은_현재_요청만_대체한다`와 같은 흐름의 실행 예제입니다.<br>
+`builder`는 앞서 배운 대로 Spring이 주입한 `ChatClient.Builder`입니다.<br>
+같은 실행 모듈의 03장 전용 `l03prompts` 패키지에 실습 테스트를 분리했습니다.<br>
+기존 `ChatService`를 수정하지 않고 테스트에서 별도 ChatClient를 만들어 비교합니다.
+
+```java
+ChatClient chatClient = builder
+        .defaultSystem("쉬운 영어로 답하세요.")
+        .build();
+
+String englishAnswer = chatClient
+        .prompt()
+        .user("Spring AI가 뭐야?")
+        .call()
+        .content();
+
+System.out.println(englishAnswer);
+```
+
+요청에서 `.system(...)`을 지정하지 않았으므로 **“쉬운 영어로 답하세요.”**가 시스템 메시지로 전달됩니다.
+
+#### ② 이번 요청의 시스템 메시지로 대체하기
+
+같은 `chatClient`로 다음 요청을 보냅니다.
+
+```java
+String koreanAnswer = chatClient
+        .prompt()
+        .system("쉬운 한국어로 답하세요.")
+        .user("Spring AI가 뭐야?")
+        .call()
+        .content();
+
+System.out.println(koreanAnswer);
+```
+
+이번 요청에는 **“쉬운 한국어로 답하세요.”**가 기본 메시지 대신 전달됩니다.<br>
+두 메시지를 합치거나 시스템 메시지 두 개를 보내는 방식이 아닙니다.<br>
+영어 답변과 한국어 답변을 모두 원하면 `.system("쉬운 영어로 답하고, 쉬운 한국어 답변도 추가하세요.")`처럼 필요한 지시를 함께 작성합니다.
+
+#### ③ 다음 요청에서 기본값이 유지되는지 확인하기
+
+```java
+String nextAnswer = chatClient
+        .prompt()
+        .user("Spring AI가 뭐야?")
+        .call()
+        .content();
+
+System.out.println(nextAnswer);
+```
+
+앞선 `.system(...)`은 그 요청만 설정했으므로 ChatClient의 기본값은 바뀌지 않습니다.<br>
+이번 요청에서는 다시 **“쉬운 영어로 답하세요.”**를 사용합니다.
+
+| 요청 | 요청별 `.system(...)` | 모델에 전달되는 시스템 메시지 |
+|---|---|---|
+| 첫 번째 | 생략 | 쉬운 영어로 답하세요. |
+| 두 번째 | 쉬운 한국어로 답하세요. | 쉬운 한국어로 답하세요. |
+| 세 번째 | 생략 | 쉬운 영어로 답하세요. |
+
+아래 테스트는 실제 OpenAI 대신 로컬 고정 응답 서버를 사용합니다.<br>
+서버로 전달된 세 요청의 메시지를 출력하고, 각 요청에 system 하나와 user 하나가 담겼는지 및 시스템 메시지가 영어 → 한국어 → 영어 지시인지 검증합니다.<br>
+고정 응답 서버는 지시와 관계없이 같은 답변을 반환하므로 **답변 언어가 아닌 전송 메시지를 확인**합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests 'com.example.ailearning.l03prompts.SystemMessageDefaultsLocalModelTest'
+```
+
 ## 4. 실험: 이전 대화를 보내지 않는 요청
 
 앞 실험의 서버를 Ctrl+C로 종료하고, system 줄을 제거한 원본 코드로 다시 시작합니다.<br>
@@ -204,6 +285,7 @@ system을 수정하는 작업과 Java의 입력 검증·메시지 저장 기능�
 2. user 메시지와 system 메시지는 각각 누구의 어떤 내용을 담나요?
 3. system 메시지에 “가격을 틀리지 마라”라고 쓰면 가격 검증 코드가 필요 없을까요?
 4. 같은 ChatClient 객체를 재사용하면 이전 질문도 기억하나요?
+5. 기본 시스템 메시지가 있는 ChatClient에서 이번 요청에 `.system(...)`을 지정하면 어떻게 되나요? 다음 요청에서 생략하면 어떤 메시지를 사용하나요?
 
 <details>
 <summary>해설</summary>
@@ -214,6 +296,8 @@ system을 수정하는 작업과 Java의 입력 검증·메시지 저장 기능�
    프롬프트 지시는 정확성 보장이 아니므로 실제 데이터와 Java 검증 코드가 필요합니다.
 4. 아닙니다.<br>
    ChatClient 재사용만으로 대화 기록이 저장·전달되지는 않습니다.
+5. 이번 요청에서는 `.system(...)`의 메시지가 기본 메시지를 대체합니다.<br>
+   ChatClient의 기본값 자체는 바뀌지 않으므로, 다음 요청에서 생략하면 기본 시스템 메시지를 사용합니다.
 
 </details>
 

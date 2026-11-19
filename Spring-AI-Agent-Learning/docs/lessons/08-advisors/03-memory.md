@@ -30,7 +30,9 @@
 ## 서비스에서 달라지는 코드
 
 아래는 이 수업의 서비스 전체 코드입니다.<br>
-등록과 호출을 분리해서 읽으세요.
+등록과 호출을 분리해서 읽으세요.<br>
+`defaultSystem(...)`은 이 ChatClient의 기본 시스템 메시지를 설정합니다.<br>
+요청별 `.system(...)`과의 차이는 [03장의 기본 시스템 메시지 실습](../03-chatclient-and-prompts.md#33-모든-요청에-사용할-기본-시스템-메시지-설정하기)에서 확인할 수 있습니다.
 
 ```java
 package com.example.ailearning.l08advisors.memory;

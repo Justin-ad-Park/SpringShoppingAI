@@ -16,7 +16,7 @@ IDE에서 Gradle을 거치지 않고 직접 실행할 때도 Working directory�
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun
 ```
 
-테스트는 연결 대상에 따라 두 클래스로 나뉩니다.
+첫 호출 테스트는 연결 대상에 따라 아래 두 클래스로 나뉩니다.
 
 - `FirstChatLocalModelTest`: 로컬 MockServer의 고정 응답을 사용합니다.<br>
   실제 키가 필요 없습니다.
@@ -30,7 +30,7 @@ IntelliJ에서는 원하는 클래스 또는 메서드의 Run을 누르면 됩�
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatOpenAiLiveTest --rerun-tasks
 ```
 
-필터 없이 이 모듈의 `test`를 실행하면 두 클래스가 모두 실행됩니다.<br>
+필터 없이 이 모듈의 `test`를 실행하면 로컬 테스트와 Live 테스트가 모두 실행됩니다.<br>
 실제 테스트는 API 사용량이 발생합니다.<br>
 `--rerun-tasks`는 이전 결과를 재사용하지 않고 다시 실행하려는 옵션입니다.
 
@@ -56,6 +56,13 @@ curl -i http://127.0.0.1:8091/api/chat \
 첫 실습에서는 설정과 `ChatService.ask()`의 호출 흐름을 이해하면 충분합니다.<br>
 입력 검증 테스트는 보충, system/user 전달과 대화 기억 테스트는 03장, 인증 헤더 검증은 선택 심화로 읽습니다.<br>
 03장의 system/user 테스트는 서비스 소스를 바꾸지 않고 로컬 고정 응답 서버로 두 메시지의 전달을 확인합니다.<br>
+03장 3.3의 기본 시스템 메시지 실습은 별도 `l03prompts` 패키지의 [SystemMessageDefaultsLocalModelTest](src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)에 있습니다.<br>
+기본값 사용·요청별 대체·기본값 유지를 모델에 전달된 메시지로 확인하며 외부 API를 호출하지 않습니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests 'com.example.ailearning.l03prompts.SystemMessageDefaultsLocalModelTest'
+```
+
 테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call/02-test-code.md)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.<br>

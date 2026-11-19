@@ -59,7 +59,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 | 연결 단원 | 실행 모듈 | 로컬 테스트 클래스의 전체 이름 | 별도 Live 클래스 |
 |---|---|---|---|
-| 01 준비·02 첫 호출·03 프롬프트 | `02-00-first-chat` | `com.example.ailearning.FirstChatLocalModelTest` | `com.example.ailearning.FirstChatOpenAiLiveTest` |
+| 01 준비·02 첫 호출·03 프롬프트 | `02-00-first-chat` | `com.example.ailearning.FirstChatLocalModelTest`<br>`com.example.ailearning.l03prompts.SystemMessageDefaultsLocalModelTest`(03장 3.3) | `com.example.ailearning.FirstChatOpenAiLiveTest` |
 | 02 보충 4 | `02-04-multiple-models` | `com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest` | `com.example.ailearning.l02multiple.MultipleProvidersLiveTest` |
 | 02 보충 5 타임아웃·재시도 | `02-05-model-timeout-retry` | `com.example.ailearning.l02requests.TimeoutNoRetryLocalModelTest`<br>`com.example.ailearning.l02requests.RetryLocalModelTest` | `com.example.ailearning.l02requests.ModelRequestOpenAiLiveTest` |
 | 04 구조화 응답 | `04-00-structured-output` | `com.example.ailearning.l04structured.StructuredOutputLocalModelTest` | `com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest` |
