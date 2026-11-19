@@ -11,7 +11,7 @@
 `adviseCall(request, chain)`에서 `chain.nextCall(request)`를 호출하면 다음 Advisor로 요청을 넘기고 그 결과가 돌아올 때까지 기다립니다.
 그 앞에 요청 전 처리를, 반환 뒤에 응답 후 처리를 넣습니다. 스트리밍용 인터페이스는 `StreamAdvisor`이며 이번 실습에서는 사용하지 않습니다.
 
-이번 예제는 답변을 바꾸지 않고 `DefaultA:before` 같은 실행 단계만 남깁니다.
+`TraceAdvisor`는 이 실습에서 직접 구현하는 Advisor입니다. 답변을 바꾸지 않고 `DefaultA:before` 같은 실행 단계만 남깁니다.
 다음은 [TraceAdvisor](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/chain/TraceAdvisor.java) 전체 코드입니다. `record`는 생성자로 받은 이름·순서를 보관하는 Java 타입이고, Advisor 동작은 `adviseCall()`에 구현합니다.
 
 ```java

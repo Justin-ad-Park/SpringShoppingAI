@@ -96,27 +96,17 @@ Spring AI가 제공한다는 것은 라이브러리에 해당 기능을 구현�
 벡터 검색·RAG·도구 탐색·캐시는 해당 모듈 의존성과 저장소 등 필요한 설정을 추가해야 사용할 수 있습니다.
 `ToolCallingAdvisor`는 이 과정의 Spring AI 2.0.2 기본 구성에서 ChatClient가 자동 연결합니다. 08-5에서는 그 안팎의 기록 범위를 비교합니다.
 
-### 프레임워크가 연결하는 모델 호출용 Advisor
+### ChatClient가 자동으로 연결하는 모델 호출용 Advisor
 
-다음 두 클래스는 체인의 마지막에서 실제 모델에 연결하는 역할입니다. 일반적인 서비스에서는 직접 등록하지 않습니다.
+Spring AI의 `ChatClient`는 내부 구현인 `DefaultChatClient`에서 Advisor 체인의 마지막에 모델 호출용 Advisor를 자동으로 연결합니다.
+일반 응답 요청은 `ChatModelCallAdvisor`가, 스트리밍 응답 요청은 `ChatModelStreamAdvisor`가 실제 `ChatModel`에 전달합니다.
+개발자는 `.call()` 또는 `.stream()`으로 호출 방식을 선택합니다.
 
 | 클래스 | 하는 일 | 샘플 위치 |
 |---|---|---|
 | [`ChatModelCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelCallAdvisor.java) | 일반 호출을 `ChatModel.call(...)`에 전달 | |
 | [`ChatModelStreamAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelStreamAdvisor.java) | 스트리밍 호출을 `ChatModel.stream(...)`에 전달 | |
 
-### 이전 코드에서 볼 수 있는 폐기 예정 이름
-
-| 클래스 | 현재 상태 | 샘플 위치 |
-|---|---|---|
-| [`ToolCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallAdvisor.java) | 2.0부터 폐기 예정. 새 코드에서는 `ToolCallingAdvisor`를 사용 | |
-
-공식 설명에 등장하는 `ReReadingAdvisor`는 질문을 한 번 더 읽도록 프롬프트를 보완하는 **직접 구현 예제**입니다.
-2.0.2에서는 [테스트 소스의 예제](https://github.com/spring-projects/spring-ai/blob/v2.0.2/models/spring-ai-openai/src/test/java/org/springframework/ai/openai/chat/client/ReReadingAdvisor.java)에 있으며 배포되는 구현 클래스가 아니므로 위의 Spring AI 배포 클래스 목록과 구분합니다.
-이 과정의 `TraceAdvisor`도 직접 구현한 예제이며 Spring AI가 배포하는 클래스가 아닙니다.
-
-목록 근거: [2.0.2 공식 소스](https://github.com/spring-projects/spring-ai/tree/v2.0.2), [공식 API의 Advisor 구현 클래스 목록](https://docs.spring.io/spring-ai/docs/current/api/org/springframework/ai/chat/client/advisor/api/Advisor.html).
-공식 API의 `current` 주소는 업데이트될 수 있으므로, 버전별 포함 여부는 위 클래스별 2.0.2 소스 링크를 기준으로 확인합니다.
 Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4](08-advisors/04-chain.md)처럼 직접 구현할 수도 있습니다.
 
 ## 학습 순서와 샘플의 연결
@@ -161,6 +151,8 @@ Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4]
 </details>
 
 ## 참고 자료
+
+Advisor 목록은 [Spring AI 2.0.2 공식 소스](https://github.com/spring-projects/spring-ai/tree/v2.0.2)를 기준으로 작성했습니다.
 
 - [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html): Advisor의 역할·인터페이스·순서 기준.
 - [Spring AI ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html): ChatClient의 모든 요청에 적용하는 설정·현재 요청의 설정·로깅 사용법.
