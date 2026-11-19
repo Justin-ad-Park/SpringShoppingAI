@@ -49,7 +49,7 @@
     }
 ```
 
-첫 프롬프트는 추출만 담당합니다. 두 번째 프롬프트는 필요한 도구를 고르게 합니다. 두 번째 요청에는 `CandidateEvidenceSelection`의 형식 지침도 함께 전달하고, Spring AI 도구 호출 루프가 끝난 응답을 이 타입으로 변환합니다. 응답 변환 전에 도구 상한 종료 사유를 검사합니다.
+`CounselWorkflow.extractRequestIntent()`가 보낸 첫 요청에서 모델은 업무 종류와 조건을 추출합니다. `selectEvidenceWithTools()`가 보낸 두 번째 요청에서 모델은 필요한 도구와 최종 상품·출처 ID를 선택합니다. 두 번째 요청에는 `CandidateEvidenceSelection`의 형식 지침도 함께 전달하고, Spring AI 도구 호출 루프가 끝난 응답을 이 타입으로 변환합니다. 응답 변환 전에 도구 상한 종료 사유를 검사합니다.
 `POLICY` 업무에는 상품 도구 자체를 제공하지 않습니다. `SHOPPING`에는 상품과 정책 도구를 함께 제공합니다.
 `searchProducts()`의 인자는 없고, Java가 검증한 `Intent`의 카테고리·예산을 사용합니다.
 모델이 검색 인자로 확정 조건을 임의 변경하는 일을 줄이는 구조입니다.

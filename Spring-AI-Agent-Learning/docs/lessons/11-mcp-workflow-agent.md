@@ -1,4 +1,4 @@
-# 11. MCP 도구를 사용하는 Workflow·Agent·하이브리드
+# 11. MCP 도구를 사용하는 Workflow·Agent·Hybrid
 
 ## 이번 수업의 목표
 
@@ -51,7 +51,7 @@ MCP는 **기능을 연결하는 약속**이고, Workflow·Agent는 **다음 행�
 | `McpSyncClient` | MCP Java SDK의 동기 클라이언트 | 서버의 도구 목록 조회와 호출 |
 | `SyncMcpToolCallback` | 원격 도구를 Spring AI 도구 계약으로 연결 | `ShoppingMcpGateway`에서 생성 |
 | `ToolCallback` | 도구 정의와 실행 방법을 다루는 Spring AI 인터페이스 | 직접 실행과 모델에 제공할 도구의 연결 |
-| `ChatClient`의 `.toolCallbacks(...)` | 이번 모델 요청에서 사용할 도구 등록 | Agent와 혼합 방식 |
+| `ChatClient`의 `.toolCallbacks(...)` | 이번 모델 요청에서 사용할 도구 등록 | Agent와 Hybrid 방식 |
 
 자동 설정이 클라이언트 연결을 준비하고, 예제의 `ShoppingMcpGateway`가 서버 목록을 읽어 콜백을 만듭니다. 모델이 도구 이름과 인자를 출력하면 Java가 콜백을 실행하고, MCP 클라이언트가 서버로 전달합니다. 모델이 직접 서버 주소에 접속하는 구조가 아닙니다.
 
@@ -68,7 +68,7 @@ MCP는 **기능을 연결하는 약속**이고, Workflow·Agent는 **다음 행�
 | 2 | [모델 없이 MCP 도구 호출](11-mcp-workflow-agent/02-direct-call.md) | MCP 도구 목록을 조회하고 지정한 도구로 배송 정책 받기 |
 | 3 | [Workflow: Java가 순서를 정하기](11-mcp-workflow-agent/03-workflow.md) | 검색 결과 전체의 ID를 계산 도구에 전달 |
 | 4 | [Agent: 모델이 도구 선택하기](11-mcp-workflow-agent/04-agent.md) | 도구 설명·입력 스키마와 실제 호출 기록 연결 |
-| 5 | [하이브리드: Java의 검증 결합](11-mcp-workflow-agent/05-hybrid.md) | 검색 조건·전체 상품 계산·총예산 검증 |
+| 5 | [Hybrid: Java의 검증 결합](11-mcp-workflow-agent/05-hybrid.md) | 검색 조건·전체 상품 계산·총예산 검증 |
 | 6 | [같은 요청으로 비교하고 테스트하기](11-mcp-workflow-agent/06-compare.md) | 실행 기록으로 세 방식의 보장 범위 설명 |
 | 선택 7 | [원격 도구의 권한과 실패 처리](11-mcp-workflow-agent/07-production-mcp.md) | 도구 발견·실행·업무 성공과 재시도 기준 구분 |
 

@@ -33,7 +33,7 @@
     }
 ```
 
-`SystemOneResponse`에서 `ScoreAnswer`를 읽고 점수·confidence·항목별 확률·Java 정책의 우선순위를 담은 `SupportPriorityResult`를 반환합니다.
+`SupportPriorityService.assessPriority()`는 Jev 응답에서 점수·confidence·항목별 확률을 읽고, `SupportRoutingPolicy`가 정한 상담 우선순위와 함께 `SupportPriorityResult`로 반환합니다.
 
 모델의 `score`는 단계별 확률을 반영한 값이므로 소수가 가능합니다. 예를 들어 0·1·2 단계의 확률이 각각 0.1·0.2·0.7이면 `0×0.1 + 1×0.2 + 2×0.7 = 1.6`입니다. 이것은 1.6점이며 80%의 정답 확률이라는 뜻은 아닙니다.
 

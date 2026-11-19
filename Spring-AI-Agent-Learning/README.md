@@ -34,7 +34,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 9 | [08. Advisor](docs/lessons/08-advisors.md) | 호출 전후 순서·메모리 자동 연결·도구 루프 |
 | 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
 | 11 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
-| 12 | [11. MCP Workflow·Agent·하이브리드](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
+| 12 | [11. MCP Workflow·Agent·Hybrid](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
 | 13 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
 | 14 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
 | 15 | [14. Jev의 Choice·Score·Noul](docs/lessons/14-jev.md) | 의도·시급성·상담원 요청 판단과 Java 정책 연결 |
@@ -116,7 +116,7 @@ labs/
   04-00-structured-output/      조건 record와 응답 변환
   05-00-tool-calling/           로컬 Java 도구
   05-05-tool-call-limits/       05장 보충 5: 도구별·전체 호출 제한
-  06-00-workflow-agent/         Workflow·Agent·혼합 비교
+  06-00-workflow-agent/         Workflow·Agent·Hybrid 비교
   07-00-chat-memory/            이전 대화의 직접 저장·재전달
   08-00-advisors/               호출 체인·메모리·도구 루프
   09-00-embeddings-search/      임베딩·유사도·필터

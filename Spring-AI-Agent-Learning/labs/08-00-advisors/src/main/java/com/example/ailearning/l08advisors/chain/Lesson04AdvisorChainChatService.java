@@ -25,7 +25,7 @@ public class Lesson04AdvisorChainChatService {
         String answer = chatClient
                 .prompt()
                 .user(question)
-                // 두 Advisor는 이번 요청에만 추가한다. 기본 Advisor도 함께 실행된다.
+                // AdvisorA/B는 이번 요청에만 추가한다. 모든 요청에 적용하는 DefaultA/B도 함께 실행된다.
                 .advisors(new TraceAdvisor("AdvisorA", 20), new TraceAdvisor("AdvisorB", 30))
                 .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, advisorTrace))
                 .call()

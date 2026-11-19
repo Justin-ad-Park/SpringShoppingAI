@@ -103,7 +103,7 @@ class McpComparisonLocalModelTest {
     }
 
     @Test
-    void 하이브리드는_검색_조건을_고정하고_잘못된_답변_대신_실제_총액을_사용한다() throws Exception {
+    void Hybrid는_검색_조건을_고정하고_잘못된_답변_대신_실제_총액을_사용한다() throws Exception {
         // Given: 모델이 검색 가격을 넓히고 최종 금액도 잘못 말한다.
         MODEL
                 .chat()
@@ -116,7 +116,7 @@ class McpComparisonLocalModelTest {
     }
 
     @Test
-    void 하이브리드는_상품의_일부만_계산하는_요청을_거부한다() throws Exception {
+    void Hybrid는_상품의_일부만_계산하는_요청을_거부한다() throws Exception {
         MODEL
                 .chat()
                 .setResponseFunction(request -> createShoppingToolSequenceResponse(request, 30000, true));
@@ -126,7 +126,7 @@ class McpComparisonLocalModelTest {
     }
 
     @Test
-    void 하이브리드는_실제_장바구니_총액으로_예산을_검증한다() throws Exception {
+    void Hybrid는_실제_장바구니_총액으로_예산을_검증한다() throws Exception {
         MODEL
                 .chat()
                 .setResponseFunction(request -> createShoppingToolSequenceResponse(request, 20000, false));
@@ -151,7 +151,7 @@ class McpComparisonLocalModelTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
-    void 하이브리드는_빈_검색_뒤_계산_여부와_무관하게_결과_없음을_반환한다(boolean calculateEmptyCart) throws Exception {
+    void Hybrid는_빈_검색_뒤_계산_여부와_무관하게_결과_없음을_반환한다(boolean calculateEmptyCart) throws Exception {
         // 실제 MCP 검색은 빈 배열을 반환한다. 모델은 계산을 생략하거나 빈 장바구니를 계산한다.
         MODEL
                 .chat()
@@ -196,7 +196,7 @@ class McpComparisonLocalModelTest {
     }
 
     @Test
-    void 모델이_계산을_생략하면_하이브리드는_검증_완료로_표시하지_않는다() throws Exception {
+    void 모델이_계산을_생략하면_Hybrid는_검증_완료로_표시하지_않는다() throws Exception {
         MODEL
                 .chat()
                 .setResponseFunction(request -> request.path("messages").toString().contains("TASK:MCP_EXTRACT")

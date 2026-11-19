@@ -7,7 +7,7 @@
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
-실제 모델은 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 자동으로 읽습니다. YAML에 실제 키를 넣지 않습니다.
+실제 모델을 호출하는 애플리케이션은 Spring Boot 설정을 통해 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 읽습니다. YAML에 실제 키를 넣지 않습니다.
 Gradle의 `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 고정합니다. IDE에서 Gradle을 거치지 않고 직접 실행할 때도 Working directory를 저장소 루트로 설정합니다.
 
 ```bash

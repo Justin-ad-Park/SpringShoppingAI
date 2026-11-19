@@ -374,7 +374,7 @@ Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행
 ## 적용 범위와 공식 참고 자료
 
 이 예제는 연결 관계를 쉽게 보기 위해 `ChatClient.create(model)`을 사용합니다.
-이 방식은 기본 자동 설정 Builder의 커스터마이저와 ChatClient 관측 설정을 자동으로 적용하지 않습니다.
+`ChatClient.create(model)`로 직접 생성한 클라이언트에는 Spring Boot가 자동 구성한 `ChatClient.Builder`의 커스터마이저와 관측 설정이 자동으로 적용되지 않습니다.
 모델 자동 설정과 클라이언트 자동 설정의 역할이 다르기 때문입니다.
 기본 Builder의 공통 설정까지 보존하는 확장은 [공식 ChatClient 문서의 여러 모델 구성](https://docs.spring.io/spring-ai/reference/api/chatclient.html)을 참고하세요.
 Anthropic 설정 경로는 [공식 Anthropic Chat 문서](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html)를 기준으로 작성하고, 저장소의 Spring AI 2.0.2에서 테스트했습니다.

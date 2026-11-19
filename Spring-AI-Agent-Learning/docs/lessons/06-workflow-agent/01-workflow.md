@@ -70,7 +70,7 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 
 `products.stream().map(...)`은 후보 각각에 배송비를 계산하는 Java 반복이고, `filter`는 총액을 비교합니다.
 모델은 `.tools()`를 받지 않으므로 여기서 실제 Java 검색을 요청하지 않습니다. Controller가 도구를 대신 실행하는 것도 아닙니다.
-서비스 코드가 `ProductCatalog`를 직접 호출합니다. 모델이 도구를 선택하는 다음 수업과 다른 점입니다.
+`ShoppingService.runWorkflow()`가 `ProductCatalog`의 상품 검색·배송비 포함 총액 계산 메서드를 직접 호출합니다. 모델이 도구를 선택하는 다음 수업과 다른 점입니다.
 
 
 ## 확인 질문

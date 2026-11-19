@@ -6,7 +6,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.stereotype.Service;
 
-/** 08-3: 이전 메시지 조회·전달·저장을 기본 메모리 Advisor에 맡긴다. */
+/** 08-3: 이전 메시지 조회·전달·저장을 Spring AI의 MessageChatMemoryAdvisor에 맡긴다. */
 @Service
 public class Lesson03MemoryAdvisorChatService {
     public record Reply(String answer, int storedMessages) {}

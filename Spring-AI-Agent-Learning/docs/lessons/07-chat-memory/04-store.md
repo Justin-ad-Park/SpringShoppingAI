@@ -166,7 +166,23 @@ public class MemoryChatService {
 
 `ChatClient`를 한 번 생성해 재사용한다고 이전 대화가 연결되는 것은 아닙니다. 또한 `ChatMemory`를 DB 저장으로 바꾸더라도 `.messages(requestMessages)`로 전달하는 단계는 여전히 필요합니다.
 
-이 연결을 자동화하는 `MessageChatMemoryAdvisor`는 [08-2](../08-advisors/03-memory.md)에서 배웁니다. 직접 저장하는 코드에 Advisor까지 추가하면 같은 메시지가 중복 저장될 수 있으므로 두 방식의 저장 책임을 겹치지 않게 합니다. 기본 Advisor와 이 서비스는 실패 시 질문이 남는 정책도 다릅니다.
+### 왜 이 실습은 모델 답변을 확인한 뒤 저장할까?
+
+Spring AI에는 **`MessageChatMemoryAdvisor`라는 클래스**도 있습니다. 이 클래스는 ChatClient의 모델 호출 과정에 연결되어, 이전 메시지를 읽어 모델 입력에 넣고 현재 질문과 답변을 저장합니다. 이처럼 호출 전후 처리를 연결하는 기능을 Advisor라고 하며, 실제 등록·사용법은 [08-3](../08-advisors/03-memory.md)에서 배웁니다.
+
+Spring AI 2.0.2의 `MessageChatMemoryAdvisor`는 **모델 호출 전에 사용자 질문을 저장**하고, 모델 응답을 받은 뒤 답변을 저장합니다.
+따라서 모델 호출이 실패해도 먼저 저장한 질문은 메모리에 남을 수 있습니다.
+
+반면 이번 07장 실습은 조회 → 모델 입력 구성 → 호출 → 답변 검증 → 저장을 `MemoryChatService.chat()`에서 직접 연결해 각 단계를 배웁니다.
+이 샘플에서는 **정상 답변을 받은 질문·답변만 다음 대화에 포함한다**는 정책을 정했습니다. 실패한 질문을 다음 요청에 다시 전달하지 않도록, `callModel()`과 `validateAnswer()`가 성공한 뒤에만 `saveConversationTurn()`을 호출합니다.
+
+| 구현 | 질문·답변 저장 시점 | 모델 호출이 실패하면 |
+|---|---|---|
+| 07장의 `MemoryChatService` | 정상 답변을 확인한 뒤 질문·답변을 한꺼번에 저장 | 이번 질문·답변을 추가하지 않음 |
+| Spring AI의 `MessageChatMemoryAdvisor` | 호출 전에 질문 저장, 정상 응답 뒤 답변 저장 | 먼저 저장한 질문이 남을 수 있음 |
+
+이 차이는 `ChatMemory` 저장소가 달라서 생기는 것이 아니라 **저장을 호출하는 시점이 다르기 때문**입니다. 07장의 정책은 샘플에서 선택한 동작이며 Spring AI가 반드시 요구하는 저장 방식은 아닙니다.
+직접 저장하는 서비스에 메모리 Advisor를 추가할 때는 저장 책임을 한쪽으로 정해야 같은 메시지를 두 번 저장하지 않습니다.
 
 ## 한 번의 후속 요청 처리
 

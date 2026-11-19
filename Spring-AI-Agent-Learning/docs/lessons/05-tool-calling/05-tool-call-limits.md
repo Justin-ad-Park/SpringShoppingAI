@@ -96,7 +96,7 @@ public class ToolLimitService {
 
 `THROW`이면 내부 `ToolCallingManager`가 상한 초과 예외를 발생시키지만, 기본 도구 루프의 `ToolCallingAdvisor`가 이를 받아 특별한 종료 사유를 담은 응답으로 반환합니다. 따라서 이 예제에서는 서비스의 `catch` 대신 **`finishReason`을 확인**합니다. `TOOL_LIMIT`은 이를 사용자 응답으로 구분하기 위해 실습에서 정한 상태 이름입니다.
 
-`.content()`만 읽으면 제한 안내 문장도 정상 답변처럼 취급하기 쉽습니다. `.chatResponse()`로 응답의 내용과 종료 사유를 함께 받습니다. 정상 요청에는 `COMPLETED`, 상한 초과에는 `TOOL_LIMIT`을 반환합니다.
+`.content()`만 읽으면 제한 안내 문장도 정상 답변처럼 취급하기 쉽습니다. `.chatResponse()`로 응답의 내용과 종료 사유를 함께 받습니다. 샘플의 `ToolLimitService.ask()`는 응답의 종료 사유를 확인하고, 정상 완료이면 `Reply.status`에 `COMPLETED`, 도구 호출 상한 초과이면 `TOOL_LIMIT`을 넣어 반환합니다.
 
 도구의 전체 구현은 [ShoppingTools.java](../../../labs/05-05-tool-call-limits/src/main/java/com/example/ailearning/l05limits/ShoppingTools.java), HTTP 진입점은 [ToolLimitController.java](../../../labs/05-05-tool-call-limits/src/main/java/com/example/ailearning/l05limits/ToolLimitController.java)에서 확인합니다.
 

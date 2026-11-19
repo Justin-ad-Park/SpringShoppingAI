@@ -23,7 +23,7 @@ public record TraceAdvisor(String advisorName, int advisorOrder) implements Call
 
     @Override
     public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
-        // 기본 Advisor도 현재 요청의 context에서 기록 객체를 받는다.
+        // TraceAdvisor는 이름·순서만 보관하고, 실행 기록은 현재 요청의 context에서 받는다.
         var advisorTrace = (AdvisorTrace) request.context().get(TRACE_CONTEXT_KEY);
         advisorTrace.record(advisorName + ":before");
         try {

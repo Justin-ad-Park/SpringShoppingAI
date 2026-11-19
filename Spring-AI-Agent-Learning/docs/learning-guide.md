@@ -126,7 +126,7 @@ Mock 테스트는 프롬프트 구성·도구 실행·값 검증 같은 Java 코
 | 08 Advisor | `Lesson01LoggingLocalModelTest`로 로그를 확인한 뒤 `Lesson02AdvisorRegistrationLocalModelTest` 실행 | 기본 기능 사용법을 익히고, 기본 등록은 매번·추가는 현재 요청에만 적용됨을 로그로 설명 |
 | 09 검색 | 같은 고정 벡터에서 threshold 또는 topK 중 하나만 변경 | 결과 점수는 같고 포함되는 문서 수만 달라지는지 비교 |
 | 10 RAG | 모델이 실제 검색에 없는 출처 ID를 선택하는 고정 응답 케이스 추가 | 답변 문구가 자연스러워도 `INVALID_CITATION` |
-| 11 MCP | 상품 가격 상한이 1원인 하이브리드 검색을 고정 응답으로 재현 | 실제 MCP 검색이 비어 있으면 `NO_RESULTS`; 빈 장바구니 0원을 구매 성공으로 표시하지 않음 |
+| 11 MCP | Hybrid 방식에서 상품 가격 상한이 1원인 검색을 고정 응답으로 재현 | 실제 MCP 검색이 비어 있으면 `NO_RESULTS`; 빈 장바구니 0원을 구매 성공으로 표시하지 않음 |
 | 12 평가 | 평가용 고정 응답의 출처 ID 하나를 허위 ID로 변경 | 인용 검증 실패가 드러나며 자연스러운 문장만으로 통과하지 않음 |
 | 13 통합 | `spring.ai.tools.limits.max-total-tool-calls`를 1로 줄여 여러 조회가 필요한 상담 실행 | `TOOL_LIMIT`이며 실패한 질문·답변은 메모리에 추가되지 않음 |
 

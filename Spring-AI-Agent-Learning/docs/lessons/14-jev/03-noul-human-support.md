@@ -48,7 +48,7 @@ private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
 | 0.2 초과~0.8 미만 | ASK_CLARIFICATION | 상담원 연결을 원하는지 확인 |
 | 0.8~1 | OFFER_HUMAN_SUPPORT | 상담원 연결 안내를 제시하는 경로 |
 
-0.2·0.8은 Jev가 강제하는 값이 아닙니다. 모델이 분류하고 Java가 정책을 적용합니다. 이 샘플은 action을 반환하며 실제 확인 질문 문장이나 연결 화면·상담 시스템을 구현하지 않습니다. 실제 서비스에서는 명시적인 연결 요청을 우선 처리하는 규칙과 실패 시 안내도 검토해야 합니다.
+0.2·0.8은 Jev가 강제하는 값이 아닙니다. Jev는 고객이 상담원 연결을 요청했을 확률을 반환하고, `SupportRoutingPolicy.determineHumanSupportAction()`은 그 확률에 따라 처리 경로를 정합니다. 이 샘플은 action을 반환하며 실제 확인 질문 문장이나 연결 화면·상담 시스템을 구현하지 않습니다. 실제 서비스에서는 명시적인 연결 요청을 우선 처리하는 규칙과 실패 시 안내도 검토해야 합니다.
 
 ## 요청과 결과 관찰
 

@@ -1,7 +1,7 @@
-# 11-5. 하이브리드: Java의 검증과 모델의 도구 선택 결합
+# 11-5. Hybrid: Java의 검증과 모델의 도구 선택 결합
 
 목표는 **모델의 도구 선택을 활용하면서 Java가 조건과 결과를 검증하는 구조를 실행하는 것**입니다.
-하이브리드는 AI 모델 종류가 아니라 책임을 나눈 실행 방식입니다. 06장에서 배운 원리를 MCP 도구에 적용합니다.
+Hybrid는 AI 모델 종류가 아니라 책임을 나눈 실행 방식입니다. 06장에서 배운 원리를 MCP 도구에 적용합니다.
 
 ```mermaid
 flowchart TD
@@ -78,7 +78,7 @@ public class McpHybridService {
 }
 ```
 
-Agent와 같은 `requestAnswerWithTools()`를 재사용하지만 `McpToolExecutor`에 `searchConditions`를 전달합니다. 이 값이 있으면 도구 실행 전 검증을 추가합니다.
+Agent와 같은 `requestAnswerWithTools()`를 재사용하지만 `McpToolExecutor`에 `searchConditions`를 전달합니다. `searchConditions`를 전달받은 `McpToolExecutor`는 원격 도구를 호출하기 전에 검색 조건을 고정하고 계산 대상 상품 ID를 검사합니다.
 
 | 지점 | Java가 하는 일 | 여전히 모델이 하는 일 |
 |---|---|---|

@@ -83,7 +83,7 @@ return searchCondition;
 ```
 
 1. Spring AI가 모델을 호출하고 응답을 `ProductSearchCondition`로 변환합니다.
-2. Java의 `validate()`가 변환된 카테고리·가격을 업무 규칙으로 검사합니다.
+2. 샘플의 `ProductSearchCondition.validate()`가 변환된 카테고리·가격을 업무 규칙으로 검사합니다.
 3. 두 단계를 통과한 객체를 반환합니다.
 
 첫 학습에서는 이 흐름을 설명한 뒤 3·4절의 그림과 정상 실행 결과로 이어가도 됩니다. 예외·HTTP 상태 처리는 실패 실험 때 아래 전체 코드와 5절로 돌아와 읽으세요.

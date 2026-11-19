@@ -37,7 +37,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.stereotype.Service;
 
-/** 08-3: 이전 메시지 조회·전달·저장을 기본 메모리 Advisor에 맡긴다. */
+/** 08-3: 이전 메시지 조회·전달·저장을 Spring AI의 MessageChatMemoryAdvisor에 맡긴다. */
 @Service
 public class Lesson03MemoryAdvisorChatService {
     public record Reply(String answer, int storedMessages) {}
@@ -121,7 +121,7 @@ user: 제가 말한 예산은 얼마인가요?
 ```
 
 두 번째 답변까지 저장하면 `storedMessages=4`입니다. 대화가 길어지면 메시지 창 정책에 따라 오래된 메시지는 제거됩니다.
-기본 Advisor의 등록·대화 ID 사용법은 [Spring AI 공식 설명](https://docs.spring.io/spring-ai/reference/api/chat-memory.html)을 참고합니다.
+`MessageChatMemoryAdvisor`의 등록·대화 ID 사용법은 [Spring AI 공식 설명](https://docs.spring.io/spring-ai/reference/api/chat-memory.html)을 참고합니다.
 
 ## 실행하고 테스트와 연결하기
 
@@ -169,16 +169,16 @@ assertThat(sentTexts).containsSubsequence(firstQuestion, firstReply.answer(), fo
 
 ## 정상 흐름 뒤에 확인할 차이: 실패한 질문의 저장 시점
 
-Spring AI 2.0.2의 기본 메모리 Advisor는 모델 호출 전에 현재 사용자 질문을 저장하고, 정상 응답 뒤 assistant를 저장합니다.
-따라서 07장의 직접 저장 구현과 실패 시 결과가 다릅니다.
+Spring AI 2.0.2가 제공하는 `MessageChatMemoryAdvisor`는 모델 호출 전에 현재 사용자 질문을 저장하고, 정상 응답을 받은 뒤 모델의 답변 메시지를 저장합니다.
+이 클래스의 역할과 저장 시점은 [07-4의 첫 소개](../07-chat-memory/04-store.md#왜-이-실습은-모델-답변을-확인한-뒤-저장할까)에서 비교했습니다. 이번에는 실제 Advisor 연결 상태에서 실패를 재현합니다.
 
 | 구현 | 사용자 질문 저장 시점 | 모델 호출 실패 시 |
 |---|---|---|
-| 07장의 직접 저장 | 정상 답변을 확인한 뒤 질문·답변을 함께 저장 | 이번 질문·답변을 저장하지 않음 |
-| 이번 기본 Advisor | 모델 호출 전에 질문 저장, 정상 응답 후 답변 저장 | 이번 사용자 질문이 남을 수 있음 |
+| 07장의 `MemoryChatService` | 정상 답변을 확인한 뒤 질문·답변을 함께 저장 | 이번 질문·답변을 저장하지 않음 |
+| `MessageChatMemoryAdvisor` | 모델 호출 전에 질문 저장, 정상 응답 후 답변 저장 | 이번 사용자 질문이 남을 수 있음 |
 
 이 차이는 `모델_실패_후에도_기본_메모리_Advisor가_먼저_저장한_질문은_남는다` LocalModel 테스트에서 HTTP 503을 재현해 확인합니다.
-기본 Advisor로 바꾼다고 실패 시 저장 정책까지 07장과 같아지는 것은 아닙니다.
+저장 기능을 `MessageChatMemoryAdvisor`에 맡기면 저장 시점도 그 클래스의 구현을 따릅니다. 07장의 성공 후 저장 정책까지 그대로 유지되는 것은 아닙니다.
 
 ## 확인 질문
 
@@ -193,7 +193,7 @@ Spring AI 2.0.2의 기본 메모리 Advisor는 모델 호출 전에 현재 사�
 1. 이 예제에서는 다시 수행하지 않습니다. 메모리 Advisor가 조회·전달·저장을 담당하므로 중복 처리될 수 있습니다.
 2. 대화 ID만 같다고 같은 사용자는 아닙니다. 서버가 확인한 사용자 또는 세션과 대화 ID를 함께 사용해 저장 키를 구분해야 합니다.
 3. 현재 요청의 대화 키를 설정합니다. 이미 등록한 메모리 Advisor가 그 값을 사용하며, 람다 자체는 새 Advisor가 아닙니다.
-4. 아닙니다. 이 버전의 기본 Advisor는 호출 전에 사용자 질문을 저장하므로 실패한 질문이 남을 수 있습니다. 성공한 대화만 저장하는 요구와 맞는지 별도로 판단해야 합니다.
+4. 아닙니다. Spring AI 2.0.2의 `MessageChatMemoryAdvisor`는 호출 전에 사용자 질문을 저장하므로 실패한 질문이 남을 수 있습니다. 성공한 대화만 저장하는 요구와 맞는지 별도로 판단해야 합니다.
 
 </details>
 

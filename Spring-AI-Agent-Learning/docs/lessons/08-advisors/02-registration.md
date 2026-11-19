@@ -60,7 +60,7 @@ public class Lesson02AdvisorRegistrationService {
         return chatClient
                 .prompt()
                 .user(question)
-                // 기본 Advisor를 교체하지 않는다. 이번 요청에만 추가한다.
+                // 모든 요청에 적용하도록 등록한 로거를 유지하고, 이번 요청에만 Advisor를 추가한다.
                 .advisors(additionalAdvisor)
                 .call()
                 .content();

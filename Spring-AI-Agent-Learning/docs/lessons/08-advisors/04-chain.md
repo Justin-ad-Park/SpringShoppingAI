@@ -40,7 +40,7 @@ public record TraceAdvisor(String advisorName, int advisorOrder) implements Call
 
     @Override
     public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
-        // 기본 Advisor도 현재 요청의 context에서 기록 객체를 받는다.
+        // TraceAdvisor는 이름·순서만 보관하고, 실행 기록은 현재 요청의 context에서 받는다.
         var advisorTrace = (AdvisorTrace) request.context().get(TRACE_CONTEXT_KEY);
         advisorTrace.record(advisorName + ":before");
         try {
@@ -90,7 +90,7 @@ public class Lesson04AdvisorChainChatService {
         String answer = chatClient
                 .prompt()
                 .user(question)
-                // 두 Advisor는 이번 요청에만 추가한다. 기본 Advisor도 함께 실행된다.
+                // AdvisorA/B는 이번 요청에만 추가한다. 모든 요청에 적용하는 DefaultA/B도 함께 실행된다.
                 .advisors(new TraceAdvisor("AdvisorA", 20), new TraceAdvisor("AdvisorB", 30))
                 .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, advisorTrace))
                 .call()
@@ -135,15 +135,26 @@ DefaultA:before
 DefaultA:after
 ```
 
-**기본 등록이 언제나 먼저라는 규칙은 아닙니다.** 예를 들어 AdvisorA의 order를 -10으로 바꾸면 기본 Advisor보다 먼저 진입하고 마지막에 종료합니다.
+**모든 요청에 적용하도록 등록한 Advisor가 언제나 먼저 실행되는 것은 아닙니다.** 예를 들어 이번 요청에만 추가한 AdvisorA의 order를 -10으로 바꾸면 DefaultA·DefaultB보다 먼저 진입하고 마지막에 종료합니다.
 order가 같으면 순서를 보장하지 않으므로, 순서가 중요할 때는 예제처럼 다른 값을 지정합니다.
 기준: [Spring AI Advisor Order](https://docs.spring.io/spring-ai/reference/api/advisors.html#_advisor_order).
 
 ## 요청마다 다른 기록을 어디에 둘까?
 
-기본 Advisor 객체는 여러 요청에 재사용됩니다. 그 객체에 하나의 변경 가능한 기록 목록을 저장하면 사용자들의 기록이 섞일 수 있습니다.
-그래서 서비스는 요청마다 새 `AdvisorTrace`를 만들고, 08-3에서 배운 `param(...)`으로 전달합니다.
-`TraceAdvisor`는 `request.context()`에서 **현재 요청의 기록 객체**를 읽습니다. 이 context 값 자체가 모델의 질문으로 전송되는 것은 아닙니다.
+기록이 섞이는 원인은 `defaultAdvisors(...)` 자체가 아니라 **여러 요청이 같은 기록 객체를 변경하는 것**입니다.
+멤버 변수가 있다는 사실만으로 문제가 생기는 것도 아닙니다. 어떤 값을 보관하고 그 값이 요청 처리 중 바뀌는지 구분해야 합니다.
+
+| 보관하는 값 | 현재 `TraceAdvisor`의 구성 | 요청 사이에 공유해도 되는가? |
+|---|---|---|
+| Advisor 이름·실행 순서 | record의 `advisorName`, `advisorOrder`. 생성 후 바뀌지 않는 설정 | 공유 가능 |
+| 요청마다 달라지는 실행 기록 | `TraceAdvisor`에는 기록 목록을 보관하지 않음 | 같은 변경 가능한 목록을 여러 요청이 사용하면 기록이 섞임 |
+
+예를 들어 `TraceAdvisor`에 `final List<String> steps`를 두고 모든 요청이 그 목록에 기록하면, 순차 요청에서도 이전 기록이 쌓이고 동시 요청에서는 기록이 끼어들 수 있습니다. `final`은 목록 참조를 다른 목록으로 바꾸지 못하게 할 뿐, 목록 내용의 변경을 막지 않습니다.
+이 문제는 하나의 객체를 여러 요청에서 재사용할 때 생기며, 같은 객체를 매 요청의 `.advisors(...)`로 전달하는 경우에도 발생할 수 있습니다.
+
+현재 `Lesson04AdvisorChainChatService`는 요청마다 새 `AdvisorTrace`를 만들고, 08-3에서 배운 `param(...)`으로 전달합니다.
+`TraceAdvisor`는 `request.context()`에서 **현재 요청의 기록 객체**를 읽습니다. 같은 객체를 재사용해도 이름·순서만 공유하고 요청 기록은 공유하지 않는 구성입니다.
+단, context에 넣는다고 객체가 복사되는 것은 아닙니다. 요청마다 `new AdvisorTrace()`를 만드는 코드가 기록을 분리합니다. 이 context 값 자체가 모델의 질문으로 전송되는 것은 아닙니다.
 
 다음은 보조 클래스 [AdvisorTrace](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/chain/support/AdvisorTrace.java) 전체 코드입니다. `steps()`는 현재 기록을 복사해 응답으로 반환합니다.
 
@@ -199,15 +210,15 @@ curl -sS http://127.0.0.1:8098/api/advisors/chain \
 ## 확인 질문
 
 1. 위 표의 네 Advisor는 전처리와 후처리에서 각각 어떤 순서로 실행되나요?
-2. AdvisorA의 order만 -10으로 바꾸면 기본 Advisor가 먼저 실행되나요?
-3. 기본 Advisor 객체에 기록 목록을 하나 두는 대신 요청별 context로 전달하는 이유는 무엇인가요?
+2. AdvisorA의 order만 -10으로 바꾸면 `defaultAdvisors(...)`에 등록한 DefaultA·DefaultB가 먼저 실행되나요?
+3. 하나의 `TraceAdvisor` 객체에 모든 요청의 기록 목록을 보관하지 않고, 요청마다 새 `AdvisorTrace`를 만들어 전달하는 이유는 무엇인가요?
 
 <details>
 <summary>해설</summary>
 
 1. 전처리는 DefaultA → DefaultB → AdvisorA → AdvisorB, 후처리는 AdvisorB → AdvisorA → DefaultB → DefaultA입니다. 순서 값이 작은 쪽이 먼저 진입하고 나중에 반환합니다.
-2. 아닙니다. 두 등록 목록을 합쳐 order로 정렬하므로 AdvisorA가 먼저 진입합니다. 기본 등록 여부는 적용 범위를 결정합니다.
-3. 기본 Advisor는 재사용되므로 변경 가능한 목록을 공유하면 다른 요청의 기록이 섞일 수 있습니다. 이 예제는 요청마다 기록 객체를 만들고 그 요청의 context로 전달합니다.
+2. 아닙니다. 두 등록 목록을 합쳐 order로 정렬하므로 AdvisorA가 먼저 진입합니다. `defaultAdvisors(...)`와 요청 단계의 `.advisors(...)` 중 어디에 등록하는지는 적용할 요청의 범위를 결정합니다.
+3. 같은 `TraceAdvisor` 객체가 요청별로 바뀌는 기록 목록까지 공유하면 다른 요청의 기록이 섞일 수 있습니다. 현재 구현은 `TraceAdvisor`에 기록 목록을 보관하지 않고, 요청마다 만든 `AdvisorTrace`를 그 요청의 context로 전달합니다.
 
 </details>
 

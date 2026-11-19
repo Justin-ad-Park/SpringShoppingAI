@@ -58,7 +58,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 | `ChatMemoryRepository` | 인터페이스                     | 메시지 목록을 실제 저장소에 저장·조회하는 계약 |
 | `InMemoryChatMemoryRepository` | 저장소 구현체 (다양한 구현체 제공)      | JVM 메모리에 대화별 메시지 목록을 보관 |
 
-`MessageWindowChatMemory`는 **무엇을 남길지**, 저장소는 **어디에 보관할지**를 담당합니다. 서비스가 `ChatMemory`에 메시지를 추가하면 구현체가 보관할 목록을 정하고 저장소에 저장합니다. 저장소가 메모리인지 DB인지는 이 정책과 별도로 선택합니다.
+`MessageWindowChatMemory`는 **무엇을 남길지**, 저장소는 **어디에 보관할지**를 담당합니다. 서비스가 `ChatMemory.add(...)`를 호출하면, 이 실습의 구현체인 `MessageWindowChatMemory`가 보관할 메시지 목록을 정하고 연결된 `ChatMemoryRepository`에 저장합니다. 저장소가 메모리인지 DB인지는 이 정책과 별도로 선택합니다.
 
 ### Spring AI가 제공하는 ChatMemory 구현체
 
@@ -66,7 +66,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 | 구현체 | 보관 정책 | 주요 설정 |
 |---|---|---|
-| `MessageWindowChatMemory` | 메시지 수가 상한을 넘으면 오래된 대화를 턴 단위로 제거하고 시스템 메시지는 유지 | `maxMessages`로 메시지 수 상한 지정. 기본값은 20개이며 이번 실습은 6개 |
+| `MessageWindowChatMemory` | 메시지 수가 상한을 넘으면 오래된 질문과 그 뒤의 답변·도구 결과를 함께 제거. 저장된 시스템 메시지는 유지 | `maxMessages`로 메시지 수 상한 지정. 기본값은 20개이며 이번 실습은 6개 |
 
 `ChatMemory` 인터페이스로 다른 보관 정책도 구현할 수 있습니다. 예를 들어 토큰 수 기준 제한이나 대화 요약이 필요하면 별도 구현 또는 추가 라이브러리의 지원 여부를 확인해야 합니다.
 

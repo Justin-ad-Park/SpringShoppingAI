@@ -37,13 +37,13 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 기초 | 03 ChatClient와 프롬프트 | Builder·메시지 역할, system 추가 실험 | 각 호출 메서드와 기억 부재 설명 | 교재·수정 실험 완성 |
 | 응답 | 04 구조화 응답 | record 설명 → 문자열과 객체 비교 → 상품 조건 추출 | 형식 성공과 값의 정확성 구분·검증 | [교재·실습 완성](lessons/04-structured-output.md) |
 | 도구 | 05 Tool Calling | 일반 Java 상품 서비스 → @Tool → 호출 결과 | 모델은 요청, 애플리케이션은 실행함을 설명 | [교재·실습 완성](lessons/05-tool-calling.md) |
-| 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·혼합 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
+| 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·Hybrid 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
 | 보충 | [02-5 모델 통신](lessons/02-first-call/05-model-timeout-retry.md) · [05-5 도구 제한](lessons/05-tool-calling/05-tool-call-limits.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
 | 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-2·07-3의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 기본 로거 → 등록 범위 → 메모리 파라미터 → 직접 구현·순서 → 도구 루프 | 소수업별 Service·LocalModel·Live로 기본/요청별 적용·대화 재전달·실행 범위 확인 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
-| 연결 | 11 MCP Workflow·Agent·하이브리드 | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
+| 연결 | 11 MCP Workflow·Agent·Hybrid | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
 | 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 | 판단 확장 | 14 Jev | Choice 의도 분류·Score 시급성·Noul 상담원 요청, 커뮤니티 Starter와 전용 클라이언트 | 모델 판단값과 Java 처리 기준을 구분 | [교재·실습](lessons/14-jev.md) |
