@@ -1,5 +1,13 @@
 # 실습 09: 임베딩과 검색
 
+## 소수업과 실행 코드
+
+| 수업 | 구현 | 테스트·확인할 동작 |
+|---|---|---|
+| 09-1 | [EmbeddingService.embed](src/main/java/com/example/ailearning/l09search/EmbeddingService.java) | [EmbeddingOnlyLocalModelTest](src/test/java/com/example/ailearning/l09search/EmbeddingOnlyLocalModelTest.java): 문서 적재 없이 입력 한 번만 임베딩 |
+| 09-2 | [BasicVectorSearchService.search](src/main/java/com/example/ailearning/l09search/BasicVectorSearchService.java) | [BasicVectorSearchLocalModelTest](src/test/java/com/example/ailearning/l09search/BasicVectorSearchLocalModelTest.java): 적재·query·topK |
+| 09-3 | [SearchService.compareSearchResults](src/main/java/com/example/ailearning/l09search/SearchService.java) | [SearchLocalModelTest](src/test/java/com/example/ailearning/l09search/SearchLocalModelTest.java): 비교·하한·필터, [Live](src/test/java/com/example/ailearning/l09search/SearchOpenAiLiveTest.java): 실제 임베딩·검색 |
+
 [교재·실행·검증 안내](../../docs/lessons/09-embeddings-search.md)를 먼저 읽습니다.
 애플리케이션은 다른 단원·기존 쇼핑 서비스에 의존하지 않습니다.
 모든 명령은 저장소 루트에서 실행합니다.

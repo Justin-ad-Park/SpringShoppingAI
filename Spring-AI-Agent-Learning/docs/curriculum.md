@@ -67,7 +67,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | [07-7 의도별 런타임 선택](../labs/07-07-runtime-memory/README.md) | `07-07-runtime-memory` | 의도 분류·Enum 파라미터·두 저장소의 대화 격리, Redis + 모델 대역 테스트 |
 | [05 보충 5](lessons/05-tool-calling/05-tool-call-limits.md) | `05-05-tool-call-limits` | 반복 도구 요청·전체 상한·요청별 초기화 검증, 별도 Live 테스트 |
 | [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md) | `02-05-model-timeout-retry` | 정상·지연·429·500·400 응답과 재시도 횟수 검증, 별도 Live 테스트 |
-| [10-4 문서 적재](lessons/10-rag/04-standard-indexing.md)와 [10-5 Advisor](lessons/10-rag/05-standard-advisor.md) | `10-04-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
+| [10-1 문서 적재](lessons/10-rag/01-standard-indexing.md)와 [10-2 Advisor](lessons/10-rag/02-standard-advisor.md) | `10-00-rag-advisor` | 표준 Reader·Splitter·저장소·Advisor와 HTTP 테스트 |
 | [11 MCP 비교](lessons/11-mcp-workflow-agent.md) | `11-00-mcp-workflow-agent` | 실제 shopping-mcp 연동, 고정 모델 테스트, OpenAI Live 테스트 |
 | [12-2 모델 평가](lessons/12-evaluation/02-model-judge.md) | `12-02-model-evaluation` | 두 Evaluator API와 로컬 판정 응답 테스트 |
 | [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
@@ -103,3 +103,11 @@ RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 | 11장 이후 | [11-7 원격 도구](lessons/11-mcp-workflow-agent/07-production-mcp.md) | 발견·실행·업무 성공, 권한과 재시도 |
 | 12장 이후 | [12-6 평가 운영](lessons/12-evaluation/06-production-evaluation.md) | 반복 평가·오류 분모·품질과 운영 지표 |
 | 13장 이후 | [13-7 상용 기능의 경계](lessons/13-shopping-agent/07-production-agent.md) | 검증 범위·복합 요청 누락·조회와 변경 |
+
+
+### 단계별 실행 예제 안내
+
+- 09-1은 embedding-only의 단일 임베딩, 09-2는 basic-search의 적재·기본 검색, 09-3은 기본 실행의 비교·필터입니다.
+- 10-1·2는 `10-00-rag-advisor`의 제공 기능, 10-3~5는 `10-03-custom-rag`의 직접 적재·출처 검증입니다.
+- 12-1의 규칙 비교와 12-3의 usage-only 채팅을 먼저 실행하고, 12-5에서 RAG 계측에 결합합니다.
+- 13-1~4의 기본 상담은 실행 제한 객체 없이 학습합니다. [13-8](lessons/13-shopping-agent/08-execution-limits.md)의 `13-08-limited-agent`는 전체 요청 제한과 추적을 추가하는 독립 선택 실습입니다.

@@ -63,14 +63,15 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 07 저장소 보충: 선택 | `07-03-Redis-Selection` | `com.example.ailearning.l07selection.InMemorySelectionLocalModelTest` | `com.example.ailearning.l07selection.RedisMemoryRepositoryLiveTest` (Redis만 호출) |
 | 07 저장소 보충: 런타임 | `07-07-runtime-memory` | 없음 (Redis 필요) | `com.example.ailearning.l07runtime.IntentMemoryRedisLiveTest` (실제 Redis + 고정 응답 모델) |
 | 08 Advisor | `08-00-advisors` | `com.example.ailearning.l08advisors.logging.Lesson01LoggingLocalModelTest`<br>`com.example.ailearning.l08advisors.registration.Lesson02AdvisorRegistrationLocalModelTest`<br>`com.example.ailearning.l08advisors.memory.Lesson03MemoryAdvisorLocalModelTest`<br>`com.example.ailearning.l08advisors.chain.Lesson04AdvisorChainLocalModelTest`<br>`com.example.ailearning.l08advisors.toolloop.Lesson05ToolLoopAdvisorLocalModelTest` | `com.example.ailearning.l08advisors.logging.Lesson01LoggingOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.registration.Lesson02AdvisorRegistrationOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.memory.Lesson03MemoryAdvisorOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.chain.Lesson04AdvisorChainOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.toolloop.Lesson05ToolLoopAdvisorOpenAiLiveTest` |
-| 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest` |
-| 10 RAG | `10-00-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
-| 10-4·10-5 표준 API | `10-04-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest` |
+| 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest`<br>`com.example.ailearning.l09search.EmbeddingOnlyLocalModelTest`<br>`com.example.ailearning.l09search.BasicVectorSearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest`<br>`com.example.ailearning.l09search.EmbeddingOnlyOpenAiLiveTest`<br>`com.example.ailearning.l09search.BasicVectorSearchOpenAiLiveTest` |
+| 10-1·10-2 표준 API | `10-00-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.PolicyIndexingLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest`<br>`com.example.ailearning.l10advisor.PolicyIndexingOpenAiLiveTest` |
+| 10-3~5 직접 RAG | `10-03-custom-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
 | 11 MCP 세 실행 방식 | `11-00-mcp-workflow-agent` | `com.example.ailearning.l11mcp.McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.domain.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.McpComparisonOpenAiLiveTest` |
-| 12 평가·실패 | `12-00-evaluation` | `com.example.ailearning.l12evaluation.EvaluationLocalModelTest` | `com.example.ailearning.l12evaluation.EvaluationOpenAiLiveTest` |
+| 12 평가·실패 | `12-00-evaluation` | `com.example.ailearning.l12evaluation.EvaluationLocalModelTest`<br>`com.example.ailearning.l12evaluation.TokenUsageLocalModelTest`<br>`com.example.ailearning.l12evaluation.rules.RuleBasedEvaluatorUnitTest` | `com.example.ailearning.l12evaluation.EvaluationOpenAiLiveTest`<br>`com.example.ailearning.l12evaluation.TokenUsageOpenAiLiveTest` |
 | 12-2 모델 평가 | `12-02-model-evaluation` | `com.example.ailearning.l12judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest` |
 | 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
 | 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
+| 13 보충 8 실행 제한 | `13-08-limited-agent` | `com.example.ailearning.l13limited.LimitedShoppingAgentLocalModelTest` | `com.example.ailearning.l13limited.LimitedShoppingAgentOpenAiLiveTest` |
 | 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
 | 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.IntentModelQualityOpenAiLiveTest` |
 | 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.JevLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.JevLiveTest` (실제 Jev) |
@@ -84,7 +85,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 - 본 단원의 기본 실습은 읽기순서 `00`을 사용합니다. 예: `05-00-tool-calling`.
 - 소주제·선택 보충 실습은 해당 소주제의 읽기 번호를 사용합니다. 예: 02장 보충 4는 `02-04-multiple-models`, 보충 5는 `02-05-model-timeout-retry`, 05장 보충 5는 `05-05-tool-call-limits`.
-- 여러 소주제가 한 모듈을 공유하면 가장 먼저 사용하는 소주제 번호를 씁니다. 10장 4·5가 공유하는 모듈은 `10-04-rag-advisor`입니다. 번호를 맞추기 위한 모듈 복제는 하지 않습니다.
+- 여러 소주제가 한 모듈을 공유하면 가장 먼저 사용하는 소주제 번호를 씁니다. 10장 1·2의 기본 모듈은 `10-00-rag-advisor`입니다. 번호를 맞추기 위한 모듈 복제는 하지 않습니다.
 - 새 폴더를 만들거나 소속을 바꾸기 전에 교육 계획에서 읽기 순서를 확인합니다. 영문 이름의 abc 순서로 보충 실습의 순서를 정하지 않습니다.
 - 폴더 이름과 Gradle 프로젝트 이름은 동일하게 유지합니다. 변경할 때 `settings.gradle`, 모듈 간 의존성·자원 경로, README, 현재 교재·실행 명령과 이 파일의 대응표를 함께 갱신합니다.
 - 현재 사용법과 과거 검증 기록을 구분합니다. 과거 명령의 당시 이름은 보존하되 파일 링크는 현재 위치에 연결하고 새 검증 결과를 별도로 남깁니다.

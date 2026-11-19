@@ -57,26 +57,24 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 
 | 순서 | 소수업 | 실행 모듈 | 완료 기준 |
 |---|---|---|---|
-| 1 | [고정 사례로 기준 세우기](12-evaluation/01-cases.md) | `12-00-evaluation` | 고정 질문·기대 결과와 실제 답변 비교 |
+| 1 | [고정 사례로 기준 세우기](12-evaluation/01-cases.md) | `12-00-evaluation` | 준비된 후보 답변을 기대값과 비교 |
 | 2 | [Evaluator로 모델 응답 평가](12-evaluation/02-model-judge.md) | `12-02-model-evaluation` | 규칙 검사와 평가 모델의 판정 구분 |
-| 3 | [같은 응답에서 사용량 읽기](12-evaluation/03-usage.md) | `12-00-evaluation` | 응답에서 입력·출력 토큰 사용량 읽기 |
+| 3 | [채팅 응답 한 번에서 사용량 읽기](12-evaluation/03-usage.md) | `12-00-evaluation` | 검색 없이 채팅 1회로 입력·출력 토큰 확인 |
 | 4 | [Actuator로 기본 메트릭 조회](12-evaluation/04-actuator.md) | `12-04-observability` | 호출 횟수·시간·토큰 지표 관찰 |
 | 5 | [실패·지연·재시도 관찰](12-evaluation/05-failures.md) | `12-00-evaluation` | 잘못된 답변과 요청 실패 구분, 02·05 보충 테스트로 제약·재시도 결과 비교 |
 | 선택 6 | [평가 결과로 변경을 판단하고 운영에서 관찰하기](12-evaluation/06-production-evaluation.md) | 설계 보충 | 고정 사례·반복 평가·운영 지표를 함께 해석 |
 
-실행 명령과 실제 모델/로컬 테스트 구분은 각 수업과 모듈 README에 있습니다.
+12-1은 모델 없는 RuleBasedEvaluatorUnitTest, 12-3은 usage-only 프로필의 TokenUsageService로 시작합니다. 실제 RAG와 규칙·사용량·실패를 결합하는 실행은 12-5입니다. 구현·테스트 대응은 [README](../../labs/12-00-evaluation/README.md)에 있습니다.
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
 
 [labs/12-00-evaluation의 실행 안내](../../labs/12-00-evaluation/README.md)를 확인합니다.
-이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
+먼저 12-1의 규칙 검사만 실행합니다. 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests com.example.ailearning.l12evaluation.EvaluationLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*RuleBasedEvaluatorUnitTest'
 ```
 
 표준 API 추가 수업은 표에 적힌 별도 모듈의 README 명령을 사용합니다.

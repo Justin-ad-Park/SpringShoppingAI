@@ -21,7 +21,7 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 |---|---|
 | `02-00-first-chat`, `02-05-model-timeout-retry`, `04`~`08`(05 보충 모듈 포함), `11-00-mcp-workflow-agent`, `12-02-model-evaluation`, `12-04-observability` | `OPENAI_API_KEY`, `OPENAI_MODEL` |
 | `09-00-embeddings-search` | `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL` — 채팅 모델은 사용하지 않음 |
-| `10-00-rag`, `10-04-rag-advisor`, `12-00-evaluation`, `13-00-shopping-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
+| `10-03-custom-rag`, `10-00-rag-advisor`, `12-00-evaluation`, `13-00-shopping-agent`, `13-08-limited-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-04-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
 `13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13장 선택 보충입니다. 둘 다 `OPENAI_API_KEY`가 필요하며 임베딩 모델은 사용하지 않습니다. 13-5는 기본 `OPENAI_MODEL`을 사용하고, 13-6은 테스트 코드에 적은 세 모델 ID를 각각 요청하므로 해당 모델 접근 권한이 필요합니다. [13-5 실행 안내](../labs/13-05-intent-classification/README.md)와 [13-6 실행 안내](../labs/13-06-intent-quality-evaluation/README.md)를 따릅니다.

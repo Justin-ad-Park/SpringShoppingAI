@@ -35,6 +35,7 @@ class McpComparisonLocalModelTest {
 
     @Value("${local.server.port}") int port;
     @Autowired ShoppingMcpGateway shoppingMcpGateway;
+    @Autowired com.example.ailearning.l11mcp.basic.BasicMcpChatService basicService;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -56,6 +57,26 @@ class McpComparisonLocalModelTest {
     static void 서버_종료() {
         MODEL.close();
         MCP.close();
+    }
+
+    @Test
+    void 제공_Provider만으로_원격_도구_결과를_모델에_전달한다() {
+        String policyTool = java.util.Arrays.stream(basicService.availableTools())
+                .map(callback -> callback.getToolDefinition().name())
+                .filter(name -> name.endsWith("getShippingPolicy"))
+                .findFirst()
+                .orElseThrow();
+        MODEL
+                .chat()
+                .setResponseSequence(
+                createAssistantToolCallMessage("policy-1", policyTool, "{}"),
+                createAssistantTextMessage("기본 배송비는 3000원입니다."));
+        String answer = basicService.ask("기본 배송비가 얼마인가요?");
+        output.printValue("Provider 도구 이름", policyTool);
+        output.printValue("배송비 답변", answer);
+        assertThat(answer).contains("3000");
+        assertThat(MODEL.chat().getRequests()).hasSize(2);
+        assertThat(MODEL.chat().getRequests().getLast().path("messages").toString()).contains("3000");
     }
 
     @Test

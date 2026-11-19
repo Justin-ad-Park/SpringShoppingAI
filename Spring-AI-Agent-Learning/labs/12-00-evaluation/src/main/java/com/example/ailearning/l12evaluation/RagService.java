@@ -1,5 +1,7 @@
 package com.example.ailearning.l12evaluation;
 
+import org.springframework.context.annotation.Profile;
+
 import com.example.ailearning.l12evaluation.policy.PolicySearch;
 import com.example.ailearning.l12evaluation.policy.PolicySearchResult;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Profile("!usage-only")
 @Service
 public class RagService {
     private static final Logger log = LoggerFactory.getLogger(RagService.class);

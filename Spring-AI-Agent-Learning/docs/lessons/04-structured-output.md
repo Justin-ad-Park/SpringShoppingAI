@@ -69,7 +69,7 @@ public record ProductSearchCondition(String category, Integer maxPrice) {
 
 ### 2.1. 먼저 정상 흐름 읽기
 
-다음은 `extractSearchCondition()`에서 오류 처리를 생략하고 정상 경로만 보여주는 발췌입니다. `chatClient`는 생성자로 만든 ChatClient이고, `SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE`은 아래 전체 코드의 추출 지시입니다. 이 발췌는 `extractSearchCondition()` 메서드 안의 코드이며 독립 실행하는 전체 파일이 아닙니다.
+다음은 `extractSearchCondition()`에서 오류 처리를 생략한 정상 경로의 발췌입니다. `chatClient`의 생성자 초기화와 추출 지시 상수 `SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE`의 정의는 아래 전체 코드에서 확인합니다.
 
 ```java
 ProductSearchCondition searchCondition = chatClient

@@ -50,7 +50,6 @@ public class FirstChatApplication {
 
 일반 Spring Boot 애플리케이션의 시작 코드와 같습니다.
 같은 패키지 아래의 Controller와 Service를 찾고, Starter의 자동 설정을 적용합니다.
-새로운 AI 실행 엔진을 직접 만드는 과정은 없습니다.
 
 ## 2. HTTP 요청을 받는 Controller
 

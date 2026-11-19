@@ -1,5 +1,9 @@
 package com.example.ailearning.l12evaluation;
 
+import org.springframework.context.annotation.Profile;
+
+import com.example.ailearning.l12evaluation.rules.RuleBasedEvaluator;
+
 import com.example.ailearning.l12evaluation.policy.PolicySearchResult;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
+@Profile("!usage-only")
 @Service
 public class EvaluationRunner {
     public record EvaluationCase(String id, String question, String expectedStatus,
@@ -41,19 +46,14 @@ public class EvaluationRunner {
     private EvaluationCaseResult evaluateCase(EvaluationCase evaluationCase) {
         RagService.RagRunResult actualResult = ragService.answer(evaluationCase.question());
         RagService.Reply actualReply = actualResult.reply();
-        List<String> failures = new ArrayList<>();
-        if (!actualReply.status().equals(evaluationCase.expectedStatus())) {
-            failures.add("상태 불일치");
-        }
         List<String> actualSourceIds = actualReply.sources().stream()
                 .map(PolicySearchResult::id)
                 .toList();
-        if (!actualSourceIds.containsAll(evaluationCase.expectedSourceIds())) {
-            failures.add("expected source ID missing");
-        }
-        if (!actualReply.answer().contains(evaluationCase.expectedText())) {
-            failures.add("expected text missing");
-        }
+        var expected = new RuleBasedEvaluator.ExpectedAnswer(
+                evaluationCase.expectedStatus(), evaluationCase.expectedSourceIds(), evaluationCase.expectedText());
+        var actual = new RuleBasedEvaluator.CandidateAnswer(
+                actualReply.status(), actualSourceIds, actualReply.answer());
+        List<String> failures = new RuleBasedEvaluator().evaluate(expected, actual);
         return new EvaluationCaseResult(evaluationCase.id(), failures.isEmpty(), List.copyOf(failures), actualResult);
     }
 }

@@ -76,7 +76,7 @@ flowchart TD
 | 2 | [문서를 넣고 유사한 문서를 찾기](09-embeddings-search/02-store.md) | 문서를 벡터 저장소에 넣고 질문과 관련된 문서를 검색하는 흐름을 연결합니다. |
 | 3 | [검색 결과와 필터 실험](09-embeddings-search/03-search.md) | 질문·결과 개수·유사도 조건을 바꾸며 검색 결과를 비교합니다. |
 
-각 소수업은 이 단원의 실습 모듈을 함께 사용합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
+각 소수업은 같은 모듈에서 단계별 Service를 사용합니다. 09-1은 embedding-only, 09-2는 basic-search 프로필, 09-3은 기본 실행을 선택합니다. 클래스·테스트 대응은 [실습 README](../../labs/09-00-embeddings-search/README.md)에 있습니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트

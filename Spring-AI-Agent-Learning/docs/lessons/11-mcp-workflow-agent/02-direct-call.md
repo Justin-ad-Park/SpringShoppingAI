@@ -12,6 +12,58 @@ curl http://127.0.0.1:8106/api/mcp/shipping-policy
 배송 정책에는 무료배송 기준 `threshold: 50000`과 기본 배송비 `shippingFee: 3000`이 나옵니다.
 이 두 API는 OpenAI를 호출하지 않습니다. 애플리케이션 기동을 위한 모델 설정은 기존처럼 준비되어 있어야 합니다.
 
+## 제공되는 Provider로 모델에 연결하기
+
+원격 도구를 모델이 선택하게 연결하는 최소 코드는 [BasicMcpChatService](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java)입니다. 제공되는 `SyncMcpToolCallbackProvider`가 도구 목록을 콜백으로 만들고 Spring AI가 실제 원격 호출을 연결합니다. 아래는 전체 Service입니다.
+
+```java
+package com.example.ailearning.l11mcp.basic;
+
+import io.modelcontextprotocol.client.McpSyncClient;
+import java.util.List;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.stereotype.Service;
+
+/** 11-2: 제공되는 Provider로 MCP 도구를 모델에 연결한다. 자체 실행기를 사용하지 않는다. */
+@Service
+public class BasicMcpChatService {
+    private final ChatClient chatClient;
+    private final SyncMcpToolCallbackProvider toolProvider;
+
+    public BasicMcpChatService(ChatClient.Builder builder, List<McpSyncClient> mcpClients) {
+        chatClient = builder.build();
+        toolProvider = SyncMcpToolCallbackProvider.builder()
+                .mcpClients(mcpClients)
+                .build();
+    }
+
+    public String ask(String question) {
+        return chatClient
+                .prompt()
+                .user(question)
+                .toolCallbacks(toolProvider)
+                .call()
+                .content();
+    }
+
+    public ToolCallback[] availableTools() {
+        return toolProvider.getToolCallbacks();
+    }
+}
+```
+
+```bash
+curl http://127.0.0.1:8106/api/mcp/basic -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '기본 배송비가 얼마인가요?'
+```
+
+이 요청은 실제 채팅 모델과 MCP 서버를 사용합니다. 모델 없는 위 두 조회 API와 구분하세요. [로컬 테스트](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다`는 도구 이름을 Provider에서 얻어 고정 모델이 선택하게 하고, 실제 MCP 결과가 다음 모델 입력에 들어갔는지 검사합니다.
+
+## 직접 콜백을 구성하는 경우
+
+아래부터는 원래 도구 이름을 유지하고, 뒤 수업에서 인자 제한·실행 기록을 추가하려는 확장입니다. 최소 모델 연결에는 이 자체 실행기가 필요하지 않습니다. 제공 Provider와 직접 만든 콜백을 같은 요청에 중복 등록하지 않습니다.
+
 ## 도구 목록을 실행 가능한 객체로 연결하기
 
 [전체 소스: ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/tools/ShoppingMcpGateway.java)

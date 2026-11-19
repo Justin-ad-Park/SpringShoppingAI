@@ -1,5 +1,7 @@
 package com.example.ailearning.l12evaluation.policy;
 
+import org.springframework.context.annotation.Profile;
+
 import java.io.IOException;
 import java.util.List;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -8,6 +10,7 @@ import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.stereotype.Service;
 
 /** 시작할 때 정책 문서를 적재하고, 질문과 가까운 정책을 검색한다. */
+@Profile("!usage-only")
 @Service
 public class PolicySearch {
     private final SimpleVectorStore policyVectorStore;

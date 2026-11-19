@@ -4,7 +4,7 @@
 
 **이번 목표:** 고정된 질문과 기대 결과를 정하고 실제 답변과 비교하는 방법을 이해합니다.
 
-**코드 읽기 안내:** EvaluationRunner의 case별 기대 값 비교가 핵심입니다. 점수가 높아도 사례가 좁으면 실제 품질을 대표하지 못합니다.
+**코드 읽기 안내:** RuleBasedEvaluator의 기대 값 비교가 핵심입니다. 점수가 높아도 사례가 좁으면 실제 품질을 대표하지 못합니다.
 
 ## 답변을 비교할 기준 정하기
 
@@ -16,106 +16,63 @@
 | 상태 | 기대 상태와 실제 상태 비교 | ANSWERED 자체가 사실성 보장은 아님 |
 | 출처 | 기대 ID가 실제 출처 목록에 포함되는지 | 인용과 주장 전체의 일치를 증명하지 못함 |
 | 핵심 문구 | 3000, 7일 같은 기대 문자열 포함 | 표현이 달라지면 오판, “7일이 아니다”도 포함 검사 통과 가능 |
-| 지연 | System.nanoTime으로 실행 경과 시간 측정 | 프로세스·네트워크·환경에 영향받음 |
-| 토큰 | 모델 응답 metadata의 usage 읽기 | 여기서는 채팅 호출만 관찰, 임베딩 사용량·가격을 합산하지 않음 |
 
 로컬 고정 응답 테스트는 이 비교 코드의 동작을 재현하며, 실제 모델 평가는 실제 응답의 품질을 확인합니다.
 한 번 답이 맞았다고 모든 입력의 품질이 보장되지는 않습니다.
 문구 검사만으로 평가를 끝내지 말고 답변과 출처 원문을 사람이 읽는 절차도 둡니다.
 이번 소수업은 Java 규칙으로 결과를 비교합니다. 다음 [12-2](02-model-judge.md)에서는 모델을 평가자로 사용하는 LLM-as-a-judge를 배웁니다.
 
-## 고정 질문 세트부터 읽기
+## 같은 기준으로 답변을 비교하기
 
-[evaluation-cases.json](../../../labs/12-00-evaluation/src/main/resources/evaluation-cases.json)에 질문·기대 상태·출처·문구가 있습니다.
-배송비, 미개봉 반품, 무관한 우주 질문 세 개로 시작합니다. 평가는 서버 내부의 이 고정 목록만 사용합니다.
+“미개봉 반품 기간은?”이라는 질문을 예로 들면, 사람은 먼저 정책 원문에서 기대 기준을 정합니다. 평가기가 그 기준을 모델 답변에서 스스로 만들어 내도록 맡기지 않습니다.
 
-```mermaid
-flowchart TD
-    D[고정 질문 세트] --> Q[다음 질문 실행]
-    Q --> A[RAG 검색과 답변 또는 실패 기록]
-    A --> S{기대 상태와 같은가}
-    S -->|아니오| F[실패 사유 기록]
-    S -->|예| C[기대 출처와 핵심 문구 검사]
-    C --> R[사례별 결과와 측정치 기록]
-    F --> R
-    R --> N{남은 질문이 있는가}
-    N -->|예| Q
-    N -->|아니오| E[통과 수와 비율 및 전체 사례 반환]
-```
+| 비교 대상 | 기대 기준 | 후보 답변 A | 후보 답변 B |
+|---|---|---|---|
+| 업무 상태 | `ANSWERED` | `ANSWERED` | `ANSWERED` |
+| 출처 ID | `return-sealed` 포함 | 포함 | 포함 |
+| 필수 문구 | `7일` 포함 | “반품은 7일 이내입니다.” | “반품은 30일 이내입니다.” |
+| 이 규칙의 결과 | 모두 만족하면 통과 | 실패 사유 없음 | 필수 문구 누락 |
 
-“모델 접속 실패”와 “연결은 됐지만 잘못된 주장”을 구분할 수 있어야 합니다.
-실패했다고 미리 준비한 정답을 성공 결과로 대체하지 않습니다.
+출처가 같더라도 답변 내용은 다를 수 있습니다. 후보 A도 이 규칙을 통과한 것이지, 미개봉·수령 후 같은 모든 적용 조건을 완전하게 설명했음을 보장하지는 않습니다.
 
-## 평가 코드
+## 준비된 답변을 규칙으로 평가하기
 
-읽는 순서: evaluation-cases.json → [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java) → [RagService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java) → [EvaluationController](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationController.java).
-`policy` 패키지의 PolicyLoader·PolicySearch·PolicySearchResult는 10장에서 배운 문서 적재·검색·검색 결과를 맡습니다. RagService는 그 검색 결과를 받아 모델에 답변을 요청하고 출처를 확인합니다.
+먼저 [RuleBasedEvaluator](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/rules/RuleBasedEvaluator.java)를 읽습니다. 기대 상태·출처·필수 문구와 준비된 후보 답변을 비교합니다. 이 클래스는 Spring이나 모델 없이 실행됩니다.
 
 ```java
-package com.example.ailearning.l12evaluation;
+package com.example.ailearning.l12evaluation.rules;
 
-import com.example.ailearning.l12evaluation.policy.PolicySearchResult;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
 
-@Service
-public class EvaluationRunner {
-    public record EvaluationCase(String id, String question, String expectedStatus,
-            List<String> expectedSourceIds, String expectedText) {}
-    public record EvaluationCaseResult(String id, boolean passed, List<String> failures,
-            RagService.RagRunResult actual) {}
-    public record EvaluationReport(int total, int passed, double passRate, List<EvaluationCaseResult> cases) {}
+/** 12-1: 준비된 답변을 기대값과 비교한다. 답변 생성·검색·계측은 하지 않는다. */
+public class RuleBasedEvaluator {
+    public record ExpectedAnswer(String status, List<String> sourceIds, String requiredText) {}
+    public record CandidateAnswer(String status, List<String> sourceIds, String text) {}
 
-    private final RagService ragService;
-    private final List<EvaluationCase> evaluationCases;
-
-    public EvaluationRunner(RagService ragService, ObjectMapper objectMapper) throws IOException {
-        this.ragService = ragService;
-        try (var input = new ClassPathResource("evaluation-cases.json").getInputStream()) {
-            evaluationCases = List.of(objectMapper.readValue(input, EvaluationCase[].class));
-        }
-    }
-
-    public EvaluationReport run() {
-        List<EvaluationCaseResult> caseResults = evaluationCases.stream()
-                .map(this::evaluateCase)
-                .toList();
-        int passedCaseCount = (int) caseResults.stream()
-                .filter(EvaluationCaseResult::passed)
-                .count();
-        return new EvaluationReport(caseResults.size(), passedCaseCount,
-                (double) passedCaseCount / caseResults.size(), caseResults);
-    }
-
-    /** 문의 한 건을 실행하고 기대한 상태·출처·본문과 대조한다. */
-    private EvaluationCaseResult evaluateCase(EvaluationCase evaluationCase) {
-        RagService.RagRunResult actualResult = ragService.answer(evaluationCase.question());
-        RagService.Reply actualReply = actualResult.reply();
-        List<String> failures = new ArrayList<>();
-        if (!actualReply.status().equals(evaluationCase.expectedStatus())) {
-            failures.add("상태 불일치");
-        }
-        List<String> actualSourceIds = actualReply.sources().stream()
-                .map(PolicySearchResult::id)
-                .toList();
-        if (!actualSourceIds.containsAll(evaluationCase.expectedSourceIds())) {
-            failures.add("expected source ID missing");
-        }
-        if (!actualReply.answer().contains(evaluationCase.expectedText())) {
-            failures.add("expected text missing");
-        }
-        return new EvaluationCaseResult(evaluationCase.id(), failures.isEmpty(), List.copyOf(failures), actualResult);
+    public List<String> evaluate(ExpectedAnswer expected, CandidateAnswer actual) {
+        var failures = new ArrayList<String>();
+        if (!actual.status().equals(expected.status())) failures.add("상태 불일치");
+        if (!actual.sourceIds().containsAll(expected.sourceIds())) failures.add("expected source ID missing");
+        if (!actual.text().contains(expected.requiredText())) failures.add("expected text missing");
+        return List.copyOf(failures);
     }
 }
 ```
 
-`Report.passRate`는 이 규칙과 이 세 사례에 대한 비율입니다. 일반적인 답변 정확도나 운영 서비스의 SLA라고 표현하지 않습니다.
-사례가 적어 한 건의 차이도 크게 보입니다. 기본 사례는 항상 유지하고 경계·실패·다른 표현을 추가합니다.
+`ExpectedAnswer`는 사람이 정한 기대 기준, `CandidateAnswer`는 검사할 답변을 담습니다. `evaluate()`는 상태를 비교하고, `containsAll()`로 필요한 출처가 모두 있는지, `contains()`로 필수 문구가 있는지 검사합니다. 실패한 항목의 설명을 목록에 추가하며 목록이 비면 정한 규칙을 통과한 것입니다.
 
+## 실행과 결과
+
+[RuleBasedEvaluatorUnitTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/rules/RuleBasedEvaluatorUnitTest.java)는 7일 답변의 통과와 30일 답변의 문구 실패를 출력하고 검증합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*RuleBasedEvaluatorUnitTest'
+```
+
+테스트는 후보 A에 빈 목록 `[]`, 후보 B에 `[expected text missing]`을 기대합니다. 이 문자열은 샘플이 정의한 실패 사유이며 Spring AI 표준 평가 코드가 아닙니다.
+
+실패 사유 목록이 비면 정한 규칙을 통과한 것입니다. 문장의 의미까지 보증하지는 않습니다. 모델이 만든 실제 답변을 이 규칙으로 검사하는 [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java)는 [12-5](05-failures.md)에서 검색·생성·계측과 결합합니다.
 
 ## 확인 질문
 

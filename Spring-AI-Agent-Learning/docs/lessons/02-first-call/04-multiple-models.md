@@ -286,8 +286,7 @@ OpenAI 호출 구현을 공유하고 요청 옵션으로 모델 ID를 바꾸거�
 ### 요청마다 모델 이름 지정하기
 
 먼저 가장 간단한 방식으로, 이미 준비한 `openAiChatClient` 하나를 공유하고 **이번 요청의 옵션**에 모델 ID를 지정해 보겠습니다.
-아래 클래스는 별도 예시 문구가 아니라 [실습에 포함된 실행 코드](../../../labs/02-04-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)입니다.
-기존 서비스는 그대로 두고 같은 패키지에 추가했습니다.
+다음은 [SameProviderModelsService](../../../labs/02-04-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)의 전체 코드입니다.
 
 ```java
 package com.example.ailearning.l02multiple;

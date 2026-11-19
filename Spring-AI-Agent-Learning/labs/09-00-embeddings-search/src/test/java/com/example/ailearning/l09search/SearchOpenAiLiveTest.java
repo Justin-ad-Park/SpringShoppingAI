@@ -21,11 +21,12 @@ class SearchOpenAiLiveTest {
     }
 
     @Autowired SearchService service;
+    @Autowired EmbeddingService embeddingService;
 
     @Test
     @Timeout(180)
     void 실제_OpenAI로_텍스트를_임베딩하고_문서를_검색한다() {
-        SearchService.EmbeddingVector vector = service.embed("배송비는 얼마인가요?");
+        EmbeddingService.EmbeddingVector vector = embeddingService.embed("배송비는 얼마인가요?");
 
         System.out.printf("벡터 차원: %d, 앞 8개 값: %s%n", vector.dimensions(),
                 java.util.Arrays.toString(java.util.Arrays.copyOf(vector.values(), Math.min(8, vector.dimensions()))));

@@ -32,6 +32,16 @@ class McpComparisonOpenAiLiveTest {
         MCP.close();
     }
 
+    @Autowired com.example.ailearning.l11mcp.basic.BasicMcpChatService basicMcpChatService;
+
+    @Test
+    @Timeout(180)
+    void 실제_모델에_제공_Provider의_MCP_도구를_연결한다() {
+        String answer = basicMcpChatService.ask("이 쇼핑몰의 기본 배송비를 알려주세요.");
+        System.out.printf("Provider로 연결한 답변: %s%n", answer);
+        assertThat(answer).isNotBlank();
+    }
+
     @Test
     @Timeout(120)
     void 실제_OpenAI로_조건을_추출하고_Workflow가_MCP를_호출한다() {

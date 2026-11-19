@@ -43,52 +43,47 @@ flowchart LR
 
 | API | 역할 | 이 단원의 위치 |
 |---|---|---|
-| `TextReader` | 텍스트 자원을 `Document`로 읽기 | 10-4의 표준 적재 |
-| `TokenTextSplitter` | 긴 문서를 검색·전달할 조각으로 나누기 | 10-4의 분할 |
-| `VectorStore` / `SearchRequest` | 문서를 적재하고 조건에 맞는 근거 검색 | 09장 복습과 10-1~2 |
-| `ChatClient` | 질문과 근거를 모델에 전달해 답변 요청 | 10-2의 직접 연결 |
-| `QuestionAnswerAdvisor` | 검색과 검색 원문의 프롬프트 포함을 연결 | 10-5의 표준 연결 |
+| `TextReader` | 텍스트 자원을 `Document`로 읽기 | 10-1의 표준 적재 |
+| `TokenTextSplitter` | 긴 문서를 검색·전달할 조각으로 나누기 | 10-1의 분할 |
+| `VectorStore` / `SearchRequest` | 문서를 적재하고 조건에 맞는 근거 검색 | 09장 복습과 10-4의 직접 검색 |
+| `ChatClient` | 질문과 근거를 모델에 전달해 답변 요청 | 10-4의 직접 연결 |
+| `QuestionAnswerAdvisor` | 검색과 검색 원문의 프롬프트 포함을 연결 | 10-2의 표준 연결 |
 
 Reader는 모델에 답변을 요청하지 않습니다. Splitter도 임베딩 모델이 아니며 문서를 조각으로 나눕니다. 문서 적재에서 임베딩이 실행되고, 사용자 질문에서는 검색용 임베딩과 답변 생성 호출이 각각 생길 수 있습니다.
 
 ### 같은 질문을 두 구현에서 비교하기
 
-“미개봉 상품의 반품 기간은?”이라는 질문을 보내면 먼저 정책 원문을 검색합니다. 직접 구현은 근거가 비었을 때 생성 호출을 건너뛰고 보류하도록 구성했습니다. 반면 10-5의 간단한 `QuestionAnswerAdvisor` 예제는 빈 검색이어도 생성 호출이 발생합니다. 두 구현이 같은 업무 정책까지 제공한다고 가정하지 않습니다.
+“미개봉 상품의 반품 기간은?”이라는 질문을 보내면 먼저 정책 원문을 검색합니다. 직접 구현은 근거가 비었을 때 생성 호출을 건너뛰고 보류하도록 구성했습니다. 반면 10-2의 간단한 `QuestionAnswerAdvisor` 예제는 빈 검색이어도 생성 호출이 발생합니다. 두 구현이 같은 업무 정책까지 제공한다고 가정하지 않습니다.
 
 본문의 source ID 검사는 검색된 ID를 사용했는지 확인하는 검사입니다. 그 원문이 최신인지, 답변의 모든 주장이 원문과 맞는지는 별도의 평가 항목입니다. 검색·근거·생성 중 어디서 실패했는지 나눠 확인하는 운영 예시는 [10-6](10-rag/06-production-rag.md)에 있습니다.
 
 ## 실습 안내
 
 선수 지식: 04의 구조화 응답, 08의 Advisor, 09의 검색.
-먼저 **검색 → 문맥 조립 → 생성 → 검증**을 직접 따라갑니다.
-그다음 표준 API가 그중 어느 역할을 대신하는지 비교합니다.
+먼저 **제공되는 Reader·Splitter·Advisor로 RAG를 실행**합니다. 그다음 출처 ID와 답변 보류 규칙이 필요한 경우 문서 적재·문맥 조립·검증을 직접 구성합니다.
 
 | 순서 | 소수업 | 실행 모듈 | 완료 기준 |
 |---|---|---|---|
-| 1 | [문서를 읽고 검색 준비하기](10-rag/01-indexing.md) | `10-00-rag` | 적재와 질문 시 검색 구분 |
-| 2 | [검색 결과를 프롬프트에 담기](10-rag/02-generation.md) | `10-00-rag` | 검색·근거 조립·생성 호출 연결 |
-| 3 | [출처 확인과 답변 보류](10-rag/03-evidence.md) | `10-00-rag` | 출처 ID 확인과 내용 검증 구분 |
-| 4 | [표준 Reader·Splitter로 적재](10-rag/04-standard-indexing.md) | `10-04-rag-advisor` | 읽기·분할·저장 역할 대응 |
-| 5 | [QuestionAnswerAdvisor로 연결](10-rag/05-standard-advisor.md) | `10-04-rag-advisor` | 문맥 전달 자동화와 업무 검증 구분 |
-| 선택 6 | [상용 RAG의 자료 갱신과 품질 확인](10-rag/06-production-rag.md) | 설계 보충 | 적재·검색·생성의 실패를 구분하고 개선 대상을 정함 |
+| 1 | [표준 Reader·Splitter로 적재](10-rag/01-standard-indexing.md) | `10-00-rag-advisor` | 채팅 없이 읽기·분할·임베딩 적재 확인 |
+| 2 | [QuestionAnswerAdvisor로 답하기](10-rag/02-standard-advisor.md) | `10-00-rag-advisor` | 질문·검색 원문·답변 생성 연결 |
+| 3 | [제목 기반 ID와 출처로 직접 적재](10-rag/03-custom-indexing.md) | `10-03-custom-rag` | 직접 구현할 적재 규칙 구분 |
+| 4 | [검색 결과를 직접 프롬프트에 담기](10-rag/04-custom-generation.md) | `10-03-custom-rag` | 빈 검색에서 생성 생략과 문맥 조립 |
+| 5 | [출처 확인과 답변 보류](10-rag/05-evidence.md) | `10-03-custom-rag` | 업무 규칙으로 출처 ID·보류 검증 |
+| 선택 6 | [상용 RAG의 자료 갱신과 품질 확인](10-rag/06-production-rag.md) | 설계 보충 | 실패 단계 구분과 개선 대상 판단 |
 
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
 
 ## 실행 코드와 테스트
 
-[labs/10-00-rag의 실행 안내](../../labs/10-00-rag/README.md)를 확인합니다.
-이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
+기본 실행은 [표준 RAG README](../../labs/10-00-rag-advisor/README.md), 추가 검증 구현은 [직접 구성 RAG README](../../labs/10-03-custom-rag/README.md)를 사용합니다. 각 소수업에는 읽을 클래스·테스트를 연결했습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:test --tests com.example.ailearning.l10rag.RagLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag:bootRun
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag-advisor:test --tests '*LocalModelTest' --tests '*UnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag-advisor:bootRun
 ```
 
-표준 API 추가 수업은 표에 적힌 별도 모듈의 README 명령을 사용합니다.
-
-로컬 테스트는 고정 응답과 벡터로 연결·분기·출처 검사를 확인합니다. 실제 검색과 답변의 품질은 별도 질문 세트로 평가해야 합니다. `bootRun`은 적재·질문 과정에서 외부 API를 사용할 수 있습니다.
+테스트는 외부 모델을 호출하지 않습니다. `bootRun`은 루트 `.env`의 채팅·임베딩 모델과 키를 사용해 실제 API를 호출합니다. 기본 앱은 시작 시 자료를 임베딩합니다.
 
 ## 확인 질문
 

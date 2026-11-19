@@ -49,7 +49,7 @@
 
 ### 4. 샘플 상태명을 묻는 질문이 남아 있음 — 중간
 
-위치: [10-3](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/03-evidence.md) 94행 3번.
+위치: [10-3](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/05-evidence.md) 94행 3번.
 
 `NO_CONTEXT`·`NO_ANSWER`는 샘플이 정의한 상태입니다. 해설의 개념은 유용하지만 질문은 상태명의 뜻을 외우게 하기보다 검색 단계와 생성 단계의 차이를 물어야 합니다.
 

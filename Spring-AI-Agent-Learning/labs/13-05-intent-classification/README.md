@@ -49,11 +49,12 @@ curl -sS http://127.0.0.1:8107/api/intents \
 Live는 프롬프트의 출력 예시와 다른 반품 수거 일정 문의 한 사례를 확인합니다. 전체 40개 의도의 정확도 검증은 아닙니다.
 정상 흐름은 모델 요청 한 번이며 SDK 자동 재시도는 0회입니다. 요청 timeout은 기본 15초, Live 30초입니다. 전체 test에는 Live도 포함되므로 클래스 필터를 사용합니다. bootRun 종료는 Ctrl+C입니다.
 
-## 이전 샘플과 달라진 계약
+## 현재 분류표와 응답 구조
 
-분류표·응답을 `shopping-intents-v2`로 갱신했습니다. JSON은 `intents` → `main_intent`·`sub_intents` 구조입니다. API는 `majorCode`·`minorCode` 대신 `main_intent`·`sub_intent`를 반환하고, 소분류는 FEE처럼 부모를 제외한 코드입니다. 미확정이면 두 코드가 모두 null입니다.
+분류표 버전은 `shopping-intents-v2`입니다. JSON은 `intents` → `main_intent`·`sub_intents` 구조이며 대분류와 소분류의 관계를 담습니다.
+API는 `main_intent`·`sub_intent`를 반환하고, 소분류는 FEE처럼 부모를 제외한 코드입니다. 미확정이면 두 코드가 모두 null입니다.
 
-이전의 두 단계 요청과 stage 문자열·Option·Choice는 제거했습니다. 상하위 관계는 JSON 안에 유지하고, 한 요청에서 조합을 고릅니다. 한 번 호출한다고 더 정확하거나 저렴하다고 보장하지는 않습니다.
+모델은 한 요청에서 전체 분류표를 읽고 조합을 고릅니다. 한 번 호출한다고 더 정확하거나 저렴하다고 보장하지는 않습니다.
 
 
 다른 OpenAI 모델과 분류 품질을 비교하는 Live 실습은 [13-6 의도 분류 모델 품질 비교](../13-06-intent-quality-evaluation/README.md)에서 진행합니다.

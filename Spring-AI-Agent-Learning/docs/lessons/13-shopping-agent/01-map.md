@@ -27,7 +27,7 @@
 
 ## 2. 구조와 실행 흐름
 
-처음에는 그림에서 `CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `CounselResultVerifier`의 경로를 따라가세요. `CounselService`의 저장은 두 번째 읽기, `LimitedAgentRequestExecutor`와 횟수·시간 제한은 세 번째 읽기에서 연결합니다. 클래스 전체를 먼저 암기할 필요는 없습니다.
+처음에는 그림에서 `CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `CounselResultVerifier`의 경로를 따라가세요. `CounselService`는 검증 결과를 대화 메모리에 저장합니다. 실행 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다. 클래스 전체를 먼저 암기할 필요는 없습니다.
 
 [그림 공통 기준](../../diagram-guide.md)에 따라 클래스 그림은 책임, 흐름 그림은 결정 주체를 표현합니다.
 화살표의 의존 관계와 실행 순서를 혼동하지 마세요.
@@ -35,7 +35,6 @@
 ```mermaid
 classDiagram
     CounselService --> CounselWorkflow : 상담 실행
-    CounselService --> LimitedAgentRequestExecutor : 요청 실행·시간 초과 취소
     CounselWorkflow --> Intent : 조건 추출
     CounselService --> ChatMemory : 이전 대화 조회와 확정 저장
     CounselWorkflow --> ProductTools : 상품 도구 제공
@@ -62,17 +61,15 @@ flowchart TD
     D -->|아니오| T[Java: 업무별 허용 도구 제공]
     T --> M[모델: 다음 도구와 인자 또는 최종 ID 선택]
     M --> E{Java: 도구 요청인가?}
-    E -->|예| L{Java: 횟수와 시간 상한 이내인가?}
-    L -->|예| R[Spring AI와 Java: 도구 실행과 결과 반환]
+    E -->|예| R[Spring AI와 Java: 도구 실행과 결과 반환]
     R --> M
-    L -->|아니오| F
     E -->|아니오| V{Java: 실제 조회 ID와 예산 조건이 맞는가?}
     V -->|아니오| F
     V -->|예| S[Java: 실제 금액과 정책 원문 표시 후 대화 저장]
 ```
 
 그림의 정상 결과에는 확인된 결과 없음도 포함합니다. 검증되지 않은 상품 선택은 실패로 보류합니다.
-모든 모델 요청과 도구 실행에는 시간·횟수 검사가 적용됩니다. 그림은 도구 진입 검사만 대표로 표시했습니다.
+이 그림은 기본 상담입니다. 전체 실행 시간·횟수 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다.
 
 ## 3. 코드 읽는 순서
 
@@ -84,8 +81,7 @@ flowchart TD
 3. [Intent](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/domain/Intent.java), [CounselToolResults](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselToolResults.java), [CandidateEvidenceSelection](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CandidateEvidenceSelection.java): 추출한 조건·실제 조회 사실·모델이 선택한 ID 구분.
 4. [ProductTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/tools/ProductTools.java), [PolicyTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/tools/PolicyTools.java): 도구 실행과 결과 기록.
 5. [CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselWorkflow.java): 다음 [13-2](02-intent.md)의 `processCounselRequest()`, [CounselResultVerifier](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselResultVerifier.java)의 검증을 읽고, [13-4](04-conversation.md)에서 `CounselService.chat()`의 저장·실패 처리를 확인합니다.
-6. **두 번째 읽기:** [CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)는 대화 저장을 맡습니다. **세 번째 읽기:** [LimitedAgentRequestExecutor](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/support/LimitedAgentRequestExecutor.java)는 요청 전체의 대기와 시간 초과 취소를 맡습니다. [RunState](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/support/RunState.java)와 같은 폴더의 `CountedChatModel`은 전체 요청의 모델 요청 횟수 제한과 실행 내역 기록을 보조합니다. 도구 호출 상한은 Spring AI 설정을 사용하며, 도구 횟수는 `RunState`에서 응답 trace용으로 셉니다. 기본 기능은 [05 보충 도구 제한](../05-tool-calling/05-tool-call-limits.md)과 [02 보충 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md)에서 확인합니다.
-7. [CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
+6. [CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
 
 
 ## 확인 질문

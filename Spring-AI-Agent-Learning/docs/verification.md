@@ -761,3 +761,31 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 한계: Mermaid 렌더링 화면은 확인하지 않았습니다. 분산 동시성·영구 저장·스트리밍·RAG는 이번 샘플에서 검증하지 않았습니다. 한 에이전트가 교육·기술 관점을 나누어 검토했으며 별도 독립 검토는 수행하지 않았습니다. 커밋하지 않았습니다.
 
 - 추가 점검: 과거 검토 기록 3개의 링크·앵커 76개도 검사했습니다. 08장 이동 링크는 유효합니다. 기존 06장 ComparisonService.java·ShoppingTools.java를 가리키는 링크 2개는 대상 파일이 없어 실패했으며, 이번 08장 변경과 무관한 과거 기록이므로 수정하지 않았습니다.
+
+
+## 2026-11-19: 09장 이후 제공 기능·단계별 실행 예제 개선
+
+- 적용 범위: 09~13장의 학습 순서·코드 경계·테스트 연결. 00~08장은 10장으로 가는 필수 링크의 새 위치만 갱신했습니다. 기능·버전 변경이나 14장 개편은 하지 않았습니다.
+- 09장: EmbeddingService의 단일 임베딩, BasicVectorSearchService의 query·topK 검색, SearchService의 비교·하한·필터를 구분했습니다. embedding-only와 basic-search 프로필은 다음 단계 Service·Controller를 제외합니다. 첫 단계 테스트는 시작 시 임베딩 없음과 입력 후 한 번의 요청을 검사합니다.
+- 10장: 10-1 표준 적재 → 10-2 Advisor → 10-3 직접 적재 → 10-4 직접 문맥 조립 → 10-5 출처 검증으로 재배치했습니다. 모듈은 10-00-rag-advisor / 10-03-custom-rag입니다. PolicyDocumentIndexer가 검색 자료를 준비하고 indexing-only에서는 채팅용 Service·Controller를 제외합니다.
+- 11장: SyncMcpToolCallbackProvider를 사용하는 BasicMcpChatService와 /api/mcp/basic을 추가했습니다. 실제 2.0.2 JAR의 builder·mcpClients 서명을 확인했고, 로컬 테스트는 Provider의 실제 도구 이름을 사용해 원격 결과가 다음 모델 입력으로 돌아가는지 검사합니다. 자체 Gateway·실행기·조건 제한은 기존 비교·확장용으로 유지합니다.
+- 12장: 모델 없는 RuleBasedEvaluator와 UnitTest를 첫 예제로, 검색 없는 TokenUsageService와 usage-only 프로필을 사용량 예제로 제공합니다. 기존 EvaluationRunner는 같은 규칙 평가기를 재사용하며 RAG·시간·실패 기록의 결합은 12-5에서 설명합니다.
+- 13장: 기본 CounselWorkflow는 일반 ChatClient.Builder와 동기 호출을 사용하며 RunState·실행기·추적에 의존하지 않습니다. 예산·출처 검증, 세션 격리, 정상·결과 없음·실패의 대화 저장 기준은 유지합니다. 기본 API의 trace 필드는 제거했습니다. 이전 실행 제한과 trace는 독립 모듈 13-08-limited-agent에 별도 패키지로 보존했습니다. 전체 시간 제한·모델 요청 상한·도구 상한·지연 후 미저장을 포함한 기존 11개 테스트는 이 확장에서 검증합니다.
+- 문서: 소수업의 전체 코드·사용 메서드·Local/Live 테스트, 각 README, 교육 계획·최상위 실행 안내, settings.gradle과 하네스 project.md의 대응표를 맞췄습니다. 과거 검증 명령은 이력으로 보존하고 이동한 파일 링크만 갱신했습니다.
+- 환경: 루트 build.gradle 기준 Java 21 / Spring Boot 4.0.9 / Spring AI 2.0.2, Gradle Wrapper 8.14.5. 실제 API 키나 .env 내용을 출력하지 않았습니다.
+
+| 모듈 | LocalModelTest·UnitTest 합계 | 실패·오류·건너뜀 |
+|---|---:|---|
+| 09-00-embeddings-search | 9 | 모두 0 |
+| 10-00-rag-advisor | 5 | 모두 0 |
+| 10-03-custom-rag | 6 | 모두 0 |
+| 11-00-mcp-workflow-agent | 16 | 모두 0 |
+| 12-00-evaluation | 8 | 모두 0 |
+| 13-00-shopping-agent | 8 | 모두 0 |
+| 13-08-limited-agent | 11 | 모두 0 |
+| 합계 | 63 | 모두 0 |
+
+- 실행 명령: 위 모듈의 :test에 --tests '*LocalModelTest'를 적용했습니다. 10-00·11·12에는 --tests '*UnitTest'도 포함했습니다. 테스트 결과 XML로 실행 수를 확인했습니다. 중간 컴파일 오류는 변경된 API 사용처·import를 수정한 뒤 재검증했습니다.
+- 빌드: 위 7개 모듈의 bootJar와 Live를 포함한 compileTestJava 성공. 최종 로컬 회귀·기본 상담 bootJar는 BUILD SUCCESSFUL이며 변경 없는 태스크는 UP-TO-DATE 결과를 재사용했습니다. 실제 OpenAI·임베딩 외부 호출은 미실행입니다. MCP는 테스트에서 로컬 서버로 실행했습니다.
+- 정적 검사: 현재 지침·교재·실습 README의 로컬 링크·앵커 검사 오류 없음, 변경 문서의 Mermaid 10개 문법 통과, git diff --check 통과. Mermaid 렌더링 화면은 확인하지 않았습니다. 전체 하네스의 과거 보고서에는 기존 06장 경로를 가리키는 링크 2개가 남아 있어 이번 범위에서 수정하지 않았습니다.
+- 교육·기술 검토는 한 에이전트가 관점을 바꿔 수행했습니다. 기본 예제에서 미래 단계의 자체 실행기를 요구하지 않는지, 제공 기능과 업무 정책의 차이, 문서의 전체 코드·실행 명령·테스트 선택을 대조했습니다. 하네스 독립 세션 행동 평가는 수행하지 않았습니다.

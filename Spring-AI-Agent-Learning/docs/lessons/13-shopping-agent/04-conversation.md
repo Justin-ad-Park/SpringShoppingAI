@@ -1,149 +1,140 @@
-# 13-4. 대화 저장과 통합 시나리오 관찰
+# 13-4. 검증 결과를 저장하고 후속 질문 처리하기
 
-**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**이번 수업의 목표:** 이전 대화로 후속 질문을 해석하는 흐름을 연결하고, 확인된 결과 없음과 처리 실패에서 저장 여부가 다른 이유를 설명합니다.
 
-**이번 목표:** 정상 결과·결과 없음·실패에서 저장 여부를 비교합니다.
+**실행 코드·설정·테스트:** [13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 07장의 대화 메모리와 13-2·3의 상담·검증 흐름을 사용합니다.
 
-**코드 읽기 안내:** 동시성 보조 코드부터 구현하지 않습니다. 먼저 세 번의 후속 요청으로 조건이 이어지는지 관찰합니다.
+## 후속 질문에는 무엇이 빠져 있을까?
 
-## 4. 대화 저장 시점
+첫 질문 “배송비 포함 3만원 이하 음료 추천”에는 조건이 모두 있지만, 다음 질문 “생활용품으로 바꿔줘”에는 예산이 없습니다. 모델이 이전 질문·답변을 함께 받아야 카테고리만 바꾸고 예산은 유지할 수 있습니다. 모델이 서버의 메모리를 스스로 찾아 읽는 것이 아니라, 애플리케이션이 이전 메시지를 다음 요청에 전달합니다.
 
-먼저 후속 질문 테스트에서 첫 예산 → 카테고리 변경 → 예산 변경을 따라가세요. 이번에는 어떤 대화를 다음 요청에 남길지에 집중합니다. 횟수·시간 상한의 세부 구현은 대화 저장을 이해한 뒤 아래 보충에서 확인합니다.
+| 요청 순서 | 질문 | 유지·변경할 조건 | 이 샘플 데이터로 확인할 결과 |
+|---|---|---|---|
+| 1 | 배송비 포함 3만원 음료 추천 | 음료·3만원 설정 | P01 허브티 12000원 + 배송비 3000원 = 15000원 등 예산 안의 상품 |
+| 2 | 생활용품으로 변경 | 예산 3만원 유지, 카테고리를 생활로 변경 | 생활 상품 P03은 35000원이므로 검색 결과 없음 |
+| 3 | 예산을 4만원으로 변경 | 생활 유지, 예산만 4만원으로 변경 | P03 텀블러 35000원 + 배송비 0원 = 35000원 |
 
-성공·추가 질문·확인된 결과 없음(`VERIFIED`, `NEEDS_INPUT`, `NO_RESULTS`, `NO_CONTEXT`)이면
-이번 질문과 답변을 user/assistant 쌍으로 저장해 다음 요청에 사용합니다.
-유효한 “생활용품으로 변경” 요청의 검색 결과가 없어도 저장해야 다음 “4만원으로 변경”에서 생활 조건을 유지할 수 있습니다.
+두 번째 결과가 없다고 대화를 저장하지 않으면 세 번째 요청에서 생활용품으로 바꿨다는 문맥이 빠집니다. 따라서 **조회하여 결과가 없음을 확인한 대화도 저장**합니다. 위 표는 Java 상품 데이터와 고정 시나리오의 기준이며, 실제 모델의 선택·성공을 보장하는 표는 아닙니다.
 
-실패·상한 초과·타임아웃 때는 이번 요청을 저장하지 않습니다. 기존 대화는 유지합니다.
-타임아웃 뒤 도착한 응답도 저장하지 않는 것을 테스트합니다.
-메모리는 프로세스 내 최대 6개 메시지이며 재시작하면 사라집니다. 오래된 중요 조건의 영구 보존을 보장하지 않습니다.
-쿠키는 학습용 소유자 구분이며 운영 서비스 인증을 대신하지 않습니다.
+## 조회·실행·저장 책임을 나누기
 
-### 세 번째 읽기: 실행 상한
+[CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)는 다음 순서로 처리합니다.
 
-아래 값은 이 통합 예제의 실행 정책입니다. 먼저 위 저장 정책을 이해한 다음 상한·타임아웃 테스트와 비교하세요. `RunState`·`LimitedAgentRequestExecutor`의 내부 구현은 아래 접힌 보충에서 이어 읽습니다.
+1. 소유자와 대화 ID를 조합한 키로 `ChatMemory`에서 이전 메시지를 읽습니다.
+2. 이전 메시지의 복사본과 현재 질문을 `CounselWorkflow`에 전달합니다. Workflow는 현재 질문을 추가해 의도 추출과 도구 선택에 사용합니다.
+3. 검증 결과가 저장 가능한 상태이면 현재 질문을 `UserMessage`, 답변을 `AssistantMessage`로 함께 저장합니다.
+4. 응답에는 상담 결과와 저장된 메시지 수를 담습니다.
 
-| 기본 설정 | 값 | 의미 |
-|---|---:|---|
-| `learning.limits.max-model-calls` | 8 | 한 쇼핑 에이전트 요청 안의 모델 호출 상한 |
-| `learning.limits.timeout-ms` | 20000 | 모델·도구 흐름을 포함한 전체 요청의 최대 실행 시간 |
-| `spring.ai.openai.timeout` | 5s | OpenAI API 요청 한 번의 시간 제한 |
-| `spring.ai.tools.limits.max-total-tool-calls` | 6 | 한 도구 호출 루프에서 모든 도구를 합친 실행 상한 |
-| `spring.ai.openai.chat.max-retries` | 0 | Chat API 자동 재시도 없음 |
+다음은 실제 `chat()` 메서드 발췌입니다. `counselWorkflow`는 생성자로 주입받고, `conversationMemory`는 아래에서 설명하는 `MessageWindowChatMemory` 필드입니다. 전체 생성자와 조회·삭제 메서드는 소스 링크에서 확인합니다.
 
-모델 API 타임아웃은 Spring AI 표준 설정으로 제한합니다. 전체 에이전트 요청은 의도 추출·도구 선택·도구 실행을 여러 번 거치므로 별도 실행기가 `learning.limits.timeout-ms`를 적용합니다. 두 시간 제한은 범위가 다릅니다.
-이 Workflow에는 도구를 사용하는 단계가 하나이므로 도구 횟수 상한은 Spring AI의 전체 도구 제한으로 적용합니다. `RunState`는 실제 실행된 도구 수를 응답 trace에 기록하지만 같은 제한을 다시 검사하지 않습니다. 도구 호출 단계가 여러 개로 늘어나 한 HTTP 요청 전체에 걸쳐 누적 상한을 적용해야 한다면 애플리케이션 카운터가 추가로 필요합니다. 설정 방법은 [05장 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md)을 참고하세요.
-
-HTTP 요청의 대기열·전송 시간을 포함한 전체 SLA를 보장하는 설정은 아닙니다.
-작업 취소를 요청해도 외부 제공 업체가 이미 수행한 요청과 비용까지 취소되지는 않을 수 있습니다.
-`trace.clientCreations`는 이 상담에서 생성한 `ChatClient` 인스턴스 수입니다. `trace.modelRequestAttempts`는 `ChatModel.call()` 시작 횟수이며 제공 업체 SDK 내부의 HTTP 재시도는 포함하지 않습니다. `trace.toolExecutions`는 Spring AI 상한을 통과해 실제 도구 코드가 시작된 횟수입니다.
-임베딩 요청은 모델 요청 시도 수에 포함하지 않습니다. 기록은 도구 요청과 반환값이며 모델의 내부 사고가 아닙니다.
-
-## 5. 실행과 관찰
-
-먼저 API 키 없이 테스트합니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootJar
+```java
+public synchronized Reply chat(String owner, String conversationId, String question) {
+    String conversationKey = owner + ":" + conversationId;
+    List<Message> previousMessages = List.copyOf(conversationMemory.get(conversationKey));
+    CounselResult counselResult;
+    try {
+        counselResult = counselWorkflow.processCounselRequest(question, previousMessages);
+    } catch (RuntimeException error) {
+        // 실패한 대화는 저장하지 않고 기존 대화는 유지한다.
+        log.warn("Counsel failed: errorType={}", error.getClass().getSimpleName());
+        return new Reply("FAILED", "상담 처리에 실패했습니다. 이전 대화는 유지합니다.", null,
+                List.of(), List.of(), conversationMemory.get(conversationKey).size());
+    }
+    if (List.of("VERIFIED", "NEEDS_INPUT", "NO_RESULTS", "NO_CONTEXT").contains(counselResult.status())) {
+        conversationMemory.add(conversationKey,
+                List.of(new UserMessage(question), new AssistantMessage(counselResult.answer())));
+    }
+    return new Reply(counselResult.status(), counselResult.answer(), counselResult.intent(),
+            counselResult.offers(), counselResult.sources(), conversationMemory.get(conversationKey).size());
+}
 ```
 
-실제 실행은 저장소 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 준비한 뒤 실행합니다.
-작성 방법은 [실행 설정 안내](../../run-guide.md)를 참고하세요.
+메모리에 쓰는 주체를 Service 한 곳으로 모아 상담 실행과 저장 판단을 구분합니다. `synchronized`는 이 Service 객체의 메서드 실행이 겹치지 않게 하는 Java 문법입니다. 모델 호출까지 순서대로 처리하므로 여러 사용자의 처리량에 제약이 있으며, 운영 환경의 분산 동시성 제어를 제공하는 구성은 아닙니다.
+
+## 어떤 대화를 저장할까?
+
+다음 상태 이름은 Spring AI의 표준 상태가 아니라 이 샘플의 업무 처리 결과입니다. 이름 암기보다 저장 이유를 확인하세요.
+
+| 상담 결과 | 저장 여부 | 이유 |
+|---|---|---|
+| `VERIFIED` | 현재 질문·답변 저장 | 실제 조회 사실과 현재 검증 기준을 통과한 결과를 후속 문맥에 사용 |
+| `NEEDS_INPUT` | 저장 | 예산을 묻는 추가 질문을 다음 답변과 연결 |
+| `NO_RESULTS`, `NO_CONTEXT` | 저장 | 상품·정책 조회 결과가 없음을 확인했으며 변경한 조건도 다음 요청에 필요 |
+| `VERIFY_FAILED` | 저장하지 않음 | 모델 선택과 실제 조회 사실이 일치하지 않음 |
+| `NO_VERIFIED_OFFER`, `NO_VERIFIED_SOURCE` | 저장하지 않음 | 필요한 조회·확인이 부족해 결과 없음을 확정할 수 없음 |
+| 처리 예외로 반환한 `FAILED` | 저장하지 않음 | 이번 처리를 완료하지 못했으므로 이전의 유효한 대화만 유지 |
+
+실패 시에는 이전 기록을 지우지 않고 이번 질문·답변만 추가하지 않습니다. 검증 상태의 구체적 판정은 [13-3](03-verify.md)을 참고하세요. HTTP 200이어도 `status`가 실패일 수 있으므로 HTTP 코드와 업무 상태를 구분합니다.
+
+## 메모리에 남는 범위
+
+Service가 만드는 메모리 필드 발췌입니다.
+
+```java
+private final ChatMemory conversationMemory = MessageWindowChatMemory.builder()
+        .maxMessages(6)
+        .build();
+```
+
+최대 6개는 대화 여섯 번이 아니라 **메시지 여섯 개**입니다. 이 예제는 질문·답변 두 개씩 저장하므로 처음 세 번을 저장하면 `storedMessages=6`입니다. 더 저장하면 오래된 대화가 제거되어 과거 조건을 계속 기억한다고 보장할 수 없습니다. 이 저장소는 프로세스 메모리이므로 재시작하면 대화가 사라집니다. 저장 정책과 저장소 선택은 [07장](../07-chat-memory.md)에서 복습합니다.
+
+소유자는 Controller에서 받은 HTTP 세션 ID이며, 같은 세션에서도 `conversationId`가 다르면 별도 대화입니다. `curl`의 같은 쿠키 파일과 같은 `/demo` 경로를 유지해야 후속 대화가 이어집니다. 세션 쿠키에 의한 구분은 이 실습의 사용자 구분이며 운영 서비스의 인증·인가를 대신하지 않습니다.
+
+## 실행하고 조건 변화 확인하기
+
+명령은 저장소 루트에서 실행합니다. 먼저 외부 API를 호출하지 않는 로컬 테스트로 연결·검증·저장 정책을 확인합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*ShoppingAgentLocalModelTest'
+```
+
+실제 실행은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 사용합니다. [실행 설정 안내](../../run-guide.md)를 참고하세요. 서버 시작 시 정책 문서 임베딩, 정책 검색 시 질문 임베딩, 상담 시 채팅 모델의 API 사용량이 발생할 수 있습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootRun
 ```
 
-실제 실행은 시작 시 정책 임베딩, 정책 검색 시 질문 임베딩, 상담 시 Chat 요청 비용이 발생할 수 있습니다.
-로컬 테스트는 고정 응답 서버를 사용하며 실제 API 키를 사용하지 않습니다.
-
-다른 터미널에서 동일 쿠키 파일을 유지합니다.
+다른 터미널에서 같은 쿠키 파일로 순서대로 요청합니다.
 
 ```bash
-curl -s -c /tmp/learning13.cookies -b /tmp/learning13.cookies   http://127.0.0.1:8102/api/counsel/demo   -H 'Content-Type: text/plain; charset=UTF-8'   --data-raw '배송비 포함 30000원 음료를 추천하고 미개봉 반품 기간도 알려줘'
-
-curl -s -c /tmp/learning13.cookies -b /tmp/learning13.cookies   http://127.0.0.1:8102/api/counsel/demo   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '생활용품으로만 바꿔줘'
-
-curl -s -c /tmp/learning13.cookies -b /tmp/learning13.cookies   http://127.0.0.1:8102/api/counsel/demo   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '예산을 40000원으로 바꿔줘'
-
-curl -s -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
-curl -s -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
+curl -c /tmp/learning13.cookies -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비 포함 30000원 음료를 추천해줘'
+curl -c /tmp/learning13.cookies -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '생활용품으로 바꿔줘'
+curl -c /tmp/learning13.cookies -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '예산은 40000원으로 바꿔줘'
 ```
 
-다음 표는 Java 데이터와 테스트의 고정 시나리오에서 확인한 기준입니다.
-실제 모델은 다른 도구 순서·선택 또는 실패 상태를 반환할 수 있습니다.
-
-| 요청 | 확인할 결과 |
+| 응답 필드 | 확인할 내용 |
 |---|---|
-| 3만원 음료 + 미개봉 반품 | P01 허브티 12000+배송비 3000=15000원, `return-sealed`의 7일 원문 |
-| 생활용품으로 변경 | 예산 3만원 유지. P03 35000원이므로 `NO_RESULTS` |
-| 예산 4만원으로 변경 | 생활 조건 유지. P03 텀블러 35000+배송비 0=35000원 |
-| 예산 없이 추천 | 도구 실행 전에 `NEEDS_INPUT` |
-| 상품가만 가능한 13000원 음료 | P01 배송비 포함 15000원 확인 뒤 추천 불가 |
-| 미개봉 반품 기간만 질문 | 예산 없이 정책 도구 사용. 상품 도구는 미제공 |
-| 정책 근거가 검색되지 않음 | `NO_CONTEXT`로 보류. 모델 선택·검색 결과에 따라 달라짐 |
+| `criteria.category`, `criteria.totalBudget` | 음료·30000 → 생활·30000 → 생활·40000으로 바뀌는가 |
+| `status` | 조회·검증 결과를 나타내는가. 두 번째 요청의 결과 없음도 저장되는가 |
+| `offers` | 세 번째 요청에서 P03의 배송비 포함 총액이 35000원인가 |
+| `storedMessages` | 저장 가능한 결과가 세 번이면 2 → 4 → 6인가 |
 
-`CounselService.Reply.intent()`는 추출한 업무 종류와 조건을 반환합니다. 기존 API와의 호환성을 위해 JSON 필드 이름은 `@JsonProperty("criteria")`로 유지합니다.
+Java의 `Reply` 접근자는 `intent()`지만 `@JsonProperty("criteria")`로 JSON에는 `criteria`가 출력됩니다. 실제 모델이 실패 상태를 반환했다면 위 증가를 기대하지 말고 상태와 조회·검증 결과부터 확인합니다.
 
-`FAILED`, `VERIFY_FAILED`, `NO_VERIFIED_OFFER`, `NO_VERIFIED_SOURCE`는 HTTP 200 응답의 업무 상태입니다.
-`MODEL_LIMIT`, `TOOL_LIMIT`, `TIMEOUT`, `CANCELLED`도 응답 `status`로 확인합니다.
-공백·2000자 초과 질문과 잘못된 대화 ID는 Controller에서 HTTP 400으로 거부합니다.
+다음 API는 같은 대화의 저장 이력을 조회하고 삭제합니다. 삭제 후 “4만원으로 바꿔줘”만 요청하면 이전 카테고리 문맥이 없다는 차이를 관찰할 수 있습니다. 실제 응답은 모델에 따라 달라지며, 삭제 실험 후에는 완전한 첫 질문으로 다시 시작하세요. 서버 종료는 Ctrl+C입니다.
 
-## 6. 테스트와 한 가지씩 바꾸는 실험
+```bash
+curl -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
+curl -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
+```
 
-[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 11개 테스트는
-실제 MVC·Spring AI 어댑터·벡터 저장소에 로컬 가짜 Chat/Embedding HTTP 서버를 연결합니다.
+[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 `후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다`는 카테고리·예산·P03·저장 메시지 수를 검증합니다. 실패 시 기존 기록 유지와 세션 격리도 별도 테스트로 확인합니다. 고정 서버의 결과이므로 실제 언어 이해·도구 선택 품질은 [Live 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentOpenAiLiveTest.java)와 별도 질문 세트로 평가합니다.
 
-- 상품·배송비·반품 근거 결합과 Java의 최종 표시.
-- 후속 카테고리·예산 수정, 결과 없음도 대화에 저장.
-- 배송비 때문에 예산을 초과한 전체 검색 결과 처리.
-- 예산 누락과 업무별 허용 도구 차이.
-- 허위 출처·예산 초과 선택 거부.
-- 세션 격리·삭제 범위·실패 시 기존 대화 유지.
-- 동기 상담 흐름의 직접 실행과 모델 요청 상한.
-- 반복 도구 호출 상한과 타임아웃 이후 미저장.
-
-가짜 서버는 정해진 문장·벡터만 처리합니다. 언어 이해·검색 품질·실제 도구 선택 성능의 증거가 아닙니다.
-이 구분은 12장의 모델 품질 평가에서도 유지합니다.
-
-실험은 하나씩 수행하고 원본으로 복원합니다.
-
-1. 메모리를 삭제하고 “4만원으로 바꿔줘”만 질문합니다. 이전 카테고리를 알 수 있는지 확인합니다.
-2. 정책 질문으로 시작해 `trace`와 허용 도구가 상품 추천과 어떻게 다른지 비교합니다.
-3. `spring.ai.tools.limits.max-total-tool-calls`를 1로 줄입니다. 여러 조회가 필요한 요청이 완성된 답변처럼 저장되는지 확인합니다.
-4. 12장의 고정 평가 방식을 복습해 상품 ID·총액·출처 ID를 함께 평가할 사례 3개를 작성합니다.
-
-<details><summary>보충: 타임아웃 이후 저장을 막는 구현</summary>
-
-`CounselService.chat()`은 이전 대화의 복사본을 `CounselWorkflow.processCounselRequest()`에 전달합니다.
-`LimitedAgentRequestExecutor`가 에이전트 요청을 실행하고 별도 스레드의 대기·시간 초과 취소를 담당합니다. `RunState`는 모델 요청 수와 마감 시간을 검사하며 도구 실행 수를 기록합니다. 도구 상한은 Spring AI가 검사합니다. 작업 스레드는 메모리를 수정하지 않으며,
-결과를 기다리는 호출자 스레드가 위 저장 정책에 맞는 응답만 저장합니다.
-타임아웃 뒤 늦게 완료된 작업이 대화를 변경하지 않게 하기 위한 구성입니다.
-실패하면 서버 로그에는 처리 단계(`INTENT`, `TOOLS`, `VERIFY`)·상태·예외 타입을 기록합니다. 질문·응답 원문과 예외 메시지는 로그에 넣지 않습니다.
-Service의 `synchronized`는 요청을 직렬화하는 Java 장치입니다. 여러 대화의 처리량이 제한되므로 운영 환경의 동시성 설계는 별도로 검토해야 합니다.
-
-</details>
+전체 대기·모델 요청 수 제한, trace와 늦은 답변 미저장은 선택 실습 [13-8](08-execution-limits.md)에서 추가합니다.
 
 ## 확인 질문
 
-1. 두 프롬프트의 역할과 Java가 고정한 순서를 각각 설명할 수 있나요?
-2. 검색 결과를 받았는데도 최종 상품·출처 ID를 다시 검사하는 이유는 무엇인가요?
-3. “결과 없음”과 “조회하지 않음”을 구분해야 하는 이유는 무엇인가요?
-4. 언제 이전 대화를 저장하고, 실패하면 무엇을 유지하나요?
-5. 결과 없음은 저장하고 실패는 저장하지 않는 이유를 후속 질문 예로 설명해 보세요.
+1. 조회 결과가 없는 카테고리 변경도 저장해야 하는 이유는 무엇인가요?
+2. 모델 호출이 실패하면 이번 요청과 이전 대화를 각각 어떻게 처리하나요?
+3. `maxMessages(6)`이면 과거의 카테고리·예산을 언제까지나 유지할 수 있나요?
 
 <details>
 <summary>해설</summary>
 
-1. 첫 프롬프트는 조건 추출, 두 번째는 도구 선택과 최종 ID 선택을 맡습니다. 추출 → 도구 선택 → 검증 → 저장의 바깥 순서와 허용 도구·금액 검증·상한은 Java가 정합니다.
-2. 모델이 조회 결과에 없는 ID를 만들거나 예산·카테고리 조건을 어길 수 있어 실제 조회 사실과 대조해야 하기 때문입니다.
-3. 모델이 빈 목록을 선택했다는 사실만으로 조회 결과가 없다고 증명할 수 없기 때문입니다. 실제 조회·검증 여부를 구분해야 결과 없음을 확정할 수 있습니다.
-4. 확인된 정상 결과·추가 질문·결과 없음은 다음 대화를 위해 저장합니다. 실패한 요청은 저장하지 않고 이전 대화를 유지합니다.
-5. 예산 안의 상품이 없음을 확인한 뒤 “그럼 예산을 4만원으로 바꿔줘”라고 하면 앞 조건과 결과가 문맥으로 필요합니다. 연결 실패 뒤에는 확인하지 못한 내용을 정상 결과처럼 저장하지 않고 이전의 유효한 대화를 유지합니다.
+1. 변경한 조건이 다음 질문의 문맥이기 때문입니다. 생활용품 결과가 없다는 대화를 저장해야 다음 “4만원으로 변경”에서도 생활 카테고리를 참고할 수 있습니다. 조회하지 않은 경우는 결과 없음으로 확정하지 않습니다.
+2. 이번 질문·답변은 저장하지 않고 이전 대화는 유지합니다. 처리하지 못한 결과를 유효한 후속 문맥으로 남기지 않기 위한 샘플의 정책입니다.
+3. 아닙니다. 메시지 여섯 개를 넘으면 오래된 메시지가 제거되며 재시작하면 메모리도 사라집니다. 장기 보존할 업무 조건은 별도 상태·저장소 설계가 필요합니다.
 
 </details>
 
-필수 과정은 여기까지입니다. 원격 도구를 사용하는 세 실행 방식은 [11장 MCP](../11-mcp-workflow-agent.md)에서 복습할 수 있습니다.
-[교육 계획](../../curriculum.md) · [레퍼런스 안내](../../references.md) · [검증 기록](../../verification.md)
-
-[이전](03-verify.md) · [다음](../13-shopping-agent.md) · [단원 목차](../13-shopping-agent.md) · [학습 방법](../../learning-guide.md)
+[이전](03-verify.md) · [목차](../13-shopping-agent.md) · [선택: 실행 제한](08-execution-limits.md)

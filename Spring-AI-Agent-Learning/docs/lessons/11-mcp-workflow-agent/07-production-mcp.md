@@ -53,6 +53,6 @@ MCP는 tools 외에 resources·prompts 등의 기능도 다룹니다. 이번 수
 
 </details>
 
-참고 자료: 위 MCP 공식 문서는 역할·보안 기준이며, 쇼핑 변경·재시도 표는 그 구분을 적용한 이 교재의 설계 제안입니다. [Dan Vega의 MCP 공개 강의](https://www.youtube.com/watch?v=TSFkdlreRMQ)는 클라이언트 연결의 추가 학습 경로입니다. 공개 소개만 확인했으며 영상 전체를 검증하지 않았습니다.
+참고 자료: 위 MCP 공식 문서는 역할·보안 기준이며, 쇼핑 변경·재시도 표는 그 구분을 적용한 이 교재의 설계 제안입니다. 추가 학습용 [Dan Vega의 MCP 강의 소개](https://www.youtube.com/watch?v=TSFkdlreRMQ)와 자료 확인 범위는 [참고 자료 안내](../../references.md#0713장-보강에-사용한-교육-자료)에서 확인할 수 있습니다.
 
 [이전: 11-6](06-compare.md) · [11장 목차](../11-mcp-workflow-agent.md) · [다음: 12장](../12-evaluation.md)

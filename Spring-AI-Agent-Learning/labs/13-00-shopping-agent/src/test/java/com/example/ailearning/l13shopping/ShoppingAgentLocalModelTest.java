@@ -4,16 +4,15 @@ import com.example.ailearning.testsupport.output.TestNamePrinter;
 import com.example.ailearning.testsupport.output.TestOutput;
 import com.example.ailearning.testsupport.http.LocalTestHttpClient;
 import com.example.ailearning.testsupport.model.OpenAiStubServer;
-import com.example.ailearning.l13shopping.workflow.CounselResult;
-import com.example.ailearning.l13shopping.workflow.CounselWorkflow;
 import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantTextMessage;
 import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantToolCallMessage;
+
+import com.example.ailearning.l13shopping.workflow.CounselResult;
+import com.example.ailearning.l13shopping.workflow.CounselWorkflow;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.ailearning.l13shopping.support.RunState;
-import com.example.ailearning.l13shopping.support.LimitedAgentRequestExecutor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -24,8 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.config.import=",
-        "spring.ai.tools.limits.max-total-tool-calls=4", "learning.limits.timeout-ms=1000"})
+        "spring.config.import="})
 class ShoppingAgentLocalModelTest {
     private final TestOutput output = new TestOutput();
 
@@ -70,29 +68,13 @@ class ShoppingAgentLocalModelTest {
     @Test
     void 상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다() {
         // 의도 추출 → 도구 선택 → 검증을 동기 호출한다. 저장과 스레드 대기는 서비스의 별도 책임이다.
-        RunState run = new RunState(8, 5000);
         CounselResult counselResult = workflow.processCounselRequest(
-                "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘", List.of(), run);
+                "배송비 포함 30000원 음료 추천하고 미개봉 반품도 알려줘", List.of());
         output.printValue("동기 상담 결과", counselResult);
 
         assertThat(counselResult.status()).isEqualTo("VERIFIED");
         assertThat(counselResult.offers().getFirst().total()).isEqualTo(15000);
         assertThat(counselResult.sources().getFirst().id()).isEqualTo("return-sealed");
-        assertThat(run.snapshot().toolExecutions()).isEqualTo(3);
-    }
-
-    @Test
-    void 실행기는_의도_추출과_도구_루프를_합쳐_모델_요청_상한을_검사한다() {
-        var requestExecutor = new LimitedAgentRequestExecutor(1, 5000);
-        var executionOutcome = requestExecutor.executeWithLimits(
-                runState -> workflow.processCounselRequest("배송비 포함 30000원 음료 추천", List.of(), runState));
-        output.printValue("모델 상한 결과", executionOutcome);
-
-        assertThat(executionOutcome.succeeded()).isFalse();
-        assertThat(executionOutcome.failureStatus()).isEqualTo("MODEL_LIMIT");
-        assertThat(executionOutcome.result()).isNull();
-        assertThat(executionOutcome.trace().modelRequestAttempts()).isEqualTo(1);
-        assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 
     @Test
@@ -104,7 +86,6 @@ class ShoppingAgentLocalModelTest {
             assertThat(body.at("/offers/0/total").asInt()).isEqualTo(15000);
             assertThat(body.at("/sources/0/id").asString()).isEqualTo("return-sealed");
             assertThat(body.path("answer").asString()).contains("15000", "7일");
-            assertThat(body.at("/trace/toolExecutions").asInt()).isEqualTo(3);
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
@@ -168,7 +149,6 @@ class ShoppingAgentLocalModelTest {
         try (var userABrowser = appClient.newSession()) {
             var body = post(userABrowser, "선물 추천");
             assertThat(body.path("status").asString()).isEqualTo("NEEDS_INPUT");
-            assertThat(body.at("/trace/toolExecutions").asInt()).isZero();
             assertThat(body.path("storedMessages").asInt()).isEqualTo(2);
         }
     }
@@ -254,42 +234,6 @@ class ShoppingAgentLocalModelTest {
             // Then: 사용자 A만 삭제되고 사용자 B의 대화는 유지되는지 검증
             assertThat(history(userABrowser).size()).isZero();
             assertThat(history(userBBrowser).size()).isEqualTo(2);
-        }
-    }
-
-    @Test
-    void 도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다() throws Exception {
-        // Given: 상품 검색 도구를 계속 요청하는 가짜 모델 설정
-        MODEL
-                .chat()
-                .setResponseFunction(request -> isIntent(request) ? intent("SHOPPING", "음료", "30000")
-                : createAssistantToolCallMessage("repeat", "searchProducts", "{}"));
-        try (var userABrowser = appClient.newSession()) {
-            // When: 상담 API 실행
-            var body = post(userABrowser, "30000원 음료 추천");
-
-            // Then: 도구 상한에서 중단하고 미완성 대화를 저장하지 않았는지 검증
-            assertThat(body.path("status").asString()).isEqualTo("TOOL_LIMIT");
-            assertThat(body.at("/trace/toolExecutions").asInt()).isEqualTo(4);
-            assertThat(body.path("storedMessages").asInt()).isZero();
-        }
-    }
-
-    @Test
-    void 시간_초과_뒤에_도착한_응답은_저장하지_않는다() throws Exception {
-        // Given: 응답이 시간 제한보다 늦게 오도록 설정
-        MODEL
-                .chat()
-                .setResponseDelay(java.time.Duration.ofMillis(1500));
-        try (var userABrowser = appClient.newSession()) {
-            // When: 상담 API 실행
-            var body = post(userABrowser, "선물 추천");
-
-            // Then: 시간 초과 이후에도 늦은 응답이 저장되지 않는지 검증
-            assertThat(body.path("status").asString()).isEqualTo("TIMEOUT");
-            Thread.sleep(800);
-            assertThat(history(userABrowser).size()).isZero();
-            assertThat(MODEL.chat().getRequests()).hasSize(1);
         }
     }
 

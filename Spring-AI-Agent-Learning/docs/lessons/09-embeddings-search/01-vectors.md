@@ -23,42 +23,53 @@
 
 예를 들어 설명용 벡터 `[1,0]`과 `[0.9,0.1]`은 방향이 가깝고 `[0,1]`은 상대적으로 다릅니다.
 이 숫자는 실제 모델 출력이 아닌 원리 설명용입니다. 실제 각 차원의 의미를 사람이 이름 붙여 해석하는 방식은 아닙니다.
-## 텍스트 하나를 변환하는 흐름
+## 텍스트 하나를 변환하기
 
-```mermaid
-sequenceDiagram
-    participant App as Java SearchService
-    participant AI as Spring AI EmbeddingModel
-    participant Model as 외부 임베딩 모델
-    App->>AI: embed(텍스트)
-    AI->>Model: 텍스트 임베딩 요청
-    Model-->>AI: 임베딩 응답
-    AI-->>App: float 배열
-    App->>App: 배열 길이와 값 반환
-```
-
-[SearchService.java](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/SearchService.java)의 `embed()` 메서드 발췌입니다.
-`embeddingModel`은 생성자로 주입받은 `EmbeddingModel`입니다. 반환 자료형 `EmbeddingVector`는 배열 길이인 `dimensions`와 배열 자체인 `values`를 담는 record입니다.
+[EmbeddingService](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/EmbeddingService.java)의 전체 코드입니다. `EmbeddingModel`은 Starter가 준비한 객체를 주입받습니다.
 
 ```java
-public EmbeddingVector embed(String text) {
-    float[] vectorValues = embeddingModel.embed(text);
-    return new EmbeddingVector(vectorValues.length, vectorValues);
+package com.example.ailearning.l09search;
+
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.stereotype.Service;
+
+/** 09-1: 텍스트 하나의 임베딩만 요청한다. 문서를 적재하지 않는다. */
+@Service
+public class EmbeddingService {
+    public record EmbeddingVector(int dimensions, float[] values) {}
+    private final EmbeddingModel embeddingModel;
+
+    public EmbeddingService(EmbeddingModel embeddingModel) {
+        this.embeddingModel = embeddingModel;
+    }
+
+    public EmbeddingVector embed(String text) {
+        float[] vectorValues = embeddingModel.embed(text);
+        return new EmbeddingVector(vectorValues.length, vectorValues);
+    }
 }
 ```
 
-문장을 보내면 `float[]`를 받고 그 길이와 값을 확인할 수 있습니다. 이 호출에도 외부 임베딩 API 사용량이 발생합니다.
-실행 설정과 벡터 조회 API는 [09-3의 설정과 실행](03-search.md)에서 확인합니다.
+## 실행과 확인
+
+같은 모듈에서 `embedding-only` 프로필을 선택하면 검색 Service·Controller를 제외합니다. 따라서 문서를 적재하지 않고 입력 텍스트 하나만 임베딩합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests '*EmbeddingOnlyLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootRun --args='--spring.profiles.active=embedding-only'
+curl http://127.0.0.1:8099/api/embedding -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비'
+```
+
+[테스트](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/EmbeddingOnlyLocalModelTest.java)는 시작 시 임베딩 요청이 없고 입력 후 요청이 한 번인지, 벡터 차원이 반환되는지 확인합니다. 로컬 테스트는 외부 API를 호출하지 않습니다. `bootRun`은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL`로 실제 모델을 사용합니다. 종료는 Ctrl+C입니다.
+
+실제 모델 연결은 [EmbeddingOnlyOpenAiLiveTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/EmbeddingOnlyOpenAiLiveTest.java)를 별도로 실행해 확인합니다. 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 
 ## 확인 질문
 
-`embedding.embed(text)`의 입력과 출력은 무엇이며, 벡터의 차원은 코드에서 어떻게 확인하나요?
+`embed(text)`의 입력과 출력은 무엇이며, 이 실습을 시작할 때 문서 임베딩도 발생하나요?
 
-<details>
-<summary>해설</summary>
-
-입력은 텍스트이고 출력은 `float[]` 숫자 벡터입니다. 반환 배열의 `length`로 차원을 확인하며, 예제의 `SearchService.embed()`는 이를 `dimensions` 필드에 담습니다.
-
+<details><summary>해설</summary>
+입력은 텍스트, 출력은 float 배열이며 길이가 차원입니다. embedding-only에서는 문서 적재를 하지 않아 실행한 텍스트의 임베딩만 요청합니다.
 </details>
 
-[이전](../09-embeddings-search.md) · [다음](02-store.md) · [단원 목차](../09-embeddings-search.md) · [학습 방법](../../learning-guide.md)
+[목차](../09-embeddings-search.md) · [다음: 기본 벡터 검색](02-store.md)

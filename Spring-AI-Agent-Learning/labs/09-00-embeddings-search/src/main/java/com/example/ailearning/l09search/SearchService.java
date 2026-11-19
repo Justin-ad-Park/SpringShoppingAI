@@ -1,5 +1,7 @@
 package com.example.ailearning.l09search;
 
+import org.springframework.context.annotation.Profile;
+
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
@@ -8,24 +10,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 
+@Profile("!embedding-only & !basic-search")
 @Service
 public class SearchService {
     public record SearchHit(String id, String text, String category, Double score) {}
     public record SearchComparison(List<SearchHit> keywordHits, List<SearchHit> vectorHits) {}
-    public record EmbeddingVector(int dimensions, float[] values) {}
-    private final EmbeddingModel embeddingModel;
     private final SimpleVectorStore policyVectorStore;
 
     public SearchService(EmbeddingModel embeddingModel) {
-        this.embeddingModel = embeddingModel;
         policyVectorStore = SimpleVectorStore.builder(embeddingModel)
                 .build();
         policyVectorStore.add(PolicyDocuments.createDocuments()); // 시작 시 문서를 임베딩해 인메모리 저장소에 적재한다.
-    }
-
-    public EmbeddingVector embed(String text) {
-        float[] vectorValues = embeddingModel.embed(text);
-        return new EmbeddingVector(vectorValues.length, vectorValues);
     }
 
     public SearchComparison compareSearchResults(String query, int topK, double threshold, String category) {

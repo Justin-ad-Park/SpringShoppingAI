@@ -22,6 +22,10 @@ sequenceDiagram
 
 그림은 기본 쇼핑 요청에서 가능한 경로입니다. 모델이 항상 이 순서로 한 번씩 호출한다는 보장은 없습니다. 인사에는 호출이 없을 수도 있습니다.
 
+## 실행 기록을 추가한 Agent
+
+11-2의 `BasicMcpChatService`가 제공 Provider만 사용하는 최소 예제입니다. 이 수업은 비교 실험을 위해 `McpToolExecutor`로 호출 기록과 실행 상한을 추가합니다. Hybrid에서 사용하는 인자 제한은 여기서는 적용하지 않습니다. 기본 연결과 자체 제어를 구분해 읽으세요.
+
 ## 서비스 전체 코드
 
 [전체 소스: McpAgentService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpAgentService.java)

@@ -1,10 +1,13 @@
 package com.example.ailearning.l12evaluation;
 
+import org.springframework.context.annotation.Profile;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+@Profile("!usage-only")
 @RestController
 @RequestMapping("/api/evaluation")
 public class EvaluationController {

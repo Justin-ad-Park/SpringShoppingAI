@@ -1,5 +1,15 @@
 # 11-00-mcp-workflow-agent
 
+## 최소 연결과 확장 예제
+
+| 학습 단계 | 구현 | 확인할 테스트 |
+|---|---|---|
+| 11-2 제공 Provider | [BasicMcpChatService](src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java) | [McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다` |
+| 11-3~6 비교·제약 | ShoppingMcpGateway·McpToolExecutor와 세 Service | 같은 테스트 클래스의 Workflow·Agent·Hybrid 사례 |
+
+`POST /api/mcp/basic`은 text/plain 질문을 받아 제공 Provider로 도구를 연결합니다. 모델 없는 `/api/mcp/tools`, `/api/mcp/shipping-policy`와 다릅니다. [Live](src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)의 Provider 사례는 실제 모델을 호출합니다.
+
+
 [11장 교재](../../docs/lessons/11-mcp-workflow-agent.md)의 세 방식은 같은 shopping-mcp 서버의 검색·계산 도구를 사용합니다.
 
 ## 설정과 실행

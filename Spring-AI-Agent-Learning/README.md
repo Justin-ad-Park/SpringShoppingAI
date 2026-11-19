@@ -53,7 +53,8 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 |---|---|---|
 | [05 보충 5](docs/lessons/05-tool-calling/05-tool-call-limits.md) | `labs/05-05-tool-call-limits` | 도구별·전체 호출 상한과 finishReason |
 | [02 보충 5](docs/lessons/02-first-call/05-model-timeout-retry.md) | `labs/02-05-model-timeout-retry` | 지연·오류 응답과 실제 HTTP 재시도 횟수 |
-| [10-4~5 표준 RAG](docs/lessons/10-rag/04-standard-indexing.md) | `labs/10-04-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
+| [10-1~2 표준 RAG](docs/lessons/10-rag/01-standard-indexing.md) | `labs/10-00-rag-advisor` | Reader·Splitter → VectorStore → QuestionAnswerAdvisor |
+| [13-8 상담 실행 제한](docs/lessons/13-shopping-agent/08-execution-limits.md) | `labs/13-08-limited-agent` | 모델 요청 수·전체 대기 제한·trace |
 | [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-02-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
 | [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-04-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
 
@@ -120,13 +121,14 @@ labs/
   07-00-chat-memory/            이전 대화의 직접 저장·재전달
   08-00-advisors/               호출 체인·메모리·도구 루프
   09-00-embeddings-search/      임베딩·유사도·필터
-  10-00-rag/                    문서 분할·검색·근거 확인
-  10-04-rag-advisor/            10장 보충 4·5: 표준 Reader·Splitter·RAG Advisor
+  10-03-custom-rag/                    문서 분할·검색·근거 확인
+  10-00-rag-advisor/            10장 기본: 표준 Reader·Splitter·RAG Advisor
   11-00-mcp-workflow-agent/     MCP 도구를 사용하는 세 실행 방식
   12-00-evaluation/             고정 사례 평가·사용량·실패 처리
   12-02-model-evaluation/       12장 보충 2: Spring AI Evaluator
   12-04-observability/          12장 보충 4: 기본 메트릭·Actuator
   13-00-shopping-agent/         상품·정책·후속 질문 통합
+  13-08-limited-agent/          13장 보충 8: 전체 실행 제한·추적
   13-05-intent-classification/  13장 보충 5: AWS 의도 트리 기반 단일 요청 분류
   13-06-intent-quality-evaluation/  13장 보충 6: 저비용 모델별 의도 분류 품질 비교
 ../gradlew               저장소 공통 Gradle Wrapper
