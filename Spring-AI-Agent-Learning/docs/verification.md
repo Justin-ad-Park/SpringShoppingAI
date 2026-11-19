@@ -736,3 +736,28 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 교육 자료와 README에서 실제 코드 발췌·변경된 클래스 링크를 맞추고 SDK 응답과 정책 적용 후 서비스 반환 타입의 차이를 설명했습니다. Live 결과 변수 선언만으로 세 서비스가 반환하는 타입을 확인할 수 있습니다.
 - 검증: ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar 성공. XML 기준 8+17=25개 통과(실패·오류·건너뜀 0), Live 테스트 소스도 컴파일했습니다. 로그는 /private/tmp/l14-naming-refactor-final.log입니다.
 - 정적 검사: Markdown 5개, 로컬 링크·앵커 46개 오류 0, Java 발췌 4개와 실제 소스 일치, git diff --check 통과. 실제 Jev·OpenAI API와 Live 의미 판단 검증은 실행하지 않았습니다. 이번 네이밍 수정은 커밋하지 않았습니다.
+
+
+## 08장 Advisor 강의와 전용 샘플 재구성 — 2026-11-18
+
+- 범위: 08-00-advisors 모듈은 유지하고 chain·memory·toolloop 패키지에 전용 서비스를 구성했습니다. 기존 통합 AdvisorChatService와 tools 활성화 분기를 제거했습니다. TraceAdvisor는 chain에서 배우고 toolloop에서 재사용하며, 메모리와 세션은 memory 예제에만 연결했습니다.
+- 실행 계약: POST /api/advisors/chain, POST·DELETE /api/advisors/memory/{conversationId}, POST /api/advisors/tool-loop로 분리했습니다. 기존 통합 경로를 남기지 않고 Controller·테스트·curl·README를 함께 변경했습니다. 다른 쇼핑 서비스나 단원 코드는 수정하지 않았습니다.
+- 강의: 08-1은 전후 처리와 order, 08-2는 MessageChatMemoryAdvisor의 후속 대화 연결, 08-3은 전체 요청과 도구 루프 안의 모델 요청 기록에 집중합니다. 02-memory-loop.md와 03-observe.md를 02-memory.md와 03-tool-loop.md로 재구성했습니다. 메인 소개의 반복 실습 안내·API 나열을 학습 경로로 교체하고 각 소수업에 전용 소스·테스트·입력·결과 해석·접힌 확인 질문을 연결했습니다.
+- 코드·이름: AdvisorChainChatService, MemoryAdvisorChatService, ToolLoopChatService와 각 전용 LocalModel·OpenAiLive 테스트를 제공합니다. 응답에 필요한 값만 각 서비스의 Reply로 반환합니다. 요청별 실행 목록, 메모리 서비스의 기존 직렬 처리와 사용자별 키 구분을 유지했습니다. PriceTools는 실제 실행을 Spy로 확인할 수 있게 주입합니다. 고정 테스트 값은 application-test.yml, 모델 대역 주소만 DynamicPropertySource에 둡니다.
+- 로컬 검증: ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*LocalModelTest' :Spring-AI-Agent-Learning:labs:08-00-advisors:bootJar. 최종 XML 기준 chain 3·memory 4·toolloop 2 = 총 9개 통과, 실패·오류·건너뜀 0. 빌드 성공과 JAR 내부의 새 클래스 배치를 확인했습니다. 기존 순서·재전달·중복 방지·실패 질문 보존·세션 격리·삭제를 유지하고, 이전 요청 미전달·입력 검증·도구 미요청 시 미실행 검증을 분리했습니다.
+- Live 검증: ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*OpenAiLiveTest'. 루트 .env의 실제 OpenAI를 호출했으며 API 사용량이 발생했습니다. 콘솔 기준 전용 테스트 3개 모두 통과, BUILD SUCCESSFUL(/tmp/advisor-rebuild-live.log). 체인 순서, 두 번째 실제 ChatModel Prompt의 이전 질문·실제 답변 포함, 실제 가격 도구 실행과 request 1회/model 2회 기록을 확인했습니다. 모델 문구는 고정하지 않고, 도구 반복은 Live 검증에서 정확히 2회로 제한하지 않았습니다. 이후 수정은 LocalModel 테스트 표현과 문서에만 적용했습니다.
+- 동기화·정적 검사: 07장의 연결 링크, 교육 계획·학습 과제·하네스 프로젝트 테스트 표를 갱신했습니다. 변경 문서 9개의 로컬 링크·앵커 126개 오류 0, 코드 블록·details 균형, 실제 소스와 문서 전체 코드 5개 일치, 이전 클래스·경로의 현재 참조 잔존 없음, git diff --check 통과. Mermaid 2개 문법도 임시 파서로 확인했습니다. 코드와 그림의 호출 순서를 대조했으나 실제 렌더링 화면은 확인하지 않았습니다.
+- 근거와 한계: Spring AI 2.0.2의 로컬 소스에서 메모리 Advisor의 조회·현재 user 선저장·정상 응답 후 assistant 저장 순서를 대조했습니다. 실제 API 성공은 이번 설정·실행의 근거이며 모든 모델의 도구 선택이나 성능을 보장하지 않습니다. 분산 동시성·영구 저장·스트리밍·RAG는 이 실습의 구현 범위가 아닙니다. 독립 검토 에이전트는 사용하지 않았으며 커밋하지 않았습니다.
+
+## 08장 기본 기능부터 배우는 다섯 소수업 구성 — 2026-11-18
+
+- 앞선 세 예제 구성에서 학습 순서를 다시 조정했습니다. 08-1 기본 로거 사용 → 08-2 기본·요청별 등록 → 08-3 메모리와 요청 파라미터 → 08-4 직접 구현·실행 순서 → 08-5 도구 루프 순서입니다. 호출 순서는 기본 사용법 뒤에 배치했습니다. 단원 소개·용어·API 인자 타입 설명을 보강하고, 각 소수업에 Lesson01~05 전용 Service와 LocalModel·Live 테스트를 연결했습니다.
+- 등록 범위: defaultAdvisors는 해당 ChatClient의 모든 요청에 적용하고, prompt 뒤의 advisors(Advisor...)는 현재 요청에 추가하며 기본 목록을 교체하지 않음을 검사했습니다. 등록 비교 예제에는 기본 로거와 추가 로거만 사용합니다. AdvisorSpec의 Consumer 람다와 Advisor 객체를 구분하고, param은 이미 등록한 Advisor가 읽을 설정값임을 설명했습니다.
+- 순서 예제: DefaultA(0)·DefaultB(10)를 기본 등록하고 AdvisorA(20)·AdvisorB(30)를 현재 요청에 추가했습니다. 전처리 네 개와 역순 후처리를 정확히 검사하고, 다음 기본 호출에는 DefaultA/B만 실행됨을 검사했습니다. 기본 객체가 공유되는 점을 고려해 기록은 요청마다 새 AdvisorTrace를 만들고 context로 전달합니다. 도구 루프도 이 기록 방식을 사용합니다.
+- 기준 대조: Spring AI 2.0.2의 실제 DefaultChatClient 소스에서 prompt의 기본 요청 설정 복사, 요청별 advisors의 목록 추가, Consumer의 설정값 전달을 확인했습니다. SimpleLoggerAdvisor의 DEBUG 요청·정상 응답 로그와 메모리 Advisor의 저장 시점도 실제 소스와 대조했습니다. 공식 Advisors API·ChatClient 설명을 참고 링크로 남겼습니다.
+- 로컬 검증: ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*LocalModelTest' :Spring-AI-Agent-Learning:labs:08-00-advisors:bootJar 성공. XML 기준 logging 1·registration 2·memory 4·chain 4·toolloop 2 = 13개 통과, 실패·오류·건너뜀 0. 로그는 /tmp/advisor-final-local.log, XML 사본은 /tmp/advisor-final-local-results입니다.
+- Live 검증: ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*OpenAiLiveTest' 성공. 실제 OpenAI를 호출해 다섯 테스트가 모두 통과했습니다(실패·오류·건너뜀 0, /tmp/advisor-final-live.log). 로거 출력, 등록 범위의 로그 수, 실제 후속 모델 입력의 이전 질문·답변, 네 Advisor의 순서, 실제 가격 도구 실행과 반복 모델 기록을 확인했습니다. 실제 모델 사용량이 발생했으며 응답 문구나 도구 반복 횟수는 고정하지 않았습니다.
+- 문서 동기화: 실습 README·교육 계획·학습 안내·07장의 연결·하네스 테스트 대응표를 갱신했습니다. 과거 검토 기록의 문구와 당시 이름은 보존하고 이동한 파일 링크만 현재 위치로 연결했습니다. 현재 안내 11개 문서의 로컬 링크·앵커 153개 오류 0, 전체 Java 발췌 8개와 소스 일치, Mermaid 1개 문법 검사 통과, git diff --check 통과.
+- 한계: Mermaid 렌더링 화면은 확인하지 않았습니다. 분산 동시성·영구 저장·스트리밍·RAG는 이번 샘플에서 검증하지 않았습니다. 한 에이전트가 교육·기술 관점을 나누어 검토했으며 별도 독립 검토는 수행하지 않았습니다. 커밋하지 않았습니다.
+
+- 추가 점검: 과거 검토 기록 3개의 링크·앵커 76개도 검사했습니다. 08장 이동 링크는 유효합니다. 기존 06장 ComparisonService.java·ShoppingTools.java를 가리키는 링크 2개는 대상 파일이 없어 실패했으며, 이번 08장 변경과 무관한 과거 기록이므로 수정하지 않았습니다.

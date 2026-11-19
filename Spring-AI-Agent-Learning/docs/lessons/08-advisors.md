@@ -1,105 +1,171 @@
-# 08. Advisor: 호출 전후 처리를 조합하기
+# 08. Advisor: AI 호출에 필요한 공통 기능 연결하기
 
 ## 이번 수업의 목표
 
-선수 지식은 07장의 메시지 조회·저장과 05장의 도구 호출입니다.
+02장의 ChatClient 호출을 이해하면 시작할 수 있습니다. 메모리 예제에서는 07장, 도구 예제에서는 05장의 내용을 연결합니다.
 
-- Advisor의 요청 전·응답 후 처리와 실행 순서를 설명합니다.
-- 메모리의 조회·전달·저장을 Advisor에 연결하고 직접 저장 방식과 비교합니다.
-- 도구 루프 안팎에서 기록한 횟수가 달라지는 이유를 실행 기록으로 확인합니다.
+- Advisor가 필요한 이유와 Spring AI가 제공하는 활용을 설명합니다.
+- 모든 요청에 적용할 기능과 이번 요청에만 추가할 기능을 구분합니다.
+- 메모리 연결을 통해 Advisor 객체와 요청별 설정값의 차이를 익힙니다.
+- 기본 사용법을 익힌 뒤 직접 구현과 실행 순서, 도구 루프의 기록 범위를 확인합니다.
 
-## 개념 먼저 이해하기
+## 어떤 문제를 해결할까?
 
-**Advisor(어드바이서)**는 모델 호출의 앞뒤에 필요한 처리를 연결하는 Spring AI의 기능입니다. 이전 대화를 질문에 추가하거나 호출 기록을 남기는 등, 여러 AI 기능에서 반복되는 처리를 일관되게 적용할 때 사용합니다.
+쇼핑 상담에는 질문에 답하는 것 외에도 반복해서 필요한 작업이 있습니다.
+모델에 무엇을 보냈는지 확인하고, 앞서 말한 예산을 후속 질문에 포함하고, 관련 배송 정책을 찾아 답변의 근거로 전달해야 합니다.
+이를 각 서비스의 모델 호출 앞뒤에 매번 직접 쓰면 같은 기능을 여러 곳에서 관리하게 됩니다.
 
-예를 들어 상담 서비스에서는 모델에 질문하기 전에 이전 대화를 함께 준비하고, 응답을 받은 뒤 대화를 저장해야 합니다. Spring AI가 제공하는 메모리 Advisor를 연결하면 이런 처리를 각 질문마다 직접 작성하는 부담을 줄일 수 있습니다.
+**Advisor(어드바이저)는 ChatClient의 요청 처리 과정에 연결하는 기능 객체**입니다.
+예를 들어 메모리 Advisor를 연결하면 이전 대화를 모델 입력에 준비하고 현재 대화를 저장하는 처리를 맡길 수 있습니다.
+Advisor는 애플리케이션에서 실행되는 코드이며, 그 이름이 별도의 AI 모델을 뜻하지는 않습니다.
 
-| 용어 | 쉬운 설명 | 예 |
+## 먼저 알아둘 용어
+
+먼저 **Advisor가 하는 일**을 이해하고, 그 일을 코드에서 어떤 인터페이스와 메서드로 표현하는지 연결해 봅니다.
+
+### Advisor의 역할을 설명하는 개념
+
+| 개념 | 쉬운 설명 | 연결되는 코드·예 |
 |---|---|---|
-| Advisor | 모델과 주고받는 요청·응답의 처리 과정에 참여하는 기능 | 메모리 연결, 호출 기록 |
-| 요청 전 처리 | 모델에 보내기 전에 입력을 준비하거나 보완하는 작업 | 이전 대화 추가 |
-| 응답 후 처리 | 받은 응답을 저장하거나 후속 작업에 사용하는 처리 | 모델 답변을 대화 메모리에 저장 |
-| Advisor 체인 | 여러 Advisor를 정해진 순서로 연결한 구성 | 대화 준비와 호출 기록을 함께 적용 |
+| 요청 전 처리 | 모델에 요청을 보내기 전에 하는 작업 | 로거 Advisor가 질문을 기록하거나, 메모리 Advisor가 이전 대화를 입력에 추가 |
+| 응답 후 처리 | 모델의 응답을 받은 뒤 하는 작업 | 로거 Advisor가 답변을 기록하거나, 메모리 Advisor가 답변을 대화 기록에 저장 |
+| Spring AI가 제공하는 Advisor | 위와 같은 기능을 Spring AI 개발팀이 구현해 라이브러리로 제공한 클래스 | `SimpleLoggerAdvisor`: 요청·응답 기록, `MessageChatMemoryAdvisor`: 대화 메모리 연결 |
+| 개발자가 직접 구현하는 Advisor | 서비스에 필요한 처리를 개발팀이 작성한 클래스 | 08-4의 `TraceAdvisor`: 전후 처리 단계 기록 |
+| Advisor 체인 | 여러 Advisor를 연결해 요청과 응답을 처리하는 구성 | 메모리 Advisor와 로거 Advisor를 같은 ChatClient에 연결 |
 
-Advisor는 애플리케이션 안에서 실행되는 처리 코드입니다. 이름 때문에 또 다른 AI가 답변에 조언하는 기능으로 생각하기 쉽지만, 별도의 모델이 있어야 하는 것은 아닙니다.
+### 위 개념을 코드로 표현하는 인터페이스와 메서드
 
-어떤 정보를 모델에 보낼지, 무엇을 언제 저장할지에 따라 서비스의 동작이 달라집니다. 개발팀은 제공되는 Advisor와 직접 구현한 처리를 조합합니다. 이 단원에서는 연결 순서에 따라 실행 기록과 대화 저장이 어떻게 달라지는지 확인합니다.
+인터페이스는 여러 클래스가 따르는 공통 규칙입니다. Spring AI가 제공하는 Advisor와 개발자가 직접 구현하는 Advisor 모두 아래 인터페이스를 통해 ChatClient에 연결됩니다.
 
-개념 참고: [Spring AI의 Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html).
+| 구분 | 실제 API 이름 | 위 개념과의 연결 | 샘플 위치와 확인할 코드 |
+|---|---|---|---|
+| 인터페이스 | `Advisor` | Advisor의 이름과 실행 순서를 나타내는 공통 규칙. 기능을 제공하는 주체가 Spring AI인지 개발자인지와 무관하게 적용 | [08-4](08-advisors/04-chain.md)의 [TraceAdvisor](../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/chain/TraceAdvisor.java): `CallAdvisor`를 통해 상속한 `getName()`·`getOrder()` 구현 |
+| 인터페이스 | `CallAdvisor` | 일반 응답 방식에서 요청 전·응답 후 처리를 구현하는 규칙. `adviseCall(...)` 안에서 다음 Advisor로 요청을 전달하고 반환된 응답을 처리 | [08-4](08-advisors/04-chain.md)의 [TraceAdvisor](../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/chain/TraceAdvisor.java): `adviseCall()`의 기록 처리와 `chain.nextCall(request)` |
+| 인터페이스 | `StreamAdvisor` | 답변을 조금씩 받는 스트리밍 방식의 처리 규칙. `adviseStream(...)`으로 요청과 응답 흐름에 참여 | 이 과정에는 직접 구현하는 스트리밍 Advisor 샘플 없음 |
+| 메서드 | `ChatClient.Builder.defaultAdvisors(...)` | 선택한 Advisor를 이 빌더로 생성하는 **ChatClient의 모든 요청에 적용하도록 등록** | [08-1](08-advisors/01-built-in.md)의 [Lesson01LoggingChatService](../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/logging/Lesson01LoggingChatService.java): 생성자에서 로거 Advisor 등록 |
+| 메서드 | `ChatClient.ChatClientRequestSpec.advisors(Advisor...)` | 선택한 Advisor를 **지금 구성하는 요청에만 추가하도록 등록** | [08-2](08-advisors/02-registration.md)의 [Lesson02AdvisorRegistrationService](../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationService.java): `chatWithAdditionalAdvisor()`에서 추가 Advisor 전달 |
+| 메서드 | `ChatClient.AdvisorSpec.param(...)` | 등록한 Advisor가 **이번 요청에서 읽을 설정값을 지정**. 예: 메모리 Advisor가 사용할 대화 ID | [08-3](08-advisors/03-memory.md)의 [Lesson03MemoryAdvisorChatService](../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/memory/Lesson03MemoryAdvisorChatService.java): `chat()`에서 `param(ChatMemory.CONVERSATION_ID, conversationKey)` 설정 |
 
-## 실습 안내
+예를 들어 `SimpleLoggerAdvisor`는 Spring AI가 제공하는 클래스이고, 일반 응답을 처리할 때 `CallAdvisor`의 규칙을 따릅니다.
+이 객체를 `defaultAdvisors(...)`에 전달하면 해당 ChatClient가 질문을 처리할 때마다 요청·응답을 기록합니다.
+즉, **Advisor 구현 클래스는 어떤 기능을 사용할지**, **등록 메서드(`defaultAdvisors` 또는 `advisors`)는 그 기능을 어느 요청에 적용할지**를 정합니다.
 
-선수 지식: 07의 직접 메시지 조회·저장, 05의 도구 호출.
-이번에는 **반복되는 호출 전후 작업을 Advisor로 옮기는 것**을 배웁니다.
-[그림 기준](../diagram-guide.md): 시퀀스는 되돌아오는 순서, 플로우차트는 도구 루프와 처리 위치를 보여줍니다.
+### ‘Spring AI가 제공한다’와 ‘모든 요청에 적용한다’는 서로 다른 설명이다
 
-## Spring AI API를 코드와 연결하기
+‘기본 제공 Advisor’라는 표현을 보더라도 **Spring AI가 구현해서 제공하는 Advisor**라는 뜻으로 읽으세요.
+반면 `defaultAdvisors(...)`의 `default`는 **그 ChatClient가 모든 요청에 사용할 설정**이라는 뜻입니다.
+두 뜻이 섞이지 않도록 이 문서에서는 ‘기본’만으로 줄여 부르지 않습니다.
 
-| API | 역할 | 이 단원에서 읽을 위치 |
+예를 들어 Spring AI가 제공하는 `SimpleLoggerAdvisor`도 이번 요청에만 추가할 수 있고,
+개발자가 직접 만든 `TraceAdvisor`도 ChatClient의 모든 요청에 적용할 수 있습니다.
+Advisor를 누가 구현했는지와 어느 요청에 적용할지는 따로 선택합니다.
+
+## defaultAdvisors와 advisors를 한 문장으로 구분하면
+
+**`defaultAdvisors(...)`는 등록한 Advisor를 그 ChatClient의 모든 요청에 적용하고, `.prompt()` 뒤의 `advisors(Advisor...)`는 지정한 Advisor를 이번 요청에만 추가합니다.**
+
+예를 들어 `defaultAdvisors(...)`로 로거 Advisor를 등록하고, 이번 요청의 `advisors(Advisor...)`에 진단용 Advisor를 추가했다고 합시다.
+이번 요청에는 로거와 진단용 Advisor가 함께 적용됩니다. 다음 질문을 새 `.prompt()`로 구성하면서 진단용 Advisor를 추가하지 않으면 로거만 적용됩니다.
+이번 요청에 Advisor를 추가해도 모든 요청에 적용하도록 등록한 로거가 사라지는 것은 아닙니다.
+
+`advisors(spec -> spec.param(...))`는 Advisor 객체 대신 **설정용 함수**를 받는 형태입니다.
+이 코드의 `param(...)`은 이미 등록한 Advisor가 사용할 값을 지정하며 새 Advisor를 추가하지 않습니다.
+구체적인 사용 코드는 [08-2](08-advisors/02-registration.md)·[08-3](08-advisors/03-memory.md)에서, 여러 Advisor를 함께 적용할 때의 실행 순서는 [08-4](08-advisors/04-chain.md)에서 배웁니다.
+
+## 어떤 기능이 제공될까?
+
+이 과정이 사용하는 **Spring AI 2.0.2의 배포 소스**를 기준으로 정리했습니다. 기능을 선택해 등록하는 클래스와 프레임워크 내부에서 사용하는 클래스를 구분합니다.
+클래스 이름을 누르면 해당 버전의 공식 소스를 볼 수 있습니다. ‘샘플 위치’가 빈 항목은 이 과정에 실행 샘플이 없습니다.
+
+### 기능을 선택해 사용하는 Advisor
+
+| 용도 | 클래스 | 하는 일 | 샘플 위치 |
+|---|---|---|---|
+| 로깅 | [`SimpleLoggerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SimpleLoggerAdvisor.java) | 요청과 정상 응답을 DEBUG 로그로 출력 | [08-1](08-advisors/01-built-in.md) |
+| 대화 메모리 | [`MessageChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/MessageChatMemoryAdvisor.java) | 이전 대화를 메시지 목록으로 모델 입력에 넣고 현재 대화를 저장 | [08-3](08-advisors/03-memory.md) |
+| 대화 메모리 | [`VectorStoreChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/VectorStoreChatMemoryAdvisor.java) | 벡터 저장소에서 관련 대화를 검색해 시스템 메시지에 넣고 대화를 저장 |  |
+| 검색 기반 답변(RAG) | [`QuestionAnswerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/QuestionAnswerAdvisor.java) | 벡터 저장소에서 질문과 관련된 문서를 검색해 모델 입력에 추가 | [10-5](10-rag/05-standard-advisor.md) |
+| 검색 기반 답변(RAG) | [`RetrievalAugmentationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-rag/src/main/java/org/springframework/ai/rag/advisor/RetrievalAugmentationAdvisor.java) | 질문 변환·문서 검색·문맥 구성 등 여러 검색 단계를 조합해 답변 생성을 지원 |  |
+| 도구 호출 | [`ToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallingAdvisor.java) | 모델이 요청한 도구를 실행하고 결과를 모델에 다시 보내는 반복 호출을 처리 | [08-5](08-advisors/05-tool-loop.md) |
+| 도구 탐색 | [`ToolSearchToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-tool-search-advisor/src/main/java/org/springframework/ai/chat/client/advisor/toolsearch/ToolSearchToolCallingAdvisor.java) | 많은 도구 중 필요한 도구를 검색하고 그 정의를 모델에 순차적으로 제공하며 실행 |  |
+| 입력 차단 | [`SafeGuardAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SafeGuardAdvisor.java) | 사용자 입력에 설정한 금칙어가 있으면 모델 호출을 차단하고 정해진 응답을 반환. 단순 단어 검사이므로 종합적인 유해성 판정 기능은 아님 |  |
+| 구조화 응답 검증 | [`StructuredOutputValidationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/StructuredOutputValidationAdvisor.java) | 모델의 JSON 응답을 스키마로 검사하고 실패하면 오류를 알려 정해진 횟수 안에서 재요청. 스트리밍 응답은 지원하지 않음 |  |
+| 응답 캐시 | [`SemanticCacheAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/vector-stores/spring-ai-redis-semantic-cache/src/main/java/org/springframework/ai/chat/cache/semantic/SemanticCacheAdvisor.java) | 의미가 비슷한 질문의 캐시된 답변을 찾으면 재사용하고, 없으면 모델을 호출해 답변을 캐시에 저장 |  |
+
+Spring AI가 제공한다는 것은 라이브러리에 해당 기능을 구현한 클래스가 있다는 뜻입니다. 모두가 08장 모듈에 포함되거나 자동으로 활성화되는 것은 아닙니다.
+벡터 검색·RAG·도구 탐색·캐시는 해당 모듈 의존성과 저장소 등 필요한 설정을 추가해야 사용할 수 있습니다.
+`ToolCallingAdvisor`는 이 과정의 Spring AI 2.0.2 기본 구성에서 ChatClient가 자동 연결합니다. 08-5에서는 그 안팎의 기록 범위를 비교합니다.
+
+### 프레임워크가 연결하는 모델 호출용 Advisor
+
+다음 두 클래스는 체인의 마지막에서 실제 모델에 연결하는 역할입니다. 일반적인 서비스에서는 직접 등록하지 않습니다.
+
+| 클래스 | 하는 일 | 샘플 위치 |
 |---|---|---|
-| `CallAdvisor` | `.call()` 요청·응답을 처리하는 인터페이스 | 08-1의 `TraceAdvisor.adviseCall()` |
-| `CallAdvisorChain.nextCall(...)` | 다음 Advisor로 넘기고 응답을 받음 | before와 after 사이 |
-| `getOrder()` | 작은 값부터 요청 진입, 응답은 역순 | A·B의 순서 비교 |
-| `MessageChatMemoryAdvisor` | 메모리 조회·전달·저장 연결 | 08-2의 기본 Advisor 등록 |
-| `ToolCallingAdvisor` | 모델의 도구 요청을 실행하고 결과로 재요청하는 루프 연결 | A·B 배치의 기준 |
-| `StreamAdvisor` | `.stream()`의 스트리밍 처리용 인터페이스 | 이번 실습에서는 구현하지 않는 선택 확장 |
+| [`ChatModelCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelCallAdvisor.java) | 일반 호출을 `ChatModel.call(...)`에 전달 | |
+| [`ChatModelStreamAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelStreamAdvisor.java) | 스트리밍 호출을 `ChatModel.stream(...)`에 전달 | |
 
-공통 기능은 생성 시 `.defaultAdvisors(...)`로 등록하고, 이번 요청의 처리나 매개변수는 `.advisors(...)`로 추가합니다. 대화 ID는 메모리 Advisor가 사용할 키이지 로그인 권한을 검사하는 값은 아닙니다.
+### 이전 코드에서 볼 수 있는 폐기 예정 이름
 
-### 한 사용자 요청과 여러 모델 요청
-
-사용자가 가격을 물어 모델이 도구를 한 번 사용한 뒤 최종 답변을 한다면, 모델에는 최초 질문과 도구 결과로 총 두 번 요청합니다. 전체 흐름을 감싸는 Advisor는 한 번, 루프 안의 Advisor는 두 번 실행될 수 있습니다. 따라서 기록 횟수를 사용자 질문 수로 바로 해석하지 않습니다.
-
-### 실무에서는 어디까지 맡길까?
-
-공통 메모리 연결·측정처럼 여러 서비스에서 반복하는 처리는 Advisor로 모으고, 상품 예산 검증이나 주문 승인 같은 업무 결정은 서비스·도메인 코드에 둡니다. 요청별 기록 목록은 요청마다 만들고, 공유 Advisor 필드에 여러 사용자의 상태를 섞지 않습니다. 상세 내용과 실패 시 저장 정책은 [08-2](08-advisors/02-memory-loop.md), 운영 관점의 연결은 [08-3](08-advisors/03-observe.md)에 있습니다.
-
-
-## 작은 수업으로 나누어 읽기
-
-처음에는 아래 순서로 하나씩 학습합니다. 전체 코드를 한 번에 이해하거나 보조 코드를 직접 작성할 필요는 없습니다.
-
-| 순서 | 소수업 | 완료 기준 |
+| 클래스 | 현재 상태 | 샘플 위치 |
 |---|---|---|
-| 1 | [호출 전후를 감싸는 Advisor](08-advisors/01-chain.md) | 여러 Advisor의 요청 전·응답 후 처리 순서를 이해합니다. |
-| 2 | [메모리와 도구 루프의 위치](08-advisors/02-memory-loop.md) | 앞에서 직접 만든 문맥 전달을 Advisor와 연결합니다. |
-| 3 | [순서와 호출 횟수 실험](08-advisors/03-observe.md) | Advisor의 위치에 따라 실행 순서와 반복 횟수가 달라지는 이유를 설명하고, 대화가 중복 저장되지 않는지 확인합니다. |
+| [`ToolCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallAdvisor.java) | 2.0부터 폐기 예정. 새 코드에서는 `ToolCallingAdvisor`를 사용 | |
 
-각 소수업은 이 단원의 실습 모듈을 함께 사용합니다. 표의 순서대로 개념과 실행 코드를 연결하세요.
-[공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)
+공식 설명에 등장하는 `ReReadingAdvisor`는 질문을 한 번 더 읽도록 프롬프트를 보완하는 **직접 구현 예제**입니다.
+2.0.2에서는 [테스트 소스의 예제](https://github.com/spring-projects/spring-ai/blob/v2.0.2/models/spring-ai-openai/src/test/java/org/springframework/ai/openai/chat/client/ReReadingAdvisor.java)에 있으며 배포되는 구현 클래스가 아니므로 위의 Spring AI 배포 클래스 목록과 구분합니다.
+이 과정의 `TraceAdvisor`도 직접 구현한 예제이며 Spring AI가 배포하는 클래스가 아닙니다.
 
-## 실행 코드와 테스트
+목록 근거: [2.0.2 공식 소스](https://github.com/spring-projects/spring-ai/tree/v2.0.2), [공식 API의 Advisor 구현 클래스 목록](https://docs.spring.io/spring-ai/docs/current/api/org/springframework/ai/chat/client/advisor/api/Advisor.html).
+공식 API의 `current` 주소는 업데이트될 수 있으므로, 버전별 포함 여부는 위 클래스별 2.0.2 소스 링크를 기준으로 확인합니다.
+Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4](08-advisors/04-chain.md)처럼 직접 구현할 수도 있습니다.
 
-[labs/08-00-advisors의 실행 안내](../../labs/08-00-advisors/README.md)를 확인합니다.
-이 단원의 기본 구현은 다음 명령으로 테스트·빌드·실행합니다. 명령은 저장소 루트 기준입니다.
+## 학습 순서와 샘플의 연결
+
+한 실행 모듈에서 **소수업별 Service와 테스트를 분리**합니다. 수업 번호가 클래스 이름에도 들어 있어 문서와 코드를 함께 찾을 수 있습니다.
+처음에는 Spring AI가 제공하는 로거 Advisor 하나를 사용하고, 그 다음 적용할 요청의 범위·설정값을 익힌 뒤 내부 실행 구조로 넘어갑니다.
+
+| 순서 | 학습할 내용 | 전용 Service | 확인할 결과 |
+|---|---|---|---|
+| [08-1. Spring AI가 제공하는 로거 사용](08-advisors/01-built-in.md) | 제공 기능을 연결하고 사용하기 | `Lesson01LoggingChatService` | 요청·응답 로그 |
+| [08-2. 등록 범위](08-advisors/02-registration.md) | 모든 요청에 적용하는 등록과 이번 요청에만 추가하는 등록 | `Lesson02AdvisorRegistrationService` | 로거는 모든 요청에 적용하고 추가 로거는 이번 요청에만 적용 |
+| [08-3. 메모리와 파라미터](08-advisors/03-memory.md) | 메모리 Advisor와 대화 ID 설정 람다 | `Lesson03MemoryAdvisorChatService` | 후속 요청에 이전 대화 포함 |
+| [08-4. 직접 구현과 호출 순서](08-advisors/04-chain.md) | CallAdvisor·getOrder·요청별 context | `Lesson04AdvisorChainChatService` | 모든 요청에 적용할 두 개와 이번 요청에만 추가할 두 개의 전후 순서 |
+| [08-5. 도구 루프와 기록 범위](08-advisors/05-tool-loop.md) | 전체 요청과 개별 모델 호출 구분 | `Lesson05ToolLoopChatService` | 한 질문에서 모델 기록이 반복되는 이유 |
+
+## 실행하기
+
+모듈은 [labs/08-00-advisors](../../labs/08-00-advisors/README.md) 하나입니다. 설정·실행 경로와 테스트 목록은 README에 있습니다.
+저장소 루트에서 다음 명령으로 다섯 소수업의 로컬 테스트를 실행합니다. 외부 API 호출은 없습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests com.example.ailearning.l08advisors.AdvisorLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*LocalModelTest'
 ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:bootJar
-./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:bootRun
 ```
 
-로컬 테스트는 고정 응답으로 순서·메시지 전달을 검증합니다. 실제 모델은 도구 사용 횟수가 달라질 수 있으며 `bootRun` 후 질문에는 API 비용이 발생할 수 있습니다.
+각 소수업의 Live 테스트는 루트 `.env`로 실제 OpenAI를 호출하며 API 사용량이 발생합니다.
+로컬 테스트는 고정 응답과의 연결·설정 동작을 확인합니다. 실제 모델의 문장이나 도구 선택 횟수가 같음을 보장하지는 않습니다.
 
 ## 확인 질문
 
-1. A의 order가 0, B가 10이고 둘 다 다음 처리를 호출한다면 요청과 정상 응답은 어떤 순서로 지나가나요?
-2. `MessageChatMemoryAdvisor`를 등록하고 서비스에서도 같은 메시지를 저장하면 어떤 문제가 생기나요?
-3. 도구 루프 안의 기록이 두 번 있다고 사용자도 두 번 질문했다고 볼 수 있나요?
+1. 여러 상담 서비스가 같은 호출 기록 기능을 사용하려면 Advisor를 어떻게 활용할 수 있나요?
+2. 특정 질문에만 필요한 Advisor를 `defaultAdvisors(...)`로 등록하면 어떤 요청에 적용되나요?
+3. 대화 ID를 요청마다 바꾸려면 메모리 Advisor를 매번 새로 구현해야 하나요?
 
 <details>
 <summary>해설</summary>
 
-1. 요청은 A → B, 응답은 B → A입니다. 먼저 진입한 A가 B의 반환을 기다렸다가 응답을 처리합니다.
-2. 같은 대화가 중복 저장될 수 있습니다. 조회·저장 책임을 한 방식에 두고 실패 시 저장 정책도 확인해야 합니다.
-3. 아닙니다. 한 질문을 처리하면서 도구 결과로 모델에 재요청할 수 있습니다. 사용자 요청과 모델 요청의 측정 범위를 구분합니다.
+1. Spring AI가 제공하는 `SimpleLoggerAdvisor` 또는 개발자가 기록 기능을 직접 구현한 Advisor를 각 ChatClient에 연결해 재사용할 수 있습니다.
+2. 해당 ChatClient의 모든 요청에 적용됩니다. 특정 질문을 처리할 때만 필요하다면 그 요청을 구성하는 `.prompt().advisors(Advisor...)`에 추가합니다.
+3. 아닙니다. `defaultAdvisors(...)`로 메모리 Advisor를 모든 요청에 적용하도록 등록하고, 각 요청에서는 `advisors(spec -> spec.param(...))`으로 사용할 대화 ID를 지정할 수 있습니다.
 
 </details>
 
 ## 참고 자료
 
-- [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html): 인터페이스와 순서의 기준입니다.
-- [Christian Tzolov / Spring Blog — Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): 도구 루프가 Advisor 체인에 위치하는 설명을 참고했습니다.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 외부 강의·예제의 확인 범위와 버전 주의점을 정리했습니다.
+- [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html): Advisor의 역할·인터페이스·순서 기준.
+- [Spring AI ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html): ChatClient의 모든 요청에 적용하는 설정·현재 요청의 설정·로깅 사용법.
+- [Spring AI Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html): 메모리 연결과 대화 ID.
+- [Spring Blog — Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): Advisor 체인의 도구 루프.
+- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 외부 자료의 확인 범위와 버전 주의점.
 
-[이전: 07장](07-chat-memory.md) · [다음: 09장](09-embeddings-search.md)
+[학습 방법](../learning-guide.md) · [교육 계획](../curriculum.md) · [이전: 07장](07-chat-memory.md) · [시작: 08-1](08-advisors/01-built-in.md) · [다음 단원: 09장](09-embeddings-search.md)

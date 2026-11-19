@@ -123,7 +123,7 @@ Mock 테스트는 프롬프트 구성·도구 실행·값 검증 같은 Java 코
 | 05 도구 호출 | `@Tool` 설명 한 문장을 바꾸고 모델에 보낸 `tools` 정의에서 확인 | 설명은 바뀌어도 Java 계산 결과는 같음 |
 | 06 Workflow·Agent | `BudgetProductTools`의 총액 필터 한 줄을 임시 제거하고 같은 로컬 테스트 실행 후 복원 | 커피가 예산을 초과해도 남으므로 단위 테스트와 Hybrid의 도구 결과 검사가 실패 |
 | 07 메모리 | `maxMessages(6)`을 4로 바꾸고 세 번 대화하기 | 저장 메시지는 최대 4개이며 이전 조건이 빠질 수 있음 |
-| 08 Advisor | `TraceAdvisor` A·B의 order를 서로 바꾸기 | 도구 없는 요청의 진입·반환 순서가 역전됨. 내부 도구 루프는 별도로 관찰 |
+| 08 Advisor | `Lesson01LoggingLocalModelTest`로 로그를 확인한 뒤 `Lesson02AdvisorRegistrationLocalModelTest` 실행 | 기본 기능 사용법을 익히고, 기본 등록은 매번·추가는 현재 요청에만 적용됨을 로그로 설명 |
 | 09 검색 | 같은 고정 벡터에서 threshold 또는 topK 중 하나만 변경 | 결과 점수는 같고 포함되는 문서 수만 달라지는지 비교 |
 | 10 RAG | 모델이 실제 검색에 없는 출처 ID를 선택하는 고정 응답 케이스 추가 | 답변 문구가 자연스러워도 `INVALID_CITATION` |
 | 11 MCP | 상품 가격 상한이 1원인 하이브리드 검색을 고정 응답으로 재현 | 실제 MCP 검색이 비어 있으면 `NO_RESULTS`; 빈 장바구니 0원을 구매 성공으로 표시하지 않음 |

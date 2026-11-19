@@ -1,0 +1,7 @@
+spring:
+  ai:
+    openai:
+      api-key: local-test-key
+      chat:
+        options:
+          model: learning-model

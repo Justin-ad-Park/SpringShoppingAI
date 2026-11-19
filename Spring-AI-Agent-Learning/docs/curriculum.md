@@ -40,7 +40,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 판단 | 06 Workflow와 Agent | 같은 상품 기능으로 고정 절차·모델 도구 선택·혼합 방식 구현 | 처리 순서를 코드로 정하는 방식과 모델이 다음 도구를 선택하는 방식의 차이 설명 | [교재·실습 완성](lessons/06-workflow-agent.md) |
 | 보충 | [02-5 모델 통신](lessons/02-first-call/05-model-timeout-retry.md) · [05-5 도구 제한](lessons/05-tool-calling/05-tool-call-limits.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
 | 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-2·07-3의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
-| 문맥 | 08 Advisor | 호출 전후 처리, 체인과 순서, 메모리 연결 | 도구 루프와 함께 동작하는 위치 설명 | [교재·실습 완성](lessons/08-advisors.md) |
+| 문맥 | 08 Advisor | 기본 로거 → 등록 범위 → 메모리 파라미터 → 직접 구현·순서 → 도구 루프 | 소수업별 Service·LocalModel·Live로 기본/요청별 적용·대화 재전달·실행 범위 확인 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
 | 연결 | 11 MCP Workflow·Agent·하이브리드 | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |

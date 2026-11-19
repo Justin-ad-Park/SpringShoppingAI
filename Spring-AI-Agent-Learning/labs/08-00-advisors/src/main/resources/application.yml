@@ -23,3 +23,8 @@ spring:
 server.servlet.session.cookie.name: LEARNING_ADVISOR_SESSION
 server.servlet.session.cookie.http-only: true
 server.servlet.session.cookie.same-site: strict
+
+# 08-1·08-2의 기본 로거 예제에서 요청·응답 본문을 확인합니다.
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: DEBUG

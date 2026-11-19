@@ -166,7 +166,7 @@ public class MemoryChatService {
 
 `ChatClient`를 한 번 생성해 재사용한다고 이전 대화가 연결되는 것은 아닙니다. 또한 `ChatMemory`를 DB 저장으로 바꾸더라도 `.messages(requestMessages)`로 전달하는 단계는 여전히 필요합니다.
 
-이 연결을 자동화하는 `MessageChatMemoryAdvisor`는 [08-2](../08-advisors/02-memory-loop.md)에서 배웁니다. 직접 저장하는 코드에 Advisor까지 추가하면 같은 메시지가 중복 저장될 수 있으므로 두 방식의 저장 책임을 겹치지 않게 합니다. 기본 Advisor와 이 서비스는 실패 시 질문이 남는 정책도 다릅니다.
+이 연결을 자동화하는 `MessageChatMemoryAdvisor`는 [08-2](../08-advisors/03-memory.md)에서 배웁니다. 직접 저장하는 코드에 Advisor까지 추가하면 같은 메시지가 중복 저장될 수 있으므로 두 방식의 저장 책임을 겹치지 않게 합니다. 기본 Advisor와 이 서비스는 실패 시 질문이 남는 정책도 다릅니다.
 
 ## 한 번의 후속 요청 처리
 
