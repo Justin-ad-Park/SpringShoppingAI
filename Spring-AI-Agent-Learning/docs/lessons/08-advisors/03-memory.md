@@ -88,6 +88,61 @@ public class Lesson03MemoryAdvisorChatService {
 3. 이전 메시지 조립과 `conversationMemory.add()`는 서비스에서 직접 수행하지 않습니다.<br>
    같은 처리를 다시 넣으면 중복 전달·저장이 생길 수 있습니다.
 
+### param(...)과 params(...)로 설정값 전달하기
+
+위 코드의 `advisorSpec`은 `ChatClient.AdvisorSpec` 타입입니다.<br>
+Spring AI가 제공하는 이 객체에 **이번 요청에서 Advisor가 사용할 설정값**을 넣습니다.<br>
+다음은 `ChatClient`에서 필요한 선언만 발췌한 코드입니다.
+
+```java
+import java.util.Map;
+
+public interface ChatClient {
+    interface AdvisorSpec {
+        AdvisorSpec param(String k, Object v);
+        AdvisorSpec params(Map<String, Object> p);
+        // 나머지 선언 생략
+    }
+    // 나머지 선언 생략
+}
+```
+
+| 메서드·인자 | 의미 | 이 예제에서 전달하는 값 |
+|---|---|---|
+| `param(k, v)` | 설정 이름과 값을 한 개씩 전달 | 대화 키 설정 한 개 |
+| `k` (`String`) | Advisor가 설정값을 찾을 때 사용하는 이름 | `ChatMemory.CONVERSATION_ID` |
+| `v` (`Object`) | 해당 이름에 저장할 값 | `conversationKey` |
+| `params(p)` | 설정 이름과 값을 Map에 담아 한 번에 전달 | 위와 같은 설정을 Map으로 전달 가능 |
+
+따라서 아래 코드는 **“이번 요청의 대화 기록은 `conversationKey`로 구분해 사용하세요”**라는 설정을 전달합니다.
+
+```java
+// 위 chat() 메서드 안의 요청 구성 부분을 발췌했습니다.
+String answer = chatClient
+        .prompt()
+        .user(question)
+        .advisors(advisorSpec -> advisorSpec.param(
+                ChatMemory.CONVERSATION_ID, conversationKey))
+        .call()
+        .content();
+```
+
+예를 들어 `conversationKey`가 `"session-1:budget"`이면, 메모리 Advisor는 그 키로 이전 메시지를 조회하고 현재 대화를 저장합니다.<br>
+`ChatMemory.CONVERSATION_ID`는 **설정 이름**이고, `conversationKey`는 **실제로 사용할 대화 키의 값**입니다.
+
+같은 설정을 `params(...)`로 전달하려면 `.advisors(...)` 부분을 다음처럼 바꿀 수 있습니다.<br>
+`Map`의 import는 `java.util.Map`입니다.
+
+```java
+.advisors(advisorSpec -> advisorSpec.params(
+        Map.of(ChatMemory.CONVERSATION_ID, conversationKey)))
+```
+
+설정 하나에는 `param(...)`이 간단하고, 여러 설정을 Map으로 준비했다면 `params(...)`로 함께 전달할 수 있습니다.<br>
+값의 타입이 `Object`여도 어떤 값이든 의미가 있는 것은 아닙니다.<br>
+설정 이름과 값의 타입은 사용하는 Advisor가 정한 방식에 맞춰야 합니다.<br>
+이 예제의 대화 키는 문자열이며, 모델에 보낼 질문 문장이 아니라 **메모리 Advisor가 대화 기록을 구분하는 데 사용하는 값**입니다.
+
 `owner`는 [AdvisorController](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/AdvisorController.java)가 얻은 서버 세션 ID입니다.<br>
 같은 `conversationId`라도 사용자 세션이 다르면 다른 대화 키를 만듭니다.<br>
 대화 ID만으로 로그인 권한을 확인하는 기능은 아닙니다.<br>
