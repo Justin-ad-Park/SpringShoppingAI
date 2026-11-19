@@ -6,7 +6,8 @@
 
 ## 어느 정도 급한 문의일까?
 
-“텀블러 재질이 궁금해요”와 “주문 취소 마감이 오늘인데 처리가 안 됐어요”는 상담 시급성이 다릅니다. Score는 애플리케이션이 낮은 단계부터 나열한 기준으로 고객 메시지를 평가합니다.
+“텀블러 재질이 궁금해요”와 “주문 취소 마감이 오늘인데 처리가 안 됐어요”는 상담 시급성이 다릅니다.<br>
+Score는 애플리케이션이 낮은 단계부터 나열한 기준으로 고객 메시지를 평가합니다.
 
 | 단계 | 시급성 기준 |
 |---|---|
@@ -14,11 +15,15 @@
 | 1 | 배송 지연·하자 같은 현재 문제, 즉시 조치할 기한은 제시되지 않음 |
 | 2 | 오늘 마감·현재 진행 중인 중복 결제 등 즉시 확인할 사정이 명시됨 |
 
-단계 번호는 배열의 순서이며 0부터 시작합니다. 세 단계의 점수 범위는 **0~2**입니다. 만족도·정답 확률·퍼센트와 혼동하지 않습니다. 메시지에 서술된 시급성을 평가하며 실제 주문 상태나 중복 결제를 확인하는 기능은 없습니다.
+단계 번호는 배열의 순서이며 0부터 시작합니다.<br>
+세 단계의 점수 범위는 **0~2**입니다.<br>
+만족도·정답 확률·퍼센트와 혼동하지 않습니다.<br>
+메시지에 서술된 시급성을 평가하며 실제 주문 상태나 중복 결제를 확인하는 기능은 없습니다.
 
 ## 코드 읽기
 
-[SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다. 다음은 `assessPriority()`의 실제 발췌입니다.
+[SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다.<br>
+다음은 `assessPriority()`의 실제 발췌입니다.
 
 ```java
     public SupportPriorityResult assessPriority(String message) {
@@ -35,7 +40,9 @@
 
 `SupportPriorityService.assessPriority()`는 Jev 응답에서 점수·confidence·항목별 확률을 읽고, `SupportRoutingPolicy`가 정한 상담 우선순위와 함께 `SupportPriorityResult`로 반환합니다.
 
-모델의 `score`는 단계별 확률을 반영한 값이므로 소수가 가능합니다. 예를 들어 0·1·2 단계의 확률이 각각 0.1·0.2·0.7이면 `0×0.1 + 1×0.2 + 2×0.7 = 1.6`입니다. 이것은 1.6점이며 80%의 정답 확률이라는 뜻은 아닙니다.
+모델의 `score`는 단계별 확률을 반영한 값이므로 소수가 가능합니다.<br>
+예를 들어 0·1·2 단계의 확률이 각각 0.1·0.2·0.7이면 `0×0.1 + 1×0.2 + 2×0.7 = 1.6`입니다.<br>
+이것은 1.6점이며 80%의 정답 확률이라는 뜻은 아닙니다.
 
 [SupportRoutingPolicy](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicy.java)가 아래 **실습용 정책**을 적용합니다.
 
@@ -46,7 +53,8 @@
 | confidence ≥ 0.7, 0.5 ≤ score < 1.5 | NORMAL |
 | confidence ≥ 0.7, score < 0.5 | LOW |
 
-점수를 정하는 모델과 점수로 우선순위를 정하는 Java 코드의 책임이 다릅니다. 실제 문의 큐나 상담원 배정은 이 샘플에 연결하지 않았습니다.
+점수를 정하는 모델과 점수로 우선순위를 정하는 Java 코드의 책임이 다릅니다.<br>
+실제 문의 큐나 상담원 배정은 이 샘플에 연결하지 않았습니다.
 
 ## 요청과 결과 관찰
 
@@ -60,17 +68,20 @@ curl -X POST http://localhost:8114/api/jev/priority -H 'Content-Type: text/plain
 {"score":1.6,"confidence":0.8,"probabilities":{"0":0.1,"1":0.2,"2":0.7},"priority":"HIGH"}
 ```
 
-Jev 원본 응답에는 단계 설명인 `legend`도 포함됩니다. 이번 HTTP 응답은 코드에 정의한 고정 기준을 사용하므로 점수·확률·confidence와 정책 결과만 반환합니다.
+Jev 원본 응답에는 단계 설명인 `legend`도 포함됩니다.<br>
+이번 HTTP 응답은 코드에 정의한 고정 기준을 사용하므로 점수·확률·confidence와 정책 결과만 반환합니다.
 
 ## 검증
 
-[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 순서 있는 기준 배열의 전송과 소수 점수 변환을 검사합니다. [정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.5·1.5·0.7 경계와 낮은 confidence의 REVIEW 우선 적용을 검증합니다.
+[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 순서 있는 기준 배열의 전송과 소수 점수 변환을 검사합니다.<br>
+[정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.5·1.5·0.7 경계와 낮은 confidence의 REVIEW 우선 적용을 검증합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest.Score*' --tests '*SupportRoutingPolicyUnitTest'
 ```
 
-실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다. [Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
+실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
+[Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
 
 ## 확인 질문
 
@@ -80,8 +91,11 @@ Jev 원본 응답에는 단계 설명인 `legend`도 포함됩니다. 이번 HTT
 <details>
 <summary>해설</summary>
 
-1. 아닙니다. Score는 확률을 반영한 연속 값이므로 단계 사이의 값이 나올 수 있습니다.
-2. 아닙니다. confidence가 0.7 미만이므로 REVIEW로 분류합니다. 높은 점수와 믿고 사용할 수 있는 판단인지는 별개입니다.
+1. 아닙니다.<br>
+   Score는 확률을 반영한 연속 값이므로 단계 사이의 값이 나올 수 있습니다.
+2. 아닙니다.<br>
+   confidence가 0.7 미만이므로 REVIEW로 분류합니다.<br>
+   높은 점수와 믿고 사용할 수 있는 판단인지는 별개입니다.
 
 </details>
 

@@ -1,22 +1,25 @@
 # 05-1. 모델 없이 상품 서비스를 호출하기
 
-**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md).<br>
+저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 가격과 배송비의 출처를 일반 Java 코드에서 찾습니다.
 
-**코드 읽기 안내:** 먼저 Product와 ProductPriceDetail를 읽습니다. 모델을 연결하기 전에 상품 P01의 총액 15000원을 손으로 계산하세요.
+**코드 읽기 안내:** 먼저 Product와 ProductPriceDetail를 읽습니다.<br>
+모델을 연결하기 전에 상품 P01의 총액 15000원을 손으로 계산하세요.
 
 ## 왜 도구가 필요한가?
 
-모델은 우리 상품 데이터에 직접 접근하지 못합니다. “허브티 가격이 얼마야?”라는 질문만으로 실제 가격을 보장할 수 없습니다.
-먼저 Java 상품 서비스를 만들고, 모델에게 이 서비스를 사용할 수 있는 도구 설명을 전달합니다.
+모델은 우리 상품 데이터에 직접 접근하지 못합니다.<br>
+“허브티 가격이 얼마야?”라는 질문만으로 실제 가격을 보장할 수 없습니다.<br>
+먼저 Java 상품 서비스를 만들고, 모델에게 이 서비스를 사용할 수 있는 도구 설명을 전달합니다.<br>
 모델은 도구 이름과 인자를 응답하고, Spring AI가 Java 메서드를 실행한 뒤 결과를 모델에 다시 보냅니다.
 
 **도구(tool)**는 애플리케이션이 허용한 실행 가능한 기능입니다.
 
 ## 먼저 일반 Java 서비스를 읽기
 
-가상 상품 데이터와 배송 정책을 사용하는 Java 서비스부터 읽습니다.
+가상 상품 데이터와 배송 정책을 사용하는 Java 서비스부터 읽습니다.<br>
 상품 한 개씩 비교하며, 국내 기본 배송비는 상품 가격 3만원 이상이면 0원, 미만이면 3000원입니다.
 
 | ID | 상품 | 카테고리 | 상품 가격 | 배송비 포함 총액 |
@@ -85,13 +88,15 @@ public class ProductCatalog {
 }
 ```
 
-`search()`는 일반 Java 필터입니다. `calculatePriceDetail()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.
+`search()`는 일반 Java 필터입니다.<br>
+`calculatePriceDetail()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.<br>
 [Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/Product.java)와 [ProductPriceDetail](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductPriceDetail.java)는 04장에서 배운 record입니다.
 
 
 ## 상품 기능만 테스트하기
 
-[ProductCatalogUnitTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/domain/ProductCatalogUnitTest.java)는 `new ProductCatalog()`로 객체를 만들고 검색 조건·상품 ID 검증과 무료 배송을 검사합니다. Spring이나 모델 서버를 띄울 필요가 없습니다.
+[ProductCatalogUnitTest](../../../labs/05-00-tool-calling/src/test/java/com/example/ailearning/l05tools/domain/ProductCatalogUnitTest.java)는 `new ProductCatalog()`로 객체를 만들고 검색 조건·상품 ID 검증과 무료 배송을 검사합니다.<br>
+Spring이나 모델 서버를 띄울 필요가 없습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.domain.ProductCatalogUnitTest
@@ -106,7 +111,8 @@ public class ProductCatalog {
 <details>
 <summary>해설</summary>
 
-모델의 답변만으로 실제 상품 가격과 배송 정책이 맞다고 보장할 수 없기 때문입니다. Java 서비스가 카탈로그와 배송 규칙으로 값을 확인하고, 이후 모델은 도구로 받은 결과를 답변에 사용하도록 역할을 나눕니다.
+모델의 답변만으로 실제 상품 가격과 배송 정책이 맞다고 보장할 수 없기 때문입니다.<br>
+Java 서비스가 카탈로그와 배송 규칙으로 값을 확인하고, 이후 모델은 도구로 받은 결과를 답변에 사용하도록 역할을 나눕니다.
 
 </details>
 

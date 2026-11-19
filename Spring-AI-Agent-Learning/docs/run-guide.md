@@ -1,7 +1,7 @@
 # 실습 실행 위치와 모델 설정
 
-모든 Gradle 명령은 SpringShoppingAI 저장소 루트에서 실행합니다.
-각 소수업 상단의 모듈 README에 test·bootJar·bootRun 명령이 있습니다.
+모든 Gradle 명령은 SpringShoppingAI 저장소 루트에서 실행합니다.<br>
+각 소수업 상단의 모듈 README에 test·bootJar·bootRun 명령이 있습니다.<br>
 모든 학습 모듈은 실제 실행 시 **저장소 루트 `.env`를 properties 설정 파일로 읽습니다.**
 터미널에서 키를 입력하거나 `export`할 필요가 없으며, zsh·Bash 중 특정 셸을 사용할 필요도 없습니다.
 
@@ -13,9 +13,11 @@ OPENAI_MODEL=<사용 가능한 채팅 모델 ID>
 OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 ```
 
-위 대괄호 부분은 실제 값으로 바꿉니다. 임베딩 모델은 이를 사용하는 실습에서만 필요합니다.
-파일은 `KEY=value` 형식으로 작성하고, `export` 접두어나 값을 감싸는 따옴표는 넣지 않습니다.
-키가 담긴 `.env`는 Git에 커밋하지 않습니다. 저장소의 `.gitignore`가 루트 `.env`를 제외합니다.
+위 대괄호 부분은 실제 값으로 바꿉니다.<br>
+임베딩 모델은 이를 사용하는 실습에서만 필요합니다.<br>
+파일은 `KEY=value` 형식으로 작성하고, `export` 접두어나 값을 감싸는 따옴표는 넣지 않습니다.<br>
+키가 담긴 `.env`는 Git에 커밋하지 않습니다.<br>
+저장소의 `.gitignore`가 루트 `.env`를 제외합니다.
 
 | 실행 모듈 | 루트 .env에서 사용하는 값 |
 |---|---|
@@ -24,11 +26,17 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 | `10-03-custom-rag`, `10-00-rag-advisor`, `12-00-evaluation`, `13-00-shopping-agent`, `13-08-limited-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-04-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
-`13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13장 선택 보충입니다. 둘 다 `OPENAI_API_KEY`가 필요하며 임베딩 모델은 사용하지 않습니다. 13-5는 기본 `OPENAI_MODEL`을 사용하고, 13-6은 테스트 코드에 적은 세 모델 ID를 각각 요청하므로 해당 모델 접근 권한이 필요합니다. [13-5 실행 안내](../labs/13-05-intent-classification/README.md)와 [13-6 실행 안내](../labs/13-06-intent-quality-evaluation/README.md)를 따릅니다.
+`13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13장 선택 보충입니다.<br>
+둘 다 `OPENAI_API_KEY`가 필요하며 임베딩 모델은 사용하지 않습니다.<br>
+13-5는 기본 `OPENAI_MODEL`을 사용하고, 13-6은 테스트 코드에 적은 세 모델 ID를 각각 요청하므로 해당 모델 접근 권한이 필요합니다.<br>
+[13-5 실행 안내](../labs/13-05-intent-classification/README.md)와 [13-6 실행 안내](../labs/13-06-intent-quality-evaluation/README.md)를 따릅니다.
 
-14장 Jev는 OpenAI 대신 TypeSafe API를 호출합니다. `14-00-jev-decisions`는 루트 `.env`의 `TYPESAFE_API_KEY`와 선택 값 `TYPESAFE_DEFAULT_MODEL`(기본 jev-latest)을 사용합니다. 연결 주소는 해당 YAML의 `spring.ai.typesafe.base-url`이며, 로컬 테스트는 이 주소만 고정 응답 서버로 변경합니다. [14장 실행 안내](../labs/14-00-jev-decisions/README.md)를 따릅니다.
+14장 Jev는 OpenAI 대신 TypeSafe API를 호출합니다.<br>
+`14-00-jev-decisions`는 루트 `.env`의 `TYPESAFE_API_KEY`와 선택 값 `TYPESAFE_DEFAULT_MODEL`(기본 jev-latest)을 사용합니다.<br>
+연결 주소는 해당 YAML의 `spring.ai.typesafe.base-url`이며, 로컬 테스트는 이 주소만 고정 응답 서버로 변경합니다.<br>
+[14장 실행 안내](../labs/14-00-jev-decisions/README.md)를 따릅니다.
 
-두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.
+두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.<br>
 모델 ID는 계정에서 접근 가능하고 해당 실습의 기능을 지원하는 값을 사용합니다.
 
 모델 서버의 기본 주소는 각 모듈의 `application.yml`에 둡니다.
@@ -40,8 +48,10 @@ spring:
       base-url: https://api.openai.com/v1
 ```
 
-Live 테스트는 이 주소를 그대로 사용합니다. 로컬 고정 응답 테스트만 `@DynamicPropertySource`에서
-`spring.ai.openai.base-url`을 테스트 서버 주소로 덮어씁니다. 테스트 서버의 포트는 실행할 때 정해지므로 Java에서 등록합니다.
+Live 테스트는 이 주소를 그대로 사용합니다.<br>
+로컬 고정 응답 테스트만 `@DynamicPropertySource`에서
+`spring.ai.openai.base-url`을 테스트 서버 주소로 덮어씁니다.<br>
+테스트 서버의 포트는 실행할 때 정해지므로 Java에서 등록합니다.<br>
 다중 제공 업체 모듈의 Anthropic 기본 주소도 YAML에 두고, 해당 로컬 테스트에서만 덮어씁니다.
 
 ## 2. 파일을 읽는 위치와 실행 방법
@@ -54,13 +64,13 @@ spring:
     import: "optional:file:.env[.properties]"
 ```
 
-`.env`는 프로세스 환경 변수를 설정하는 스크립트가 아니라 Spring Boot가 읽는 설정 파일입니다.
-`[.properties]`는 파일을 Java properties 형식으로 읽으라는 뜻입니다.
+`.env`는 프로세스 환경 변수를 설정하는 스크립트가 아니라 Spring Boot가 읽는 설정 파일입니다.<br>
+`[.properties]`는 파일을 Java properties 형식으로 읽으라는 뜻입니다.<br>
 `optional:`은 파일이 없을 때 파일 읽기 오류를 내지 않는다는 뜻이며, 실제 호출에 필요한 설정값까지 생략할 수 있다는 뜻은 아닙니다.
 
-각 모듈의 Gradle `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 맞춥니다.
-IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도 저장소 루트로 맞춥니다.
-프로세스 환경 변수에 같은 이름이 이미 설정되어 있다면 파일 값보다 우선하므로, 예상과 다른 모델이 선택될 때 확인하세요.
+각 모듈의 Gradle `bootRun`과 `test`는 작업 디렉터리를 저장소 루트로 맞춥니다.<br>
+IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도 저장소 루트로 맞춥니다.<br>
+프로세스 환경 변수에 같은 이름이 이미 설정되어 있다면 파일 값보다 우선하므로, 예상과 다른 모델이 선택될 때 확인하세요.<br>
 키나 전체 `.env` 내용을 콘솔에 출력하지 않습니다.
 
 예를 들어 Tool Calling 실습은 루트 `.env`를 준비한 뒤 다음 명령으로 실행합니다.
@@ -79,15 +89,21 @@ IDE에서 Gradle을 거치지 않고 직접 실행한다면 Working directory도
 | `주제LocalModelTest` | 로컬 고정 응답 HTTP 서버를 사용한 모델·도구·웹 연결 | 없음 |
 | `주제OpenAiLiveTest` / `주제ProvidersLiveTest` | 실제 OpenAI 또는 여러 제공 업체와의 연결 | 있음 |
 
-`LocalModelTest`는 로컬 LLM 실행을 뜻하지 않습니다. 외부 API 대신 고정 응답 서버를 사용하는 통합 테스트입니다. 객체별 단위 테스트를 제공하는 모듈에서는 README의 로컬 명령이 단위·통합 클래스를 함께 선택합니다.
+`LocalModelTest`는 로컬 LLM 실행을 뜻하지 않습니다.<br>
+외부 API 대신 고정 응답 서버를 사용하는 통합 테스트입니다.<br>
+객체별 단위 테스트를 제공하는 모듈에서는 README의 로컬 명령이 단위·통합 클래스를 함께 선택합니다.
 
-로컬 Mock 테스트는 `.env` 읽기를 끄고 더미 키·모델 이름·로컬 서버 주소를 직접 설정합니다.
-서버의 HTTP 처리와 결과 출력은 [공통 테스트 도구](../test-support/README.md)가 제공하며, 단원별 응답과 시나리오는 각 테스트에 남아 있습니다.
-고정 HTTP 응답으로 코드의 연결을 검증하며, 실제 모델의 답변 품질을 평가하는 테스트와 다릅니다.
-각 모듈에는 로컬 테스트와 별도 OpenAI Live 테스트가 있습니다. Live 클래스는 모듈 README에서 확인합니다.
-테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에 HTTP 상태·응답·조건 객체·검색 결과를 이름 반복 없이 출력합니다. 출력 형식은 [공통 테스트 도구](../test-support/README.md#실행과-결과-출력)에서 관리합니다.
-Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`에도 포함됩니다. 로컬 검증은 반드시 아래처럼 클래스를 지정합니다.
-태그·실행 허용 변수·별도 Live 태스크는 없습니다. IntelliJ에서도 원하는 클래스나 메서드의 Run을 선택합니다.
+로컬 Mock 테스트는 `.env` 읽기를 끄고 더미 키·모델 이름·로컬 서버 주소를 직접 설정합니다.<br>
+서버의 HTTP 처리와 결과 출력은 [공통 테스트 도구](../test-support/README.md)가 제공하며, 단원별 응답과 시나리오는 각 테스트에 남아 있습니다.<br>
+고정 HTTP 응답으로 코드의 연결을 검증하며, 실제 모델의 답변 품질을 평가하는 테스트와 다릅니다.<br>
+각 모듈에는 로컬 테스트와 별도 OpenAI Live 테스트가 있습니다.<br>
+Live 클래스는 모듈 README에서 확인합니다.<br>
+테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에 HTTP 상태·응답·조건 객체·검색 결과를 이름 반복 없이 출력합니다.<br>
+출력 형식은 [공통 테스트 도구](../test-support/README.md#실행과-결과-출력)에서 관리합니다.<br>
+Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`에도 포함됩니다.<br>
+로컬 검증은 반드시 아래처럼 클래스를 지정합니다.<br>
+태그·실행 허용 변수·별도 Live 태스크는 없습니다.<br>
+IntelliJ에서도 원하는 클래스나 메서드의 Run을 선택합니다.
 
 첫 실습에서 Mock 테스트만 실행하려면 클래스를 지정하세요.
 
@@ -109,20 +125,25 @@ Live는 루트 `.env`의 실제 설정을 사용하며, 모듈의 전체 `test`�
 ./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
 ```
 
-Live의 문장은 실행마다 달라질 수 있습니다. 실제 도구 선택·검색 품질·평가 결과는 출력으로 확인하며, 고정 응답 테스트의 결과와 구분합니다.
+Live의 문장은 실행마다 달라질 수 있습니다.<br>
+실제 도구 선택·검색 품질·평가 결과는 출력으로 확인하며, 고정 응답 테스트의 결과와 구분합니다.
 
 ## 11장 MCP 실습
 
-[실행 안내](../labs/11-00-mcp-workflow-agent/README.md)를 따릅니다. 수동 실행은 shopping-mcp(기본 8082)와 학습 앱(기본 8106)을 각각 시작합니다.
-로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다. 실제 외부 모델 테스트는 별도 OpenAiLiveTest 클래스입니다.
+[실행 안내](../labs/11-00-mcp-workflow-agent/README.md)를 따릅니다.<br>
+수동 실행은 shopping-mcp(기본 8082)와 학습 앱(기본 8106)을 각각 시작합니다.<br>
+로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다.<br>
+실제 외부 모델 테스트는 별도 OpenAiLiveTest 클래스입니다.
 
 ## 02·05장의 별도 보충 실습
 
-기본 Workflow 모듈과 각각 독립 실행합니다. 두 모듈 모두 루트 `.env`의 채팅 키·모델만 사용합니다.
+기본 Workflow 모듈과 각각 독립 실행합니다.<br>
+두 모듈 모두 루트 `.env`의 채팅 키·모델만 사용합니다.
 
 | 문서 | 모듈 | 포트 |
 |---|---|---|
 | [05 보충 5: 도구 호출 횟수 제한](lessons/05-tool-calling/05-tool-call-limits.md) | [05-05-tool-call-limits](../labs/05-05-tool-call-limits/README.md) | 8110 |
 | [02 보충 5: 타임아웃·재시도](lessons/02-first-call/05-model-timeout-retry.md) | [02-05-model-timeout-retry](../labs/02-05-model-timeout-retry/README.md) | 8111 |
 
-12장의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다. 요청 횟수는 고정 HTTP 서버가 받은 기록으로 확인하며, 실제 모델 연결은 각 모듈의 Live 클래스로 구분합니다.
+12장의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다.<br>
+요청 횟수는 고정 HTTP 서버가 받은 기록으로 확인하며, 실제 모델 연결은 각 모듈의 Live 클래스로 구분합니다.

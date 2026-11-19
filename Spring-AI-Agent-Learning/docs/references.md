@@ -1,6 +1,7 @@
 # 레퍼런스: 무엇을 언제 읽을까?
 
-검토 갱신: 2026-11-12(07~13장 보강 자료). 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.
+검토 갱신: 2026-11-12(07~13장 보강 자료).<br>
+이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.<br>
 한국어 교재를 먼저 읽고 막힌 개념에 해당하는 절만 찾아보세요.
 
 ## 첫 묶음에서 읽을 자료
@@ -29,16 +30,26 @@
 
 ## 블로그·강좌·예제 검토
 
-- [Spring 공식 블로그: Building Effective Agents with Spring AI (2025-01-21)](https://spring.io/blog/2025/01/21/spring-ai-agentic-patterns/): 패턴의 목적과 흐름을 이해하는 데 유용합니다. 2025년 예제이므로 현재 2.0 API에 그대로 붙여 넣기보다 개념 자료로 사용합니다.
-- [Spring 공식 블로그: Tool Calling in Spring AI 2.0 (2026-06-15)](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): 1.x와 2.0 구조 차이를 설명하며 현재 교육 버전과 연결하기 좋습니다. Tool Calling을 직접 해본 뒤 읽는 보충 자료로 채택했습니다.
-- [공식 spring-ai-examples](https://github.com/spring-projects/spring-ai-examples): 구현 비교용으로 채택합니다. 단원 완료 후 관련 예제만 열고 해당 예제의 build 파일과 README에서 버전을 확인하세요. main 브랜치는 계속 바뀝니다.
-- [Spring Academy 입문 과정](https://spring.academy/courses/spring-ai-intro): 과정 후보로 확인했습니다. 이번에는 강의 본문 전체를 읽지 못해 세부 품질·접근 조건·버전 호환성 검토를 보류했습니다. 필수 자료로 지정하지 않습니다.
+- [Spring 공식 블로그: Building Effective Agents with Spring AI (2025-01-21)](https://spring.io/blog/2025/01/21/spring-ai-agentic-patterns/): 패턴의 목적과 흐름을 이해하는 데 유용합니다.<br>
+  2025년 예제이므로 현재 2.0 API에 그대로 붙여 넣기보다 개념 자료로 사용합니다.
+- [Spring 공식 블로그: Tool Calling in Spring AI 2.0 (2026-06-15)](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): 1.x와 2.0 구조 차이를 설명하며 현재 교육 버전과 연결하기 좋습니다.<br>
+  Tool Calling을 직접 해본 뒤 읽는 보충 자료로 채택했습니다.
+- [공식 spring-ai-examples](https://github.com/spring-projects/spring-ai-examples): 구현 비교용으로 채택합니다.<br>
+  단원 완료 후 관련 예제만 열고 해당 예제의 build 파일과 README에서 버전을 확인하세요.<br>
+  main 브랜치는 계속 바뀝니다.
+- [Spring Academy 입문 과정](https://spring.academy/courses/spring-ai-intro): 과정 후보로 확인했습니다.<br>
+  이번에는 강의 본문 전체를 읽지 못해 세부 품질·접근 조건·버전 호환성 검토를 보류했습니다.<br>
+  필수 자료로 지정하지 않습니다.
 
-입문 흐름 전체를 하나의 블로그에 맡기기보다, 자체 한국어 교재가 선수 지식을 연결하고 공식 자료로 사실을 확인하는 방식을 택했습니다. 블로그의 코드가 짧다는 이유만으로 초보자에게 쉬운 것은 아닙니다.
+입문 흐름 전체를 하나의 블로그에 맡기기보다, 자체 한국어 교재가 선수 지식을 연결하고 공식 자료로 사실을 확인하는 방식을 택했습니다.<br>
+블로그의 코드가 짧다는 이유만으로 초보자에게 쉬운 것은 아닙니다.
 
 ## 07~13장 보강에 사용한 교육 자료
 
-확인일: 2026-11-12. 아래는 공개 본문·예제 또는 강의 소개를 실제로 확인한 범위입니다. 강의 영상 전체를 시청하거나 외부 예제를 실행한 것으로 기록하지 않습니다. 상용 서비스 설계는 공급사 기능 안내와 공개 기술 예제를 바탕으로 한 교재의 제안이며, 공개 예제를 특정 고객의 운영 사례로 소개하지 않습니다.
+확인일: 2026-11-12.<br>
+아래는 공개 본문·예제 또는 강의 소개를 실제로 확인한 범위입니다.<br>
+강의 영상 전체를 시청하거나 외부 예제를 실행한 것으로 기록하지 않습니다.<br>
+상용 서비스 설계는 공급사 기능 안내와 공개 기술 예제를 바탕으로 한 교재의 제안이며, 공개 예제를 특정 고객의 운영 사례로 소개하지 않습니다.
 
 | 연결 단원 | 자료·작성 주체 | 반영한 설명 | 확인 범위·주의점 |
 |---|---|---|---|
@@ -57,32 +68,40 @@
 | 13 | [Building effective agents](https://www.anthropic.com/research/building-effective-agents) / Anthropic | 단순한 구성에서 시작하고 고정 흐름·모델 판단을 구분 | 공개 원저자 글 확인. Spring AI API 설명과 구분 |
 | 13 | [Spring AI for Beginners](https://github.com/microsoft/Spring-AI-for-Beginners) / Microsoft | 기능별 목표에서 RAG·도구·MCP·Agent로 이어지는 교육 구성 | 공개 목차와 Agent 모듈 확인. 전체 실습 실행·Azure 배포는 하지 않음 |
 
-Spring Academy의 [Observability Lab](https://spring.academy/courses/spring-ai-intro/lessons/observability-lab)도 확인했으나 본문을 읽을 수 없어 기술 설명의 근거로 채택하지 않았습니다. 유료 강의 본문이나 확인하지 못한 영상 내용을 추정해서 보강하지 않습니다.
+Spring Academy의 [Observability Lab](https://spring.academy/courses/spring-ai-intro/lessons/observability-lab)도 확인했으나 본문을 읽을 수 없어 기술 설명의 근거로 채택하지 않았습니다.<br>
+유료 강의 본문이나 확인하지 못한 영상 내용을 추정해서 보강하지 않습니다.
 
-단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다. 새 선택 보충은 [07-6](lessons/07-chat-memory/06-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
+단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다.<br>
+새 선택 보충은 [07-6](lessons/07-chat-memory/06-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
 
 ## 버전과 자료를 읽는 기준
 
-현재 확인한 공식 기본 레퍼런스는 Spring AI 2.0.2입니다. `/reference/` URL은 향후 다른 버전을 가리킬 수 있습니다.
-읽을 때 페이지의 버전 표시를 확인하고 실습의 `build.gradle`과 비교하세요.
-실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.0.2와 Boot 4.0.9로 통일했습니다.
-SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유틸리티를 기본 기능처럼 혼합하지 않습니다.
+현재 확인한 공식 기본 레퍼런스는 Spring AI 2.0.2입니다.<br>
+`/reference/` URL은 향후 다른 버전을 가리킬 수 있습니다.<br>
+읽을 때 페이지의 버전 표시를 확인하고 실습의 `build.gradle`과 비교하세요.<br>
+실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.0.2와 Boot 4.0.9로 통일했습니다.<br>
+SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유틸리티를 기본 기능처럼 혼합하지 않습니다.<br>
 자료를 업데이트할 때는 버전 확인 → 컴파일 → 로컬 계약 테스트 → 필요한 경우 실제 모델 평가 순으로 확인합니다.
 
 ## 13-5 의도 분류의 참고 자료
 
-확인일: 2026-11-10. [13-5 교재](lessons/13-shopping-agent/05-intent-classification.md)와 [실습](../labs/13-05-intent-classification/README.md)의 구현 근거입니다.
+확인일: 2026-11-10.<br>
+[13-5 교재](lessons/13-shopping-agent/05-intent-classification.md)와 [실습](../labs/13-05-intent-classification/README.md)의 구현 근거입니다.
 
 | 자료 | 읽을 부분 | 참고한 내용과 적용 범위 |
 |---|---|---|
 | AWS 공식 블로그: Information extraction with LLMs using Amazon SageMaker JumpStart — [한국어 경로](https://aws.amazon.com/ko/blogs/machine-learning/information-extraction-with-llms-using-amazon-sagemaker-jumpstart/), [영문 원문](https://aws.amazon.com/blogs/machine-learning/information-extraction-with-llms-using-amazon-sagemaker-jumpstart/) | Classification using prompt engineering → Sub-intents and intent trees | main_intent/sub_intents 트리, JSON 삽입, #### 구분 표시, 출력 예시, 한 문의에서 대분류·소분류를 함께 받는 방식. 내용은 영문 원문으로 확인했습니다. |
 | [Spring AI Output Converters](https://docs.spring.io/spring-ai/reference/api/structured-output/converters.html) | 구조화 응답 변환의 역할과 한계 | .entity()로 모델 응답을 record로 받는 구현 근거. 형식 변환과 코드 조합의 업무 검증을 구분합니다. |
 
-AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특정 상용 쇼핑몰의 도입 실적이나 이 저장소 샘플의 인증 근거가 아닙니다. 보험 분류를 쇼핑 분류로 바꾸고 한글 설명·보류 정책·JSON 반환·Java 검증을 추가한 자체 실습으로 사용합니다. SageMaker 배포와 파인튜닝 절차는 이번 구현 범위에 넣지 않습니다.
+AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다.<br>
+특정 상용 쇼핑몰의 도입 실적이나 이 저장소 샘플의 인증 근거가 아닙니다.<br>
+보험 분류를 쇼핑 분류로 바꾸고 한글 설명·보류 정책·JSON 반환·Java 검증을 추가한 자체 실습으로 사용합니다.<br>
+SageMaker 배포와 파인튜닝 절차는 이번 구현 범위에 넣지 않습니다.
 
 ## 13-6 OpenAI 모델 품질 비교 참고 자료
 
-확인일: 2026-11-10. [13-6 교재](lessons/13-shopping-agent/06-intent-quality-evaluation.md)와 [Live 실습](../labs/13-06-intent-quality-evaluation/README.md)의 모델 ID·표준 가격·용도 설명을 확인한 자료입니다.
+확인일: 2026-11-10.<br>
+[13-6 교재](lessons/13-shopping-agent/06-intent-quality-evaluation.md)와 [Live 실습](../labs/13-06-intent-quality-evaluation/README.md)의 모델 ID·표준 가격·용도 설명을 확인한 자료입니다.
 
 | 자료 | 확인한 내용 | 이 실습에서의 사용 |
 |---|---|---|
@@ -91,12 +110,15 @@ AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특
 | [GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini) | mini 모델, 입력 $0.75·출력 $4.50/백만 토큰 | mini 등급 비교 모델 |
 | [OpenAI API 가격표](https://developers.openai.com/api/docs/pricing) | 표준·캐시·배치 등 가격 구분 | 실습 표는 표준 입력·출력 가격만 발췌 |
 
-가격·모델 접근 권한은 바뀔 수 있습니다. 가격표는 예상 단가 비교용이며 테스트 실행 비용을 계산하지 않습니다. 평가 결과는 교육용 다섯 문항의 정답 일치율이지 OpenAI가 보증한 모델 품질 순위나 전체 서비스 정확도가 아닙니다.
+가격·모델 접근 권한은 바뀔 수 있습니다.<br>
+가격표는 예상 단가 비교용이며 테스트 실행 비용을 계산하지 않습니다.<br>
+평가 결과는 교육용 다섯 문항의 정답 일치율이지 OpenAI가 보증한 모델 품질 순위나 전체 서비스 정확도가 아닙니다.
 
 
 ## 14장 Jev의 근거 자료
 
-확인일: 2026-11-13. Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니다.
+확인일: 2026-11-13.<br>
+Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니다.
 
 | 자료 | 확인 범위 |
 |---|---|
@@ -107,4 +129,6 @@ AWS 글은 2024-05-07 게시된 가상 보험 상담 기술 예제입니다. 특
 | [JevChatModel](https://spring-ai-community.github.io/spring-ai-typesafe/latest/chat/JevChatModel/) | 실험적인 채팅 어댑터의 범위. 기본 실습에는 사용하지 않음 |
 | [제공 업체의 Jev 소개](https://github.com/jevmodel/jev-ai-model) | 비영어 정확도 별도 검증 필요성 |
 
-Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/응답 타입·/v1/systemone 경로·자동 구성·timeout/retry 설정을 대조하고 현재 프로젝트에서 컴파일했습니다. 제공 업체 API나 예제는 실제 호출하지 않았으며 한국어 성능·지연·비용 비교도 하지 않았습니다. 교육 예제의 문의 분류표와 임계값은 이 교재의 실습 정책입니다.
+Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/응답 타입·/v1/systemone 경로·자동 구성·timeout/retry 설정을 대조하고 현재 프로젝트에서 컴파일했습니다.<br>
+제공 업체 API나 예제는 실제 호출하지 않았으며 한국어 성능·지연·비용 비교도 하지 않았습니다.<br>
+교육 예제의 문의 분류표와 임계값은 이 교재의 실습 정책입니다.

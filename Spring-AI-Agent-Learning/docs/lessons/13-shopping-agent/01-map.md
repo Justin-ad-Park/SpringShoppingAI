@@ -1,6 +1,7 @@
 # 13-1. 통합하기 전에 책임 지도 그리기
 
-**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md).<br>
+저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 상품 추천·정책 안내·후속 질문을 함께 처리하도록 모델의 판단, 도구 실행, 결과 검증, 대화 저장의 책임과 처리 흐름을 설계합니다.
 
@@ -21,15 +22,19 @@
 | 임베딩·RAG | 09~10 | `PolicySearch`가 검색한 실제 정책만 근거로 사용 |
 | 평가와 실패 관찰 | 12 | 정상·실패 시나리오와 요청별 실행 기록 확인 |
 
-이 예제는 **Hybrid 구조**입니다. 추출 → 도구 선택 → 검증 → 저장이라는 바깥 Workflow는 Java가 고정합니다.
-도구 선택 구간에서는 모델이 상품 검색·배송비·정책 중 다음 행동을 선택합니다.
+이 예제는 **Hybrid 구조**입니다.<br>
+추출 → 도구 선택 → 검증 → 저장이라는 바깥 Workflow는 Java가 고정합니다.<br>
+도구 선택 구간에서는 모델이 상품 검색·배송비·정책 중 다음 행동을 선택합니다.<br>
 프롬프트에 순서를 적어서 바깥 흐름을 강제하는 방식이 아닙니다.
 
 ## 2. 구조와 실행 흐름
 
-처음에는 그림에서 `CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `CounselResultVerifier`의 경로를 따라가세요. `CounselService`는 검증 결과를 대화 메모리에 저장합니다. 실행 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다. 클래스 전체를 먼저 암기할 필요는 없습니다.
+처음에는 그림에서 `CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `CounselResultVerifier`의 경로를 따라가세요.<br>
+`CounselService`는 검증 결과를 대화 메모리에 저장합니다.<br>
+실행 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다.<br>
+클래스 전체를 먼저 암기할 필요는 없습니다.
 
-[그림 공통 기준](../../diagram-guide.md)에 따라 클래스 그림은 책임, 흐름 그림은 결정 주체를 표현합니다.
+[그림 공통 기준](../../diagram-guide.md)에 따라 클래스 그림은 책임, 흐름 그림은 결정 주체를 표현합니다.<br>
 화살표의 의존 관계와 실행 순서를 혼동하지 마세요.
 
 ```mermaid
@@ -47,8 +52,9 @@ classDiagram
     PolicyTools --> CounselToolResults : 근거 기록
 ```
 
-`CounselToolResults`는 **이번 요청에서 도구가 조회한 결과를 모아 두는 객체**입니다. 대화 메모리와 다릅니다.
-메모리는 이전 대화를 재사용하고, `CounselToolResults`는 이번 답변의 상품 ID·출처 ID를 `CounselResultVerifier`가 검사할 수 있게 보관합니다.
+`CounselToolResults`는 **이번 요청에서 도구가 조회한 결과를 모아 두는 객체**입니다.<br>
+대화 메모리와 다릅니다.<br>
+메모리는 이전 대화를 재사용하고, `CounselToolResults`는 이번 답변의 상품 ID·출처 ID를 `CounselResultVerifier`가 검사할 수 있게 보관합니다.<br>
 도구 객체와 이 기록은 요청마다 새로 만들므로 다른 요청의 조회 사실을 섞지 않습니다.
 
 ```mermaid
@@ -68,12 +74,14 @@ flowchart TD
     V -->|예| S[Java: 실제 금액과 정책 원문 표시 후 대화 저장]
 ```
 
-그림의 정상 결과에는 확인된 결과 없음도 포함합니다. 검증되지 않은 상품 선택은 실패로 보류합니다.
-이 그림은 기본 상담입니다. 전체 실행 시간·횟수 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다.
+그림의 정상 결과에는 확인된 결과 없음도 포함합니다.<br>
+검증되지 않은 상품 선택은 실패로 보류합니다.<br>
+이 그림은 기본 상담입니다.<br>
+전체 실행 시간·횟수 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다.
 
 ## 3. 코드 읽는 순서
 
-실행 모듈: [13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md).
+실행 모듈: [13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md).<br>
 패키지: `com.example.ailearning.l13shopping`.
 
 1. [ProductCatalog](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/domain/ProductCatalog.java): 05와 같은 상품·배송비 규칙.
@@ -91,7 +99,9 @@ flowchart TD
 <details>
 <summary>해설</summary>
 
-이전 대화는 후속 질문의 의도와 유지할 조건을 해석하는 문맥이고, 이번 조회 결과는 선택한 상품·정책이 실제로 확인됐는지 검증하는 근거입니다. 과거 답변을 이번에 조회한 사실로 취급하면 현재 확인하지 않은 ID나 금액을 확인된 사실로 잘못 취급할 수 있습니다. 예제는 대화 메모리와 요청별 `CounselToolResults`를 구분해 이 역할을 나눕니다.
+이전 대화는 후속 질문의 의도와 유지할 조건을 해석하는 문맥이고, 이번 조회 결과는 선택한 상품·정책이 실제로 확인됐는지 검증하는 근거입니다.<br>
+과거 답변을 이번에 조회한 사실로 취급하면 현재 확인하지 않은 ID나 금액을 확인된 사실로 잘못 취급할 수 있습니다.<br>
+예제는 대화 메모리와 요청별 `CounselToolResults`를 구분해 이 역할을 나눕니다.
 
 </details>
 

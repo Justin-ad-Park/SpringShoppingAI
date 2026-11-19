@@ -1,16 +1,20 @@
 # 13-3. 조회한 사실로 최종 결과 확인
 
-**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/13-00-shopping-agent](../../../labs/13-00-shopping-agent/README.md).<br>
+저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 상품 총액과 출처 ID를 실제 도구 기록으로 검증합니다.
 
-**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다. `CounselToolResults`에서 찾지 못하는 ID는 거절합니다.
+**코드 읽기 안내:** 선택한 ID가 있다는 것과 실제로 조회했다는 것은 다릅니다.<br>
+`CounselToolResults`에서 찾지 못하는 ID는 거절합니다.
 
 ## 3.2 모델이 반환한 ID도 검사하기
 
-`ProductPriceDetail`은 상품 한 건의 금액 정보이며, 여러 상품은 `List<ProductPriceDetail>`로 표현합니다.
-`CandidateEvidenceSelection`에는 `productIds`, `sourceIds`만 있습니다. 자연어 답변 문장은 받지 않습니다.
-`CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다. 검증 후 `createVerifiedAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
+`ProductPriceDetail`은 상품 한 건의 금액 정보이며, 여러 상품은 `List<ProductPriceDetail>`로 표현합니다.<br>
+`CandidateEvidenceSelection`에는 `productIds`, `sourceIds`만 있습니다.<br>
+자연어 답변 문장은 받지 않습니다.<br>
+`CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다.<br>
+검증 후 `createVerifiedAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
 
 ```java
     public CounselResult verifySelection(Intent requestIntent,
@@ -55,21 +59,24 @@
     }
 ```
 
-배송비를 조회하지 않은 상품, 예산 초과 상품, 카테고리 불일치, 검색하지 않은 정책 ID는 거절합니다.
-검색된 모든 상품의 총액이 예산을 넘는 것도 실제 조회 결과로 확인해야 `NO_RESULTS`가 됩니다.
+배송비를 조회하지 않은 상품, 예산 초과 상품, 카테고리 불일치, 검색하지 않은 정책 ID는 거절합니다.<br>
+검색된 모든 상품의 총액이 예산을 넘는 것도 실제 조회 결과로 확인해야 `NO_RESULTS`가 됩니다.<br>
 모델이 그냥 빈 목록을 골랐다는 이유만으로 “상품이 없다”고 확정하지 않습니다.
 
-`VERIFIED`는 이 예제의 금액·ID·조건 검사를 통과했다는 뜻입니다.
-정책 문서 자체의 진실성, 질문과 근거의 의미적 적합성, 최선의 상품 선택까지 보장하지 않습니다.
-또한 **사용자가 요청한 모든 항목에 답했는지**도 검사하지 않습니다. 예를 들어 “상품 추천과 반품 기간”을 함께 물어도,
-모델이 유효한 상품만 선택하고 `sourceIds`를 빈 목록으로 반환하면 현재 검증은 `VERIFIED`를 반환할 수 있습니다.
-따라서 이 상태를 “요청 전체 처리 완료”로 해석하면 안 됩니다. 13-4의 표는 기대 시나리오이며 모든 실제 실행의 보장은 아닙니다.
+`VERIFIED`는 이 예제의 금액·ID·조건 검사를 통과했다는 뜻입니다.<br>
+정책 문서 자체의 진실성, 질문과 근거의 의미적 적합성, 최선의 상품 선택까지 보장하지 않습니다.<br>
+또한 **사용자가 요청한 모든 항목에 답했는지**도 검사하지 않습니다.<br>
+예를 들어 “상품 추천과 반품 기간”을 함께 물어도,
+모델이 유효한 상품만 선택하고 `sourceIds`를 빈 목록으로 반환하면 현재 검증은 `VERIFIED`를 반환할 수 있습니다.<br>
+따라서 이 상태를 “요청 전체 처리 완료”로 해석하면 안 됩니다.<br>
+13-4의 표는 기대 시나리오이며 모든 실제 실행의 보장은 아닙니다.<br>
 10장의 자유 생성 답변과 달리 **실제 금액과 정책 원문을 표시**하는 선택을 했습니다.
 
 
 <details><summary>선택 과제: 검증 범위를 확장한다면</summary>
 
-복합 요청의 누락까지 막아야 하는 서비스라면 필요한 결과 항목을 따로 추출하고, 정책 답변이 필요한데 출처가 없는 경우도 검사해야 합니다. 이번 예제의 검증 범위에는 포함하지 않습니다.
+복합 요청의 누락까지 막아야 하는 서비스라면 필요한 결과 항목을 따로 추출하고, 정책 답변이 필요한데 출처가 없는 경우도 검사해야 합니다.<br>
+이번 예제의 검증 범위에는 포함하지 않습니다.<br>
 자연스러운 요약을 추가한다면 12장 방식으로 사실 일치도 평가를 먼저 확장해야 합니다.
 
 </details>
@@ -81,7 +88,8 @@
 <details>
 <summary>해설</summary>
 
-`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다. 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
+`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다.<br>
+다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
 
 </details>
 

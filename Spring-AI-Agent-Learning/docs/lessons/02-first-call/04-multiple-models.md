@@ -1,14 +1,16 @@
 # 02 보충 4. 서로 다른 제공 업체의 모델을 함께 사용하기
 
-[생성자 주입 설명](01-constructor-injection.md)에서 배운 연결 과정을 두 모델로 확장합니다.
-이 문서는 선택 학습입니다. 이후 기본 수업을 진행하기 위한 필수 조건은 아닙니다.
+[생성자 주입 설명](01-constructor-injection.md)에서 배운 연결 과정을 두 모델로 확장합니다.<br>
+이 문서는 선택 학습입니다.<br>
+이후 기본 수업을 진행하기 위한 필수 조건은 아닙니다.<br>
 실행 예제는 기존 첫 호출 실습과 분리한 [02-04-multiple-models](../../../labs/02-04-multiple-models/README.md)에 있습니다.
 
 ### 권장 학습 순서
 
 먼저 [1절](#1-먼저-두-가지-경우를-구분하기)로 차이를 구분하고,
-[8절의 요청별 모델 ID 변경](#8-같은-업체의-모델-두-개를-쓴다면)을 읽으세요. 같은 OpenAI 클라이언트에서 요청 옵션 하나를 바꾸는 부분에 집중합니다.
-그다음 다른 업체도 함께 사용하려면 2~7절을 순서대로 따라가며 두 Starter·설정·이름이 있는 클라이언트를 구성합니다.
+[8절의 요청별 모델 ID 변경](#8-같은-업체의-모델-두-개를-쓴다면)을 읽으세요.<br>
+같은 OpenAI 클라이언트에서 요청 옵션 하나를 바꾸는 부분에 집중합니다.<br>
+그다음 다른 업체도 함께 사용하려면 2~7절을 순서대로 따라가며 두 Starter·설정·이름이 있는 클라이언트를 구성합니다.<br>
 8절 코드는 같은 실행 모듈의 `openAiChatClient`를 재사용하므로 **설명은 먼저 읽어도, 기존 첫 실습에 그대로 붙여 넣는 코드는 아닙니다.**
 로컬 테스트는 두 업체의 실제 키 없이 실행할 수 있고, 이 모듈로 실제 호출할 때는 두 업체 설정을 모두 준비해야 합니다.
 
@@ -19,16 +21,18 @@
 | 같은 제공 업체의 모델을 여러 개 사용 | 요청의 모델 이름 | OpenAI 계정에서 사용할 수 있는 모델 A와 B |
 | 다른 제공 업체의 모델을 사용 | 호출 구현, 인증 정보, 모델 이름 | OpenAI 모델과 Anthropic Claude 모델 |
 
-`ChatClient`는 공통 호출 API입니다. `OpenAiChatModel`과 `AnthropicChatModel`은 각각의 제공 업체 API를 호출하는 Java 객체입니다.
-실제 언어 모델은 제공 업체 서버에서 실행됩니다.
+`ChatClient`는 공통 호출 API입니다.<br>
+`OpenAiChatModel`과 `AnthropicChatModel`은 각각의 제공 업체 API를 호출하는 Java 객체입니다.<br>
+실제 언어 모델은 제공 업체 서버에서 실행됩니다.<br>
 OpenAI용 객체에 Anthropic 모델 이름만 넣는다고 Anthropic으로 연결되지는 않습니다.
 
-이번 실습은 **OpenAI와 Anthropic의 호출 객체를 각각 준비하고, 이름으로 구분한 ChatClient 두 개를 주입**합니다.
+이번 실습은 **OpenAI와 Anthropic의 호출 객체를 각각 준비하고, 이름으로 구분한 ChatClient 두 개를 주입**합니다.<br>
 두 업체의 응답을 합치거나 모델이 스스로 업체를 선택하는 기능은 포함하지 않습니다.
 
 ## 2. 두 제공 업체의 Starter 추가하기
 
-실습의 `build.gradle`입니다. 버전은 상위 프로젝트의 Spring AI 2.0.2 설정을 따릅니다.
+실습의 `build.gradle`입니다.<br>
+버전은 상위 프로젝트의 Spring AI 2.0.2 설정을 따릅니다.
 
 ```groovy
 dependencies {
@@ -39,7 +43,7 @@ dependencies {
 tasks.named('bootRun') { workingDir rootProject.projectDir }
 tasks.named('test') { workingDir rootProject.projectDir }
 ```
-OpenAI Starter가 OpenAI 자동 설정을, Anthropic Starter가 Anthropic 자동 설정을 제공합니다.
+OpenAI Starter가 OpenAI 자동 설정을, Anthropic Starter가 Anthropic 자동 설정을 제공합니다.<br>
 두 Starter를 추가했으므로 각각의 설정값으로 두 종류의 모델 호출 객체를 준비할 수 있습니다.
 
 ## 3. 제공 업체별 설정 준비하기
@@ -76,8 +80,10 @@ spring:
         model: ${ANTHROPIC_MODEL}
         max-tokens: 256
 ```
-저장소 루트 `.env`에는 다음 네 값을 준비합니다. 아래 대괄호 부분은 실제 키와 계정에서 사용할 수 있는 모델 ID로 바꿉니다.
-키가 담긴 파일은 Git에 커밋하지 않습니다. 이미 있는 OpenAI 설정은 그대로 사용하면 됩니다.
+저장소 루트 `.env`에는 다음 네 값을 준비합니다.<br>
+아래 대괄호 부분은 실제 키와 계정에서 사용할 수 있는 모델 ID로 바꿉니다.<br>
+키가 담긴 파일은 Git에 커밋하지 않습니다.<br>
+이미 있는 OpenAI 설정은 그대로 사용하면 됩니다.
 
 ```properties
 OPENAI_API_KEY=<OpenAI API 키>
@@ -86,15 +92,19 @@ ANTHROPIC_API_KEY=<Anthropic API 키>
 ANTHROPIC_MODEL=<Anthropic 모델 ID>
 ```
 
-실습의 Gradle `bootRun`과 `test`는 저장소 루트를 작업 디렉터리로 사용합니다.
-따라서 `optional:file:.env[.properties]`가 저장소 루트의 `.env`를 읽습니다.
+실습의 Gradle `bootRun`과 `test`는 저장소 루트를 작업 디렉터리로 사용합니다.<br>
+따라서 `optional:file:.env[.properties]`가 저장소 루트의 `.env`를 읽습니다.<br>
 `optional`은 파일이 없어도 읽기 오류를 내지 않는다는 뜻이며, 실제 호출에 필요한 키와 모델 값까지 생략해도 된다는 뜻은 아닙니다.
 
 설정에서 특히 다음 세 가지를 확인하세요.
 
-- **`spring.ai.model.chat`을 지정하지 않습니다.** 이 예제의 두 제공 업체 자동 설정은 이 선택값을 생략하면 각각 활성화됩니다. 여기에 `openai`만 지정하면 Anthropic Chat 자동 설정은 활성화되지 않습니다.
-- **`spring.ai.chat.client.enabled: false`로 기본 Builder 자동 설정을 끕니다.** 기본 Builder가 사용할 `ChatModel` 하나를 정할 수 없기 때문입니다. 모델 호출 객체의 자동 설정은 계속 사용하고, 다음 절에서 `ChatClient` 두 개만 직접 만듭니다.
-- **각 제공 업체의 설정 구조를 확인합니다.** 이 버전에서 OpenAI 모델 이름은 `spring.ai.openai.chat.options.model`, Anthropic은 `spring.ai.anthropic.chat.model`입니다. 설정 경로가 모두 같지는 않습니다. `embedding: none`은 이번 실습에 필요 없는 임베딩 모델의 자동 설정을 끕니다.
+- **`spring.ai.model.chat`을 지정하지 않습니다.** 이 예제의 두 제공 업체 자동 설정은 이 선택값을 생략하면 각각 활성화됩니다.<br>
+  여기에 `openai`만 지정하면 Anthropic Chat 자동 설정은 활성화되지 않습니다.
+- **`spring.ai.chat.client.enabled: false`로 기본 Builder 자동 설정을 끕니다.** 기본 Builder가 사용할 `ChatModel` 하나를 정할 수 없기 때문입니다.<br>
+  모델 호출 객체의 자동 설정은 계속 사용하고, 다음 절에서 `ChatClient` 두 개만 직접 만듭니다.
+- **각 제공 업체의 설정 구조를 확인합니다.** 이 버전에서 OpenAI 모델 이름은 `spring.ai.openai.chat.options.model`, Anthropic은 `spring.ai.anthropic.chat.model`입니다.<br>
+  설정 경로가 모두 같지는 않습니다.<br>
+  `embedding: none`은 이번 실습에 필요 없는 임베딩 모델의 자동 설정을 끕니다.
 
 ## 4. 모델마다 이름이 있는 ChatClient 만들기
 
@@ -120,15 +130,17 @@ public class ChatClientsConfiguration {
     }
 }
 ```
-`openAiChatClient()`의 매개변수는 구체적인 `OpenAiChatModel` 타입입니다.
-Spring은 OpenAI 자동 설정이 준비한 객체를 전달합니다. `ChatClient.create(model)`은 전달받은 모델 호출 객체를 사용하는 클라이언트를 만듭니다.
+`openAiChatClient()`의 매개변수는 구체적인 `OpenAiChatModel` 타입입니다.<br>
+Spring은 OpenAI 자동 설정이 준비한 객체를 전달합니다.<br>
+`ChatClient.create(model)`은 전달받은 모델 호출 객체를 사용하는 클라이언트를 만듭니다.<br>
 Anthropic도 같은 방식으로 연결됩니다.
 
-두 반환값은 모두 `ChatClient` 타입이지만 `@Bean`에 지정한 이름이 다릅니다.
+두 반환값은 모두 `ChatClient` 타입이지만 `@Bean`에 지정한 이름이 다릅니다.<br>
 그 이름이 다음 절의 `@Qualifier`와 정확히 일치해야 합니다.
 
-[공통 그림 기준](../../diagram-guide.md)에 따라, 클래스 그림은 어떤 객체가 무엇을 사용하는지 보여줍니다.
-두 ChatClient 상자는 같은 클래스의 서로 다른 인스턴스입니다. 괄호의 이름은 주입할 때 사용하는 이름입니다.
+[공통 그림 기준](../../diagram-guide.md)에 따라, 클래스 그림은 어떤 객체가 무엇을 사용하는지 보여줍니다.<br>
+두 ChatClient 상자는 같은 클래스의 서로 다른 인스턴스입니다.<br>
+괄호의 이름은 주입할 때 사용하는 이름입니다.
 
 ```mermaid
 classDiagram
@@ -181,13 +193,14 @@ public class MultipleModelsService {
     }
 }
 ```
-`ChatClient` 타입만 적으면 후보가 두 개입니다.
-`@Qualifier("openAiChatClient")`는 그중 해당 이름의 객체를 생성자 인자로 받겠다는 뜻입니다.
+`ChatClient` 타입만 적으면 후보가 두 개입니다.<br>
+`@Qualifier("openAiChatClient")`는 그중 해당 이름의 객체를 생성자 인자로 받겠다는 뜻입니다.<br>
 `@Qualifier("anthropicChatClient")`도 같은 방식으로 다른 객체를 선택합니다.
 
-연결은 애플리케이션 시작 시 정해집니다. 이후 `askOpenAi()`는 OpenAI에, `askAnthropic()`은 Anthropic에 요청합니다.
-`@Qualifier`가 질문 내용을 분석하거나 매 요청마다 제공 업체를 판단하는 것은 아닙니다.
-현재 클래스는 생성자가 하나이므로 생성자에 `@Autowired`를 붙이지 않아도 Spring이 주입합니다.
+연결은 애플리케이션 시작 시 정해집니다.<br>
+이후 `askOpenAi()`는 OpenAI에, `askAnthropic()`은 Anthropic에 요청합니다.<br>
+`@Qualifier`가 질문 내용을 분석하거나 매 요청마다 제공 업체를 판단하는 것은 아닙니다.<br>
+현재 클래스는 생성자가 하나이므로 생성자에 `@Autowired`를 붙이지 않아도 Spring이 주입합니다.<br>
 두 클라이언트를 모두 명시하므로 기본 후보 하나를 지정하는 `@Primary`는 필요하지 않습니다.
 
 ## 6. 요청을 받아 실제 모델 호출하기
@@ -221,7 +234,8 @@ public class MultipleModelsController {
     }
 }
 ```
-각 URL이 호출할 서비스 메서드를 정합니다. 개발자가 URL과 메서드로 제공 업체를 선택하는 구조입니다.
+각 URL이 호출할 서비스 메서드를 정합니다.<br>
+개발자가 URL과 메서드로 제공 업체를 선택하는 구조입니다.<br>
 두 API 키와 모델 ID를 준비한 뒤 저장소 루트에서 실행하세요.
 
 ```bash
@@ -240,52 +254,58 @@ curl http://localhost:8092/api/multi-chat/anthropic \
   --data '생성자 주입을 두 문장으로 설명해줘'
 ```
 
-각 요청의 응답 본문에 해당 모델이 생성한 텍스트가 나옵니다. 문장과 응답 시간은 달라질 수 있고 실제 API 사용 요금이 발생할 수 있습니다.
+각 요청의 응답 본문에 해당 모델이 생성한 텍스트가 나옵니다.<br>
+문장과 응답 시간은 달라질 수 있고 실제 API 사용 요금이 발생할 수 있습니다.<br>
 이 예제의 시작에는 두 제공 업체 설정이 모두 필요합니다.
 
 ## 7. 테스트는 무엇을 확인할까?
 
-[MultipleProvidersLocalModelTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.
-외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/AnthropicStubServer.java)로 바꿉니다. 각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.
+[MultipleProvidersLocalModelTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)는 실제 Spring Boot 서버와 두 Spring AI 제공 업체 어댑터를 사용합니다.<br>
+외부 API 주소만 공통 [OpenAiStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/OpenAiStubServer.java)와 [AnthropicStubServer](../../../test-support/src/main/java/com/example/ailearning/testsupport/model/AnthropicStubServer.java)로 바꿉니다.<br>
+각 서버는 자기 요청과 인증 헤더를 따로 기록합니다.<br>
 실제 키 대신 테스트용 값을 지정하며 저장소의 `.env`를 읽지 않습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLocalModelTest
 ```
 
-- OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다. Anthropic 요청은 발생하지 않아야 합니다.
-- Anthropic URL 호출: Anthropic 형식의 요청, Anthropic 모델 이름, Anthropic용 인증 정보가 전달되는지 확인합니다. OpenAI 요청은 발생하지 않아야 합니다.
+- OpenAI URL 호출: OpenAI 형식의 요청, OpenAI 모델 이름, OpenAI용 인증 정보가 전달되는지 확인합니다.<br>
+  Anthropic 요청은 발생하지 않아야 합니다.
+- Anthropic URL 호출: Anthropic 형식의 요청, Anthropic 모델 이름, Anthropic용 인증 정보가 전달되는지 확인합니다.<br>
+  OpenAI 요청은 발생하지 않아야 합니다.
 
-업체 선택 테스트 2개는 이름으로 지정한 객체가 올바른 제공 업체 호출로 연결되는지 검증합니다.
-8절의 요청별 모델 선택 테스트 1개까지 포함하면 이 클래스의 전체 테스트는 3개입니다.
+업체 선택 테스트 2개는 이름으로 지정한 객체가 올바른 제공 업체 호출로 연결되는지 검증합니다.<br>
+8절의 요청별 모델 선택 테스트 1개까지 포함하면 이 클래스의 전체 테스트는 3개입니다.<br>
 실제 외부 모델의 답변 품질이나 API 키 권한은 검증하지 않습니다.
 
 ### 선택: 실제 OpenAI와 Anthropic에 연결하기
 
 같은 테스트 패키지의 [MultipleProvidersLiveTest](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLiveTest.java)는
-서비스의 `askOpenAi()`로 실제 OpenAI를 호출합니다. `askAnthropic()` 예제는 현재 주석 처리되어 있습니다.
+서비스의 `askOpenAi()`로 실제 OpenAI를 호출합니다.<br>
+`askAnthropic()` 예제는 현재 주석 처리되어 있습니다.<br>
 Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답이 비어 있지 않은지 검사합니다.
 
-루트 `.env`에 두 업체의 키와 모델 ID 네 값을 준비한 뒤, IntelliJ에서 클래스 또는 개별 메서드의 Run으로 실행합니다.
+루트 `.env`에 두 업체의 키와 모델 ID 네 값을 준비한 뒤, IntelliJ에서 클래스 또는 개별 메서드의 Run으로 실행합니다.<br>
 애플리케이션이 두 클라이언트를 함께 준비하므로 메서드 하나만 실행할 때도 네 설정값이 필요합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests com.example.ailearning.l02multiple.MultipleProvidersLiveTest --rerun-tasks
 ```
 
-태그나 실행 허용 변수는 없습니다. 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 활성화된 OpenAI Live 테스트가 실행됩니다.
+태그나 실행 허용 변수는 없습니다.<br>
+필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 활성화된 OpenAI Live 테스트가 실행됩니다.<br>
 Live 테스트는 실제 API 사용량이 발생하며, 로컬 테스트 통과가 실제 API 접근 권한이나 답변 품질을 보장하지는 않습니다.
 
 ## 8. 같은 업체의 모델 두 개를 쓴다면?
 
-같은 OpenAI 계정에서 모델 A와 B를 사용한다면 두 Starter를 추가할 필요가 없습니다.
-OpenAI 호출 구현을 공유하고 요청 옵션으로 모델 ID를 바꾸거나, 기본 모델 옵션이 다른 OpenAI 클라이언트 두 개를 구성할 수 있습니다.
-반면 이번 예제는 제공 업체 자체가 달라서 서로 다른 `ChatModel` 구현과 인증 정보를 준비했습니다.
+같은 OpenAI 계정에서 모델 A와 B를 사용한다면 두 Starter를 추가할 필요가 없습니다.<br>
+OpenAI 호출 구현을 공유하고 요청 옵션으로 모델 ID를 바꾸거나, 기본 모델 옵션이 다른 OpenAI 클라이언트 두 개를 구성할 수 있습니다.<br>
+반면 이번 예제는 제공 업체 자체가 달라서 서로 다른 `ChatModel` 구현과 인증 정보를 준비했습니다.<br>
 `@Qualifier`는 원격 모델 ID를 지정하는 설정이 아니라 **주입할 Java 객체를 구분하는 이름**이라는 점을 기억하세요.
 
 ### 요청마다 모델 이름 지정하기
 
-먼저 가장 간단한 방식으로, 이미 준비한 `openAiChatClient` 하나를 공유하고 **이번 요청의 옵션**에 모델 ID를 지정해 보겠습니다.
+먼저 가장 간단한 방식으로, 이미 준비한 `openAiChatClient` 하나를 공유하고 **이번 요청의 옵션**에 모델 ID를 지정해 보겠습니다.<br>
 다음은 [SameProviderModelsService](../../../labs/02-04-multiple-models/src/main/java/com/example/ailearning/l02multiple/SameProviderModelsService.java)의 전체 코드입니다.
 
 ```java
@@ -319,8 +339,10 @@ public class SameProviderModelsService {
 
 여기서 두 가지 선택은 서로 다른 단계에서 이루어집니다.
 
-- 생성자의 `@Qualifier("openAiChatClient")`: 사용할 Java 객체를 선택합니다. 따라서 호출 대상 제공 업체는 OpenAI입니다.
-- `OpenAiChatOptions.builder().model(modelId)`: 그 제공 업체에서 **이번 요청에 사용할 모델 ID**를 지정합니다. 이 값은 `application.yml`의 기본 모델 이름보다 우선합니다.
+- 생성자의 `@Qualifier("openAiChatClient")`: 사용할 Java 객체를 선택합니다.<br>
+  따라서 호출 대상 제공 업체는 OpenAI입니다.
+- `OpenAiChatOptions.builder().model(modelId)`: 그 제공 업체에서 **이번 요청에 사용할 모델 ID**를 지정합니다.<br>
+  이 값은 `application.yml`의 기본 모델 이름보다 우선합니다.
 
 예를 들어 다른 Spring 서비스나 테스트에서 `SameProviderModelsService`를 주입받았다면 다음처럼 사용할 수 있습니다.
 
@@ -330,30 +352,33 @@ String shortAnswer = sameProviderModels.ask("생성자 주입을 짧게 설명�
 String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 설명해줘", modelB);
 ```
 
-`modelA`, `modelB`는 설명을 위한 변수 이름이며 모델 ID 자체가 아닙니다.
-실제로 실행할 때는 계정에서 접근할 수 있고 이 Chat API를 지원하는 모델 ID를 전달하세요.
+`modelA`, `modelB`는 설명을 위한 변수 이름이며 모델 ID 자체가 아닙니다.<br>
+실제로 실행할 때는 계정에서 접근할 수 있고 이 Chat API를 지원하는 모델 ID를 전달하세요.<br>
 모델이 다르면 지원 옵션과 비용도 다를 수 있습니다.
 
 이 저장소의 Spring AI 2.0.2에서는 `.options(...)`에 옵션 Builder를 전달하므로, 위 코드에서 `.build()`를 붙이지 않습니다.
 
-`.options(...)`는 새로 구성하는 요청에만 적용됩니다. 공유 중인 ChatClient의 기본 모델 설정을 바꾸지 않습니다.
-따라서 기존 `MultipleModelsService.askOpenAi()`처럼 모델 옵션을 지정하지 않는 호출은 계속 `OPENAI_MODEL`을 사용합니다.
+`.options(...)`는 새로 구성하는 요청에만 적용됩니다.<br>
+공유 중인 ChatClient의 기본 모델 설정을 바꾸지 않습니다.<br>
+따라서 기존 `MultipleModelsService.askOpenAi()`처럼 모델 옵션을 지정하지 않는 호출은 계속 `OPENAI_MODEL`을 사용합니다.<br>
 질문을 두 번 호출하면 모델 API 요청도 두 번 발생하며, 이전 답변을 자동으로 함께 보내지는 않습니다.
 
 ### 테스트에서 확인하기
 
 [MultipleProvidersLocalModelTest의 `요청별_모델을_선택해도_기본_모델은_유지된다()`](../../../labs/02-04-multiple-models/src/test/java/com/example/ailearning/l02multiple/MultipleProvidersLocalModelTest.java)에서
-`SameProviderModelsService`를 주입받아 실행합니다. IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
+`SameProviderModelsService`를 주입받아 실행합니다.<br>
+IntelliJ에서 이 메서드의 Run을 누르거나, 저장소 루트에서 다음 명령으로 선택 실행하세요.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-04-multiple-models:test --tests '*MultipleProvidersLocalModelTest.요청별_모델을_선택해도_기본_모델은_유지된다'
 ```
 
-로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.
+로컬 테스트에서는 모델 이름을 `openai-model-a`, `openai-model-b`로 지정해 두 번 호출한 뒤, 기본 모델로 한 번 더 호출합니다.<br>
 이 이름은 로컬 서버가 받는 테스트용 문자열이므로 실제 API에서 사용할 수 있는 모델 이름이라는 뜻은 아닙니다.
 
-테스트는 OpenAI 요청의 `model` 값이 순서대로 A → B → 기본 모델인지, 세 요청이 같은 OpenAI 인증 정보를 사용하는지 확인합니다.
-Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행하는 명령은 7절과 같고, `MultipleProvidersLocalModelTest`의 테스트는 총 3개입니다.
+테스트는 OpenAI 요청의 `model` 값이 순서대로 A → B → 기본 모델인지, 세 요청이 같은 OpenAI 인증 정보를 사용하는지 확인합니다.<br>
+Anthropic 요청은 발생하지 않아야 합니다.<br>
+로컬 테스트만 실행하는 명령은 7절과 같고, `MultipleProvidersLocalModelTest`의 테스트는 총 3개입니다.
 
 ## 확인 질문
 
@@ -365,17 +390,18 @@ Anthropic 요청은 발생하지 않아야 합니다. 로컬 테스트만 실행
 <summary>해설</summary>
 
 1. 각 `@Bean`의 이름을 생성자 매개변수의 `@Qualifier`에 적어 구분합니다.
-2. 아닙니다. `spring.ai.chat.client.enabled: false`는 기본 `ChatClient.Builder` 자동 설정만 끄며 제공 업체 모델 자동 설정은 별개입니다.
+2. 아닙니다.<br>
+   `spring.ai.chat.client.enabled: false`는 기본 `ChatClient.Builder` 자동 설정만 끄며 제공 업체 모델 자동 설정은 별개입니다.
 3. `/openai`는 `askOpenAi()`를 호출하고, 그 메서드는 `OpenAiChatModel`에 연결된 ChatClient를 사용하기 때문입니다.
 
 </details>
 
 ## 적용 범위와 공식 참고 자료
 
-이 예제는 연결 관계를 쉽게 보기 위해 `ChatClient.create(model)`을 사용합니다.
-`ChatClient.create(model)`로 직접 생성한 클라이언트에는 Spring Boot가 자동 구성한 `ChatClient.Builder`의 커스터마이저와 관측 설정이 자동으로 적용되지 않습니다.
-모델 자동 설정과 클라이언트 자동 설정의 역할이 다르기 때문입니다.
-기본 Builder의 공통 설정까지 보존하는 확장은 [공식 ChatClient 문서의 여러 모델 구성](https://docs.spring.io/spring-ai/reference/api/chatclient.html)을 참고하세요.
+이 예제는 연결 관계를 쉽게 보기 위해 `ChatClient.create(model)`을 사용합니다.<br>
+`ChatClient.create(model)`로 직접 생성한 클라이언트에는 Spring Boot가 자동 구성한 `ChatClient.Builder`의 커스터마이저와 관측 설정이 자동으로 적용되지 않습니다.<br>
+모델 자동 설정과 클라이언트 자동 설정의 역할이 다르기 때문입니다.<br>
+기본 Builder의 공통 설정까지 보존하는 확장은 [공식 ChatClient 문서의 여러 모델 구성](https://docs.spring.io/spring-ai/reference/api/chatclient.html)을 참고하세요.<br>
 Anthropic 설정 경로는 [공식 Anthropic Chat 문서](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html)를 기준으로 작성하고, 저장소의 Spring AI 2.0.2에서 테스트했습니다.
 
 [생성자 주입 설명으로 돌아가기](01-constructor-injection.md) · [02장으로 돌아가기](../02-first-call.md)

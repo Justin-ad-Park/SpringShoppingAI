@@ -1,6 +1,7 @@
 # 06-1. Java가 순서를 정하는 Workflow
 
-**실행 코드·설정·테스트:** [labs/06-00-workflow-agent](../../../labs/06-00-workflow-agent/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/06-00-workflow-agent](../../../labs/06-00-workflow-agent/README.md).<br>
+저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 모델로 요청 조건을 추출하고, 상품 검색·배송비 계산·예산 검증·답변 생성을 정해진 순서로 연결하는 Workflow를 구현합니다.
 
@@ -9,9 +10,10 @@
 ## Java가 처리할 질문과 가격 조건
 
 요청: “배송비 포함 3만원 이하인 음료 선물을 추천해줘.”
-가상 상품은 05와 같습니다. 허브티 총 15000원, 커피 총 31000원, 텀블러 총 35000원입니다.
-**커피는 상품 가격 28000원이지만 배송비를 더하면 예산을 초과**합니다.
-이번 `ProductSearchCondition.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.
+가상 상품은 05와 같습니다.<br>
+허브티 총 15000원, 커피 총 31000원, 텀블러 총 35000원입니다.<br>
+**커피는 상품 가격 28000원이지만 배송비를 더하면 예산을 초과**합니다.<br>
+이번 `ProductSearchCondition.totalBudget`은 04의 상품 가격 상한과 달리 배송비를 포함한 총예산입니다.<br>
 배송 정책은 국내 기본 배송으로 고정하며 지역/주소는 입력받지 않습니다.
 
 ## Workflow: 코드가 순서를 보장한다
@@ -30,7 +32,8 @@ flowchart TD
     W7 --> W8[Java: 응답 반환]
 ```
 
-Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 조건 값을 추출하지만, 검색·배송비 계산·설명 단계를 실행할 순서는 Java가 정합니다.
+Workflow에도 모델 판단을 넣을 수 있습니다.<br>
+여기서는 모델이 조건 값을 추출하지만, 검색·배송비 계산·설명 단계를 실행할 순서는 Java가 정합니다.<br>
 프롬프트에 “검색하라”라고 써서 순서를 강제하는 것이 아닙니다.
 
 [ShoppingService.java](../../../labs/06-00-workflow-agent/src/main/java/com/example/ailearning/l06decisions/ShoppingService.java)의 조건 추출과 Workflow 메서드입니다.
@@ -68,9 +71,11 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
     }
 ```
 
-`products.stream().map(...)`은 후보 각각에 배송비를 계산하는 Java 반복이고, `filter`는 총액을 비교합니다.
-모델은 `.tools()`를 받지 않으므로 여기서 실제 Java 검색을 요청하지 않습니다. Controller가 도구를 대신 실행하는 것도 아닙니다.
-`ShoppingService.runWorkflow()`가 `ProductCatalog`의 상품 검색·배송비 포함 총액 계산 메서드를 직접 호출합니다. 모델이 도구를 선택하는 다음 수업과 다른 점입니다.
+`products.stream().map(...)`은 후보 각각에 배송비를 계산하는 Java 반복이고, `filter`는 총액을 비교합니다.<br>
+모델은 `.tools()`를 받지 않으므로 여기서 실제 Java 검색을 요청하지 않습니다.<br>
+Controller가 도구를 대신 실행하는 것도 아닙니다.<br>
+`ShoppingService.runWorkflow()`가 `ProductCatalog`의 상품 검색·배송비 포함 총액 계산 메서드를 직접 호출합니다.<br>
+모델이 도구를 선택하는 다음 수업과 다른 점입니다.
 
 
 ## 확인 질문
@@ -80,7 +85,8 @@ Workflow에도 모델 판단을 넣을 수 있습니다. 여기서는 모델이 
 <details>
 <summary>해설</summary>
 
-모델로 카테고리·예산을 추출한 뒤 Java가 상품 검색 → 각 상품의 배송비 포함 총액 계산 → 예산 초과 후보 제외를 실행합니다. 남은 후보가 있을 때 모델에 설명을 요청합니다.
+모델로 카테고리·예산을 추출한 뒤 Java가 상품 검색 → 각 상품의 배송비 포함 총액 계산 → 예산 초과 후보 제외를 실행합니다.<br>
+남은 후보가 있을 때 모델에 설명을 요청합니다.
 
 </details>
 

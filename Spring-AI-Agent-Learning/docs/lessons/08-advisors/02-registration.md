@@ -2,7 +2,7 @@
 
 ## 이번 수업의 목표
 
-[08-1](01-built-in.md)의 로거를 사용해 `defaultAdvisors(...)`와 요청 단계의 `advisors(...)`가 적용되는 범위를 구분합니다.
+[08-1](01-built-in.md)의 로거를 사용해 `defaultAdvisors(...)`와 요청 단계의 `advisors(...)`가 적용되는 범위를 구분합니다.<br>
 내부 구현이나 실행 순서보다 “어느 요청에 이 기능이 필요한가?”를 먼저 판단합니다.
 
 ## default는 무엇의 기본일까?
@@ -25,13 +25,14 @@
 
 
 ## 용어 정리
-- “기본 제공 Advisor” : SpringAI에서 기본으로 제공하는 Advisor. [목록 참고](../08-advisors.md#spring-ai-202에서-기본-제공되는-advisor)
+- “기본 제공 Advisor” : SpringAI에서 기본으로 제공하는 Advisor.<br>
+  [목록 참고](../08-advisors.md#spring-ai-202에서-기본-제공되는-advisor)
 - `defaultAdvisors(...)`(기본 등록) : ChatClient의 모든 요청에 적용할 Advisor를 등록하는 메서드
   - 기본 제공 Advisor와 직접 구현한 Advisor 모두 등록할 수 있습니다.
 
 ## 같은 로거로 범위만 비교하기
 
-다음은 [Lesson02AdvisorRegistrationService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationService.java) 전체 코드입니다.
+다음은 [Lesson02AdvisorRegistrationService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationService.java) 전체 코드입니다.<br>
 이 수업에는 메모리·도구·커스텀 Advisor를 넣지 않습니다.
 
 ```java
@@ -73,8 +74,10 @@ public class Lesson02AdvisorRegistrationService {
 }
 ```
 
-아래는 이 서비스를 주입받은 테스트에서 실행할 호출 순서의 발췌입니다. `service`의 준비와 검증문은 아래 테스트 파일에 있습니다.
-`additionalAdvisor`는 호출자가 전달하는 Advisor입니다. 어떤 기능이 추가되는지는 전달한 구현 객체에 따라 달라집니다.
+아래는 이 서비스를 주입받은 테스트에서 실행할 호출 순서의 발췌입니다.<br>
+`service`의 준비와 검증문은 아래 테스트 파일에 있습니다.<br>
+`additionalAdvisor`는 호출자가 전달하는 Advisor입니다.<br>
+어떤 기능이 추가되는지는 전달한 구현 객체에 따라 달라집니다.<br>
 아래 호출에서는 등록 범위만 비교하려고 `SimpleLoggerAdvisor`를 전달합니다.
 
 ```java
@@ -100,7 +103,8 @@ IntelliJ에서 `ChatClient` 구현인 `DefaultChatClient.prompt()`와 `DefaultCh
 
 ## 실행과 테스트
 
-저장소 루트에서 실행합니다. LocalModel은 고정 응답 HTTP 서버를 사용하며 외부 API를 호출하지 않습니다.
+저장소 루트에서 실행합니다.<br>
+LocalModel은 고정 응답 HTTP 서버를 사용하며 외부 API를 호출하지 않습니다.<br>
 Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 호출하므로 API 사용량이 발생합니다.
 
 ```bash
@@ -109,23 +113,27 @@ Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 �
 ```
 
 - [Lesson02AdvisorRegistrationLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationLocalModelTest.java): 기본 로거의 반복 실행, 요청별 로거 추가, 다음 요청에서 추가 로거 미실행을 로그 수와 Spy로 검사합니다.
-- [Lesson02AdvisorRegistrationOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다. 자연어 답변 문구를 고정하지 않습니다.
+- [Lesson02AdvisorRegistrationOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다.<br>
+  자연어 답변 문구를 고정하지 않습니다.
 
 
-이 수업은 Service를 직접 주입받아 실행합니다. Advisor는 개발자가 등록하는 Java 객체이므로 추가 로거를 HTTP 요청으로 받는 API는 만들지 않습니다.<br>
+이 수업은 Service를 직접 주입받아 실행합니다.<br>
+Advisor는 개발자가 등록하는 Java 객체이므로 추가 로거를 HTTP 요청으로 받는 API는 만들지 않습니다.<br>
 로거 설정은 08-1과 같은 application.yml의 DEBUG 설정을 사용합니다.
 
 ## 같은 advisors인데 람다를 받는 코드는 무엇일까?
 
-`advisors`에는 받는 인자가 다른 메서드들이 있습니다. Java에서는 이를 오버로딩이라고 합니다.
+`advisors`에는 받는 인자가 다른 메서드들이 있습니다.<br>
+Java에서는 이를 오버로딩이라고 합니다.
 
 | 호출 모양 | 실제 인자 타입 | 하는 일 |
 |---|---|---|
 | `.advisors(additionalAdvisor)` | `Advisor...` | 현재 요청에 실행할 Advisor 객체 추가 |
 | `.advisors(spec -> spec.param(key, value))` | `Consumer<ChatClient.AdvisorSpec>` | 현재 요청의 Advisor 설정을 작성 |
 
-두 번째는 Advisor 구현체를 전달하는 코드가 아닙니다. 이 람다는 설정용 객체를 받아 값을 채우는 함수입니다.
-`param()`은 이미 등록된 Advisor가 읽을 값을 지정하며, 그 자체로 새 Advisor를 등록하지 않습니다.
+두 번째는 Advisor 구현체를 전달하는 코드가 아닙니다.<br>
+이 람다는 설정용 객체를 받아 값을 채우는 함수입니다.<br>
+`param()`은 이미 등록된 Advisor가 읽을 값을 지정하며, 그 자체로 새 Advisor를 등록하지 않습니다.<br>
 설정 함수 안의 `spec.advisors(...)`로 객체를 추가할 수도 있지만, 다음 수업에서는 `param()`으로 대화 ID만 지정합니다.
 
 ## 확인 질문
@@ -137,12 +145,17 @@ Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 �
 <details>
 <summary>해설</summary>
 
-1. 사라지지 않습니다. 기본 로거에 현재 요청의 로거가 추가됩니다.
-2. 기본 로거만 적용됩니다. 이전 요청에서 추가한 로거는 다음 요청에 남지 않습니다.
-3. 이 코드에서는 아닙니다. `param()`은 현재 요청의 설정값을 채웁니다. Advisor 객체를 추가하는 호출과 인자 타입·역할이 다릅니다.
+1. 사라지지 않습니다.<br>
+   기본 로거에 현재 요청의 로거가 추가됩니다.
+2. 기본 로거만 적용됩니다.<br>
+   이전 요청에서 추가한 로거는 다음 요청에 남지 않습니다.
+3. 이 코드에서는 아닙니다.<br>
+   `param()`은 현재 요청의 설정값을 채웁니다.<br>
+   Advisor 객체를 추가하는 호출과 인자 타입·역할이 다릅니다.
 
 </details>
 
-참고: [Spring AI ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html). 등록 범위는 사용 버전 2.0.2의 `DefaultChatClient` 소스와 위 테스트로 함께 확인합니다.
+참고: [Spring AI ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html).<br>
+등록 범위는 사용 버전 2.0.2의 `DefaultChatClient` 소스와 위 테스트로 함께 확인합니다.
 
 [이전: 기본 로거](01-built-in.md) · [다음: 대화 메모리와 파라미터](03-memory.md) · [단원 목차](../08-advisors.md)

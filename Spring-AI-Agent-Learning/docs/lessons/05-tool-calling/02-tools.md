@@ -1,15 +1,18 @@
 # 05-2. Java 메서드를 도구로 제공하기
 
-**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md). 저장소 루트에서 해당 README의 명령으로 실행합니다.
+**실행 코드·설정·테스트:** [labs/05-00-tool-calling](../../../labs/05-00-tool-calling/README.md).<br>
+저장소 루트에서 해당 README의 명령으로 실행합니다.
 
 **이번 목표:** 도구 설명 등록과 실제 메서드 실행을 구분합니다.
 
-**코드 읽기 안내:** @Tool은 모델에게 메서드의 사용법을 설명합니다. 메서드 본문을 외부 모델 서버로 보내는 것이 아닙니다.
+**코드 읽기 안내:** @Tool은 모델에게 메서드의 사용법을 설명합니다.<br>
+메서드 본문을 외부 모델 서버로 보내는 것이 아닙니다.
 
 ## 같은 기능에 도구 설명 붙이기
 
-`@Tool`은 메서드를 도구로 설명하고, `@ToolParam`은 인자의 설명이나 생략 가능 여부를 정합니다.
-어노테이션을 붙였다고 모든 모델 호출에서 자동으로 노출되지는 않습니다. 이번 요청의 `.tools(tools)`에 명시적으로 등록합니다.
+`@Tool`은 메서드를 도구로 설명하고, `@ToolParam`은 인자의 설명이나 생략 가능 여부를 정합니다.<br>
+어노테이션을 붙였다고 모든 모델 호출에서 자동으로 노출되지는 않습니다.<br>
+이번 요청의 `.tools(tools)`에 명시적으로 등록합니다.
 
 [ShoppingTools.java](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ShoppingTools.java)의 전체 코드입니다.
 
@@ -43,8 +46,9 @@ public class ShoppingTools {
 }
 ```
 
-새 업무 규칙을 어노테이션 안에 구현한 것이 아닙니다. 원래 Java 서비스로 위임합니다.
-`required=false`는 조건 생략을 허용하고, null이면 해당 필터를 적용하지 않습니다.
+새 업무 규칙을 어노테이션 안에 구현한 것이 아닙니다.<br>
+원래 Java 서비스로 위임합니다.<br>
+`required=false`는 조건 생략을 허용하고, null이면 해당 필터를 적용하지 않습니다.<br>
 도구 설명은 모델의 선택을 돕고, Java 검증은 실제 입력과 계산을 보호합니다.
 
 ## 모델과 연결하기
@@ -84,9 +88,10 @@ public class ToolChatService {
 }
 ```
 
-03장과 비교해 핵심으로 추가된 코드는 `.tools(tools)`입니다.
-여기서 `tools`는 ShoppingTools 객체이고, Spring AI는 `@Tool` 메서드에서 도구 설명과 인자 구조를 만듭니다.
-모델은 `{"productId":"P02"}` 같은 인자를 요청합니다. Java 객체를 모델 서버로 보내서 실행시키는 방식이 아닙니다.
+03장과 비교해 핵심으로 추가된 코드는 `.tools(tools)`입니다.<br>
+여기서 `tools`는 ShoppingTools 객체이고, Spring AI는 `@Tool` 메서드에서 도구 설명과 인자 구조를 만듭니다.<br>
+모델은 `{"productId":"P02"}` 같은 인자를 요청합니다.<br>
+Java 객체를 모델 서버로 보내서 실행시키는 방식이 아닙니다.
 
 ```java
 // UserTools에도 @Tool 메서드가 있다고 가정한 예시입니다.
@@ -108,7 +113,9 @@ public String ask(String question, ShoppingTools shoppingTools, UserTools userTo
 <details>
 <summary>해설</summary>
 
-ChatClient 요청을 구성하는 `.tools(tools)`에서 제공합니다. 이 예제의 `tools`는 `ShoppingTools` 객체이며, Spring AI가 그 객체의 `@Tool` 메서드에서 도구 설명과 인자 구조를 만들어 모델 요청에 포함합니다. 여러 도구 객체는 `.tools(shoppingTools, userTools)`처럼 함께 등록할 수 있습니다.
+ChatClient 요청을 구성하는 `.tools(tools)`에서 제공합니다.<br>
+이 예제의 `tools`는 `ShoppingTools` 객체이며, Spring AI가 그 객체의 `@Tool` 메서드에서 도구 설명과 인자 구조를 만들어 모델 요청에 포함합니다.<br>
+여러 도구 객체는 `.tools(shoppingTools, userTools)`처럼 함께 등록할 수 있습니다.
 
 </details>
 

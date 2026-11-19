@@ -2,9 +2,11 @@
 
 ## 개념 먼저 이해하기
 
-**구조화 응답(Structured Output)**은 모델의 답변을 미리 정한 항목과 데이터 형식에 맞춰 받는 방식입니다. 사람이 읽을 설명문뿐 아니라, 애플리케이션이 다음 작업에 사용할 데이터를 얻고 싶을 때 사용합니다.
+**구조화 응답(Structured Output)**은 모델의 답변을 미리 정한 항목과 데이터 형식에 맞춰 받는 방식입니다.<br>
+사람이 읽을 설명문뿐 아니라, 애플리케이션이 다음 작업에 사용할 데이터를 얻고 싶을 때 사용합니다.
 
-예를 들어 사용자가 “1만 5천 원 이하 음료를 찾아줘”라고 말하면, 서비스는 **카테고리: 음료 / 상품 가격 상한: 15000원**이라는 두 조건을 받아 검색에 사용할 수 있습니다. 대화에서 필요한 조건을 뽑아 검색 화면의 입력란을 채우는 기능을 생각하면 됩니다.
+예를 들어 사용자가 “1만 5천 원 이하 음료를 찾아줘”라고 말하면, 서비스는 **카테고리: 음료 / 상품 가격 상한: 15000원**이라는 두 조건을 받아 검색에 사용할 수 있습니다.<br>
+대화에서 필요한 조건을 뽑아 검색 화면의 입력란을 채우는 기능을 생각하면 됩니다.
 
 | 용어 | 쉬운 설명 | 서비스에서의 역할 |
 |---|---|---|
@@ -12,9 +14,11 @@
 | 스키마(schema) | 항목 이름, 값의 종류, 필수 여부 등을 정한 데이터 형식의 약속 | 가격에 숫자를 받고 필요한 항목을 구분 |
 | 값 검증 | 형식에 맞게 받은 값이 서비스의 규칙에도 맞는지 확인 | 음수 가격이나 지원하지 않는 카테고리를 거부 |
 
-Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java 데이터로 변환하는 연결을 돕습니다. **형식에 맞는 응답이라고 해서 사용자의 의도를 정확히 추출했거나 업무 규칙을 만족했다는 뜻은 아닙니다.** 허용할 값과 정보가 빠졌을 때의 처리는 서비스에서 정해야 합니다.
+Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java 데이터로 변환하는 연결을 돕습니다.<br>
+**형식에 맞는 응답이라고 해서 사용자의 의도를 정확히 추출했거나 업무 규칙을 만족했다는 뜻은 아닙니다.** 허용할 값과 정보가 빠졌을 때의 처리는 서비스에서 정해야 합니다.
 
-이 단원에서는 상품 검색 조건을 예로 사용합니다. 문의 유형 분류나 예약 조건 추출에도 같은 방식을 활용할 수 있습니다.
+이 단원에서는 상품 검색 조건을 예로 사용합니다.<br>
+문의 유형 분류나 예약 조건 추출에도 같은 방식을 활용할 수 있습니다.
 
 개념 참고: [Spring AI의 구조화 응답 설명](https://docs.spring.io/spring-ai/reference/api/structured-output.html).
 
@@ -22,7 +26,8 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 실습 안내
 
-상품 검색 조건과 검증 규칙을 담는 `ProductSearchCondition`를 [domain 패키지](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain)에 모았습니다. 모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
+상품 검색 조건과 검증 규칙을 담는 `ProductSearchCondition`를 [domain 패키지](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain)에 모았습니다.<br>
+모델 호출과 도구 연결 코드는 기존 단원 패키지에서 읽습니다.
 
 **실행 코드·설정·테스트:** [labs/04-00-structured-output](../../labs/04-00-structured-output/README.md)
 
@@ -38,7 +43,7 @@ Spring AI는 원하는 데이터 구조를 모델에 전달하고 응답을 Java
 
 ## 1. 결과를 담을 record
 
-[ProductSearchCondition.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/ProductSearchCondition.java)의 전체 코드입니다.
+[ProductSearchCondition.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/domain/ProductSearchCondition.java)의 전체 코드입니다.<br>
 `category`는 상품 카테고리, `maxPrice`는 상품 한 개의 가격 상한(원)입니다.
 
 ```java
@@ -60,8 +65,9 @@ public record ProductSearchCondition(String category, Integer maxPrice) {
 }
 ```
 
-`validate()`는 카테고리가 음료·생활인지, 가격 상한이 0 이상인지 검사합니다.
-사용자가 말하지 않은 조건은 `null`로 둡니다. 가격 조건이 없는 `null`과 가격 상한을 0원으로 지정한 `0`은 다릅니다.
+`validate()`는 카테고리가 음료·생활인지, 가격 상한이 0 이상인지 검사합니다.<br>
+사용자가 말하지 않은 조건은 `null`로 둡니다.<br>
+가격 조건이 없는 `null`과 가격 상한을 0원으로 지정한 `0`은 다릅니다.
 
 ## 2. 문자열과 record로 응답받기
 
@@ -69,7 +75,8 @@ public record ProductSearchCondition(String category, Integer maxPrice) {
 
 ### 2.1. 먼저 정상 흐름 읽기
 
-다음은 `extractSearchCondition()`에서 오류 처리를 생략한 정상 경로의 발췌입니다. `chatClient`의 생성자 초기화와 추출 지시 상수 `SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE`의 정의는 아래 전체 코드에서 확인합니다.
+다음은 `extractSearchCondition()`에서 오류 처리를 생략한 정상 경로의 발췌입니다.<br>
+`chatClient`의 생성자 초기화와 추출 지시 상수 `SEARCH_CONDITION_EXTRACTION_SYSTEM_MESSAGE`의 정의는 아래 전체 코드에서 확인합니다.
 
 ```java
 ProductSearchCondition searchCondition = chatClient
@@ -86,11 +93,13 @@ return searchCondition;
 2. 샘플의 `ProductSearchCondition.validate()`가 변환된 카테고리·가격을 업무 규칙으로 검사합니다.
 3. 두 단계를 통과한 객체를 반환합니다.
 
-첫 학습에서는 이 흐름을 설명한 뒤 3·4절의 그림과 정상 실행 결과로 이어가도 됩니다. 예외·HTTP 상태 처리는 실패 실험 때 아래 전체 코드와 5절로 돌아와 읽으세요.
+첫 학습에서는 이 흐름을 설명한 뒤 3·4절의 그림과 정상 실행 결과로 이어가도 됩니다.<br>
+예외·HTTP 상태 처리는 실패 실험 때 아래 전체 코드와 5절로 돌아와 읽으세요.
 
 ### 2.2. 실패 처리까지 포함한 전체 코드
 
-[SearchConditionExtractor.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionExtractor.java)의 전체 코드입니다. 정상 흐름에 모델 호출·변환 실패, 빈 응답, 업무 검증 실패 처리를 추가합니다.
+[SearchConditionExtractor.java](../../labs/04-00-structured-output/src/main/java/com/example/ailearning/l04structured/SearchConditionExtractor.java)의 전체 코드입니다.<br>
+정상 흐름에 모델 호출·변환 실패, 빈 응답, 업무 검증 실패 처리를 추가합니다.
 
 ```java
 package com.example.ailearning.l04structured;
@@ -153,17 +162,22 @@ public class SearchConditionExtractor {
 }
 ```
 
-`extractSearchCondition()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다. 따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다. 원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
+`extractSearchCondition()`의 첫 `catch`는 모델 HTTP 호출과 객체 변환을 함께 감쌉니다.<br>
+따라서 연결·인증 등 호출 실패도 이 경로로 들어올 수 있어 “모델 호출 또는 응답 변환에 실패했습니다”로 안내합니다.<br>
+원래 예외는 `cause`로 보존하며 모든 실패를 JSON 오류라고 판단하지 않습니다.
 
 - `.content()`는 응답 문자열을 반환합니다.
-- `.entity(ProductSearchCondition.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다. 반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
-- `searchCondition.validate()`는 변환된 값이 허용 범위에 있는지 검사합니다. 예를 들어 가격이 `-1`이면 숫자로 변환할 수는 있지만 검증에서 거부합니다.
+- `.entity(ProductSearchCondition.class)`는 응답 형식 지시를 추가하고 결과를 record로 변환합니다.<br>
+  반환 객체의 값은 `category()`, `maxPrice()`로 읽습니다.
+- `searchCondition.validate()`는 변환된 값이 허용 범위에 있는지 검사합니다.<br>
+  예를 들어 가격이 `-1`이면 숫자로 변환할 수는 있지만 검증에서 거부합니다.
 
 **객체로 변환됐다는 사실만으로 올바른 값이라고 판단할 수는 없습니다.** 검증을 통과한 양수 가격도 사용자가 말한 금액과 다를 수 있습니다.
 
 ## 3. 변환과 검증 순서
 
-아래는 정상 응답의 흐름입니다. 형식 변환은 Spring AI가 돕고, 값 검사는 앞의 Java 코드가 수행합니다.
+아래는 정상 응답의 흐름입니다.<br>
+형식 변환은 Spring AI가 돕고, 값 검사는 앞의 Java 코드가 수행합니다.
 
 ```mermaid
 sequenceDiagram
@@ -182,7 +196,7 @@ sequenceDiagram
 
 ## 4. 실행하고 비교하기
 
-[루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 저장소 루트에서 실행합니다.
+[루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 저장소 루트에서 실행합니다.<br>
 로컬 테스트에는 실제 키가 필요 없고, `bootRun`으로 호출하는 외부 모델에는 비용이 발생할 수 있습니다.
 
 ```bash
@@ -202,18 +216,22 @@ curl -sS http://127.0.0.1:8094/api/criteria \
   --data-raw '음료 중 1만5천원 이하 선물을 찾아줘.'
 ```
 
-첫 경로의 Java 반환 타입은 `String`, 두 번째는 `ProductSearchCondition`입니다. 두 번째 경로는 record를 다음과 같은 HTTP JSON으로 반환합니다.
+첫 경로의 Java 반환 타입은 `String`, 두 번째는 `ProductSearchCondition`입니다.<br>
+두 번째 경로는 record를 다음과 같은 HTTP JSON으로 반환합니다.
 
 ```json
 {"category":"음료","maxPrice":15000}
 ```
 
-실제 모델 응답은 달라질 수 있습니다. “음료를 추천해줘”로 바꿔 가격 조건이 `null`인지 확인하세요. HTTP JSON에서는 `null` 필드가 생략될 수 있습니다.
+실제 모델 응답은 달라질 수 있습니다.<br>
+“음료를 추천해줘”로 바꿔 가격 조건이 `null`인지 확인하세요.<br>
+HTTP JSON에서는 `null` 필드가 생략될 수 있습니다.<br>
 서버 종료는 Ctrl+C입니다.
 
 ## 5. 실패는 테스트로 확인하기
 
-로컬 테스트의 `MODEL`은 가짜 OpenAI 서버입니다. `MODEL.chat()`에서 채팅 응답을 지정합니다.
+로컬 테스트의 `MODEL`은 가짜 OpenAI 서버입니다.<br>
+`MODEL.chat()`에서 채팅 응답을 지정합니다.<br>
 다음은 테스트 설정의 발췌이며, 모델이 반환할 문자열을 정하는 코드입니다.
 
 ```java
@@ -222,7 +240,7 @@ MODEL
         .setResponseText("{\"category\":\"음료\",\"maxPrice\":15000}");
 ```
 
-테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.
+테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.<br>
 테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04장에서-먼저-읽을-코드)에 있습니다.
 
 [StructuredOutputLocalModelTest](../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
@@ -235,13 +253,16 @@ MODEL
 | 음수 가격 또는 허용하지 않는 카테고리 | 값 검증 실패, HTTP 422 |
 | 공백 질문 | Spring MVC가 Controller 본문 실행 전에 HTTP 400으로 거부, 모델 호출 없음 |
 
-실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다. 이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
+실제 모델의 오류를 항상 재현할 수는 없으므로, 실패 경로는 고정 응답으로 검사합니다.<br>
+이 테스트가 실제 모델의 추출 정확도까지 보장하지는 않습니다.
 
 ### 5.1. 보충: 예외는 어디에서 발생하고 HTTP 상태는 누가 정할까?
 
-정상 변환·값 검증을 이해했다면 첫 학습에서는 이 절을 건너뛰고 05장으로 넘어가도 됩니다. 아래 문서는 실패 원인을 더 자세히 확인할 때 읽습니다.
+정상 변환·값 검증을 이해했다면 첫 학습에서는 이 절을 건너뛰고 05장으로 넘어가도 됩니다.<br>
+아래 문서는 실패 원인을 더 자세히 확인할 때 읽습니다.
 
-먼저 **입력 검사 → 모델 응답 변환 → 변환된 값 검사** 중 어느 단계에서 실패했는지 구분합니다. 웹 서버와 Controller의 역할이 낯설면 [0. 웹 요청의 기본 흐름](04-structured-output/00-web-request-basics.md)을 먼저 읽으세요.
+먼저 **입력 검사 → 모델 응답 변환 → 변환된 값 검사** 중 어느 단계에서 실패했는지 구분합니다.<br>
+웹 서버와 Controller의 역할이 낯설면 [0. 웹 요청의 기본 흐름](04-structured-output/00-web-request-basics.md)을 먼저 읽으세요.
 
 | 보충 문서 | 실패한 단계 | HTTP 상태를 정하는 곳 |
 |---|---|---|
@@ -249,9 +270,12 @@ MODEL
 | [2. validate() 값 검증 실패와 422](04-structured-output/02-value-validation-422.md) | 변환된 객체의 값 검사 | 서비스의 `catch`에서 `UNPROCESSABLE_ENTITY` 지정 |
 | [3. @NotBlank 입력 검증 실패와 400](04-structured-output/03-input-validation-400.md) | Controller 본문 실행 전 질문 검사 | Spring MVC의 기본 입력 검증 처리 |
 
-500·422는 이 API에서 개발자가 선택한 상태입니다. `entity()`나 `IllegalArgumentException`이 숫자를 자동으로 결정하는 것은 아닙니다. 현재 기본 구성에서 Spring MVC는 예외에 담긴 상태를 HTTP 응답에 적용합니다.
+500·422는 이 API에서 개발자가 선택한 상태입니다.<br>
+`entity()`나 `IllegalArgumentException`이 숫자를 자동으로 결정하는 것은 아닙니다.<br>
+현재 기본 구성에서 Spring MVC는 예외에 담긴 상태를 HTTP 응답에 적용합니다.
 
-각 보충 문서는 실패 재현, 관련 실습 코드, 상태 지정, 테스트 결과 순서로 읽습니다. 라이브러리 내부 코드와 디버깅 절차는 문서 끝의 **선택 보충**에 있습니다.
+각 보충 문서는 실패 재현, 관련 실습 코드, 상태 지정, 테스트 결과 순서로 읽습니다.<br>
+라이브러리 내부 코드와 디버깅 절차는 문서 끝의 **선택 보충**에 있습니다.
 
 ## 실제 OpenAI로 확인하기
 
@@ -261,7 +285,8 @@ MODEL
 ./gradlew :Spring-AI-Agent-Learning:labs:04-00-structured-output:test --tests com.example.ailearning.l04structured.StructuredOutputOpenAiLiveTest
 ```
 
-루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용하며 실제 API 사용량이 발생합니다. 로컬 테스트의 고정 응답과 달리 모델의 추출 결과도 검증합니다.
+루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용하며 실제 API 사용량이 발생합니다.<br>
+로컬 테스트의 고정 응답과 달리 모델의 추출 결과도 검증합니다.
 
 ## 확인 질문
 
@@ -271,8 +296,10 @@ MODEL
 <details>
 <summary>해설</summary>
 
-1. `text()`는 모델의 문자열 답변을 반환합니다. `extractSearchCondition()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
-2. 객체 변환은 응답 형식을 Java 타입으로 읽는 작업입니다. 허용 카테고리나 예산 범위 같은 업무 규칙은 `validate()`로 별도 확인해야 합니다.
+1. `text()`는 모델의 문자열 답변을 반환합니다.<br>
+   `extractSearchCondition()`는 모델 응답을 `.entity(...)`로 조건 객체로 변환하고 Java 검증을 거친 뒤 반환합니다.
+2. 객체 변환은 응답 형식을 Java 타입으로 읽는 작업입니다.<br>
+   허용 카테고리나 예산 범위 같은 업무 규칙은 `validate()`로 별도 확인해야 합니다.
 
 </details>
 

@@ -6,9 +6,12 @@
 
 ## 참·거짓을 바로 boolean으로 받지 않는 이유
 
-“자동 응답 말고 사람 상담원과 이야기하고 싶어요”에서 확인할 조건은 **고객이 상담원 연결을 요청했는가**입니다. Noul은 이 조건이 참일 확률을 0~1로 반환합니다.
+“자동 응답 말고 사람 상담원과 이야기하고 싶어요”에서 확인할 조건은 **고객이 상담원 연결을 요청했는가**입니다.<br>
+Noul은 이 조건이 참일 확률을 0~1로 반환합니다.
 
-0에 가까우면 아니라고 판단하고 1에 가까우면 그렇다고 판단합니다. 0.5는 연결을 “절반만 원한다”는 뜻이 아니라 참·거짓 판단이 불확실하다는 뜻입니다. 별도 confidence 필드는 없습니다.
+0에 가까우면 아니라고 판단하고 1에 가까우면 그렇다고 판단합니다.<br>
+0.5는 연결을 “절반만 원한다”는 뜻이 아니라 참·거짓 판단이 불확실하다는 뜻입니다.<br>
+별도 confidence 필드는 없습니다.
 
 ## 코드 읽기
 
@@ -22,7 +25,10 @@ private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
         .build();
 ```
 
-`instructions`는 판단할 명제, `whenTrue`·`whenFalse`는 참·거짓의 구분 기준입니다. 호출에는 질문 ID `human_support`를 사용하고, `SystemOneResponse`에서 `NoulAnswer`를 읽고 `value()`로 참일 확률을 얻습니다. 서비스는 확률과 정책의 처리 경로를 담은 `HumanSupportRequestResult`를 반환합니다. 원본 응답의 필드명은 `noul`이며, 고객용 API에서는 의미가 드러나도록 `yesProbability`로 반환합니다.
+`instructions`는 판단할 명제, `whenTrue`·`whenFalse`는 참·거짓의 구분 기준입니다.<br>
+호출에는 질문 ID `human_support`를 사용하고, `SystemOneResponse`에서 `NoulAnswer`를 읽고 `value()`로 참일 확률을 얻습니다.<br>
+서비스는 확률과 정책의 처리 경로를 담은 `HumanSupportRequestResult`를 반환합니다.<br>
+원본 응답의 필드명은 `noul`이며, 고객용 API에서는 의미가 드러나도록 `yesProbability`로 반환합니다.
 
 다음은 실제 `assessHumanSupportRequest()` 메서드입니다.
 
@@ -48,7 +54,10 @@ private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
 | 0.2 초과~0.8 미만 | ASK_CLARIFICATION | 상담원 연결을 원하는지 확인 |
 | 0.8~1 | OFFER_HUMAN_SUPPORT | 상담원 연결 안내를 제시하는 경로 |
 
-0.2·0.8은 Jev가 강제하는 값이 아닙니다. Jev는 고객이 상담원 연결을 요청했을 확률을 반환하고, `SupportRoutingPolicy.determineHumanSupportAction()`은 그 확률에 따라 처리 경로를 정합니다. 이 샘플은 action을 반환하며 실제 확인 질문 문장이나 연결 화면·상담 시스템을 구현하지 않습니다. 실제 서비스에서는 명시적인 연결 요청을 우선 처리하는 규칙과 실패 시 안내도 검토해야 합니다.
+0.2·0.8은 Jev가 강제하는 값이 아닙니다.<br>
+Jev는 고객이 상담원 연결을 요청했을 확률을 반환하고, `SupportRoutingPolicy.determineHumanSupportAction()`은 그 확률에 따라 처리 경로를 정합니다.<br>
+이 샘플은 action을 반환하며 실제 확인 질문 문장이나 연결 화면·상담 시스템을 구현하지 않습니다.<br>
+실제 서비스에서는 명시적인 연결 요청을 우선 처리하는 규칙과 실패 시 안내도 검토해야 합니다.
 
 ## 요청과 결과 관찰
 
@@ -62,17 +71,21 @@ curl -X POST http://localhost:8114/api/jev/human-support -H 'Content-Type: text/
 {"yesProbability":0.9,"action":"OFFER_HUMAN_SUPPORT"}
 ```
 
-다른 명제로 Noul을 사용하려면 무엇의 확률인지부터 정해야 합니다. “상담원 연결 요청”의 확률과 “반품 가능”의 확률은 다른 의미입니다. 반품 자격·권한·금액 같은 확정 규칙은 정책 데이터와 Java 검증으로 판단합니다.
+다른 명제로 Noul을 사용하려면 무엇의 확률인지부터 정해야 합니다.<br>
+“상담원 연결 요청”의 확률과 “반품 가능”의 확률은 다른 의미입니다.<br>
+반품 자격·권한·금액 같은 확정 규칙은 정책 데이터와 Java 검증으로 판단합니다.
 
 ## 검증
 
-[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 Noul 요청 기준과 응답 변환, 0.9와 0.5에서의 분기를 검사합니다. [정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.2·0.8 양쪽 경계를 확인합니다.
+[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 Noul 요청 기준과 응답 변환, 0.9와 0.5에서의 분기를 검사합니다.<br>
+[정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.2·0.8 양쪽 경계를 확인합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest.Noul*' --tests '*SupportRoutingPolicyUnitTest'
 ```
 
-실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다. [Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
+실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
+[Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
 
 ## 확인 질문
 
@@ -82,8 +95,11 @@ curl -X POST http://localhost:8114/api/jev/human-support -H 'Content-Type: text/
 <details>
 <summary>해설</summary>
 
-1. 아닙니다. 연결 요청이라는 명제가 참일 확률입니다. 요구 강도나 시급성의 정도를 평가하려면 순서 있는 Score 기준이 필요합니다.
-2. 0.79는 ASK_CLARIFICATION, 0.8은 OFFER_HUMAN_SUPPORT입니다. 경계를 포함하는지는 Java 정책과 단위 테스트에 명시돼 있습니다.
+1. 아닙니다.<br>
+   연결 요청이라는 명제가 참일 확률입니다.<br>
+   요구 강도나 시급성의 정도를 평가하려면 순서 있는 Score 기준이 필요합니다.
+2. 0.79는 ASK_CLARIFICATION, 0.8은 OFFER_HUMAN_SUPPORT입니다.<br>
+   경계를 포함하는지는 Java 정책과 단위 테스트에 명시돼 있습니다.
 
 </details>
 

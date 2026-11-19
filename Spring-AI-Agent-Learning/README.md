@@ -1,22 +1,29 @@
 # Spring AI Agent Learning
 
-Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음인 개발자를 위한 한국어 교재입니다.
+Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음인 개발자를 위한 한국어 교재입니다.<br>
 목표는 **한 번의 모델 호출을 이해하는 것부터 시작해, 도구를 선택하는 작은 Agent로 확장하는 것**입니다.
 
-이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다. 기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 11장에서는 shopping-mcp에 연결해 세 실행 방식을 비교합니다. 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
+이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다.<br>
+기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 11장에서는 shopping-mcp에 연결해 세 실행 방식을 비교합니다.<br>
+기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
 
 ## 이번에 작성한 범위
 
-기초 00~03과 04~14 교재·실습을 작성했습니다. 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.
-각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.
-[검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.
-11장 MCP 실습은 기존 shopping-mcp 서버를 사용합니다. 로컬 테스트가 서버를 자동 실행하며, 수동 실행에서는 두 애플리케이션을 실행합니다.
-로컬 테스트의 서버와 결과 출력은 [공통 테스트 도구](test-support/README.md)를 사용합니다. 단원별 테스트에서는 응답·도구 순서·벡터 값과 검증 내용을 읽습니다.
+기초 00~03과 04~14 교재·실습을 작성했습니다.<br>
+한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.<br>
+각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.<br>
+[검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.<br>
+11장 MCP 실습은 기존 shopping-mcp 서버를 사용합니다.<br>
+로컬 테스트가 서버를 자동 실행하며, 수동 실행에서는 두 애플리케이션을 실행합니다.<br>
+로컬 테스트의 서버와 결과 출력은 [공통 테스트 도구](test-support/README.md)를 사용합니다.<br>
+단원별 테스트에서는 응답·도구 순서·벡터 값과 검증 내용을 읽습니다.
 
 ## 한 수업씩 읽는 방법
 
-[초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요. 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.
-04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다. 05~14는 각 단원의 목차에서 소수업으로 나누어 학습합니다.
+[초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요.<br>
+모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.<br>
+04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다.<br>
+05~14는 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -41,12 +48,13 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
-처음부터 전체 공식 문서를 읽지 않아도 됩니다. 00부터 14까지 번호 순으로 읽으세요.
+처음부터 전체 공식 문서를 읽지 않아도 됩니다.<br>
+00부터 14까지 번호 순으로 읽으세요.<br>
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
 
 ## 추가한 독립 실행 실습
 
-설명용 코드 조각이 아니라 시작 클래스·Controller·Service·설정·테스트를 포함합니다.
+설명용 코드 조각이 아니라 시작 클래스·Controller·Service·설정·테스트를 포함합니다.<br>
 같은 기능의 설명을 나눈 소수업은 하나의 실행 모듈을 공유합니다.
 
 | 수업 | 모듈 | 실행 후 확인할 것 |
@@ -58,9 +66,12 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | [12-2 모델 평가](docs/lessons/12-evaluation/02-model-judge.md) | `labs/12-02-model-evaluation` | 질문·근거·후보 답변을 보내 평가 판정 확인 |
 | [12-4 관측](docs/lessons/12-evaluation/04-actuator.md) | `labs/12-04-observability` | 한 번의 호출 후 Actuator 기본 지표 조회 |
 
-각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.
-OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다. 14장 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다. RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.
-첫 호출 모듈의 설정·실행 방식은 유지합니다. 평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
+각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.<br>
+OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
+14장 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다.<br>
+RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.<br>
+첫 호출 모듈의 설정·실행 방식은 유지합니다.<br>
+평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
 
 ## 실습 환경
 
@@ -70,18 +81,21 @@ OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합�
 - IDE: 상위 SpringShoppingAI 저장소를 Gradle 프로젝트로 열기
 - DB, Docker, 프런트엔드, 기존 쇼핑 애플리케이션 불필요
 
-버전은 저장소 루트 build.gradle과 Gradle Wrapper에서 모든 실습·서비스에 공통으로 관리합니다.
-모델 이름은 계정에서 사용할 수 있는 것으로 직접 설정합니다. 특정 모델이나 가격을 교재에 고정하지 않습니다.
+버전은 저장소 루트 build.gradle과 Gradle Wrapper에서 모든 실습·서비스에 공통으로 관리합니다.<br>
+모델 이름은 계정에서 사용할 수 있는 것으로 직접 설정합니다.<br>
+특정 모델이나 가격을 교재에 고정하지 않습니다.
 
 ## 빠른 확인
 
-상위 SpringShoppingAI 저장소 루트에서 실행합니다. 첫 실행은 인터넷으로 Gradle과 라이브러리를 받습니다.
+상위 SpringShoppingAI 저장소 루트에서 실행합니다.<br>
+첫 실행은 인터넷으로 Gradle과 라이브러리를 받습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
-위 명령은 외부 모델을 호출하지 않습니다. 실제 Spring AI가 **로컬 가짜 모델 HTTP 서버**에 보낸 요청을 검증합니다.
+위 명령은 외부 모델을 호출하지 않습니다.<br>
+실제 Spring AI가 **로컬 가짜 모델 HTTP 서버**에 보낸 요청을 검증합니다.<br>
 자연어 이해 성능이나 실제 모델의 정답률을 평가하는 테스트는 아닙니다.
 
 실제 모델 호출은 [환경 설정](docs/lessons/01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 다음 명령으로 시작합니다.
@@ -98,7 +112,8 @@ curl -i http://127.0.0.1:8091/api/chat \
   --data-raw 'Spring의 의존성 주입을 초보자에게 두 문장으로 설명해줘.'
 ```
 
-실제 모델 호출에는 API 사용량과 비용이 발생할 수 있습니다. 시작/종료와 오류 해결은 01·02장을 참고하세요.
+실제 모델 호출에는 API 사용량과 비용이 발생할 수 있습니다.<br>
+시작/종료와 오류 해결은 01·02장을 참고하세요.
 
 ## 폴더 안내
 
@@ -134,16 +149,21 @@ labs/
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
 
-labs 폴더명은 `단원번호-읽기순서-이름`을 사용합니다. `00`은 본 실습이고, 나머지는 소주제의 읽기 번호입니다. 이름순으로 정렬하면 본 실습 다음에 보충 실습이 표시됩니다.
+labs 폴더명은 `단원번호-읽기순서-이름`을 사용합니다.<br>
+`00`은 본 실습이고, 나머지는 소주제의 읽기 번호입니다.<br>
+이름순으로 정렬하면 본 실습 다음에 보충 실습이 표시됩니다.
 
-학습 코드의 클래스 읽기 순서는 `FirstChatApplication` → `ChatController` → `ChatService`입니다.
+학습 코드의 클래스 읽기 순서는 `FirstChatApplication` → `ChatController` → `ChatService`입니다.<br>
 테스트 내부의 가짜 서버 구현은 첫 실습의 선수 지식이 아닙니다.
 
 ## 단계별 코드 격리 원칙
 
-각 실행 실습은 자기 패키지와 Spring Boot 시작 클래스를 가집니다. 모델 품질 비교용 13-6은 13-5의 의도 분류 코드·분류표·프롬프트를 재사용하기 위해 예외적으로 해당 모듈에 테스트 의존성을 둡니다.
-04에 도구가, 05에 메모리가, 07에 다음 단원의 Advisor 코드가 먼저 등장하지 않습니다.
-반복되는 작은 상품 코드는 학습 순서를 위해 복사했으며 공통 모듈 추상화로 감추지 않았습니다.
-각 labs 폴더의 README에 코드 읽는 순서와 API·포트가 있습니다. 모든 실행은 저장소 루트의 공통 Wrapper를 사용합니다.
+각 실행 실습은 자기 패키지와 Spring Boot 시작 클래스를 가집니다.<br>
+모델 품질 비교용 13-6은 13-5의 의도 분류 코드·분류표·프롬프트를 재사용하기 위해 예외적으로 해당 모듈에 테스트 의존성을 둡니다.<br>
+04에 도구가, 05에 메모리가, 07에 다음 단원의 Advisor 코드가 먼저 등장하지 않습니다.<br>
+반복되는 작은 상품 코드는 학습 순서를 위해 복사했으며 공통 모듈 추상화로 감추지 않았습니다.<br>
+각 labs 폴더의 README에 코드 읽는 순서와 API·포트가 있습니다.<br>
+모든 실행은 저장소 루트의 공통 Wrapper를 사용합니다.
 
-자료를 작성·수정하는 사람은 [프로젝트 내부 교육 하네스](../education-harness/README.md)를 참고하세요. 학습을 진행하는 데 이 제작 안내를 읽을 필요는 없습니다.
+자료를 작성·수정하는 사람은 [프로젝트 내부 교육 하네스](../education-harness/README.md)를 참고하세요.<br>
+학습을 진행하는 데 이 제작 안내를 읽을 필요는 없습니다.

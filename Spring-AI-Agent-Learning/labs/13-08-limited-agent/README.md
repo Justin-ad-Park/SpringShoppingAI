@@ -1,6 +1,7 @@
 # 13-8 상담 전체 실행 제한과 추적
 
-[교재](../../docs/lessons/13-shopping-agent/08-execution-limits.md)를 읽고 [기본 상담](../13-00-shopping-agent/README.md) 이후 실행합니다. 기본 코드와 의존성 없이 별도 패키지로 실행하는 확장입니다.
+[교재](../../docs/lessons/13-shopping-agent/08-execution-limits.md)를 읽고 [기본 상담](../13-00-shopping-agent/README.md) 이후 실행합니다.<br>
+기본 코드와 의존성 없이 별도 패키지로 실행하는 확장입니다.
 
 | 읽을 코드 | 확인할 책임 |
 |---|---|
@@ -15,4 +16,7 @@
 ./gradlew :Spring-AI-Agent-Learning:labs:13-08-limited-agent:bootRun
 ```
 
-로컬 테스트는 외부 모델을 호출하지 않습니다. 앱과 Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 읽고 실제 채팅·임베딩 API를 호출합니다. 포트 8118의 `/api/counsel/demo`로 기본 상담과 같은 질문을 보냅니다. 종료는 Ctrl+C입니다.
+로컬 테스트는 외부 모델을 호출하지 않습니다.<br>
+앱과 Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 읽고 실제 채팅·임베딩 API를 호출합니다.<br>
+포트 8118의 `/api/counsel/demo`로 기본 상담과 같은 질문을 보냅니다.<br>
+종료는 Ctrl+C입니다.
