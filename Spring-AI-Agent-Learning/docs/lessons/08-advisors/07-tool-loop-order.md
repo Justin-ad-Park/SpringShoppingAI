@@ -43,6 +43,54 @@ new OrderedLogAdvisor("model", toolLoopOrder + 10);
 앞에 배치한 `request`는 도구 사용 여부와 관계없이 before와 after가 각각 한 번 실행됩니다.<br>
 뒤에 배치한 `model`은 모델을 두 번 요청하면 before와 after도 각각 두 번 실행됩니다.
 
+### 공식 문서 인용: 메모리 Advisor를 반복 바깥과 안에 배치하기
+
+다음은 [Spring AI 공식 문서의 Memory and the Tool Loop](https://docs.spring.io/spring-ai/reference/api/tools.html#memory-and-the-tool-loop) 중 두 배치 방식에 대한 설명을 번역한 인용입니다.<br>
+코드의 `chatModel`과 `chatMemory`는 이미 준비된 객체이며, 등록 부분만 보여 줍니다.
+
+> **반복 바깥에 배치하기 — 기본 동작**
+>
+> `MessageChatMemoryAdvisor`의 기본 order는 `HIGHEST_PRECEDENCE + 200`입니다.<br>
+> `ToolCallingAdvisor`보다 작은 값이므로 반복 바깥에 배치됩니다.<br>
+> 이때 메모리 Advisor는 다음과 같이 동작합니다.
+>
+> - 반복이 시작되기 전에 이전 대화를 한 번 불러옵니다.
+> - 반복이 끝난 뒤 마지막 사용자 메시지와 마지막 어시스턴트 메시지만 저장합니다.
+> - 도구 호출 요청이나 도구 응답 메시지는 전달받지 않습니다.
+>
+> 이는 안전한 기본 동작이며 모든 `ChatMemoryRepository` 구현체에서 사용할 수 있습니다.<br>
+> 또한 Spring AI 1.x의 동작과도 같습니다.<br>
+> 1.x에서는 도구 반복이 각 `ChatModel` 내부에 있어 메모리에서 도구 메시지를 확인할 수 없었습니다.
+>
+> ```java
+> var chatClient = ChatClient.builder(chatModel)
+>         // 기본적으로 반복 바깥에 배치됩니다.
+>         .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory)
+>                 .build())
+>         .build();
+> ```
+>
+> **반복 안에 배치하기**
+>
+> 이후 대화에서도 모델에 전체 도구 실행 대화를 제공하면, 모델이 이미 무엇을 시도했고 어떤 도구를 호출했으며 어떤 결과를 받았는지 판단할 수 있습니다.<br>
+> 이를 위해 메모리 Advisor의 order를 `ToolCallingAdvisor.DEFAULT_ORDER`보다 크게 지정해 반복 안에 배치합니다.
+>
+> ```java
+> var chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory)
+>         // ToolCallingAdvisor 뒤, 즉 반복 안에 배치합니다.
+>         .order(BaseAdvisor.HIGHEST_PRECEDENCE + 400)
+>         .build();
+>
+> var chatClient = ChatClient.builder(chatModel)
+>         .defaultAdvisors(chatMemoryAdvisor)
+>         .build();
+> ```
+
+반복 안에 배치할 때는 도구 메시지도 저장할 수 있는 `ChatMemoryRepository`를 사용해야 합니다.<br>
+지원되는 저장소와 직접 `ToolCallingAdvisor`를 구성할 때의 설정은 위 공식 문서의 같은 절에서 확인할 수 있습니다.
+
+### 실행 위치가 달라지는 내부 호출
+
 Spring AI 2.0.2의 `DefaultAroundAdvisorChain`은 order가 작은 Advisor부터 실행하도록 정렬합니다.<br>
 `ToolCallingAdvisor`는 반복할 때 `copy(this)`로 **자기 뒤에 있는 Advisor들만** 다시 실행하므로, 앞에 있는 Advisor의 before는 반복되지 않습니다.<br>
 아래에서 이 내부 호출과 출력 순서를 연결해 설명합니다.<br>
