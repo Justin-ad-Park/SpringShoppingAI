@@ -74,7 +74,7 @@
 | [07-chat-memory/03-isolation.md](../../Spring-AI-Agent-Learning/docs/lessons/07-chat-memory/05-isolation.md) | 89행: 번호 대응; 107행: 제목, 접힌 답 없음 |
 | [08-advisors/01-chain.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/04-chain.md) | 88행: 제목, 접힌 답 없음 |
 | [08-advisors/02-memory-loop.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/03-memory.md) | 103행: 제목, 접힌 답 없음 |
-| [08-advisors/03-observe.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/05-tool-loop.md) | 72행: 번호 대응; 87행: 제목, 접힌 답 없음 |
+| [08-advisors/03-observe.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/06-tool-loop.md) | 72행: 번호 대응; 87행: 제목, 접힌 답 없음 |
 | [09-embeddings-search/01-vectors.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/01-vectors.md) | 53행: 제목, 접힌 답 없음 |
 | [09-embeddings-search/02-store.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/02-store.md) | 155행: 제목, 접힌 답 없음 |
 | [09-embeddings-search/03-search.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/03-search.md) | 46행: 번호 대응; 63행: 제목, 접힌 답 없음 |

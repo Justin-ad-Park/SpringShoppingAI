@@ -18,12 +18,12 @@ Advisor의 내부 구현이나 호출 순서는 아직 몰라도 됩니다.<br>
 
 ## 기능을 연결하고 질문하기
 
-아래는 [Lesson01LoggingChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/logging/Lesson01LoggingChatService.java)의 전체 코드입니다.<br>
+아래는 [Lesson01LoggingChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson01_logging/Lesson01LoggingChatService.java)의 전체 코드입니다.<br>
 `SimpleLoggerAdvisor.builder().build()`는 Spring AI가 제공한 로거 객체를 만듭니다.<br>
 `defaultAdvisors(...)`는 그 로거를 이 ChatClient의 모든 요청에 적용하도록 등록합니다.
 
 ```java
-package com.example.ailearning.l08advisors.logging;
+package com.example.ailearning.l08advisors.lesson01_logging;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -86,8 +86,8 @@ Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 �
 ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*Lesson01LoggingOpenAiLiveTest'
 ```
 
-- [Lesson01LoggingLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/logging/Lesson01LoggingLocalModelTest.java): HTTP 응답과 로거가 출력한 `request:`, `response:`를 확인합니다.
-- [Lesson01LoggingOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/logging/Lesson01LoggingOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다.<br>
+- [Lesson01LoggingLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson01_logging/Lesson01LoggingLocalModelTest.java): HTTP 응답과 로거가 출력한 `request:`, `response:`를 확인합니다.
+- [Lesson01LoggingOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson01_logging/Lesson01LoggingOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다.<br>
   자연어 답변 문구를 고정하지 않습니다.
 
 

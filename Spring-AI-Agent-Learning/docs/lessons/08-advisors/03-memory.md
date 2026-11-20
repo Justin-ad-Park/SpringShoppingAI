@@ -2,7 +2,7 @@
 
 **이번 목표:** 07장에서 직접 작성한 이전 메시지 조회·전달·저장을 `MessageChatMemoryAdvisor`로 연결하고, 후속 요청에 대화가 전달되는지 확인합니다.
 
-이 수업은 `memory` 패키지의 [Lesson03MemoryAdvisorChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/memory/Lesson03MemoryAdvisorChatService.java)를 읽습니다.<br>
+이 수업은 `lesson03_memory` 패키지의 [Lesson03MemoryAdvisorChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson03_memory/Lesson03MemoryAdvisorChatService.java)를 읽습니다.<br>
 [08-2](02-registration.md)의 기본 등록에 메모리 기능을 연결하는 수업입니다.
 
 ## 같은 사용자와 후속 질문 연결하기
@@ -35,7 +35,7 @@
 요청별 `.system(...)`과의 차이는 [03장의 기본 시스템 메시지 실습](../03-chatclient-and-prompts.md#33-모든-요청에-사용할-기본-시스템-메시지-설정하기)에서 확인할 수 있습니다.
 
 ```java
-package com.example.ailearning.l08advisors.memory;
+package com.example.ailearning.l08advisors.lesson03_memory;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -222,8 +222,8 @@ curl -sS -X DELETE -b /tmp/learning08-memory.cookies \
 
 | 테스트 | 확인하는 동작 |
 |---|---|
-| [Lesson03MemoryAdvisorLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/memory/Lesson03MemoryAdvisorLocalModelTest.java) | 실제 두 번째 모델 요청의 메시지, 중복 저장 방지, 사용자·대화 격리, 삭제, 실패 시 질문 보존 |
-| [Lesson03MemoryAdvisorOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/memory/Lesson03MemoryAdvisorOpenAiLiveTest.java) | 실제 두 번의 답변과 저장 개수, 후속 모델 요청에 이전 질문·실제 답변이 포함됨 |
+| [Lesson03MemoryAdvisorLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson03_memory/Lesson03MemoryAdvisorLocalModelTest.java) | 실제 두 번째 모델 요청의 메시지, 중복 저장 방지, 사용자·대화 격리, 삭제, 실패 시 질문 보존 |
+| [Lesson03MemoryAdvisorOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson03_memory/Lesson03MemoryAdvisorOpenAiLiveTest.java) | 실제 두 번의 답변과 저장 개수, 후속 모델 요청에 이전 질문·실제 답변이 포함됨 |
 
 먼저 LocalModel의 `후속_요청에_이전_대화를_전달하고_질문과_답변을_한번씩_저장한다`를 읽습니다.<br>
 고정 응답을 쓰므로 전송한 메시지의 위치와 내용을 정확히 비교할 수 있습니다.

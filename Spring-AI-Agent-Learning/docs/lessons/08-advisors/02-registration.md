@@ -32,11 +32,11 @@
 
 ## 같은 로거로 범위만 비교하기
 
-다음은 [Lesson02AdvisorRegistrationService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationService.java) 전체 코드입니다.<br>
+다음은 [Lesson02AdvisorRegistrationService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson02_registration/Lesson02AdvisorRegistrationService.java) 전체 코드입니다.<br>
 이 수업에는 메모리·도구·커스텀 Advisor를 넣지 않습니다.
 
 ```java
-package com.example.ailearning.l08advisors.registration;
+package com.example.ailearning.l08advisors.lesson02_registration;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -92,7 +92,7 @@ service.chatWithDefaults("일반 질문");
 
 위 예시처럼 하나의 모델 호출에 여러 Advisor를 적용할 수 있습니다.
 - 여기서는 Advisor의 등록 범위를 비교합니다.
-- 여러 Advisor의 실행 순서를 지정하는 방법은 [08-4](04-chain.md)에서 다룹니다.
+- 여러 Advisor의 실행 순서를 지정하는 방법은 [08-5](05-advisor-order.md)에서 다룹니다.
 
 ## Spring AI가 적용하는 방식
 
@@ -112,8 +112,8 @@ Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`로 실제 OpenAI를 �
 ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*Lesson02AdvisorRegistrationOpenAiLiveTest'
 ```
 
-- [Lesson02AdvisorRegistrationLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationLocalModelTest.java): 기본 로거의 반복 실행, 요청별 로거 추가, 다음 요청에서 추가 로거 미실행을 로그 수와 Spy로 검사합니다.
-- [Lesson02AdvisorRegistrationOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/registration/Lesson02AdvisorRegistrationOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다.<br>
+- [Lesson02AdvisorRegistrationLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson02_registration/Lesson02AdvisorRegistrationLocalModelTest.java): 기본 로거의 반복 실행, 요청별 로거 추가, 다음 요청에서 추가 로거 미실행을 로그 수와 Spy로 검사합니다.
+- [Lesson02AdvisorRegistrationOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson02_registration/Lesson02AdvisorRegistrationOpenAiLiveTest.java): 실제 모델과 연결해 이 수업의 기능을 확인합니다.<br>
   자연어 답변 문구를 고정하지 않습니다.
 
 

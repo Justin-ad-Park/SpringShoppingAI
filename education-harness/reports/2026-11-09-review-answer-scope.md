@@ -96,7 +96,7 @@
 
 ### 6. Advisor 실행 횟수의 전제 — 낮음
 
-위치: [08-3](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/05-tool-loop.md) 72행 4번.
+위치: [08-3](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/06-tool-loop.md) 72행 4번.
 
 해설은 현재 A/B 배치에서 도구 1회 후 최종 답변을 받는 예를 전제로 A 1쌍·B 2쌍을 설명합니다.<br>
 근거는 있으나 질문의 “도구를 한 번 호출했을 때”만으로는 계속되는 도구 요청이나 다른 Advisor 배치까지 구분되지 않습니다.

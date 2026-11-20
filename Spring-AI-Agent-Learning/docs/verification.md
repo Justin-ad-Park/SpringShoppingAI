@@ -1462,3 +1462,64 @@ Mermaid의 문법을 검사했으며 픽셀 단위 그림 검증을 수행했다
 - 교육·기술 검토는 한 에이전트가 관점을 바꿔 수행했습니다.<br>
   기본 예제에서 미래 단계의 자체 실행기를 요구하지 않는지, 제공 기능과 업무 정책의 차이, 문서의 전체 코드·실행 명령·테스트 선택을 대조했습니다.<br>
   하네스 독립 세션 행동 평가는 수행하지 않았습니다.
+
+## 2026-11-20: 08장 Advisor 호출·정렬·도구 반복의 단계 분리
+
+기준 커밋은 `8982420`입니다. 구조 관찰을 위해 추가했던 미커밋 모델 Spy·`ToolLoopCallRecorder`와 관련 출력 변경을 먼저 원복한 뒤 수업을 재구성했습니다.<br>
+원복 전 파일은 저장소 밖의 임시 폴더에 보관했습니다. 커밋은 생성하지 않았습니다.
+
+| 단계 | 새로 확인하는 내용 | 실행 코드 |
+|---|---|---|
+| 08-4 | Advisor 하나의 nextCall 이전·정상 반환 이후 | BeforeAfterAdvisor · Lesson04BeforeAfterChatService |
+| 08-5 | 두 Advisor의 order와 반대 방향 반환 | OrderedLogAdvisor · Lesson05AdvisorOrderChatService |
+| 08-6 | 도구 실행 결과를 담은 후속 모델 요청 | Lesson06ToolLoopChatService |
+| 08-7 | 반복 담당 Advisor를 기준으로 앞뒤 배치 | Lesson07ToolLoopOrderChatService |
+| 08-8 선택 | 요청별 기록 목록과 기본·추가 등록 조합 | 기존 네 Advisor 예제를 Lesson08RequestTraceChatService로 이동 |
+
+기존 04의 실행 순서·요청별 기록 분리·다음 기본 호출에서 추가 Advisor 미실행·공백 질문 검증은 08-8로 이동해 보존했습니다.<br>
+기존 05의 도구 실행·도구 결과 재전달·인사 시 도구 미실행은 08-6에서, 반복 안팎의 출력 횟수 검증은 08-7에서 각각 확인합니다.<br>
+08-4·08-5·08-7은 표준 OutputCaptureExtension으로 콘솔을 확인하며, 실제 모델을 Spy로 감싸는 새 기록 도구를 추가하지 않았습니다.
+
+실행 모듈·의존성·포트는 유지했습니다.<br>
+`POST /api/advisors/chain`은 08-8에서 기존 answer·steps 형식을 유지합니다. 기본 도구 반복 API인 `/api/advisors/tool-loop`는 답변 문자열을 반환하며, 위치 비교는 별도 `/api/advisors/tool-loop/order`와 콘솔에서 확인합니다.<br>
+메인 목차·실습 README·교육 계획·프로젝트 설정의 테스트 목록과 이동한 파일 링크를 갱신했습니다. 하네스의 공통 규칙은 바꾸지 않았습니다.
+
+저장소 루트에서 실행한 최종 검증 명령입니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*LocalModelTest' :Spring-AI-Agent-Learning:labs:08-00-advisors:bootJar
+```
+
+| 테스트 | 실제 실행 수 | 실패·오류·건너뜀 |
+|---|---:|---|
+| Lesson01LoggingLocalModelTest | 1 | 모두 0 |
+| Lesson02AdvisorRegistrationLocalModelTest | 2 | 모두 0 |
+| Lesson03MemoryAdvisorLocalModelTest | 4 | 모두 0 |
+| Lesson04BeforeAfterLocalModelTest | 1 | 모두 0 |
+| Lesson05AdvisorOrderLocalModelTest | 1 | 모두 0 |
+| Lesson06ToolLoopLocalModelTest | 2 | 모두 0 |
+| Lesson07ToolLoopOrderLocalModelTest | 2 | 모두 0 |
+| Lesson08RequestTraceLocalModelTest | 4 | 모두 0 |
+| 합계 | 17 | 모두 0 |
+
+- 최종 실행에서 compileJava·compileTestJava·test·bootJar를 수행했고 BUILD SUCCESSFUL을 확인했습니다. Live 코드도 컴파일했지만 실제 Live 테스트는 실행하지 않았습니다.
+- 소주제에 실은 전체 Java 소스 12개를 실제 파일과 공백을 제외하고 대조했습니다.
+- 새 시퀀스 다이어그램 4개를 기존 임시 환경의 Mermaid 파서로 검사했습니다. 실제 화면 렌더링 검사는 수행하지 않았습니다.
+- 전체 로컬 링크·앵커 1318개 오류 0개, `git diff --check` 통과를 확인했습니다.
+- 단일 에이전트가 학습 순서와 구현을 차례로 검토했습니다. 별도 에이전트의 독립 검토나 하네스 행동 평가는 실행하지 않았습니다.
+- 실제 OpenAI API 호출과 모델 품질 평가는 수행하지 않았습니다.
+
+### 같은 작업의 후속 변경: 소주제 번호를 패키지에 표시
+
+운영 코드와 테스트의 소주제 패키지를 `lesson01_logging`부터 `lesson08_recording`까지 같은 이름으로 맞췄습니다.<br>
+공통 진입점인 AdvisorApplication·AdvisorController는 상위 패키지에 유지하고, import·교재의 전체 코드·파일 링크·테스트 목록을 함께 갱신했습니다.<br>
+패키지 이동 전 Java 파일 30개의 내용과 비교해 package·import 변경 외에 코드 변경이 없음을 확인했습니다.<br>
+새 패키지에서 위 로컬 검증 명령을 다시 실행해 테스트 17개 통과(실패·오류·건너뜀 0), Live 소스 컴파일과 bootJar 생성 성공을 확인했습니다.<br>
+문서 전체 소스 12개 일치, 로컬 링크·앵커 1318개 오류 0개, 공백 검사 통과를 확인했습니다. 실제 Live 호출과 커밋은 하지 않았습니다.
+
+### 후속 확인: 08-7의 modelA·modelB 배치
+
+사용자가 추가한 modelA·modelB를 유지하고 로그 수집 조건과 순서 검증을 맞췄습니다.<br>
+08-7 로컬 테스트 2개와 실제 OpenAI Live 테스트 1개가 통과했습니다.<br>
+커밋 전 08장 전체 로컬 테스트 17개와 bootJar를 다시 실행해 성공을 확인했습니다.<br>
+나머지 Live 테스트는 실행하지 않았습니다.

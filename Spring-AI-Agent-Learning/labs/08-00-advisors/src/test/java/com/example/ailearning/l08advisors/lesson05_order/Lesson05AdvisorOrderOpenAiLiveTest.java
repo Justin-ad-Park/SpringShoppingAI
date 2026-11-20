@@ -1,0 +1,34 @@
+package com.example.ailearning.l08advisors.lesson05_order;
+
+import com.example.ailearning.testsupport.output.TestNamePrinter;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/** 실제 OpenAI에 연결하며 API 사용량이 발생한다. */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = "spring.ai.openai.timeout=30s")
+@ExtendWith(OutputCaptureExtension.class)
+@Timeout(180)
+class Lesson05AdvisorOrderOpenAiLiveTest {
+    @Autowired
+    Lesson05AdvisorOrderChatService service;
+
+    @BeforeEach
+    void 테스트_이름_출력(TestInfo testInfo) {
+        TestNamePrinter.printTestName(testInfo);
+    }
+
+    @Test
+    void 실제_모델에서도_나열_순서보다_order가_작은_Advisor부터_진입한다(CapturedOutput logs) {
+        String answer = service.chat("안녕하세요.");
+        var steps = logs.getOut().lines().filter(line -> line.matches("[AB]:(before|after)")).toList();
+        System.out.println("답변: " + answer);
+        assertThat(steps).containsExactly("A:before", "B:before", "B:after", "A:after");
+        assertThat(answer).isNotBlank();
+    }
+}

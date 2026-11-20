@@ -1,9 +1,12 @@
 package com.example.ailearning.l08advisors;
 
-import com.example.ailearning.l08advisors.logging.Lesson01LoggingChatService;
-import com.example.ailearning.l08advisors.chain.Lesson04AdvisorChainChatService;
-import com.example.ailearning.l08advisors.memory.Lesson03MemoryAdvisorChatService;
-import com.example.ailearning.l08advisors.toolloop.Lesson05ToolLoopChatService;
+import com.example.ailearning.l08advisors.lesson01_logging.Lesson01LoggingChatService;
+import com.example.ailearning.l08advisors.lesson08_recording.Lesson08RequestTraceChatService;
+import com.example.ailearning.l08advisors.lesson03_memory.Lesson03MemoryAdvisorChatService;
+import com.example.ailearning.l08advisors.lesson06_toolloop.Lesson06ToolLoopChatService;
+import com.example.ailearning.l08advisors.lesson04_beforeafter.Lesson04BeforeAfterChatService;
+import com.example.ailearning.l08advisors.lesson05_order.Lesson05AdvisorOrderChatService;
+import com.example.ailearning.l08advisors.lesson07_looporder.Lesson07ToolLoopOrderChatService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,16 +19,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/advisors")
 public class AdvisorController {
     private final Lesson01LoggingChatService loggingService;
-    private final Lesson04AdvisorChainChatService chainService;
+    private final Lesson08RequestTraceChatService chainService;
     private final Lesson03MemoryAdvisorChatService memoryService;
-    private final Lesson05ToolLoopChatService toolLoopService;
+    private final Lesson06ToolLoopChatService toolLoopService;
+    private final Lesson04BeforeAfterChatService beforeAfterService;
+    private final Lesson05AdvisorOrderChatService orderService;
+    private final Lesson07ToolLoopOrderChatService loopOrderService;
 
-    public AdvisorController(Lesson01LoggingChatService loggingService, Lesson04AdvisorChainChatService chainService,
-            Lesson03MemoryAdvisorChatService memoryService, Lesson05ToolLoopChatService toolLoopService) {
+    public AdvisorController(Lesson01LoggingChatService loggingService, Lesson08RequestTraceChatService chainService,
+            Lesson03MemoryAdvisorChatService memoryService, Lesson06ToolLoopChatService toolLoopService,
+            Lesson04BeforeAfterChatService beforeAfterService, Lesson05AdvisorOrderChatService orderService,
+            Lesson07ToolLoopOrderChatService loopOrderService) {
         this.loggingService = loggingService;
         this.chainService = chainService;
         this.memoryService = memoryService;
         this.toolLoopService = toolLoopService;
+        this.beforeAfterService = beforeAfterService;
+        this.orderService = orderService;
+        this.loopOrderService = loopOrderService;
     }
 
     @PostMapping(path = "/logging", consumes = MediaType.TEXT_PLAIN_VALUE)
@@ -33,8 +44,23 @@ public class AdvisorController {
         return loggingService.chat(question);
     }
 
+    @PostMapping(path = "/before-after", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public String beforeAfter(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return beforeAfterService.chat(question);
+    }
+
+    @PostMapping(path = "/order", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public String order(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return orderService.chat(question);
+    }
+
+    @PostMapping(path = "/tool-loop/order", consumes = MediaType.TEXT_PLAIN_VALUE)
+    public String loopOrder(@RequestBody @NotBlank @Size(max = 2000) String question) {
+        return loopOrderService.chat(question);
+    }
+
     @PostMapping(path = "/chain", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public Lesson04AdvisorChainChatService.Reply chain(@RequestBody @NotBlank @Size(max = 2000) String question) {
+    public Lesson08RequestTraceChatService.Reply chain(@RequestBody @NotBlank @Size(max = 2000) String question) {
         return chainService.chat(question);
     }
 
@@ -52,7 +78,7 @@ public class AdvisorController {
     }
 
     @PostMapping(path = "/tool-loop", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public Lesson05ToolLoopChatService.Reply toolLoop(@RequestBody @NotBlank @Size(max = 2000) String question) {
+    public String toolLoop(@RequestBody @NotBlank @Size(max = 2000) String question) {
         return toolLoopService.chat(question);
     }
 }
