@@ -39,7 +39,30 @@ flowchart LR
     E --> V[SimpleVectorStore에 저장]
 ```
 
-[PolicyLoader.java](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/policy/PolicyLoader.java)의 전체 코드입니다.
+## 제목과 본문이 Document로 바뀌는 예
+
+[policies.md](../../../labs/10-03-custom-rag/src/main/resources/policies.md)에서 미개봉 반품 정책 부분만 발췌하면 다음과 같습니다.
+
+```markdown
+## return-sealed
+미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.
+```
+
+`PolicyLoader`는 이 부분을 다음 값을 가진 Document 하나로 만듭니다.
+
+| Document의 값 | 변환 결과 | 원문에서 가져온 부분 |
+|---|---|---|
+| ID | `return-sealed` | `##` 뒤의 제목 |
+| 본문 | 미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다. | 제목 다음의 내용 |
+| 메타데이터의 `source` | `policies.md#return-sealed` | 파일 이름과 위 ID를 연결 |
+
+이렇게 만든 ID와 출처는 나중에 검색한 정책을 식별하고 답변의 출처를 표시할 때 사용합니다.<br>
+배송·개봉 반품 정책도 같은 방식으로 바꾸어 `List<Document>`에 담습니다.
+
+## 문서를 읽고 Document 목록 만들기
+
+다음은 [PolicyLoader.java](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/policy/PolicyLoader.java)의 전체 코드입니다.<br>
+`split()`으로 제목과 본문을 구분하고, `Document.builder()`에서 위 표의 값을 채우는 부분을 연결해 읽으세요.
 
 ```java
 package com.example.ailearning.l10rag.policy;
@@ -80,9 +103,27 @@ public final class PolicyLoader {
 ```
 
 출처는 실제 리소스 위치와 청크 ID로 만듭니다.<br>
-모델이 파일 이름을 임의로 생성하도록 맡기지 않습니다.<br>
-서버 시작 시 `PolicySearch` 생성자가 `PolicyLoader`로 읽은 문서를 `SimpleVectorStore`에 적재합니다.<br>
-이 저장소는 프로세스 메모리에 보관되므로, 서버를 재시작하면 문서를 다시 임베딩합니다.
+모델이 파일 이름을 임의로 생성하도록 맡기지 않습니다.
+
+## 만든 문서를 벡터 저장소에 적재하기
+
+다음은 [PolicySearch](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/policy/PolicySearch.java)의 생성자 발췌입니다.<br>
+서버 시작 시 Spring이 이 객체를 만들면서 정책 문서를 적재합니다.
+
+```java
+public PolicySearch(EmbeddingModel embeddingModel) throws IOException {
+    policyVectorStore = SimpleVectorStore.builder(embeddingModel)
+            .build();
+    policyVectorStore.add(PolicyLoader.loadDocuments());
+}
+```
+
+`PolicyLoader.loadDocuments()`는 파일을 읽어 위 표처럼 ID·본문·출처를 담은 문서 목록을 만듭니다.<br>
+그 목록을 받은 `add(...)`가 연결된 임베딩 모델로 본문을 벡터로 바꾸어 저장합니다.<br>
+문서 목록 만들기와 임베딩·저장은 서로 다른 단계입니다.
+
+질문이 오면 이미 적재한 문서를 검색하며, 그때마다 파일을 다시 읽어 적재하지 않습니다.<br>
+이 저장소는 프로세스 메모리에 보관되므로 서버를 재시작하면 문서를 다시 읽고 임베딩합니다.
 
 
 ## 확인 질문

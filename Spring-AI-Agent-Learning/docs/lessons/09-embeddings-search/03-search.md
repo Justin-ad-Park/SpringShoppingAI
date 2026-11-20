@@ -26,6 +26,37 @@
 `topK`는 이 조건을 만족한 결과에서 반환할 최대 개수이므로 항상 그 수만큼 나오지는 않습니다.<br>
 이 샘플 API의 threshold 허용 범위는 0~1입니다.
 
+## 09-2의 검색 코드에 조건 추가하기
+
+다음은 `SearchService.searchByVector()`의 실제 메서드입니다.<br>
+09-2의 `query`·`topK` 설정에 유사도 하한과 카테고리 필터를 추가합니다.
+
+```java
+private List<SearchHit> searchByVector(String query, int topK, double threshold, String category) {
+    var vectorSearchRequest = SearchRequest.builder()
+            .query(query)
+            .topK(topK)
+            .similarityThreshold(threshold);
+    // 허용 목록으로 검사한 메타데이터 값만 필터에 사용한다.
+    if (category != null) vectorSearchRequest.filterExpression("category == '" + category + "'");
+    return policyVectorStore
+            .similaritySearch(vectorSearchRequest.build())
+            .stream()
+            .map(this::toSearchHit)
+            .toList();
+}
+```
+
+`.similarityThreshold(threshold)`는 검색 결과에 포함할 유사도 점수의 하한을 지정합니다.<br>
+예를 들어 `threshold=0.8`이면 점수가 0.8 이상인 문서만 검색 결과에 포함합니다.
+
+`category=returns`이면 `.filterExpression(...)`에 `category == 'returns'`를 넣어 반품 정책만 검색합니다.<br>
+`category`를 지정하지 않으면 이 필터를 추가하지 않습니다.<br>
+호출하는 `compareSearchResults()`에서 `shipping`·`returns` 중 허용된 값인지 먼저 검사합니다.
+
+`toSearchHit()`는 검색된 Document의 ID·원문·카테고리·점수를 응답용 `SearchHit`으로 옮깁니다.<br>
+문자열 검색 결과와 이 벡터 검색 결과를 묶어 반환하므로, 아래 실험에서 두 목록을 비교할 수 있습니다.
+
 ## 설정과 실행
 
 이 실습에는 채팅 모델 이름이 필요 없습니다.<br>

@@ -2,24 +2,17 @@ package com.example.ailearning.l10advisor;
 
 import com.example.ailearning.testsupport.output.TestNamePrinter;
 import com.example.ailearning.testsupport.output.TestOutput;
-import com.example.ailearning.testsupport.http.LocalTestHttpClient;
 import com.example.ailearning.testsupport.model.OpenAiStubServer;
-import static com.example.ailearning.testsupport.model.OpenAiChatStub.createAssistantTextMessage;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
         properties = {"spring.config.import=", "spring.profiles.active=indexing-only"})
 class PolicyIndexingLocalModelTest {
     private final TestOutput output = new TestOutput();
-
-    @RegisterExtension
-    final LocalTestHttpClient appClient = new LocalTestHttpClient(() -> this.port, output);
 
     @BeforeEach
     void 테스트_이름_출력(TestInfo testInfo) {
@@ -27,7 +20,6 @@ class PolicyIndexingLocalModelTest {
     }
 
     static final OpenAiStubServer MODEL = createModelServer();
-    @Value("${local.server.port}") int port;
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.ai.openai.api-key", () -> "local-test-key");
         registry.add("spring.ai.openai.chat.options.model", () -> "learning-model");
