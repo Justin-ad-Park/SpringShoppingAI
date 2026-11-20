@@ -1,0 +1,4 @@
+interface:
+  display_name: "교육작성하네스점검"
+  short_description: "변경된 하네스 기준으로 지정 단원의 문서와 코드를 점검합니다"
+  default_prompt: "$education-haness-review 09~10장을 최근 하네스 업데이트 기준으로 점검하고 개선 목록을 작성해줘. 수정은 하지 마."

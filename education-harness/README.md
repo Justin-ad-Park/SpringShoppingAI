@@ -16,6 +16,7 @@
 |---|---|---|---|
 | 새 과정의 안·계획 | [과정 계획](common/workflows/plan-course.md), [작성 규칙](common/rules/authoring.md)의 설명 수준 | 대상·기준 문서·기술 | 계획안. 구현 요청 전에는 코드 생성 안 함 |
 | 기존 자료 검토만 | [검토 절차](common/workflows/review-materials.md), [검토 기준](common/rules/review.md) | 대상·기준 문서, 관련 동작·검증 정보 | 위치·근거·개선안. 파일 수정 안 함 |
+| 하네스 업데이트로 단원 점검·선택 반영 | 아래 [프로젝트 전용 도구](#프로젝트-전용-도구)에서 점검 또는 반영 Skill 선택 | 대상·기준 문서·관련 모듈, 반영 시 검증·커밋 방식 | ID가 있는 개선 목록 또는 선택 항목의 수정·검증 결과 |
 | 문장·링크 등 작은 수정 | [수정 절차](common/workflows/update-materials.md), 관련 작성 규칙 | 대상·해당 문서·커밋 방식 | 요청한 수정과 관련 검사 |
 | 새 단원·실행 코드 구현 | [단원 작성](common/workflows/write-lesson.md), [작성 규칙](common/rules/authoring.md), [검토 기준](common/rules/review.md) | 대상·기술·관련 모듈·코드 형식·검증·커밋 방식 | 실행 코드·설명·테스트·검증 기록 |
 | 하네스 규칙·절차 수정 | [수정 절차](common/workflows/update-materials.md), [행동 평가](common/evals/README.md) | 관련 정책·도구·커밋 방식 | 지침 변경과 정적·행동 검증의 구분 |
@@ -26,6 +27,52 @@
 검사는 [검증 절차](common/workflows/verify-materials.md) 중 변경에 해당하는 절을 적용합니다.<br>
 템플릿은 새 문서 작성이나 구조 변경 시에만 사용합니다.
 
+## 프로젝트 전용 도구
+
+두 도구는 에이전트가 문서·코드를 읽고 판단하는 Skill입니다.<br>
+점검과 반영을 분리하며, 기본 사용 흐름은 다음과 같습니다.
+
+```text
+$education-haness-review 09~10장을 최근 하네스 업데이트 기준으로 점검해줘.
+
+$education-haness-apply 방금 점검한 R01과 R03을 반영해줘.
+```
+
+| 도구 | 역할 | 원본 |
+|---|---|---|
+| `education-haness-review` | 단원 범위를 받아 개선 목록 작성. 기본은 읽기 전용 | [점검 Skill](common/tools/education-haness-review/SKILL.md) |
+| `education-haness-apply` | 앞선 점검 결과에서 선택한 항목을 수정하고 관련 검증 수행 | [반영 Skill](common/tools/education-haness-apply/SKILL.md) |
+
+비교할 버전을 지정하려면 `0.2.30 이후 변경 기준으로 09장을 점검해줘`처럼 요청합니다.<br>
+생략하면 최신 버전의 변경 기준만 점검하며, `최신 기준 전체로`라고 지정하면 현재 적용되는 기준 전체를 점검합니다.<br>
+단원 범위는 `08-7`이나 특정 교재 경로로도 지정할 수 있습니다.
+
+같은 대화에서는 점검 결과를 그대로 이어서 반영합니다.<br>
+다른 대화에서 사용하려면 점검할 때 `결과를 education-harness/reports/09-10-review.md에 저장해줘`처럼 저장을 요청하고, 반영할 때 그 파일을 지정합니다.<br>
+반영 도구는 선택 항목의 근거가 여전히 유효한지 다시 확인하며, 요청 없이 커밋하지 않습니다.
+
+### 호출과 유지보수
+
+데스크톱 앱에서는 입력창에 `/`를 입력해 **교육작성하네스점검**, **교육작성하네스반영**을 검색·선택합니다.<br>
+`$`를 입력해 Skill 이름으로 선택할 수도 있고, Codex CLI에서는 `/skills` 목록에서 선택할 수 있습니다.<br>
+표시되지 않으면 프로젝트에서 Skill이 활성화되어 있는지 확인하고 앱을 다시 시작합니다.<br>
+호출 방식은 [공식 Skill 안내](https://learn.chatgpt.com/docs/build-skills)와 [슬래시 명령 안내](https://learn.chatgpt.com/docs/reference/slash-commands)를 기준으로 합니다.
+
+원본 지침과 UI 설정은 `common/tools/<도구명>/SKILL.md`, `agents/openai.yaml`에서 관리합니다.<br>
+저장소 루트 `.agents/skills/<도구명>`은 원본 폴더를 가리키는 상대 심볼릭 링크입니다.<br>
+사용자 홈에 설치하지 않으므로 이 저장소에서만 적용되며, 교육 원칙은 기존 rules/를 참조합니다.
+
+다른 프로젝트에 가져갈 때는 하네스와 프로젝트 설정을 준비한 뒤 그 저장소 루트에서 연결합니다.<br>
+이미 같은 이름의 경로가 있다면 덮어쓰지 말고 기존 연결을 먼저 확인합니다.
+
+```bash
+mkdir -p .agents/skills
+ln -s ../../education-harness/common/tools/education-haness-review .agents/skills/education-haness-review
+ln -s ../../education-harness/common/tools/education-haness-apply .agents/skills/education-haness-apply
+```
+
+Skill을 지원하지 않는 환경에서는 위 표의 원본 지침을 지정해 같은 점검·반영 작업을 요청할 수 있습니다.
+
 ## 파일별 기준 위치
 
 | 알고 싶은 것 | 기준 위치 | 다른 파일에서의 사용 |
@@ -35,6 +82,7 @@
 | 변수·메서드·타입·패키지 이름 | [이름 기준](common/rules/naming.md) | 작성·검토·절차·템플릿은 이 문서 참조. 과정별 배치는 프로젝트 설정 |
 | 검토 질문·중요도 | [검토 기준](common/rules/review.md) | 절차는 해당 기준을 참조 |
 | 작업 순서·검사 방법 | common/workflows/ | 규칙의 설명을 반복하기보다 수행 단계 제시 |
+| 호출 가능한 점검·반영 도구 | common/tools/ | 프로젝트의 .agents/skills는 원본 연결만 관리. 공통 규칙·절차를 복제하지 않음 |
 | 독자·기술·검증 명령·과정별 예외 | [프로젝트 설정](project.md) | 실제 빌드·소스에서 사실을 확인하고 관련 안내 갱신 |
 | 단원과 실습의 대응 | 프로젝트 설정이 지정한 교육 계획 | 테스트 클래스·로컬 명령은 프로젝트 설정이 관리 |
 | 현재 작업과 완료 근거 | 장기 작업은 context/, 큰 변화의 완료 근거는 프로젝트 지정 위치 | 작은 수정은 별도 기록 없이 결과만 안내 |

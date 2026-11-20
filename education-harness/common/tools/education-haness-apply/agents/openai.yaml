@@ -1,0 +1,4 @@
+interface:
+  display_name: "교육작성하네스반영"
+  short_description: "앞서 점검한 개선 목록에서 선택한 항목을 문서와 코드에 반영합니다"
+  default_prompt: "$education-haness-apply 방금 점검한 개선 목록에서 R01과 R03을 반영하고 관련 검증을 해줘. 커밋은 하지 마."
