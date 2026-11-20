@@ -25,7 +25,7 @@ import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
 
-import com.example.ailearning.l08advisors.chain.support.AdvisorTrace;
+import java.util.List;
 
 /** 08-4에서 전후 처리 순서를 기록하고, 08-5에서 전체 요청과 모델 요청의 범위를 비교한다. */
 public record TraceAdvisor(String advisorName, int advisorOrder) implements CallAdvisor {
@@ -44,18 +44,23 @@ public record TraceAdvisor(String advisorName, int advisorOrder) implements Call
     @Override
     public ChatClientResponse adviseCall(ChatClientRequest request, CallAdvisorChain chain) {
         // TraceAdvisor는 이름·순서만 보관하고, 실행 기록은 현재 요청의 context에서 받는다.
-        var advisorTrace = (AdvisorTrace) request.context().get(TRACE_CONTEXT_KEY);
-        advisorTrace.record(advisorName + ":before");
+        // 이 키에는 서비스가 만든 List<String>을 전달한다. 해당 형 변환의 경고만 억제한다.
+        @SuppressWarnings("unchecked")
+        List<String> executionSteps = (List<String>) request.context().get(TRACE_CONTEXT_KEY);
+        executionSteps.add(advisorName + ":before");
         try {
             // 다음 Advisor 또는 모델을 호출하고, 반환될 때까지 기다린다.
             return chain.nextCall(request);
         } finally {
             // 정상 응답과 실패 모두에서 종료를 기록한다. 성공했다는 표시가 아니다.
-            advisorTrace.record(advisorName + ":after");
+            executionSteps.add(advisorName + ":after");
         }
     }
 }
 ```
+
+`request.context()`의 값은 `Object`이므로 서비스에서 전달한 목록을 `List<String>`으로 형 변환합니다.<br>
+`@SuppressWarnings("unchecked")`는 이 키에 문자열 목록을 넣는다는 약속을 바탕으로, 해당 형 변환의 컴파일 경고만 억제합니다.
 
 `finally`는 예외가 나도 실행됩니다.<br>
 이 예제의 `after`는 종료 기록이며 정상 답변을 받았다는 보장은 아닙니다.<br>
@@ -70,10 +75,10 @@ public record TraceAdvisor(String advisorName, int advisorOrder) implements Call
 ```java
 package com.example.ailearning.l08advisors.chain;
 
-import com.example.ailearning.l08advisors.chain.support.AdvisorTrace;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 08-4: 기본 등록과 요청별 등록을 합친 뒤 order에 따라 전후 처리를 실행한다. */
@@ -91,28 +96,28 @@ public class Lesson04AdvisorChainChatService {
     }
 
     public Reply chat(String question) {
-        var advisorTrace = new AdvisorTrace();
+        List<String> executionSteps = new ArrayList<>();
         String answer = chatClient
                 .prompt()
                 .user(question)
                 // AdvisorA/B는 이번 요청에만 추가한다. 모든 요청에 적용하는 DefaultA/B도 함께 실행된다.
                 .advisors(new TraceAdvisor("AdvisorA", 20), new TraceAdvisor("AdvisorB", 30))
-                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, advisorTrace))
+                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, executionSteps))
                 .call()
                 .content();
-        return new Reply(answer, advisorTrace.steps());
+        return new Reply(answer, List.copyOf(executionSteps));
     }
 
     /** 다음 요청에 AdvisorA/B가 남지 않는지 비교하는 기본 등록 전용 호출. */
     public Reply chatWithDefaults(String question) {
-        var advisorTrace = new AdvisorTrace();
+        List<String> executionSteps = new ArrayList<>();
         String answer = chatClient
                 .prompt()
                 .user(question)
-                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, advisorTrace))
+                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, executionSteps))
                 .call()
                 .content();
-        return new Reply(answer, advisorTrace.steps());
+        return new Reply(answer, List.copyOf(executionSteps));
     }
 }
 ```
@@ -159,35 +164,16 @@ order가 같으면 순서를 보장하지 않으므로, 순서가 중요할 때�
 `final`은 목록 참조를 다른 목록으로 바꾸지 못하게 할 뿐, 목록 내용의 변경을 막지 않습니다.<br>
 이 문제는 하나의 객체를 여러 요청에서 재사용할 때 생기며, 같은 객체를 매 요청의 `.advisors(...)`로 전달하는 경우에도 발생할 수 있습니다.
 
-현재 `Lesson04AdvisorChainChatService`는 요청마다 새 `AdvisorTrace`를 만들고, 08-3에서 배운 `param(...)`으로 전달합니다.<br>
-`TraceAdvisor`는 `request.context()`에서 **현재 요청의 기록 객체**를 읽습니다.<br>
-같은 객체를 재사용해도 이름·순서만 공유하고 요청 기록은 공유하지 않는 구성입니다.<br>
-단, context에 넣는다고 객체가 복사되는 것은 아닙니다.<br>
-요청마다 `new AdvisorTrace()`를 만드는 코드가 기록을 분리합니다.<br>
+현재 `Lesson04AdvisorChainChatService`는 요청마다 `new ArrayList<>()`로 새 기록 목록을 만들고, 08-3에서 배운 `param(...)`으로 전달합니다.<br>
+`TraceAdvisor`는 `request.context()`에서 **현재 요청의 목록**을 읽어 `add(...)`로 실행 단계를 추가합니다.<br>
+같은 Advisor 객체를 재사용해도 이름·순서만 공유하고 요청별 기록 목록은 따로 사용하는 구성입니다.
+
+context에 넣는다고 목록이 자동으로 복사되는 것은 아닙니다.<br>
+요청마다 새 목록을 만드는 코드가 기록을 분리합니다.<br>
 이 context 값 자체가 모델의 질문으로 전송되는 것은 아닙니다.
 
-다음은 보조 클래스 [AdvisorTrace](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/chain/support/AdvisorTrace.java) 전체 코드입니다.<br>
-`steps()`는 현재 기록을 복사해 응답으로 반환합니다.
-
-```java
-package com.example.ailearning.l08advisors.chain.support;
-
-import java.util.ArrayList;
-import java.util.List;
-
-/** 한 요청에서 실행한 Advisor의 전후 처리 기록. 요청마다 새 객체를 만든다. */
-public class AdvisorTrace {
-    private final List<String> steps = new ArrayList<>();
-
-    public void record(String step) {
-        steps.add(step);
-    }
-
-    public List<String> steps() {
-        return List.copyOf(steps);
-    }
-}
-```
+모델 호출이 끝나면 서비스는 `List.copyOf(executionSteps)`로 기록 목록을 복사해 응답에 담습니다.<br>
+기록은 목록의 `add(...)`로 추가하고, 응답에는 복사한 목록을 전달합니다.
 
 ## 실행과 테스트
 
@@ -226,7 +212,7 @@ curl -sS http://127.0.0.1:8098/api/advisors/chain \
 
 1. 위 표의 네 Advisor는 전처리와 후처리에서 각각 어떤 순서로 실행되나요?
 2. AdvisorA의 order만 -10으로 바꾸면 `defaultAdvisors(...)`에 등록한 DefaultA·DefaultB가 먼저 실행되나요?
-3. 하나의 `TraceAdvisor` 객체에 모든 요청의 기록 목록을 보관하지 않고, 요청마다 새 `AdvisorTrace`를 만들어 전달하는 이유는 무엇인가요?
+3. 하나의 `TraceAdvisor` 객체에 모든 요청의 기록 목록을 보관하지 않고, 요청마다 새 기록 목록을 만들어 전달하는 이유는 무엇인가요?
 
 <details>
 <summary>해설</summary>
@@ -237,7 +223,7 @@ curl -sS http://127.0.0.1:8098/api/advisors/chain \
    두 등록 목록을 합쳐 order로 정렬하므로 AdvisorA가 먼저 진입합니다.<br>
    `defaultAdvisors(...)`와 요청 단계의 `.advisors(...)` 중 어디에 등록하는지는 적용할 요청의 범위를 결정합니다.
 3. 같은 `TraceAdvisor` 객체가 요청별로 바뀌는 기록 목록까지 공유하면 다른 요청의 기록이 섞일 수 있습니다.<br>
-   현재 구현은 `TraceAdvisor`에 기록 목록을 보관하지 않고, 요청마다 만든 `AdvisorTrace`를 그 요청의 context로 전달합니다.
+   현재 구현은 `TraceAdvisor`에 기록 목록을 보관하지 않고, 요청마다 만든 `List<String>`을 그 요청의 context로 전달합니다.
 
 </details>
 

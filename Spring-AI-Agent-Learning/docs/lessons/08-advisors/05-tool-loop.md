@@ -20,8 +20,9 @@ Java가 도구를 실행해 12000원을 반환하면, 그 결과를 모델에 �
 `request`·`model`은 이번 예제의 기록 이름입니다.<br>
 둘 다 08-4에서 만든 같은 `TraceAdvisor` 타입이며, 순서 값만 다르게 줍니다.
 
-`AdvisorTrace`는 08-4에서 배운 요청별 기록 객체입니다.<br>
-같은 context 파라미터로 기록을 전달하므로 각 요청의 결과가 섞이지 않습니다.
+08-4와 같이 요청마다 새 `List<String>`을 만들어 실행 순서를 담습니다.<br>
+두 Advisor에는 이번 요청에서 만든 같은 목록을 context 파라미터로 전달하므로, 전체 요청과 개별 모델 호출의 기록을 한 목록에서 비교할 수 있습니다.<br>
+다음 요청은 새 목록을 사용하므로 이전 기록과 섞이지 않습니다.
 
 ## 실제 서비스와 가격 도구
 
@@ -36,7 +37,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.stereotype.Service;
 
-import com.example.ailearning.l08advisors.chain.support.AdvisorTrace;
+import java.util.ArrayList;
 import java.util.List;
 
 /** 08-5: 메모리 없이 도구 루프 바깥과 안쪽의 실행 기록만 비교한다. */
@@ -55,7 +56,7 @@ public class Lesson05ToolLoopChatService {
     }
 
     public Reply chat(String question) {
-        var advisorTrace = new AdvisorTrace();
+        List<String> executionSteps = new ArrayList<>();
         int toolLoopOrder = ToolCallingAdvisor.DEFAULT_ORDER;
         String answer = chatClient
                 .prompt()
@@ -63,11 +64,11 @@ public class Lesson05ToolLoopChatService {
                 // request는 전체 요청, model은 도구 결과로 반복되는 모델 요청을 감싼다.
                 .advisors(new TraceAdvisor("request", toolLoopOrder - 10),
                         new TraceAdvisor("model", toolLoopOrder + 10))
-                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, advisorTrace))
+                .advisors(advisorSpec -> advisorSpec.param(TraceAdvisor.TRACE_CONTEXT_KEY, executionSteps))
                 .tools(priceTools)
                 .call()
                 .content();
-        return new Reply(answer, advisorTrace.steps());
+        return new Reply(answer, List.copyOf(executionSteps));
     }
 }
 ```

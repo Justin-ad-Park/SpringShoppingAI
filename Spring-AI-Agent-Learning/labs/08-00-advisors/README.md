@@ -16,7 +16,8 @@
 | 08-5 | 도구 루프 안팎의 실행 범위 | [Lesson05ToolLoopChatService](src/main/java/com/example/ailearning/l08advisors/toolloop/Lesson05ToolLoopChatService.java) | [Lesson05ToolLoopAdvisorLocalModelTest](src/test/java/com/example/ailearning/l08advisors/toolloop/Lesson05ToolLoopAdvisorLocalModelTest.java) | [Lesson05ToolLoopAdvisorOpenAiLiveTest](src/test/java/com/example/ailearning/l08advisors/toolloop/Lesson05ToolLoopAdvisorOpenAiLiveTest.java) |
 
 08-2는 Service를 직접 주입받아 Java Advisor 객체를 등록하는 예제이며 전용 HTTP API는 만들지 않습니다.<br>
-08-4의 `TraceAdvisor`와 `chain/support/AdvisorTrace`는 08-5의 기록에도 재사용합니다.
+08-4의 `TraceAdvisor`는 08-5에서도 재사용합니다.<br>
+실행 순서는 요청마다 만든 `List<String>`에 담으며, 별도의 기록용 클래스는 사용하지 않습니다.
 
 ## 로컬 테스트와 빌드
 
