@@ -50,8 +50,6 @@ Advisor는 애플리케이션에서 실행되는 코드이며, 그 이름이 별
 | 도구 결과를 전달하려고 모델에 다시 요청함 | [08-6 도구 실행과 모델 재요청](08-advisors/06-tool-loop.md) |
 | 반복 담당 객체 앞의 Advisor와 뒤의 Advisor는 실행 범위가 다름 | [08-7 반복 처리와 배치](08-advisors/07-tool-loop-order.md) |
 
-정상 응답 뒤의 처리와 실패 때도 남기는 종료 기록의 차이는 [08-8 선택 보충](08-advisors/08-request-recording.md)에서 구분합니다.
-
 ### 위 개념을 코드로 표현하는 인터페이스와 메서드
 
 인터페이스는 여러 클래스가 따르는 공통 규칙입니다.<br>
@@ -149,7 +147,6 @@ Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4]
 | [08-5. 두 Advisor의 순서](08-advisors/05-advisor-order.md) | order와 반대 방향 반환 | `Lesson05AdvisorOrderChatService` | A 전 → B 전 → B 후 → A 후 |
 | [08-6. 도구 실행과 모델 재요청](08-advisors/06-tool-loop.md) | 한 질문에 여러 모델 요청이 필요한 이유 | `Lesson06ToolLoopChatService` | 도구 결과를 담은 두 번째 모델 요청 |
 | [08-7. 도구 반복과 Advisor 배치](08-advisors/07-tool-loop-order.md) | DEFAULT_ORDER를 기준으로 배치 | `Lesson07ToolLoopOrderChatService` | 전체 처리 1회와 각 모델 요청의 기록 |
-| [08-8. 요청별 기록 (선택)](08-advisors/08-request-recording.md) | 요청별 목록·기본/추가 등록 조합 | `Lesson08RequestTraceChatService` | 서로 다른 요청의 기록 분리 |
 
 ## 실행하기
 

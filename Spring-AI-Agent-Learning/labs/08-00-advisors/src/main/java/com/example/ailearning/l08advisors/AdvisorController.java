@@ -1,7 +1,6 @@
 package com.example.ailearning.l08advisors;
 
 import com.example.ailearning.l08advisors.lesson01_logging.Lesson01LoggingChatService;
-import com.example.ailearning.l08advisors.lesson08_recording.Lesson08RequestTraceChatService;
 import com.example.ailearning.l08advisors.lesson03_memory.Lesson03MemoryAdvisorChatService;
 import com.example.ailearning.l08advisors.lesson06_toolloop.Lesson06ToolLoopChatService;
 import com.example.ailearning.l08advisors.lesson04_beforeafter.Lesson04BeforeAfterChatService;
@@ -19,19 +18,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/advisors")
 public class AdvisorController {
     private final Lesson01LoggingChatService loggingService;
-    private final Lesson08RequestTraceChatService chainService;
     private final Lesson03MemoryAdvisorChatService memoryService;
     private final Lesson06ToolLoopChatService toolLoopService;
     private final Lesson04BeforeAfterChatService beforeAfterService;
     private final Lesson05AdvisorOrderChatService orderService;
     private final Lesson07ToolLoopOrderChatService loopOrderService;
 
-    public AdvisorController(Lesson01LoggingChatService loggingService, Lesson08RequestTraceChatService chainService,
+    public AdvisorController(Lesson01LoggingChatService loggingService,
             Lesson03MemoryAdvisorChatService memoryService, Lesson06ToolLoopChatService toolLoopService,
             Lesson04BeforeAfterChatService beforeAfterService, Lesson05AdvisorOrderChatService orderService,
             Lesson07ToolLoopOrderChatService loopOrderService) {
         this.loggingService = loggingService;
-        this.chainService = chainService;
         this.memoryService = memoryService;
         this.toolLoopService = toolLoopService;
         this.beforeAfterService = beforeAfterService;
@@ -57,11 +54,6 @@ public class AdvisorController {
     @PostMapping(path = "/tool-loop/order", consumes = MediaType.TEXT_PLAIN_VALUE)
     public String loopOrder(@RequestBody @NotBlank @Size(max = 2000) String question) {
         return loopOrderService.chat(question);
-    }
-
-    @PostMapping(path = "/chain", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public Lesson08RequestTraceChatService.Reply chain(@RequestBody @NotBlank @Size(max = 2000) String question) {
-        return chainService.chat(question);
     }
 
     @PostMapping(path = "/memory/{conversationId}", consumes = MediaType.TEXT_PLAIN_VALUE)

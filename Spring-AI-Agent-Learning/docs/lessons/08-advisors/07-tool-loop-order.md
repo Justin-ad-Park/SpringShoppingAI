@@ -209,4 +209,4 @@ Live 테스트는 실제 도구 사용을 확인하되 모델의 도구 재요�
 
 </details>
 
-[이전: 도구 실행과 모델 재요청](06-tool-loop.md) · [선택 보충: 요청별 기록](08-request-recording.md) · [단원 목차](../08-advisors.md)
+[이전: 도구 실행과 모델 재요청](06-tool-loop.md) · [단원 목차](../08-advisors.md)

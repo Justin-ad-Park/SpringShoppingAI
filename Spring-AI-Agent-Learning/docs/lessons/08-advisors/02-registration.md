@@ -90,9 +90,10 @@ service.chatWithDefaults("일반 질문");
 | 첫 호출 | 기본 등록 Advisor + 인자로 전달한 additionalAdvisor | 2 | 1 |
 | 다음 호출 | 기본 등록 Advisor | 1 | 1 |
 
-위 예시처럼 하나의 모델 호출에 여러 Advisor를 적용할 수 있습니다.
-- 여기서는 Advisor의 등록 범위를 비교합니다.
-- 여러 Advisor의 실행 순서를 지정하는 방법은 [08-5](05-advisor-order.md)에서 다룹니다.
+위 예시처럼 하나의 모델 호출에 여러 Advisor를 적용할 수 있습니다.<br>
+기본 등록과 요청별 추가 등록은 적용 범위를 정합니다.<br>
+두 방식으로 등록한 Advisor도 합쳐진 목록에서 `order`에 따라 실행되며, 기본 등록이 언제나 먼저 실행되는 것은 아닙니다.<br>
+실행 순서는 [08-5 두 Advisor의 순서](05-advisor-order.md)에서 배웁니다.
 
 ## Spring AI가 적용하는 방식
 

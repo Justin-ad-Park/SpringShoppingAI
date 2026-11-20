@@ -1,7 +1,7 @@
 # 08 Advisor 실습
 
-[단원 교재](../../docs/lessons/08-advisors.md)의 다섯 소수업을 한 앱에서 실행합니다.<br>
-로거 사용 → 등록 범위 → 메모리 파라미터 → 직접 구현·순서 → 도구 루프 순서로 학습합니다.<br>
+[단원 교재](../../docs/lessons/08-advisors.md)의 일곱 소수업을 한 앱에서 실행합니다.<br>
+로거 사용 → 등록 범위 → 메모리 파라미터 → 단일 Advisor 전후 처리 → 두 Advisor의 순서 → 도구 재요청 → 반복 앞뒤 배치 순서로 학습합니다.<br>
 각 Service는 해당 수업에 필요한 기능만 연결합니다.<br>
 `AdvisorController`는 HTTP 입력·세션·공백 검증을 처리하는 공통 진입점입니다.
 
@@ -16,14 +16,11 @@
 | 08-5 | 두 Advisor의 order와 반환 순서 | [Lesson05AdvisorOrderChatService](src/main/java/com/example/ailearning/l08advisors/lesson05_order/Lesson05AdvisorOrderChatService.java) | [Lesson05AdvisorOrderLocalModelTest](src/test/java/com/example/ailearning/l08advisors/lesson05_order/Lesson05AdvisorOrderLocalModelTest.java) | [Lesson05AdvisorOrderOpenAiLiveTest](src/test/java/com/example/ailearning/l08advisors/lesson05_order/Lesson05AdvisorOrderOpenAiLiveTest.java) |
 | 08-6 | 사용자 정의 Advisor 없는 도구 재요청 | [Lesson06ToolLoopChatService](src/main/java/com/example/ailearning/l08advisors/lesson06_toolloop/Lesson06ToolLoopChatService.java) | [Lesson06ToolLoopLocalModelTest](src/test/java/com/example/ailearning/l08advisors/lesson06_toolloop/Lesson06ToolLoopLocalModelTest.java) | [Lesson06ToolLoopOpenAiLiveTest](src/test/java/com/example/ailearning/l08advisors/lesson06_toolloop/Lesson06ToolLoopOpenAiLiveTest.java) |
 | 08-7 | 도구 반복을 기준으로 Advisor 배치 | [Lesson07ToolLoopOrderChatService](src/main/java/com/example/ailearning/l08advisors/lesson07_looporder/Lesson07ToolLoopOrderChatService.java) | [Lesson07ToolLoopOrderLocalModelTest](src/test/java/com/example/ailearning/l08advisors/lesson07_looporder/Lesson07ToolLoopOrderLocalModelTest.java) | [Lesson07ToolLoopOrderOpenAiLiveTest](src/test/java/com/example/ailearning/l08advisors/lesson07_looporder/Lesson07ToolLoopOrderOpenAiLiveTest.java) |
-| 08-8 | 요청별 기록과 등록 조합 (선택) | [Lesson08RequestTraceChatService](src/main/java/com/example/ailearning/l08advisors/lesson08_recording/Lesson08RequestTraceChatService.java) | [Lesson08RequestTraceLocalModelTest](src/test/java/com/example/ailearning/l08advisors/lesson08_recording/Lesson08RequestTraceLocalModelTest.java) | [Lesson08RequestTraceOpenAiLiveTest](src/test/java/com/example/ailearning/l08advisors/lesson08_recording/Lesson08RequestTraceOpenAiLiveTest.java) |
 
 08-2는 Service를 직접 주입받아 Java Advisor 객체를 등록하는 예제이며 전용 HTTP API는 만들지 않습니다.<br>
 08-4는 단일 전후 처리, 08-5는 정렬, 08-6은 도구 결과 재전달만 확인합니다.<br>
 08-7에서 처음 `ToolCallingAdvisor.DEFAULT_ORDER`를 기준으로 두 Advisor를 배치합니다.<br>
-08-5의 `OrderedLogAdvisor`를 재사용하며 요청별 context나 기록용 보조 객체는 사용하지 않습니다.<br>
-08-8은 기존 네 Advisor의 등록·기록 예제를 보존한 선택 보충입니다.<br>
-요청마다 새 목록을 만들어 응답의 `steps`로 반환합니다.
+08-5의 `OrderedLogAdvisor`를 재사용하며 요청별 context나 기록용 보조 객체는 사용하지 않습니다.
 
 ## 패키지에서 수업 찾기
 
@@ -38,7 +35,6 @@ lesson04_beforeafter
 lesson05_order
 lesson06_toolloop
 lesson07_looporder
-lesson08_recording
 ```
 
 `AdvisorApplication`과 `AdvisorController`는 여러 수업에서 사용하는 진입점이므로 상위 `l08advisors` 패키지에 둡니다.
@@ -79,7 +75,6 @@ IntelliJ에서도 위 클래스나 한글 메서드의 Run을 선택할 수 있�
 | 08-5 | `POST /api/advisors/order` | 답변 문자열, 콘솔에 두 Advisor 순서 출력 |
 | 08-6 | `POST /api/advisors/tool-loop` | 허브티 가격 답변 문자열 |
 | 08-7 | `POST /api/advisors/tool-loop/order` | 답변 문자열, 콘솔에 request/model 전후 출력 |
-| 08-8 선택 | `POST /api/advisors/chain` | 기존처럼 `answer`, `steps` 반환 |
 
 본문은 `text/plain; charset=UTF-8`, 포트는 8098입니다.<br>
 curl과 결과 해석은 각 소수업에 있습니다.<br>
