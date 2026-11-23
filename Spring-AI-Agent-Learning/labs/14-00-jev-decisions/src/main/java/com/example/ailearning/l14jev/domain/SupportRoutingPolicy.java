@@ -16,6 +16,7 @@ public final class SupportRoutingPolicy {
 
     public static SupportPriority determinePriority(double score, double confidence) {
         if (confidence < MIN_CONFIDENCE) return SupportPriority.REVIEW;
+
         if (score >= HIGH_PRIORITY_SCORE) return SupportPriority.HIGH;
         if (score >= NORMAL_PRIORITY_SCORE) return SupportPriority.NORMAL;
         return SupportPriority.LOW;

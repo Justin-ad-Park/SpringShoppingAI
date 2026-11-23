@@ -32,14 +32,12 @@ class JevLiveTest {
         String productMessage = "3만원 이하의 가벼운 텀블러를 추천해 주세요.";
         IntentClassificationResult productIntentResult = intentService.classifyIntent(productMessage);
         printJevDecision(productMessage, productIntentResult);
-
         String deliveryMessage = "이미 주문한 상품이 아직 도착하지 않았어요. 지금 배송 상태가 궁금합니다.";
         IntentClassificationResult deliveryIntentResult = intentService.classifyIntent(deliveryMessage);
         printJevDecision(deliveryMessage, deliveryIntentResult);
 
         assertThat(productIntentResult.predictedIntent()).isEqualTo(ShoppingIntent.PRODUCT_SEARCH);
         assertThat(deliveryIntentResult.predictedIntent()).isEqualTo(ShoppingIntent.ORDER_DELIVERY);
-
         for (IntentClassificationResult intentResult : List.of(productIntentResult, deliveryIntentResult)) {
             assertThat(intentResult.confidence()).isBetween(0.0, 1.0);
             assertThat(intentResult.probabilities()).containsKey(intentResult.predictedIntent().name());
