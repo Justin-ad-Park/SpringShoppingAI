@@ -35,6 +35,19 @@ class Lesson03MemoryAdvisorOpenAiLiveTest {
     }
 
     @Test
+    void 첫번째_요청_이후__메시지_확인() {
+        // Given: 이전 대화가 없는 상태에서 첫 대화 실행
+        service.clear("live-user", "budget");
+        String firstQuestion = "친구 선물 예산은 3만원입니다.";
+        System.out.println("질문1:" + firstQuestion);
+        var firstReply = service.chat("live-user", "budget", firstQuestion);
+
+        // When
+        System.out.printf("첫 답변: %s%n 저장 메시지 수: %d%n",
+                firstReply.answer(), firstReply.storedMessages());
+    }
+
+    @Test
     void 실제_모델의_후속_요청에_이전_질문과_실제_답변을_함께_전달한다() {
         // Given: 이전 대화가 없는 상태에서 첫 대화 실행
         service.clear("live-user", "budget");

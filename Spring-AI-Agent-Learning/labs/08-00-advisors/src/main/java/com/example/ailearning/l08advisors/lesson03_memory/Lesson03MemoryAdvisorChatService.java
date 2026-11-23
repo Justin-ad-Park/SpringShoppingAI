@@ -21,8 +21,7 @@ public class Lesson03MemoryAdvisorChatService {
         chatClient = builder
                 .defaultSystem("이전 대화를 참고해 사용자의 질문에 답하세요.")
                 // default: 이 ChatClient의 모든 요청에 메모리 기능을 연결한다.
-                .defaultAdvisors(SimpleLoggerAdvisor.builder().build(), MessageChatMemoryAdvisor.builder(conversationMemory)
-                        .build())
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(conversationMemory).build())
                 .build();
     }
 
