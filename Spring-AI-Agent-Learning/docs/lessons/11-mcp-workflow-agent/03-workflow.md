@@ -1,7 +1,7 @@
 # 11-3. Workflow: Java가 도구 호출 순서를 정하기
 
 목표는 **모델이 추출한 조건을 Java가 받아 검색 → 계산을 정해진 순서로 실행하는 것**입니다.<br>
-04장의 구조화 응답을 사용하는 [SearchConditionExtractor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
+04단원의 구조화 응답을 사용하는 [SearchConditionExtractor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
 
 | 필드 | 의미 |
 |---|---|
@@ -25,6 +25,20 @@ sequenceDiagram
 ```
 
 ## 서비스 전체 코드
+
+이 비교 실습은 `McpToolExecutor`라는 보조 객체로 원격 도구를 실행합니다.<br>
+`executeTool(도구 이름, 인자)`를 호출하면 MCP 서버로 요청을 보내고 성공한 호출의 인자·결과를 기록합니다.<br>
+호출 시도 횟수도 제한하며, 이 객체는 Spring AI 제공 타입이 아니라 실습에서 작성한 코드입니다.
+
+아래 생성 코드의 인자는 다음 역할을 합니다.
+
+| 인자 | 역할 |
+|---|---|
+| `shoppingMcpGateway` | 실제 MCP 도구 호출을 전달 |
+| `objectMapper` | 도구 인자와 결과를 JSON으로 변환 |
+| `maxToolCallAttempts` | 이번 실행의 도구 호출 시도 상한. 기본값 6은 [11-6](06-compare.md)의 설정 설명과 연결 |
+| 마지막 `null` | 추가 검색 조건을 강제로 덮어쓰지 않음. 조건 고정이 필요한 Hybrid 방식은 11-5에서 학습 |
+
 
 [전체 소스: McpWorkflowService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpWorkflowService.java)
 
@@ -91,9 +105,8 @@ public class McpWorkflowService {
 `SearchConditions.searchArguments()`는 같은 배송그룹의 재고 있는 상품을 최대 20개 검색합니다.<br>
 이 범위는 현재 서버의 계산 조건에 맞춘 실습 범위입니다.
 
-`McpToolExecutor`은 요청별 기록과 호출 횟수 제한을 담당하는 제공 코드입니다.<br>
-지금은 `executeTool()`과 결과의 `toolCalls`만 따라가세요.<br>
-조건 고정 기능은 11-5에서 읽습니다.
+`toolCalls`는 위 보조 객체가 기록한 실제 성공 호출 목록입니다.<br>
+조건을 강제로 고정하는 추가 동작은 [11-5](05-hybrid.md)에서 별도로 연결합니다.
 
 ## 실행
 
@@ -117,4 +130,4 @@ Workflow에서 모델은 무엇을 판단하고 무엇을 판단하지 않나요
 </details>
 
 
-[11장 목차](../11-mcp-workflow-agent.md) · [다음 수업](04-agent.md)
+[11단원 목차](../11-mcp-workflow-agent.md) · [다음 수업](04-agent.md)

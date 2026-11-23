@@ -19,7 +19,7 @@
 | 도구·모델 장애 | 정책 검색이 실패한 상황 | 정상 답변과 오류·보류를 구분 |
 
 위 표는 **평가 세트 설계 예시**입니다.<br>
-현재 12장 API가 이 사례를 모두 구현했다는 뜻은 아닙니다.<br>
+현재 12단원 API가 이 사례를 모두 구현했다는 뜻은 아닙니다.<br>
 기존 고정 사례는 비교 기준으로 유지하고, 실제 실패 사례를 추가하되 반복 조정에 사용하지 않을 확인용 사례도 따로 둡니다.
 
 ## 2. 한 점수로 합치기 전에 분리해서 보기
@@ -81,4 +81,4 @@ Micrometer 측정을 Prometheus 같은 장기 보관 시스템에 연결할 수 
 API·측정 기준: [Spring AI Evaluation](https://docs.spring.io/spring-ai/reference/api/testing.html) · [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html).<br>
 운영 항목은 이를 바탕으로 한 설계 제안입니다.
 
-[이전: 12-5](05-failures.md) · [12장 목차](../12-evaluation.md) · [다음: 13장](../13-shopping-agent.md)
+[이전: 12-5](05-failures.md) · [12단원 목차](../12-evaluation.md) · [다음: 13단원](../13-shopping-agent.md)

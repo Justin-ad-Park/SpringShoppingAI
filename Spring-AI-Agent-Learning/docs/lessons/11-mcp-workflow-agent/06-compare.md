@@ -78,4 +78,4 @@ MCP는 연결 방식입니다.<br>
 </details>
 
 
-[11장 목차](../11-mcp-workflow-agent.md)
+[11단원 목차](../11-mcp-workflow-agent.md)

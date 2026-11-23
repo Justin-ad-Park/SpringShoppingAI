@@ -80,4 +80,4 @@ Spring Blog의 [Modular RAG 설명](https://spring.io/blog/2026/10/02/spring-ai-
 참고: 위 링크는 프레임워크 API와 공개 기술 예제입니다.<br>
 갱신 절차·쇼핑 시나리오는 이를 바탕으로 작성한 설계 제안이며 특정 기업의 운영 방식으로 주장하지 않습니다.
 
-[이전: 10-5](05-evidence.md) · [10장 목차](../10-rag.md) · [다음: 11장](../11-mcp-workflow-agent.md)
+[이전: 10-5](05-evidence.md) · [10단원 목차](../10-rag.md) · [다음: 11단원](../11-mcp-workflow-agent.md)

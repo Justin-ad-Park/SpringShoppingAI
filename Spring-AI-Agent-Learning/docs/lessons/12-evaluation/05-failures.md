@@ -23,17 +23,56 @@
 
 | 메서드 | 결과 | 사용하는 이유 |
 |---|---|---|
+| `.content()` | 답변 문자열 | 답변 텍스트만 필요할 때 |
 | `.entity(UnverifiedAnswer.class)` | 변환한 객체 | 답변의 필드를 사용할 때 |
 | `.chatResponse()` | 원래 ChatResponse | 답변과 사용량 등 메타데이터를 읽을 때 |
 | `.responseEntity(UnverifiedAnswer.class)` | 변환한 객체와 ChatResponse를 함께 담은 Spring AI의 `ResponseEntity<ChatResponse, UnverifiedAnswer>` | 구조화 답변과 사용량이 모두 필요할 때 |
 
-같은 메서드의 `answerResponse.entity()`로 변환한 답변을 읽고, `answerResponse.response().getMetadata().getUsage()`로 원래 응답의 사용량을 읽습니다.<br>
-두 값은 같은 모델 응답에서 가져오므로 사용량을 얻으려고 모델을 다시 호출하지 않습니다.<br>
 이 Spring AI 응답 객체는 Spring MVC의 HTTP 상태·헤더·본문을 담는 `ResponseEntity`와 다른 타입입니다.
 
-사용량을 확인하면 요청별 `RequestMetrics`에 입력·출력 토큰을 기록합니다.<br>
-사용량이 없거나 보고된 전체 토큰이 양수가 아니면 초기값 `null`을 유지합니다.<br>
+`RequestMetrics`는 [이 실습의 RagService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java) 안에 정의한 측정값 보관 클래스입니다.<br>
+사용자 요청마다 새로 만들며 채팅 요청 시도 수와 응답의 입력·출력 토큰을 모읍니다.<br>
+Spring AI가 제공하는 응답 타입과 구분해서 읽으세요.
+
+다음은 [RagService.requestGroundedAnswer()](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)의 응답 처리 발췌입니다.<br>
+`answerResponse`는 해당 메서드에서 `chatClient.prompt()...call().responseEntity(UnverifiedAnswer.class)`로 받은 결과이며, `requestMetrics`는 현재 요청에서 새로 만든 계측 객체입니다.
+
+```java
+var tokenUsage = answerResponse.response().getMetadata().getUsage();
+if (tokenUsage != null && tokenUsage.getTotalTokens() > 0) {
+    requestMetrics.inputTokens = tokenUsage.getPromptTokens();
+    requestMetrics.outputTokens = tokenUsage.getCompletionTokens();
+}
+return answerResponse.entity();
+```
+
+`response()`는 사용량을 읽을 원래 응답, `entity()`는 출처 검사에 전달할 구조화 답변입니다.<br>
+두 값은 같은 모델 응답에서 읽으므로 사용량을 얻으려고 모델을 다시 호출하지 않습니다.
+
+사용량이 없거나 보고된 전체 토큰이 양수가 아니면 입력·출력 토큰 필드는 초기값 `null`을 유지합니다.<br>
 응답 변환 전에 실패한 경우도 사용량을 읽지 못할 수 있으며, 이를 사용량 0이라고 해석하지 않습니다.
+
+## 토큰 수와 경과 시간의 측정 범위 구분하기
+
+`RagService.answer()`는 검색 전에 `System.nanoTime()`을 기록하고, 정상·실패 결과를 반환할 때 경과 시간을 계산합니다.<br>
+같은 클래스의 실제 측정값 생성 메서드입니다.
+
+```java
+private RagMetrics createMetricsSnapshot(long startedAtNanos, RequestMetrics requestMetrics, String failureKind) {
+    long elapsedMs = (System.nanoTime() - startedAtNanos) / 1_000_000;
+    return new RagMetrics(elapsedMs, requestMetrics.chatRequestAttempts,
+            requestMetrics.inputTokens, requestMetrics.outputTokens, failureKind);
+}
+```
+
+| 측정값 | 포함하는 범위 |
+|---|---|
+| `elapsedMs` | 이번 `answer()`의 질문 임베딩·검색·필요한 채팅 생성과 응답 검증까지의 경과 시간. 단위 ms |
+| `inputTokens`, `outputTokens` | 해당 채팅 응답이 보고한 토큰 수. 질문 임베딩 사용량은 포함하지 않음 |
+| `chatCalls` | 샘플이 ChatClient 호출을 시도한 수. SDK 내부 HTTP 재시도 수와는 다름 |
+
+서버 시작 시 문서 적재 시간은 위 `elapsedMs`에 포함하지 않습니다.<br>
+검색 결과가 없어 채팅 생성을 생략해도 질문 임베딩·검색 시간은 측정되며, 이 경우 채팅 토큰 값은 확인된 값으로 채워지지 않습니다.
 
 ## 고정 질문 세트와 평가 보고서 연결하기
 
@@ -61,58 +100,6 @@
 운영 서비스 전체의 정답률이나 가용성을 뜻하지 않습니다.<br>
 사례가 적으면 한 건의 차이도 크게 보이므로 기본 사례를 유지하면서 경계 조건과 다른 질문 표현을 추가합니다.<br>
 연결 실패를 준비된 정답으로 대체하지 않고 실패 상태와 원인을 기록해야 비교가 가능합니다.
-
-## 구조화 답변과 사용량을 한 응답에서 읽기
-
-12-3은 `.chatResponse()`로 일반 답변과 사용량을 읽었습니다.<br>
-이 통합 예제는 모델 응답을 `UnverifiedAnswer`로 변환하면서 원래 응답의 사용량도 읽어야 하므로 `.responseEntity(UnverifiedAnswer.class)`를 사용합니다.
-
-| 결과를 받는 메서드 | 읽을 수 있는 값 |
-|---|---|
-| `.content()` | 답변 문자열 |
-| `.entity(UnverifiedAnswer.class)` | 변환한 답변 객체 |
-| `.chatResponse()` | 답변·메타데이터를 가진 ChatResponse |
-| `.responseEntity(UnverifiedAnswer.class)` | 변환한 객체와 원래 ChatResponse를 함께 가진 결과 |
-
-마지막 메서드의 반환값은 Spring AI의 응답 래퍼이며, Spring MVC에서 HTTP 상태·헤더·본문을 구성하는 `ResponseEntity`와는 다릅니다.
-
-다음은 [RagService.requestGroundedAnswer()](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)의 응답 처리 발췌입니다.<br>
-`answerResponse`는 바로 앞의 `chatClient.prompt()...call().responseEntity(UnverifiedAnswer.class)`로 받은 결과이며, `requestMetrics`는 현재 요청에서 새로 만든 계측 객체입니다.
-
-```java
-var tokenUsage = answerResponse.response().getMetadata().getUsage();
-if (tokenUsage != null && tokenUsage.getTotalTokens() > 0) {
-    requestMetrics.inputTokens = tokenUsage.getPromptTokens();
-    requestMetrics.outputTokens = tokenUsage.getCompletionTokens();
-}
-return answerResponse.entity();
-```
-
-`response()`는 사용량을 읽을 원래 응답, `entity()`는 출처 검사에 전달할 구조화 답변입니다.<br>
-사용량을 읽기 위해 별도 모델 요청을 보내지 않습니다.<br>
-사용량을 확인하지 못하면 Integer 필드는 `null`로 남기며, 임의로 0으로 바꾸지 않습니다.
-
-## 토큰 수와 경과 시간의 측정 범위 구분하기
-
-`RagService.answer()`는 검색 전에 `System.nanoTime()`을 기록하고, 정상·실패 결과를 반환할 때 경과 시간을 계산합니다.<br>
-같은 클래스의 실제 측정값 생성 메서드입니다.
-
-```java
-private RagMetrics createMetricsSnapshot(long startedAtNanos, RequestMetrics requestMetrics, String failureKind) {
-    long elapsedMs = (System.nanoTime() - startedAtNanos) / 1_000_000;
-    return new RagMetrics(elapsedMs, requestMetrics.chatRequestAttempts,
-            requestMetrics.inputTokens, requestMetrics.outputTokens, failureKind);
-}
-```
-
-| 측정값 | 포함하는 범위 |
-|---|---|
-| `elapsedMs` | 이번 `answer()`의 질문 임베딩·검색·필요한 채팅 생성과 응답 검증까지의 경과 시간. 단위 ms |
-| `inputTokens`, `outputTokens` | 해당 채팅 응답이 보고한 토큰 수. 질문 임베딩 사용량은 포함하지 않음 |
-| `chatCalls` | 샘플이 ChatClient 호출을 시도한 수. SDK 내부 HTTP 재시도 수와는 다름 |
-
-서버 시작 시 문서 적재 시간은 위 `elapsedMs`에 포함하지 않습니다.<br>
-검색 결과가 없어 채팅 생성을 생략해도 질문 임베딩·검색 시간은 측정되며, 이 경우 채팅 토큰 값은 확인된 값으로 채워지지 않습니다.
 
 ## 실패는 어디서 확인할까?
 
@@ -168,7 +155,7 @@ SDK 재시도는 0회, 요청 타임아웃은 교육 샘플의 기본값인 5초
 
 ## 실행
 
-키·Chat 모델·임베딩 모델 설정은 [10장](../10-rag.md)과 같습니다.<br>
+키·Chat 모델·임베딩 모델 설정은 [10단원](../10-rag.md)과 같습니다.<br>
 저장소 루트에서:
 
 ```bash
@@ -204,11 +191,11 @@ usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니�
 실제 비용이나 품질로 표시하지 않습니다.<br>
 기본 요청 타임아웃은 5초이며, 이 로컬 테스트 클래스는 `spring.ai.openai.timeout=500ms`로 덮어써 느린 응답을 빠르게 검증합니다.
 
-## 02·05장의 보충 실습을 다시 실행하기
+## 02·05단원의 보충 실습을 다시 실행하기
 
 RAG 평가 코드에 제약 처리를 추가하지 않고 앞에서 완성한 독립 모듈을 활용합니다.
 
-| 실습 | 12장에서 확인할 것 |
+| 실습 | 12단원에서 확인할 것 |
 |---|---|
 | [05 보충 5: 도구 호출 횟수 제한](../05-tool-calling/05-tool-call-limits.md) | `TOOL_LIMIT`·`finishReason`을 모델 품질 실패나 통신 오류와 구분 |
 | [02 보충 5: 모델 요청 타임아웃과 재시도](../02-first-call/05-model-timeout-retry.md) | 같은 질문·같은 429 응답에서 재시도 0회와 1회의 실제 HTTP 요청 수 비교 |

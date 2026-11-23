@@ -2,7 +2,7 @@
 
 ## 이번 수업의 목표
 
-선수 지식은 04~12장의 구조화 응답·도구·실행 방식·메모리·검색·평가입니다.
+선수 지식은 04~12단원의 구조화 응답·도구·실행 방식·메모리·검색·평가입니다.
 
 - 조건 해석·정보 조회·결과 검증·저장을 하나의 상담 흐름으로 연결합니다.
 - 모델의 선택과 Java의 업무 검증 책임을 구분합니다.
@@ -62,7 +62,7 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 목표는 **상품 추천·정책 검색·후속 질문을 연결하면서 모델 판단과 Java의 책임을 설명하는 것**입니다.<br>
 명령은 모두 SpringShoppingAI 저장소 루트에서 실행합니다.<br>
 이 단원의 상품 도구는 애플리케이션 내부에서 실행합니다.<br>
-원격 도구를 사용하는 세 방식은 [11장 MCP](11-mcp-workflow-agent.md)에서 독립적으로 실행합니다.
+원격 도구를 사용하는 세 방식은 [11단원 MCP](11-mcp-workflow-agent.md)에서 독립적으로 실행합니다.
 
 
 ## 세 단계로 실행하기
@@ -153,7 +153,7 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 - [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents): 고정 흐름과 모델 선택의 구분, 단순한 구성에서 시작하는 설계 기준을 참고했습니다.
 - [Microsoft — Spring AI for Beginners](https://github.com/microsoft/Spring-AI-for-Beginners): 개별 기능을 RAG·도구·MCP·Agent로 연결하는 공개 교육 과정의 학습 구성을 참고했습니다.<br>
   Azure 배포 코드를 옮긴 것은 아닙니다.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 확인 범위와 버전 차이를 설명합니다.<br>
+- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 확인 범위와 버전 차이를 설명합니다.<br>
   13-5·6의 기존 출처는 각 소수업에서 확인합니다.
 
-[이전: 12장](12-evaluation.md) · [다음: 14장 Jev](14-jev.md) · [전체 교육 계획](../curriculum.md)
+[이전: 12단원](12-evaluation.md) · [다음: 14단원 Jev](14-jev.md) · [전체 교육 계획](../curriculum.md)

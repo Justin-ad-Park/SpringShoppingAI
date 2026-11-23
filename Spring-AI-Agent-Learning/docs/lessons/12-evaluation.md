@@ -2,7 +2,7 @@
 
 ## 이번 수업의 목표
 
-선수 지식은 10장의 RAG, HTTP 오류와 Java 예외입니다.
+선수 지식은 10단원의 RAG, HTTP 오류와 Java 예외입니다.
 
 - 고정 사례·기대 결과를 정하고 같은 기준으로 변경 전후를 비교합니다.
 - 코드 검사와 평가 모델의 판정이 각각 무엇을 확인하는지 설명합니다.
@@ -33,7 +33,7 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 평가 모델을 사용한 판정도 다른 모델의 판단이므로, 점수 하나가 정확성을 보증하지는 않습니다.<br>
 중요한 질문, 답변해도 되는 조건, 근거가 없을 때의 기대 행동을 먼저 정하고 사람이 확인할 기준과 연결해야 합니다.
 
-02장 보충의 타임아웃·재시도와 05장 보충의 도구 호출 제한 실습도 여기서 다시 활용합니다.<br>
+02단원 보충의 타임아웃·재시도와 05단원 보충의 도구 호출 제한 실습도 여기서 다시 활용합니다.<br>
 서비스가 질문을 한 번 처리하는 동안 재시도로 실제 모델 서버에는 여러 번 요청할 수 있으므로, 어떤 단계의 횟수와 시간을 측정하는지 구분합니다.
 
 개념 참고: [Spring AI의 평가](https://docs.spring.io/spring-ai/reference/api/testing.html), [관측 기능](https://docs.spring.io/spring-ai/reference/observability/index.html).
@@ -120,6 +120,6 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 - [Canonical / Ubuntu — Spring AI and Observability](https://ubuntu.com/developers/docs/tutorials/java-advanced/spring-ai/springai-observability/): RAG 실행과 메트릭 조회를 연결하는 실습 구성을 참고했습니다.<br>
   해당 자료의 Prometheus 구성을 현재 실습에 추가한 것은 아닙니다.
 - [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents): 여러 평가 기준·반복 실행·실제 결과를 분리하는 방법을 참고했습니다.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
 
-[이전: 11장 MCP](11-mcp-workflow-agent.md) · [다음: 13장 통합](13-shopping-agent.md)
+[이전: 11단원 MCP](11-mcp-workflow-agent.md) · [다음: 13단원 통합](13-shopping-agent.md)

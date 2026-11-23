@@ -27,12 +27,17 @@ sequenceDiagram
 
 ## 실행 기록을 추가한 Agent
 
-11-2의 `BasicMcpChatService`가 제공 Provider만 사용하는 최소 예제입니다.<br>
+[11-2 모델 연결 보충](02-provider-model.md)의 `BasicMcpChatService`가 제공 Provider만 사용하는 최소 예제입니다.<br>
 이 수업은 비교 실험을 위해 `McpToolExecutor`로 호출 기록과 실행 상한을 추가합니다.<br>
 Hybrid에서 사용하는 인자 제한은 여기서는 적용하지 않습니다.<br>
 기본 연결과 자체 제어를 구분해 읽으세요.
 
 ## 서비스 전체 코드
+
+11-3과 같은 `McpToolExecutor`를 사용하되, 이번에는 `createToolCallbacks()`로 모델에게 제공할 도구 목록을 받습니다.<br>
+각 콜백은 모델이 실행을 요청했을 때 원격 호출을 보내고 결과를 기록합니다.<br>
+생성자의 `maxToolCallAttempts`는 호출 시도 상한이며, 마지막 `null`은 11-5의 추가 조건 고정을 사용하지 않는다는 뜻입니다.
+
 
 [전체 소스: McpAgentService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpAgentService.java)
 
@@ -117,4 +122,4 @@ Java 코드가 순서와 분기를 실행하는 Workflow와는 다릅니다.
 </details>
 
 
-[11장 목차](../11-mcp-workflow-agent.md) · [다음 수업](05-hybrid.md)
+[11단원 목차](../11-mcp-workflow-agent.md) · [다음 수업](05-hybrid.md)

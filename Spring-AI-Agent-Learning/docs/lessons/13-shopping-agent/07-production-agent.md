@@ -14,7 +14,7 @@
 | 조회 | 허용 도구를 제공하고 실행 결과 기록 | 로그인 권한·실제 업무 API 연결 |
 | 검증 | 조회한 ID·총액·카테고리·출처 검사 | 요청 항목 전체의 충족 여부 확인 |
 | 대화 저장 | 정상·결과 없음·실패별 저장 시점 구분 | 영구 이력·명시적 상담 상태·만료 정책 |
-| 실행 제한 | 모델 요청·도구 실행·전체 시간의 범위별 제한 | 동시 사용자·원격 실패·운영 용량 기준 |
+| 실행 제한 | 기본 상담과 분리한 [13-8 선택 실습](08-execution-limits.md)에서 모델 요청·도구 실행·전체 대기 제한 | 동시 사용자·원격 실패·운영 용량 기준 |
 
 예제의 `VERIFIED`는 현재 검사 범위의 통과를 나타냅니다.<br>
 상품 추천과 반품 안내를 함께 요청했는데 상품만 답했다면, ID·금액이 맞아도 요청 전체를 충족하지 못했을 수 있습니다.<br>
@@ -89,4 +89,4 @@
 참고: [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents)의 단순한 구성과 실행 결과 확인 원칙, [Microsoft의 Agent 교육 모듈](https://github.com/microsoft/Spring-AI-for-Beginners/tree/main/06-agents)의 기능 연결 학습 구성을 참고했습니다.<br>
 특정 상용 쇼핑몰 사례나 이 샘플의 운영 인증을 의미하지 않습니다.
 
-[13장 목차](../13-shopping-agent.md) · [기본 과정 마무리: 13-4](04-conversation.md) · [전체 교육 계획](../../curriculum.md)
+[13단원 목차](../13-shopping-agent.md) · [기본 과정 마무리: 13-4](04-conversation.md) · [전체 교육 계획](../../curriculum.md)

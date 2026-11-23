@@ -4,7 +4,8 @@
 
 | 학습 단계 | 구현 | 확인할 테스트 |
 |---|---|---|
-| 11-2 제공 Provider | [BasicMcpChatService](src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java) | [McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다` |
+| [11-2 직접 호출](../../docs/lessons/11-mcp-workflow-agent/02-direct-call.md) | ShoppingMcpGateway | `모델_없이_실제_MCP의_도구_목록과_배송_정책을_조회한다` |
+| [11-2 모델 연결 보충](../../docs/lessons/11-mcp-workflow-agent/02-provider-model.md) | [BasicMcpChatService](src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java) | [McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다` |
 | 11-3~6 비교·제약 | ShoppingMcpGateway·McpToolExecutor와 세 Service | 같은 테스트 클래스의 Workflow·Agent·Hybrid 사례 |
 
 `POST /api/mcp/basic`은 text/plain 질문을 받아 제공 Provider로 도구를 연결합니다.<br>
@@ -12,7 +13,7 @@
 [Live](src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)의 Provider 사례는 실제 모델을 호출합니다.
 
 
-[11장 교재](../../docs/lessons/11-mcp-workflow-agent.md)의 세 방식은 같은 shopping-mcp 서버의 검색·계산 도구를 사용합니다.
+[11단원 교재](../../docs/lessons/11-mcp-workflow-agent.md)의 세 방식은 같은 shopping-mcp 서버의 검색·계산 도구를 사용합니다.
 
 ## 설정과 실행
 

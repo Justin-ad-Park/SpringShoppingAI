@@ -9,7 +9,7 @@
 개발자는 4절의 코드와 6절의 실행을 따라갑니다.<br>
 상용 사례·설계 비교·평가는 7~9절에서 읽습니다.
 
-**선수 지식:** [04장 구조화 응답](../04-structured-output.md), [13-2 의도 추출](02-intent.md).<br>
+**선수 지식:** [04단원 구조화 응답](../04-structured-output.md), [13-2 의도 추출](02-intent.md).<br>
 기본 상담 모듈과 분리된 선택 보충입니다.
 
 ### 이 수업이 참고한 공식 자료
@@ -437,4 +437,4 @@ Dialogflow CX는 후보 점수가 정해 둔 최소 점수(임계값)에 못 미
 
 </details>
 
-[의도 추출 기본 수업으로](02-intent.md) · [13장 목차](../13-shopping-agent.md) · [교육 계획](../../curriculum.md)
+[의도 추출 기본 수업으로](02-intent.md) · [13단원 목차](../13-shopping-agent.md) · [교육 계획](../../curriculum.md)

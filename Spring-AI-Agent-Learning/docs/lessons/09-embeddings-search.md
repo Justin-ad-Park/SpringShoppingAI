@@ -40,7 +40,8 @@ flowchart TD
 Spring AI는 임베딩 모델 호출과 벡터 저장소 연결을 돕습니다.<br>
 이 수업의 저장소는 애플리케이션 메모리에서 동작하므로 별도 데이터베이스를 설치하지 않습니다.
 
-**유사도가 높다는 것은 내용이 질문과 가깝다는 뜻이며, 문서의 사실 여부나 최신성을 증명하는 점수는 아닙니다.** 기획할 때는 검색할 문서의 범위와 업데이트 방법, 반드시 적용할 카테고리 같은 조건도 함께 정해야 합니다.
+**유사도가 높다는 것은 내용이 질문과 가깝다는 뜻이며, 문서의 사실 여부나 최신성을 증명하는 점수는 아닙니다.**<br>
+기획할 때는 검색할 문서의 범위와 문서 업데이트(문서 품질 유지) 방법, 반드시 적용할 카테고리 같은 조건도 함께 정해야 합니다.
 
 개념 참고: [Spring AI의 임베딩 설명](https://docs.spring.io/spring-ai/reference/api/embeddings.html).
 
@@ -55,29 +56,19 @@ Spring AI는 임베딩 모델 호출과 벡터 저장소 연결을 돕습니다.
 | API | 역할 | 실습에서의 사용 |
 |---|---|---|
 | `EmbeddingModel` | 텍스트를 벡터로 바꾸는 인터페이스 | `embed(text)`의 `float[]` 관찰 |
-| `Document` | 본문·ID·메타데이터를 담는 자료형 | 정책 원문과 `category` 보관 |
-| `VectorStore` | 문서 적재·삭제와 유사도 검색의 인터페이스 | 실제 저장소를 교체할 수 있는 계약 |
+| `Document` | 문서 본문·ID·분류 같은 부가 정보를 담는 자료형 | 배송·반품 정책 원문과 분류 보관 |
+| `VectorStore` | 여러 벡터 저장소를 같은 메서드로 사용하도록 정의한 인터페이스 | 문서 저장·삭제·유사도 검색 |
 | `SimpleVectorStore` | 메모리에서 벡터를 비교하는 구현체 | 별도 DB 없이 검색 원리 실습 |
-| `SearchRequest` | 질의와 검색 조건을 묶는 요청 | `query`, `topK`, `similarityThreshold`, 필터 |
+| `SearchRequest` | 검색할 질문과 조건을 묶는 요청 | 질문·최대 결과 수 등 지정 |
 
-`topK`는 최대 반환 개수이고 threshold는 포함할 유사도 하한입니다.<br>
-필터는 카테고리 등 명시적 조건입니다.<br>
-“반품 문서만”이라는 요구를 유사도 점수만으로 대신하지 않습니다.<br>
-코드와 용어를 함께 읽는 위치는 [09-2](09-embeddings-search/02-store.md)입니다.
+문서를 저장하고 검색하는 기본 흐름은 [09-2](09-embeddings-search/02-store.md)에서 코드와 함께 배웁니다.<br>
+검색할 문서의 범위를 제한하는 조건은 기본 검색을 배운 뒤 [09-3](09-embeddings-search/03-search.md)에서 추가합니다.
 
-### 문서가 준비될 때와 질문할 때
+### 저장한 정책이 바뀌면 어떻게 할까?
 
-애플리케이션 시작 시 정책 문서 3개를 적재하면, `SimpleVectorStore`가 연결된 `EmbeddingModel`을 호출해 문서 본문을 벡터로 변환하고 저장합니다.<br>
-“택배비가 얼마야?”라는 질문에서는 질문을 임베딩한 뒤 기존 벡터와 비교하고 관련 원문을 반환합니다.<br>
-**이 단계에는 답변 생성용 Chat 모델 호출이 없습니다.** `SimpleVectorStore`를 재생성하면 다시 적재하는 현재 예제의 비용도 구분해서 봅니다.
-
-### 실무에서 검색 자료를 갱신하려면
-
-상용 검색에는 원문 ID·정책 버전·적용일 같은 정보를 함께 보관하고, 변경·폐기된 문서가 계속 검색되지 않게 갱신 절차를 둡니다.<br>
-임베딩 모델을 바꾸면 차원이 같아도 벡터 공간이 달라질 수 있으므로 문서도 새 모델로 다시 생성합니다.<br>
-외부 저장소를 연결하는 것만으로 검색 품질이 좋아지는 것은 아닙니다.<br>
-[09-3](09-embeddings-search/03-search.md)의 비교 기준으로 질문별 결과를 확인합니다.
-
+검색 결과는 저장소에 준비한 문서를 기준으로 나옵니다.<br>
+정책이 바뀌면 검색에 사용할 문서도 갱신해야 새 내용을 찾을 수 있습니다.<br>
+문서나 임베딩 모델을 바꿀 때 무엇을 다시 준비해야 하는지는 [09-2](09-embeddings-search/02-store.md)에서 설명하고, 검색 결과 비교는 [09-3](09-embeddings-search/03-search.md)에서 실습합니다.
 
 ## 작은 수업으로 나누어 읽기
 
@@ -137,6 +128,6 @@ Spring AI는 임베딩 모델 호출과 벡터 저장소 연결을 돕습니다.
 - [Spring AI Vector Databases](https://docs.spring.io/spring-ai/reference/api/vectordbs.html): `VectorStore`와 검색 요청의 기준입니다.
 - [Oded Shopen / Spring Blog — AI Meets Spring Petclinic, Part II](https://spring.io/blog/2024/09/27/ai-meets-spring-petclinic-implementing-an-ai-assistant-with-spring-ai-part/): 서로 다른 표현을 의미 검색으로 연결하는 업무 예시를 참고했습니다.<br>
   2024년 코드를 현재 API의 기준으로 사용하지 않습니다.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
 
-[이전: 08장](08-advisors.md) · [다음: 10장](10-rag.md)
+[이전: 08단원](08-advisors.md) · [다음: 10단원](10-rag.md)

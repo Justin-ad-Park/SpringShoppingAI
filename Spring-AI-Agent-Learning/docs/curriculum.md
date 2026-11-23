@@ -25,14 +25,14 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 ## 한 단원을 작은 수업으로 읽기
 
 [학습 방법](learning-guide.md)을 기준으로 각 단원의 목차에서 소수업에 들어갑니다.<br>
-04장은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다.<br>
+04단원은 한 문서에서 기초 용어·전체 코드·값 검증을 연결해 읽습니다.<br>
 05~13은 각 단원의 목차에서 해당 실습 모듈과 소수업 순서를 확인합니다.<br>
-02장의 첫 호출 뒤 모델 요청 타임아웃·재시도를, 05장의 도구 호출 뒤 도구 실행 횟수 제한을 별도 보충 모듈로 선택해 학습합니다.<br>
-12장에서는 같은 테스트와 결과를 실패 평가·관측에 다시 활용합니다.
+02단원의 첫 호출 뒤 모델 요청 타임아웃·재시도를, 05단원의 도구 호출 뒤 도구 실행 횟수 제한을 별도 보충 모듈로 선택해 학습합니다.<br>
+12단원에서는 같은 테스트와 결과를 실패 평가·관측에 다시 활용합니다.
 
 ## 학습 지도
 
-00장 선택 읽기 [Spring AI와 LangChain 비교](lessons/00-llm-and-spring-ai/01-SpringAIvsLangChain.md)에서는 기능·생태계·운영 조건을 기준으로 프레임워크를 선택하고 혼합 구성을 검토하는 방법을 설명합니다.
+00단원 선택 읽기 [Spring AI와 LangChain 비교](lessons/00-llm-and-spring-ai/01-SpringAIvsLangChain.md)에서는 기능·생태계·운영 조건을 기준으로 프레임워크를 선택하고 혼합 구성을 검토하는 방법을 설명합니다.
 
 | 묶음 | 단원 | 새 개념과 실습 | 완료 기준 | 현재 상태 |
 | --- | --- | --- | --- | --- |
@@ -54,7 +54,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 판단 확장 | 14 Jev | Choice 의도 분류·Score 시급성·Noul 상담원 요청, 커뮤니티 Starter와 전용 클라이언트 | 모델 판단값과 Java 처리 기준을 구분 | [교재·실습](lessons/14-jev.md) |
 
 
-13장 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다.<br>
+13단원 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다.<br>
 상용 사례를 함께 읽습니다.<br>
 모델별 품질 평가는 [13-6 보충](lessons/13-shopping-agent/06-intent-quality-evaluation.md)에서 별도로 다룹니다.<br>
 기본 통합 상담과 분리된 실습입니다.
@@ -62,14 +62,14 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 ## 설명 수업과 실행 모듈의 대응
 
 실행 모듈 앞의 숫자는 연결된 본 단원 번호입니다.<br>
-02장의 기본 실습은 `02-00-first-chat`, 선택 보충은 `02-04-multiple-models`입니다.<br>
+02단원의 기본 실습은 `02-00-first-chat`, 선택 보충은 `02-04-multiple-models`입니다.<br>
 하위 설명 파일의 `01`·`02`·`03`·`04`는 그 단원 안에서의 읽기 순서이며 실행 모듈 번호와는 구분합니다.
 
 | 설명 수업 | 실행 모듈 | 함께 제공하는 코드와 테스트 |
 |---|---|---|
 | 01 환경 준비·02 첫 호출·03 프롬프트 실험 | `02-00-first-chat` | 첫 호출 애플리케이션, 로컬 Mock 테스트, 실제 OpenAI 테스트 |
-| 02장 보충 4: 여러 모델 | `02-04-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
-| 04장 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
+| 02단원 보충 4: 여러 모델 | `02-04-multiple-models` | 제공 업체별 클라이언트 선택과 같은 업체의 요청별 모델 선택 테스트 |
+| 04단원 본문·05~13의 기본 소수업 | 기존 번호의 labs 모듈 | 기존 애플리케이션·설정·계약 테스트 유지 |
 | [14 Jev의 세 질문 타입](lessons/14-jev.md) | `14-00-jev-decisions` | TypeSafe Starter·세 Service·정책 경계 단위 테스트·고정 응답/실제 Jev 테스트 |
 | [07-2 JDBC 저장소](lessons/07-chat-memory/02-jdbcRepository.md) | `07-02-JDBC` | YAML·JDBC 자동 구성, 대화 재전달·SQL 저장·재조회 테스트 |
 | [07-3 Redis/InMemory 선택](lessons/07-chat-memory/03-RepositorySelection.md) | `07-03-Redis-Selection` | YAML 기반 시작 시 저장소 선택, InMemory 로컬·Redis Live 테스트 |
@@ -91,7 +91,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 실습용 가짜 HTTP 모델은 [공통 test-support](../test-support/README.md)가 제공하며 로컬 테스트 의존성으로만 사용합니다.
 
 Workflow와 Agent는 같은 상품 검색·배송비 조회 도구로 비교합니다.<br>
-비교 요청, 프롬프트, 실습 순서와 완료 질문은 [06장 Workflow와 Agent](lessons/06-workflow-agent.md#workflow와-agent-비교-수업)에서 확인하세요.
+비교 요청, 프롬프트, 실습 순서와 완료 질문은 [06단원 Workflow와 Agent](lessons/06-workflow-agent.md#workflow와-agent-비교-수업)에서 확인하세요.
 
 ## 구현 범위와 선택 심화
 
@@ -102,8 +102,8 @@ Workflow와 Agent는 같은 상품 검색·배송비 조회 도구로 비교합�
 단원마다 구현·테스트·커밋을 마친 뒤 다음으로 넘어갔습니다.<br>
 그림은 [다이어그램 공통 기준](diagram-guide.md)을 적용하고, 앞으로 배울 코드에 의존하지 않습니다.
 
-11장은 기존 shopping-mcp를 사용해 원격 도구 연결을 학습합니다.<br>
-기초 실습은 이전처럼 다른 서비스를 실행하지 않고 학습할 수 있으며, 11장 로컬 테스트는 MCP 서버를 자동 실행합니다.<br>
+11단원은 기존 shopping-mcp를 사용해 원격 도구 연결을 학습합니다.<br>
+기초 실습은 이전처럼 다른 서비스를 실행하지 않고 학습할 수 있으며, 11단원 로컬 테스트는 MCP 서버를 자동 실행합니다.<br>
 멀티 에이전트·Skills·A2A, 외부 Vector DB, 스트리밍 UI, 이미지/음성은 필수 과정 이후로 미룹니다.<br>
 RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 
@@ -114,11 +114,11 @@ RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 
 | 읽을 시점 | 소주제 | 학습할 구분 |
 |---|---|---|
-| 07장 이후 | [07-6 대화 저장과 재사용](lessons/07-chat-memory/06-production-memory.md) | 최근 문맥·전체 이력·업무 상태와 영구 저장 |
-| 10장 이후 | [10-6 상용 RAG](lessons/10-rag/06-production-rag.md) | 자료 갱신과 적재·검색·생성별 실패 |
-| 11장 이후 | [11-7 원격 도구](lessons/11-mcp-workflow-agent/07-production-mcp.md) | 발견·실행·업무 성공, 권한과 재시도 |
-| 12장 이후 | [12-6 평가 운영](lessons/12-evaluation/06-production-evaluation.md) | 반복 평가·오류 분모·품질과 운영 지표 |
-| 13장 이후 | [13-7 상용 기능의 경계](lessons/13-shopping-agent/07-production-agent.md) | 검증 범위·복합 요청 누락·조회와 변경 |
+| 07단원 이후 | [07-6 대화 저장과 재사용](lessons/07-chat-memory/06-production-memory.md) | 최근 문맥·전체 이력·업무 상태와 영구 저장 |
+| 10단원 이후 | [10-6 상용 RAG](lessons/10-rag/06-production-rag.md) | 자료 갱신과 적재·검색·생성별 실패 |
+| 11단원 이후 | [11-7 원격 도구](lessons/11-mcp-workflow-agent/07-production-mcp.md) | 발견·실행·업무 성공, 권한과 재시도 |
+| 12단원 이후 | [12-6 평가 운영](lessons/12-evaluation/06-production-evaluation.md) | 반복 평가·오류 분모·품질과 운영 지표 |
+| 13단원 이후 | [13-7 상용 기능의 경계](lessons/13-shopping-agent/07-production-agent.md) | 검증 범위·복합 요청 누락·조회와 변경 |
 
 
 ### 단계별 실행 예제 안내

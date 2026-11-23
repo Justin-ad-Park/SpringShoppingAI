@@ -62,7 +62,7 @@ public List<PolicySearchResult> searchPolicies(String question) {
 }
 ```
 
-09장에서 배운 검색입니다.<br>
+09단원에서 배운 검색입니다.<br>
 질문과 유사한 문서를 최대 2개 가져와 원문과 ID를 사용할 수 있게 합니다.
 
 ## 2. 검색 결과에 따라 생성 호출 결정하기
@@ -88,7 +88,7 @@ public Reply answer(String question) {
 
 같은 클래스의 `requestGroundedAnswer()`가 검색 결과를 참고 문자열로 묶어 질문과 함께 보냅니다.<br>
 아래는 실제 메서드입니다.<br>
-`UnverifiedAnswer`는 `answerable`, `answer`, `sourceIds`를 담는 응답 record이며 04장의 `.entity()`로 받습니다.
+`UnverifiedAnswer`는 `answerable`, `answer`, `sourceIds`를 담는 응답 record이며 04단원의 `.entity()`로 받습니다.
 
 ```java
 private UnverifiedAnswer requestGroundedAnswer(String question, List<PolicySearchResult> retrievedPolicies) {

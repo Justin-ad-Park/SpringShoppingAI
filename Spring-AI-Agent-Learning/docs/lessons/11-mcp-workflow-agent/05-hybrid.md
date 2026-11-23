@@ -2,7 +2,7 @@
 
 목표는 **모델의 도구 선택을 활용하면서 Java가 조건과 결과를 검증하는 구조를 실행하는 것**입니다.<br>
 Hybrid는 AI 모델 종류가 아니라 책임을 나눈 실행 방식입니다.<br>
-06장에서 배운 원리를 MCP 도구에 적용합니다.
+06단원에서 배운 원리를 MCP 도구에 적용합니다.
 
 ```mermaid
 flowchart TD
@@ -122,4 +122,4 @@ Agent와 같은 `requestAnswerWithTools()`를 재사용하지만 `McpToolExecuto
 </details>
 
 
-[11장 목차](../11-mcp-workflow-agent.md) · [다음 수업](06-compare.md)
+[11단원 목차](../11-mcp-workflow-agent.md) · [다음 수업](06-compare.md)

@@ -2,7 +2,7 @@
 
 ## 이번 수업의 목표
 
-선수 지식은 04장의 구조화 응답, 08장의 Advisor와 09장의 검색입니다.
+선수 지식은 04단원의 구조화 응답, 08단원의 Advisor와 09단원의 검색입니다.
 
 - 미리 하는 문서 적재와 질문마다 하는 검색·생성을 구분합니다.
 - 검색 원문을 모델 요청에 넣고, 근거가 없을 때의 처리 기준을 설명합니다.
@@ -35,8 +35,8 @@ flowchart LR
     C -->|없음| H[서비스: 근거 부족으로 답변 보류]
 ```
 
-09장의 의미 검색이 관련 자료를 찾는 기능이라면, RAG는 그 결과를 모델의 답변 생성까지 연결합니다.<br>
-RAG의 검색에는 키워드 검색 등도 쓸 수 있으며, 이 교재에서는 09장의 의미 검색을 활용합니다.<br>
+09단원의 의미 검색이 관련 자료를 찾는 기능이라면, RAG는 그 결과를 모델의 답변 생성까지 연결합니다.<br>
+RAG의 검색에는 키워드 검색 등도 쓸 수 있으며, 이 교재에서는 09단원의 의미 검색을 활용합니다.<br>
 Spring AI는 검색 결과를 요청에 포함하도록 직접 구성하거나, Advisor로 연결하는 방법을 제공합니다.
 
 자료를 전달하는 것은 모델 자체를 새로 학습시키는 작업과 다릅니다.<br>
@@ -51,7 +51,7 @@ Spring AI는 검색 결과를 요청에 포함하도록 직접 구성하거나, 
 |---|---|---|
 | `TextReader` | 텍스트 자원을 `Document`로 읽기 | 10-1의 표준 적재 |
 | `TokenTextSplitter` | 긴 문서를 검색·전달할 조각으로 나누기 | 10-1의 분할 |
-| `VectorStore` / `SearchRequest` | 문서를 적재하고 조건에 맞는 근거 검색 | 09장 복습과 10-4의 직접 검색 |
+| `VectorStore` / `SearchRequest` | 문서를 적재하고 조건에 맞는 근거 검색 | 09단원 복습과 10-4의 직접 검색 |
 | `ChatClient` | 질문과 근거를 모델에 전달해 답변 요청 | 10-4의 직접 연결 |
 | `QuestionAnswerAdvisor` | 검색과 검색 원문의 프롬프트 포함을 연결 | 10-2의 표준 연결 |
 
@@ -127,6 +127,6 @@ Splitter도 임베딩 모델이 아니며 문서를 조각으로 나눕니다.<b
 - [Spring AI RAG](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html): 표준 API와 확장 흐름의 기준입니다.
 - [Christian Tzolov / Spring Blog — Modular RAG](https://spring.io/blog/2026/10/02/spring-ai-modular-rag-typesafe-jev/): 검색된 문서가 주제와 비슷해도 답변 근거로 유용하지 않을 수 있다는 설명을 참고했습니다.<br>
   해당 글의 확장 모듈은 이번 실습에 추가하지 않습니다.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
 
-[이전: 09장](09-embeddings-search.md) · [다음: 11장](11-mcp-workflow-agent.md)
+[이전: 09단원](09-embeddings-search.md) · [다음: 11단원](11-mcp-workflow-agent.md)
