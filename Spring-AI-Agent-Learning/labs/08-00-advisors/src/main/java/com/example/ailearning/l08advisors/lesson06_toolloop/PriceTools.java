@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PriceTools {
     @Tool(description = "가상 허브티 P01의 상품 가격만 조회합니다. 배송비는 포함하지 않습니다.")
-    public int getTeaPrice() {
+    public int getTeaPrice(String productName) {
         return 12000;
     }
 }

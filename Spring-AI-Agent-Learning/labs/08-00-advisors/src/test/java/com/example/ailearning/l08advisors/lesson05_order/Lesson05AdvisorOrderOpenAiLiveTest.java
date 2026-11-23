@@ -30,5 +30,7 @@ class Lesson05AdvisorOrderOpenAiLiveTest {
         System.out.println("답변: " + answer);
         assertThat(steps).containsExactly("A:before", "B:before", "B:after", "A:after");
         assertThat(answer).isNotBlank();
+
+        System.out.println("\r\n ======Advisor 응답값 ====== \r\n" + steps);
     }
 }

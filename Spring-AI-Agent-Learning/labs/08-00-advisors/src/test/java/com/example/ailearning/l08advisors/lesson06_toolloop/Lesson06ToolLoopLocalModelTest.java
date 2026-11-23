@@ -73,7 +73,7 @@ class Lesson06ToolLoopLocalModelTest {
         // Then: 문자열 응답이 아닌 실제 도구 실행과 모델에 전달된 결과도 확인
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isEqualTo("허브티 가격은 12000원입니다.");
-        verify(priceTools).getTeaPrice();
+        verify(priceTools).getTeaPrice(any());
         assertThat(MODEL.chat().getRequests()).hasSize(2);
         assertThat(MODEL.chat().getRequests().getLast().path("messages").toString()).contains("price-1", "12000", "tool");
     }

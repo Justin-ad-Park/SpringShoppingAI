@@ -30,5 +30,7 @@ class Lesson04BeforeAfterOpenAiLiveTest {
         System.out.println("답변: " + answer);
         assertThat(answer).isNotBlank();
         assertThat(steps).containsExactly("single:before", "single:after");
+
+        System.out.println("\r\n ======Advisor 응답값 ====== \r\n" + steps);
     }
 }

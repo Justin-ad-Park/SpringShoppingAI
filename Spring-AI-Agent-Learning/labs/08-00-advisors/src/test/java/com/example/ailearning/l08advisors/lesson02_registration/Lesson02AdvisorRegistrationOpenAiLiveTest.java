@@ -25,6 +25,21 @@ class Lesson02AdvisorRegistrationOpenAiLiveTest {
     }
 
     @Test
+    void 실제_모델에서도_기본_등록_호출(CapturedOutput logs) {
+        // When: 첫 요청에는 추가 로거를 전달하고, 다음 요청에는 기본 설정만 사용한다.
+        String secondAnswer = service.chatWithDefaults("상품 문의에 필요한 정보는 무엇인가요?");
+
+        // Then: 모델 응답은 두 번, 로그는 첫 요청 2번 + 다음 요청 1번이다.
+        assertThat(secondAnswer).isNotBlank();
+        long loggedRequests = logs.getOut().lines()
+                .filter(line -> line.contains("SimpleLoggerAdvisor") && line.contains("request: "))
+                .count();
+        assertThat(loggedRequests).isEqualTo(1);
+
+        System.out.printf("첫 답변: %s%n요청 로그 수: %d%n", secondAnswer, loggedRequests);
+    }
+
+    @Test
     void 실제_모델에서도_기본_등록과_요청별_추가의_범위가_구분된다(CapturedOutput logs) {
         // When: 첫 요청에는 추가 로거를 전달하고, 다음 요청에는 기본 설정만 사용한다.
         String firstAnswer = service.chatWithAdditionalAdvisor("안녕하세요.", SimpleLoggerAdvisor.builder().build());
@@ -39,4 +54,6 @@ class Lesson02AdvisorRegistrationOpenAiLiveTest {
         assertThat(loggedRequests).isEqualTo(3);
         System.out.printf("첫 답변: %s%n두 번째 답변: %s%n요청 로그 수: %d%n", firstAnswer, secondAnswer, loggedRequests);
     }
+
+
 }

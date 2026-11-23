@@ -2,6 +2,7 @@ package com.example.ailearning.l08advisors.lesson03_memory;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class Lesson03MemoryAdvisorChatService {
         chatClient = builder
                 .defaultSystem("이전 대화를 참고해 사용자의 질문에 답하세요.")
                 // default: 이 ChatClient의 모든 요청에 메모리 기능을 연결한다.
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(conversationMemory)
+                .defaultAdvisors(SimpleLoggerAdvisor.builder().build(), MessageChatMemoryAdvisor.builder(conversationMemory)
                         .build())
                 .build();
     }

@@ -35,7 +35,7 @@ class Lesson06ToolLoopOpenAiLiveTest {
         ToolCallPrinter.printToolCalls(priceTools);
 
         // Then: 도구 사용은 답변 문장으로 추정하지 않고 실제 실행 기록으로 검증한다.
-        verify(priceTools, atLeastOnce()).getTeaPrice();
+        verify(priceTools, atLeastOnce()).getTeaPrice(any());
         assertThat(answer).isNotBlank();
     }
 }

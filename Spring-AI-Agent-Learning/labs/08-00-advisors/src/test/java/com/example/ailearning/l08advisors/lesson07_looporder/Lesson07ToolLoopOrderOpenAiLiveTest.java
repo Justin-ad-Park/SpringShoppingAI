@@ -38,7 +38,7 @@ class Lesson07ToolLoopOrderOpenAiLiveTest {
         System.out.println("답변: " + answer);
         ToolCallPrinter.printToolCalls(priceTools);
 
-        verify(priceTools, atLeastOnce()).getTeaPrice();
+        verify(priceTools, atLeastOnce()).getTeaPrice(any());
         assertThat(answer).isNotBlank();
         assertThat(steps).startsWith("request:before").endsWith("request:after");
         assertThat(Collections.frequency(steps, "request:before")).isEqualTo(1);
