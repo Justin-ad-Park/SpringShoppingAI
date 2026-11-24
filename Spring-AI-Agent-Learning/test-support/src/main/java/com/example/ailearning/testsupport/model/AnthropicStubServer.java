@@ -85,8 +85,8 @@ public final class AnthropicStubServer implements AutoCloseable {
         return http.getRequestBodies(MESSAGES);
     }
 
-    public List<String> getMessageApiKeyHeaders() {
-        return http.getRequestHeaderValues(MESSAGES, "x-api-key");
+    public List<String> getMessageAuthorizationHeaders() {
+        return http.getRequestHeaderValues(MESSAGES, "authorization");
     }
 
     @Override

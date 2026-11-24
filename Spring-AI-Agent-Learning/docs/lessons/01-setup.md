@@ -70,8 +70,8 @@ dependencies {
 webmvc는 HTTP API, model-openai는 OpenAI 모델 연결을 위한 것입니다.<br>
 입력 검증과 테스트 의존성은 루트에서 공통 적용합니다.<br>
 **BOM**은 관련 라이브러리들의 버전을 맞추는 목록입니다.<br>
-저장소 루트 `build.gradle`의 `spring-ai-bom:2.0.2`가 이를 지정합니다.<br>
-같은 파일에서 Boot 4.0.9 플러그인, Java 21, 공통 테스트 의존성을 관리하므로 실습마다 버전을 중복 선언하지 않습니다.<br>
+저장소 루트 `build.gradle`의 `spring-ai-bom:2.1.0`가 이를 지정합니다.<br>
+같은 파일에서 Boot 4.2.0 플러그인, Java 21, 공통 테스트 의존성을 관리하므로 실습마다 버전을 중복 선언하지 않습니다.<br>
 Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않습니다.
 
 이번 묶음에서는 Chat 기능만 사용합니다.<br>

@@ -41,7 +41,7 @@ Spring AI의 `Prompt` 객체는 메시지 목록과 선택적인 모델 호출 �
 
 ## Spring AI에서 구분하는 네 가지 역할
 
-이 교재의 Spring AI 2.0.2는 `MessageType`에서 다음 네 가지 역할을 구분합니다.<br>
+이 교재의 Spring AI 2.1.0는 `MessageType`에서 다음 네 가지 역할을 구분합니다.<br>
 아래 클래스 이름은 메시지를 Java 객체로 표현할 때 사용하는 타입입니다.<br>
 지금은 역할의 차이를 먼저 이해하면 됩니다.
 
@@ -61,7 +61,7 @@ Spring AI의 `Prompt` 객체는 메시지 목록과 선택적인 모델 호출 �
 아래 예시에서 간단한 구성부터 차례로 살펴봅니다.
 
 이 구분은 [Spring AI 공식 Prompt·Roles 설명](https://docs.spring.io/spring-ai/reference/api/prompt.html)을 참고하고,
-저장소에서 사용하는 2.0.2의 `MessageType`과 메시지 클래스에서 확인했습니다.
+저장소에서 사용하는 2.1.0의 `MessageType`과 메시지 클래스에서 확인했습니다.
 
 ## 예시 1: 사용자 메시지 하나로 구성한 프롬프트
 
@@ -325,7 +325,7 @@ OpenAI Chat Completions API의 `tool_calls[].type`에는 다음 두 종류가 �
 
 이는 [OpenAI API 규격](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)의 구분입니다.<br>
 Spring AI의 `ToolCall.type`이 문자열이라고 해서 두 유형을 모두 사용할 수 있다는 뜻은 아닙니다.<br>
-이 교재의 Spring AI 2.0.2 OpenAI 연동 구현은 위 예제의 도구 호출을 `function` 형식으로 변환합니다.<br>
+이 교재의 Spring AI 2.1.0 OpenAI 연동 구현은 위 예제의 도구 호출을 `function` 형식으로 변환합니다.<br>
 `type` 값만 `custom`으로 바꿔 커스텀 도구 호출로 전환할 수는 없습니다.<br>
 또한 이 두 종류는 Chat Completions의 해당 필드 기준이며, Responses API 등 다른 API의 전체 도구 유형 목록은 아닙니다.
 
@@ -363,7 +363,7 @@ Spring AI와 애플리케이션이 도구를 실행한 뒤 결과를 모델에 �
 Spring AI의 공통 메시지 타입과 제공 업체의 HTTP API 규격은 구분해야 합니다.<br>
 예를 들어 [OpenAI Chat Completions API](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)는
 애플리케이션 개발자의 지시를 전달하는 `developer` 역할도 정의합니다.<br>
-하지만 Spring AI 2.0.2의 기본 ChatClient API에는 `.developer(...)`나 `DeveloperMessage`, `MessageType.DEVELOPER`가 없습니다.<br>
+하지만 Spring AI 2.1.0의 기본 ChatClient API에는 `.developer(...)`나 `DeveloperMessage`, `MessageType.DEVELOPER`가 없습니다.<br>
 **이 교재에서는 애플리케이션의 지시를 `.system(...)` 또는 `SystemMessage`로 전달합니다.**
 현재 OpenAI 연동 구현은 이를 `system`으로 보내며 `developer`로 자동 변환하지 않습니다.<br>
 반드시 `developer` 역할을 지정해야 한다면 OpenAI SDK 직접 호출 같은 별도 구현이 필요합니다.<br>

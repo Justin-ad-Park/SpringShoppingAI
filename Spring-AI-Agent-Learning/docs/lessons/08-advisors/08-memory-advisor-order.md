@@ -24,7 +24,7 @@ var memoryAdvisor = MessageChatMemoryAdvisor.builder(conversationMemory)
         .build();
 ```
 
-Spring AI 2.0.2에서 `MessageChatMemoryAdvisor.Builder`의 order 필드는 `DEFAULT_CHAT_MEMORY_PRECEDENCE_ORDER`로 초기화됩니다.<br>
+Spring AI 2.1.0에서 `MessageChatMemoryAdvisor.Builder`의 order 필드는 `DEFAULT_CHAT_MEMORY_PRECEDENCE_ORDER`로 초기화됩니다.<br>
 아래는 실제 구현에서 order 관련 부분만 발췌한 코드이며, 다른 필드와 생성자는 생략했습니다.
 
 ```java
@@ -172,7 +172,7 @@ ChatMemory에 저장된 메시지:
 
 ## 4. 어떤 조건에서 어떤 메시지를 저장할까?
 
-Spring AI 2.0.2의 `MessageChatMemoryAdvisor.before()`는 이번 요청의 **마지막 사용자 메시지 또는 도구 결과 메시지**를 선택해 저장합니다.<br>
+Spring AI 2.1.0의 `MessageChatMemoryAdvisor.before()`는 이번 요청의 **마지막 사용자 메시지 또는 도구 결과 메시지**를 선택해 저장합니다.<br>
 `after()`는 다음 처리가 정상 반환한 모델 응답의 assistant 메시지를 저장합니다.<br>
 프롬프트의 모든 메시지를 통째로 저장하는 방식은 아닙니다.
 
@@ -255,10 +255,10 @@ Live 테스트는 실제 가격 도구가 실행됐는지 확인합니다.<br>
 
 - [Spring AI 공식 문서: Memory and the Tool Loop](https://docs.spring.io/spring-ai/reference/api/tools.html#memory-and-the-tool-loop): 기본 배치와 반복 안 배치, 도구 메시지를 저장할 수 있는 저장소 설명.
 - [Spring AI 공식 문서: Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html): 메모리와 저장소, 대화 ID와 메시지 보관 정책.
-- [Spring AI 2.0.2: MessageChatMemoryAdvisor 구현](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/MessageChatMemoryAdvisor.java): Builder의 order 초기화·생성자 전달과 `before()`·`after()`의 저장 대상.
-- [Spring AI 2.0.2: Advisor의 기본 order](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/api/Advisor.java): `DEFAULT_CHAT_MEMORY_PRECEDENCE_ORDER` 정의.
+- [Spring AI 2.1.0: MessageChatMemoryAdvisor 구현](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/MessageChatMemoryAdvisor.java): Builder의 order 초기화·생성자 전달과 `before()`·`after()`의 저장 대상.
+- [Spring AI 2.1.0: Advisor의 기본 order](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/api/Advisor.java): `DEFAULT_CHAT_MEMORY_PRECEDENCE_ORDER` 정의.
 
-공식 웹 문서는 현재 버전의 내용으로 갱신되므로, 이 실습의 동작은 2.0.2 소스와 로컬 테스트를 기준으로 확인합니다.<br>
+공식 웹 문서는 현재 버전의 내용으로 갱신되므로, 이 실습의 동작은 2.1.0 소스와 로컬 테스트를 기준으로 확인합니다.<br>
 반복 안 배치에는 도구 메시지를 저장할 수 있는 저장소가 필요하며, 이 실습의 기본 인메모리 저장소는 이를 지원합니다.<br>
 자동 연결되는 ToolCallingAdvisor가 메모리 Advisor의 위치를 감지하므로, 이 샘플은 ToolCallingAdvisor를 직접 만들거나 내부 대화 기록 설정을 바꾸지 않습니다.
 

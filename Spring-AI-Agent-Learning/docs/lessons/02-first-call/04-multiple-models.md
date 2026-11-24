@@ -32,7 +32,7 @@ OpenAI용 객체에 Anthropic 모델 이름만 넣는다고 Anthropic으로 연�
 ## 2. 두 제공 업체의 Starter 추가하기
 
 실습의 `build.gradle`입니다.<br>
-버전은 상위 프로젝트의 Spring AI 2.0.2 설정을 따릅니다.
+버전은 상위 프로젝트의 Spring AI 2.1.0 설정을 따릅니다.
 
 ```groovy
 dependencies {
@@ -296,6 +296,9 @@ Controller를 거치지 않고, 질문과 실제 응답을 출력하며 응답�
 필터 없이 모듈의 `test`를 실행하면 로컬 테스트 3개와 활성화된 OpenAI Live 테스트가 실행됩니다.<br>
 Live 테스트는 실제 API 사용량이 발생하며, 로컬 테스트 통과가 실제 API 접근 권한이나 답변 품질을 보장하지는 않습니다.
 
+Spring AI 2.1의 Anthropic SDK는 API 키를 `Authorization: Bearer ...` 헤더로 전달합니다.<br>
+로컬 테스트도 이 헤더를 확인하며, 실제 키를 로그에 출력하지 않습니다.
+
 ## 8. 같은 업체의 모델 두 개를 쓴다면?
 
 같은 OpenAI 계정에서 모델 A와 B를 사용한다면 두 Starter를 추가할 필요가 없습니다.<br>
@@ -356,7 +359,7 @@ String detailedAnswer = sameProviderModels.ask("생성자 주입을 자세히 �
 실제로 실행할 때는 계정에서 접근할 수 있고 이 Chat API를 지원하는 모델 ID를 전달하세요.<br>
 모델이 다르면 지원 옵션과 비용도 다를 수 있습니다.
 
-이 저장소의 Spring AI 2.0.2에서는 `.options(...)`에 옵션 Builder를 전달하므로, 위 코드에서 `.build()`를 붙이지 않습니다.
+이 저장소의 Spring AI 2.1.0에서는 `.options(...)`에 옵션 Builder를 전달하므로, 위 코드에서 `.build()`를 붙이지 않습니다.
 
 `.options(...)`는 새로 구성하는 요청에만 적용됩니다.<br>
 공유 중인 ChatClient의 기본 모델 설정을 바꾸지 않습니다.<br>
@@ -402,6 +405,6 @@ Anthropic 요청은 발생하지 않아야 합니다.<br>
 `ChatClient.create(model)`로 직접 생성한 클라이언트에는 Spring Boot가 자동 구성한 `ChatClient.Builder`의 커스터마이저와 관측 설정이 자동으로 적용되지 않습니다.<br>
 모델 자동 설정과 클라이언트 자동 설정의 역할이 다르기 때문입니다.<br>
 기본 Builder의 공통 설정까지 보존하는 확장은 [공식 ChatClient 문서의 여러 모델 구성](https://docs.spring.io/spring-ai/reference/api/chatclient.html)을 참고하세요.<br>
-Anthropic 설정 경로는 [공식 Anthropic Chat 문서](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html)를 기준으로 작성하고, 저장소의 Spring AI 2.0.2에서 테스트했습니다.
+Anthropic 설정 경로는 [공식 Anthropic Chat 문서](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html)를 기준으로 작성하고, 저장소의 Spring AI 2.1.0에서 테스트했습니다.
 
 [생성자 주입 설명으로 돌아가기](01-constructor-injection.md) · [02단원으로 돌아가기](../02-first-call.md)

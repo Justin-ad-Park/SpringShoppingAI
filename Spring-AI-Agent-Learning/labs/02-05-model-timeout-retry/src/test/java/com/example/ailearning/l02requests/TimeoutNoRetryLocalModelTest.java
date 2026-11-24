@@ -66,7 +66,7 @@ class TimeoutNoRetryLocalModelTest {
         System.out.println("모델 서버가 받은 요청 수: " + MODEL.chat().getRequests().size());
 
         // Then: 서비스의 자체 Future가 아니라 SDK 통신 단계에서 실패
-        assertThat(error).isInstanceOf(com.openai.errors.OpenAIIoException.class).hasRootCauseInstanceOf(java.io.InterruptedIOException.class);
+        assertThat(error).isInstanceOf(com.openai.errors.OpenAIIoException.class).hasCauseInstanceOf(java.io.InterruptedIOException.class);
         assertThat(MODEL.chat().getRequests()).hasSize(1);
     }
 

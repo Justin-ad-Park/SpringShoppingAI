@@ -26,7 +26,7 @@
 
 ## 용어 정리
 - “기본 제공 Advisor” : SpringAI에서 기본으로 제공하는 Advisor.<br>
-  [목록 참고](../08-advisors.md#spring-ai-202에서-기본-제공되는-advisor)
+  [목록 참고](../08-advisors.md#spring-ai-210에서-기본-제공되는-advisor)
 - `defaultAdvisors(...)`(기본 등록) : ChatClient의 모든 요청에 적용할 Advisor를 등록하는 메서드
   - 기본 제공 Advisor와 직접 구현한 Advisor 모두 등록할 수 있습니다.
 
@@ -97,7 +97,7 @@ service.chatWithDefaults("일반 질문");
 
 ## Spring AI가 적용하는 방식
 
-Spring AI 2.0.2의 `DefaultChatClient` 구현에서 `.prompt()`는 기본 요청 설정을 복사해 새 요청을 만듭니다.<br>
+Spring AI 2.1.0의 `DefaultChatClient` 구현에서 `.prompt()`는 기본 요청 설정을 복사해 새 요청을 만듭니다.<br>
 그 새 요청의 `advisors(Advisor...)`는 목록에 객체를 더합니다. <br>
 그래서 기본 기능은 유지되고, 요청별 추가는 그 요청에만 남습니다. <br>
 IntelliJ에서 `ChatClient` 구현인 `DefaultChatClient.prompt()`와 `DefaultChatClientRequestSpec.advisors(Advisor...)`를 열면 이 동작을 확인할 수 있습니다.
@@ -157,6 +157,6 @@ Java에서는 이를 오버로딩이라고 합니다.
 </details>
 
 참고: [Spring AI ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html).<br>
-등록 범위는 사용 버전 2.0.2의 `DefaultChatClient` 소스와 위 테스트로 함께 확인합니다.
+등록 범위는 사용 버전 2.1.0의 `DefaultChatClient` 소스와 위 테스트로 함께 확인합니다.
 
 [이전: 기본 로거](01-built-in.md) · [다음: 대화 메모리와 파라미터](03-memory.md) · [단원 목차](../08-advisors.md)

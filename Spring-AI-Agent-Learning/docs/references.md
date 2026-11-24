@@ -53,12 +53,12 @@
 
 | 연결 단원 | 자료·작성 주체 | 반영한 설명 | 확인 범위·주의점 |
 |---|---|---|---|
-| 07 | [Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory) / Manfred Ng, Baeldung | 저장소에서 메모리·ChatClient로 연결하는 설명 순서 | 공개 본문 확인. 1.0.0 코드·세션 범위 선택을 2.0.2의 필수 조건으로 옮기지 않음 |
+| 07 | [Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory) / Manfred Ng, Baeldung | 저장소에서 메모리·ChatClient로 연결하는 설명 순서 | 공개 본문 확인. 1.0.0 코드·세션 범위 선택을 2.1.0의 필수 조건으로 옮기지 않음 |
 | 07 | [Oracle Chat Memory 가이드](https://docs.oracle.com/en/database/oracle/oracle-database/26/aintg/spring-ai-integration-guide/chat-memory.html) / Oracle | 대화 문맥·전체 이력과 JDBC 영구 저장 구분 | 공개 공급사 연동 가이드. 특정 기업의 운영 실적은 아님 |
 | 07 | [Chat Memory in Spring AI 2.0](https://ankurm.com/spring-ai-2-0-chat-memory-jdbc-redis-windowed-conversations/) / Ankur | 저자가 공개한 저장·동시성 실험을 운영 설계 항목과 연결 | 공개 본문 확인. 저자의 2.0.1 실험을 이 저장소에서 재실행하지 않음 |
 | 07 심화 | [Compacting Chat Memory Advisor](https://github.com/danvega/compacting-chat-memory-advisor) / Dan Vega | 오래된 문맥 요약과 최근 메시지 유지 | 공개 README 확인. 기본 MessageWindowChatMemory의 자동 요약 기능이 아님 |
 | 07~13 | [AI for Java Developers 강의 안내](https://www.danvega.dev/newsletter/2025/06/30/ai-for-java-developers-course) / Dan Vega | 대화·검색·도구·운영을 연결하는 학습 경로 | 공개 강의 소개 확인. 영상 전체 시청·버전 호환성 검증은 하지 않음 |
-| 08 | [Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) / Christian Tzolov, Spring Blog | Advisor와 도구 루프 안팎의 책임 | 공개 본문 확인. 실제 API는 2.0.2 실습과 대조 |
+| 08 | [Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) / Christian Tzolov, Spring Blog | Advisor와 도구 루프 안팎의 책임 | 공개 본문 확인. 실제 API는 2.1.0 실습과 대조 |
 | 09~10 | [AI Meets Spring Petclinic, Part II](https://spring.io/blog/2024/09/27/ai-meets-spring-petclinic-implementing-an-ai-assistant-with-spring-ai-part/) / Oded Shopen, Spring Blog | 업무 질문과 의미 검색·RAG의 연결 | 공개 기술 예제. 2024년 API를 복사하지 않음 |
 | 10 심화 | [Modular RAG](https://spring.io/blog/2026/10/02/spring-ai-modular-rag-typesafe-jev/) / Christian Tzolov, Spring Blog | 검색 결과의 관련성과 답변 근거로서의 유용성 구분 | 공개 본문 확인. 추가 모델·TypeSafe 의존성은 도입하지 않음 |
 | 11 | [Build AI-Powered Apps with MCP Clients in Spring AI](https://www.youtube.com/watch?v=TSFkdlreRMQ) / Dan Vega | 원격 도구 서버와 Spring AI 클라이언트의 연결 학습 경로 | 검색에 노출된 공개 소개 확인. 영상 페이지 본문은 가져오지 못했고 전체 영상은 미검증 |
@@ -71,15 +71,15 @@
 Spring Academy의 [Observability Lab](https://spring.academy/courses/spring-ai-intro/lessons/observability-lab)도 확인했으나 본문을 읽을 수 없어 기술 설명의 근거로 채택하지 않았습니다.<br>
 유료 강의 본문이나 확인하지 못한 영상 내용을 추정해서 보강하지 않습니다.
 
-단원별 기본 API는 공식 레퍼런스와 실제 2.0.2 소스를 기준으로 합니다.<br>
+단원별 기본 API는 공식 레퍼런스와 실제 2.1.0 소스를 기준으로 합니다.<br>
 새 선택 보충은 [07-6](lessons/07-chat-memory/06-production-memory.md) · [10-6](lessons/10-rag/06-production-rag.md) · [11-7](lessons/11-mcp-workflow-agent/07-production-mcp.md) · [12-6](lessons/12-evaluation/06-production-evaluation.md) · [13-7](lessons/13-shopping-agent/07-production-agent.md)이며 실행 모듈을 추가한 것은 아닙니다.
 
 ## 버전과 자료를 읽는 기준
 
-현재 확인한 공식 기본 레퍼런스는 Spring AI 2.0.2입니다.<br>
+현재 확인한 공식 기본 레퍼런스는 Spring AI 2.1.0입니다.<br>
 `/reference/` URL은 향후 다른 버전을 가리킬 수 있습니다.<br>
 읽을 때 페이지의 버전 표시를 확인하고 실습의 `build.gradle`과 비교하세요.<br>
-실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.0.2와 Boot 4.0.9로 통일했습니다.<br>
+실습과 기존 서비스는 공통 빌드에서 Maven Central에 배포된 2.1.0과 Boot 4.2.0으로 통일했습니다.<br>
 SNAPSHOT·Milestone 예제, 1.x Tool Calling 내부 구조, 별도 community 유틸리티를 기본 기능처럼 혼합하지 않습니다.<br>
 자료를 업데이트할 때는 버전 확인 → 컴파일 → 로컬 계약 테스트 → 필요한 경우 실제 모델 평가 순으로 확인합니다.
 
@@ -122,7 +122,7 @@ Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니�
 
 | 자료 | 확인 범위 |
 |---|---|
-| [Spring AI Chat Models](https://docs.spring.io/spring-ai/reference/api/chat/comparison.html) | 본체 2.0.2의 제공 업체 목록 |
+| [Spring AI Chat Models](https://docs.spring.io/spring-ai/reference/api/chat/comparison.html) | 본체 2.1.0의 제공 업체 목록 |
 | [Spring AI TypeSafe 프로젝트](https://github.com/spring-ai-community/spring-ai-typesafe) | 커뮤니티 SDK·Starter·Spring AI 연동의 구분 |
 | [Starter](https://spring-ai-community.github.io/spring-ai-typesafe/latest/client/SpringBootStarter/) | TypeSafeClient 자동 구성·spring.ai.typesafe 설정 |
 | [Choice](https://docs.typesafe.ai/primitives/choice) · [Score](https://docs.typesafe.ai/primitives/score) · [Noul](https://docs.typesafe.ai/primitives/noul) | 선택지·순서 있는 단계·참일 확률의 의미 |
@@ -132,3 +132,12 @@ Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니�
 Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/응답 타입·/v1/systemone 경로·자동 구성·timeout/retry 설정을 대조하고 현재 프로젝트에서 컴파일했습니다.<br>
 제공 업체 API나 예제는 실제 호출하지 않았으며 한국어 성능·지연·비용 비교도 하지 않았습니다.<br>
 교육 예제의 문의 분류표와 임계값은 이 교재의 실습 정책입니다.
+
+## 15단원 로컬 의사결정
+
+- [Spring AI Ollama Decision](https://docs.spring.io/spring-ai/reference/api/decision/ollama-decision.html): 전용 모델·자동 설정·지원 입력.
+- [Ollama Decision API](https://docs.ollama.com/capabilities/decision): 선택·참거짓·점수 질문과 여러 질문의 요청 형식.
+- [Ollama 설치](https://ollama.com/download), [d1-omni:600m](https://ollama.com/library/d1-omni:600m): 프로그램과 모델 준비.
+
+실습은 Spring AI 2.1.0의 `OllamaDecisionModel` 소스와 배포 의존성으로 대조했습니다.<br>
+로컬 설치 안내와 실제 모델 실행의 검증 여부는 [15단원 검증 기록](verification/15-ollama-and-ai21-upgrade.md)에 구분합니다.

@@ -2,7 +2,7 @@
 
 OpenAI와 Anthropic 모델을 각각의 이름이 있는 ChatClient로 구성하고 `@Qualifier`로 주입합니다.<br>
 다른 실습의 Java 코드에 의존하지 않습니다.<br>
-Spring AI 버전은 상위 프로젝트의 2.0.2를 사용합니다.
+Spring AI 버전은 상위 프로젝트의 2.1.0를 사용합니다.
 
 [설명과 전체 코드 읽기](../../docs/lessons/02-first-call/04-multiple-models.md)
 

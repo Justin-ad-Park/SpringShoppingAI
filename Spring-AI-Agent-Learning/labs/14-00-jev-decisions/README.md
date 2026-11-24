@@ -2,7 +2,7 @@
 
 [14장 교재](../../docs/lessons/14-jev.md)의 세 소주제를 한 앱에서 실행합니다.<br>
 Spring AI 본체의 ChatModel 대신 **Spring AI Community의 TypeSafe Starter 0.4.0**이 만든 `TypeSafeClient`를 사용합니다.<br>
-기존 Java 21·Boot 4.0.9·Spring AI BOM 2.0.2를 유지하며 OpenAI API는 호출하지 않습니다.
+기존 Java 21·Boot 4.2.0·Spring AI BOM 2.1.0를 유지하며 OpenAI API는 호출하지 않습니다.
 
 ## 코드 읽는 순서
 

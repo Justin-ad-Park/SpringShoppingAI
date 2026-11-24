@@ -179,7 +179,7 @@ Spring AI에는 **`MessageChatMemoryAdvisor`라는 클래스**도 있습니다.<
 이 클래스는 ChatClient의 모델 호출 과정에 연결되어, 이전 메시지를 읽어 모델 입력에 넣고 현재 질문과 답변을 저장합니다.<br>
 이처럼 호출 전후 처리를 연결하는 기능을 Advisor라고 하며, 실제 등록·사용법은 [08-3](../08-advisors/03-memory.md)에서 배웁니다.
 
-Spring AI 2.0.2의 `MessageChatMemoryAdvisor`는 **모델 호출 전에 사용자 질문을 저장**하고, 모델 응답을 받은 뒤 답변을 저장합니다.<br>
+Spring AI 2.1.0의 `MessageChatMemoryAdvisor`는 **모델 호출 전에 사용자 질문을 저장**하고, 모델 응답을 받은 뒤 답변을 저장합니다.<br>
 따라서 모델 호출이 실패해도 먼저 저장한 질문은 메모리에 남을 수 있습니다.
 
 반면 이번 07단원 실습은 조회 → 모델 입력 구성 → 호출 → 답변 검증 → 저장을 `MemoryChatService.chat()`에서 직접 연결해 각 단계를 배웁니다.<br>

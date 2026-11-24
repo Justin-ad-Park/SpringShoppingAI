@@ -12,7 +12,7 @@
 | shopping-agent | 8081 | GPT 의도 해석, 업무별 실행, 단기 조건 메모리 |
 | shopping-mcp | 8082 | 범용 상품 검색·장바구니·배송 견적·혜택 Mock 도구 |
 
-Java 21 / Spring Boot 4.0.9 / Spring AI 2.0.2 / Gradle Wrapper 8.14.5.
+Java 21 / Spring Boot 4.2.0 / Spring AI 2.1.0 / Gradle Wrapper 8.14.5.
 
 ```bash
 # API 키 없이 예시 표현으로 시연
@@ -56,3 +56,5 @@ Mock은 정해진 표현만 지원하며 GPT의 언어 이해 품질을 검증�
 ./gradlew :integration-tests:smokeTest    # Java/JUnit: 세 서비스 자동 실행/종료
 ./gradlew :integration-tests:gptPathTest  # 로컬 GPT 대역, API 키/비용 없이 연결 검증
 ```
+
+- [Spring AI 2.1.0·Boot 4.2.0 적용과 검증 범위](docs/SPRING-AI-2.1-MIGRATION.md)

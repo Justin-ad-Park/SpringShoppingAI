@@ -246,7 +246,7 @@ assertThat(sentTexts).containsSubsequence(firstQuestion, firstReply.answer(), fo
 
 ## 정상 흐름 뒤에 확인할 차이: 실패한 질문의 저장 시점
 
-Spring AI 2.0.2가 제공하는 `MessageChatMemoryAdvisor`는 모델 호출 전에 현재 사용자 질문을 저장하고, 정상 응답을 받은 뒤 모델의 답변 메시지를 저장합니다.<br>
+Spring AI 2.1.0가 제공하는 `MessageChatMemoryAdvisor`는 모델 호출 전에 현재 사용자 질문을 저장하고, 정상 응답을 받은 뒤 모델의 답변 메시지를 저장합니다.<br>
 이 클래스의 역할과 저장 시점은 [07-4의 첫 소개](../07-chat-memory/04-store.md#왜-이-실습은-모델-답변을-확인한-뒤-저장할까)에서 비교했습니다.<br>
 이번에는 실제 Advisor 연결 상태에서 실패를 재현합니다.
 
@@ -276,7 +276,7 @@ Spring AI 2.0.2가 제공하는 `MessageChatMemoryAdvisor`는 모델 호출 전�
 3. 현재 요청의 대화 키를 설정합니다.<br>
    이미 등록한 메모리 Advisor가 그 값을 사용하며, 람다 자체는 새 Advisor가 아닙니다.
 4. 아닙니다.<br>
-   Spring AI 2.0.2의 `MessageChatMemoryAdvisor`는 호출 전에 사용자 질문을 저장하므로 실패한 질문이 남을 수 있습니다.<br>
+   Spring AI 2.1.0의 `MessageChatMemoryAdvisor`는 호출 전에 사용자 질문을 저장하므로 실패한 질문이 남을 수 있습니다.<br>
    성공한 대화만 저장하는 요구와 맞는지 별도로 판단해야 합니다.
 
 </details>

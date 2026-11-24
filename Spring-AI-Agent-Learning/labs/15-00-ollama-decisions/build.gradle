@@ -1,0 +1,11 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+    testImplementation project(':Spring-AI-Agent-Learning:test-support')
+}
+
+tasks.named('bootRun') { workingDir rootProject.projectDir }
+tasks.named('test') {
+    workingDir rootProject.projectDir
+    testLogging { showStandardStreams = true }
+}

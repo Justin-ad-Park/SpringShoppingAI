@@ -32,7 +32,7 @@ spring:
 ```
 
 `options.model`은 사용할 모델이고, `timeout`·`max-retries`는 연결 설정입니다.<br>
-이 수업은 2.0.2에서 실제 전송에 적용되는 공통 연결 경로인 `spring.ai.openai`를 사용합니다.
+이 수업은 2.1.0에서 실제 전송에 적용되는 공통 연결 경로인 `spring.ai.openai`를 사용합니다.
 
 타임아웃은 검색·도구 실행·여러 모델 호출을 합친 Workflow 전체의 종료 시각을 정하는 설정이 아닙니다.<br>
 재시도에는 추가 대기와 요청이 생길 수 있으므로 전체 소요 시간은 더 길어질 수 있습니다.<br>
@@ -154,6 +154,9 @@ API가 명시적으로 재시도 여부를 지시하는 경우도 있으나, 이
 
 [타임아웃·재시도 없음 테스트](../../../labs/02-05-model-timeout-retry/src/test/java/com/example/ailearning/l02requests/TimeoutNoRetryLocalModelTest.java)와 [재시도 테스트](../../../labs/02-05-model-timeout-retry/src/test/java/com/example/ailearning/l02requests/RetryLocalModelTest.java)는 서비스 호출은 그대로 두고 설정만 다르게 합니다.<br>
 500ms는 느린 응답을 빨리 재현하기 위한 테스트 설정이며 실제 연결의 권장값은 아닙니다.
+
+타임아웃 테스트는 `OpenAIIoException`의 직접 원인이 `InterruptedIOException`인지 확인합니다.<br>
+그 안에 소켓 종료 예외가 더 연결될 수 있으므로, 가장 깊은 예외 타입을 타임아웃의 고정 조건으로 삼지 않습니다.
 
 이 예제는 SDK의 통신 예외가 서비스 밖으로 전달되면 [ModelRequestController](../../../labs/02-05-model-timeout-retry/src/main/java/com/example/ailearning/l02requests/ModelRequestController.java)에서 `ResponseStatusException(INTERNAL_SERVER_ERROR, ...)`로 바꿉니다.<br>
 따라서 외부 모델이 보낸 429를 우리 API의 429로 그대로 전달하는 것은 아닙니다.<br>

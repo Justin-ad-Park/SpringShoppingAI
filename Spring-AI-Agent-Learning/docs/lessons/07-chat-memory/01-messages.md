@@ -32,7 +32,7 @@ assistant 문장은 **설명용 예시**입니다.<br>
 ## 새 용어와 객체 관계
 
 - `ChatMemory`: 대화 ID로 메시지를 저장·조회·삭제하는 Spring AI 인터페이스입니다.
-- `MessageWindowChatMemory`: 최근 일정 개수의 메시지를 유지하는 Spring AI(2.0.2)의 유일한 구현체입니다.<br>
+- `MessageWindowChatMemory`: 최근 일정 개수의 메시지를 유지하는 Spring AI(2.1.0)의 유일한 구현체입니다.<br>
   이 실습의 `MemoryChatService`는 대화별로 유지할 최대 메시지 수를 6개로 설정합니다.
 - `ChatMemoryRepository`: 메시지를 저장·조회하는 인터페이스입니다.<br>
   어떤 메시지를 남길지 정하는 정책과 저장 위치를 분리합니다.
@@ -79,7 +79,7 @@ classDiagram
 **보관 정책과 저장소 종류를 구분해서 읽습니다.** `MessageWindowChatMemory`는 최근 메시지를 유지하는 `ChatMemory` 구현체이고, 아래 여섯 가지는 메시지를 실제로 보관하는 **`ChatMemoryRepository` 구현체**입니다.<br>
 저장소를 바꾸면서 같은 메시지 창 정책을 사용할 수 있습니다.
 
-이 교재가 사용하는 **Spring AI 2.0.2 기준**의 목록입니다.
+이 교재가 사용하는 **Spring AI 2.1.0 기준**의 목록입니다.
 
 | 구현체 | 저장 위치 | 용도 | 알아둘 특징 |
 |---|---|---|---|
@@ -116,9 +116,9 @@ private final ChatMemory conversationMemory = MessageWindowChatMemory.builder()
 
 ### Spring AI 빌더의 실제 코드
 
-다음은 **Spring AI 2.0.2의 `MessageWindowChatMemory` 소스 중 기본 개수 상수와 빌더 부분 발췌**입니다.<br>
+다음은 **Spring AI 2.1.0의 `MessageWindowChatMemory` 소스 중 기본 개수 상수와 빌더 부분 발췌**입니다.<br>
 들여쓰기만 바꾸었습니다.<br>
-출처: [Spring AI 소스](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-model/src/main/java/org/springframework/ai/chat/memory/MessageWindowChatMemory.java), Spring 프로젝트 기여자, Apache License 2.0.
+출처: [Spring AI 소스](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-model/src/main/java/org/springframework/ai/chat/memory/MessageWindowChatMemory.java), Spring 프로젝트 기여자, Apache License 2.0.
 
 ```java
 private static final int DEFAULT_MAX_MESSAGES = 20;
@@ -215,7 +215,7 @@ ChatMemory memory = MessageWindowChatMemory.builder()
 전체 사용자 수나 토큰 수를 제한하지 않습니다.<br>
 기본값은 20이며, 이 예제는 관찰하기 쉽게 6으로 지정했습니다.
 
-Spring AI 2.0.2의 `MessageWindowChatMemory`는 메시지가 상한을 넘으면 오래된 메시지부터 제거합니다.<br>
+Spring AI 2.1.0의 `MessageWindowChatMemory`는 메시지가 상한을 넘으면 오래된 메시지부터 제거합니다.<br>
 이때 **오래된 질문만 지우고 그 질문에 대한 답변이나 도구 실행 결과만 남기지 않도록**, 보관할 일반 대화 메시지가 다음 사용자 질문(`user`)부터 시작할 때까지 더 제거합니다.
 
 예를 들어 system 메시지 없이 질문·답변을 다음과 같이 저장했다고 합시다.<br>
@@ -237,7 +237,7 @@ Spring AI 2.0.2의 `MessageWindowChatMemory`는 메시지가 상한을 넘으면
 메모리에 저장된 system 메시지는 오래된 일반 대화를 제거할 때 유지합니다.<br>
 다만 이번 서비스는 system 메시지를 매 요청의 프롬프트에만 넣고 메모리에는 저장하지 않습니다.
 
-API 계약의 근거: [Spring AI 2.0.2의 메모리 소스](https://github.com/spring-projects/spring-ai/tree/v2.0.2/spring-ai-model/src/main/java/org/springframework/ai/chat/memory).<br>
+API 계약의 근거: [Spring AI 2.1.0의 메모리 소스](https://github.com/spring-projects/spring-ai/tree/v2.1.0/spring-ai-model/src/main/java/org/springframework/ai/chat/memory).<br>
 내부 구현을 외울 필요는 없으며 위의 역할 구분에 집중합니다.
 
 

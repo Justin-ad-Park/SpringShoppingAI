@@ -72,7 +72,7 @@ class MultipleProvidersLocalModelTest {
         assertThat(response.body()).isEqualTo("Anthropic 로컬 고정 응답");
         assertThat(ANTHROPIC.getMessageRequests()).hasSize(1);
         assertThat(ANTHROPIC.getMessageRequests().getFirst().path("model").asString()).isEqualTo("anthropic-test-model");
-        assertThat(ANTHROPIC.getMessageApiKeyHeaders()).containsExactly("local-anthropic-key");
+        assertThat(ANTHROPIC.getMessageAuthorizationHeaders()).containsExactly("Bearer local-anthropic-key");
         assertThat(OPENAI.chat().getRequests()).isEmpty();
     }
     @Test void 요청별_모델을_선택해도_기본_모델은_유지된다() throws Exception {

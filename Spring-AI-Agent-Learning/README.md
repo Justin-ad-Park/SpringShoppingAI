@@ -9,7 +9,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 ## 이번에 작성한 범위
 
-기초 00~03과 04~14 교재·실습을 작성했습니다.<br>
+기초 00~03과 04~15 교재·실습을 작성했습니다.<br>
 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.<br>
 각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.<br>
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.<br>
@@ -23,7 +23,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 [초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요.<br>
 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.<br>
 04단원은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다.<br>
-05~14는 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
+05~15는 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -45,11 +45,12 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 13 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
 | 14 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
 | 15 | [14. Jev의 Choice·Score·Noul](docs/lessons/14-jev.md) | 의도·시급성·상담원 요청 판단과 Java 정책 연결 |
+| 16 | [15. Ollama 로컬 의사결정](docs/lessons/15-ollama-decisions.md) | 설치·시작·중지, Choice·Yes/No·Score, 여러 질문·필드 입력 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
 처음부터 전체 공식 문서를 읽지 않아도 됩니다.<br>
-00부터 14까지 번호 순으로 읽으세요.<br>
+00부터 15까지 번호 순으로 읽으세요.<br>
 뒤쪽의 확인 질문에는 문서 안에 접을 수 있는 해설이 있습니다.
 
 ## 추가한 독립 실행 실습
@@ -69,6 +70,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.<br>
 OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
 14단원 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다.<br>
+15단원 Ollama의 기본 로컬 실습은 API 키 없이 실행합니다.<br>
 RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.<br>
 첫 호출 모듈의 설정·실행 방식은 유지합니다.<br>
 평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
@@ -76,7 +78,7 @@ RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.<br>
 ## 실습 환경
 
 - Java 21, Gradle Wrapper 8.14.5
-- Spring Boot 4.0.9, Spring AI 2.0.2
+- Spring Boot 4.2.0, Spring AI 2.1.0
 - 첫 실습: OpenAI Chat 어댑터, 로컬 주소 `127.0.0.1:8091`
 - IDE: 상위 SpringShoppingAI 저장소를 Gradle 프로젝트로 열기
 - DB, Docker, 프런트엔드, 기존 쇼핑 애플리케이션 불필요
@@ -122,7 +124,7 @@ docs/
   curriculum.md          전체 순서와 다음 제작 범위
   references.md          자료별 장점·주의점·읽을 부분
   verification.md        실제 검증 범위와 결과
-  lessons/00~13          순서대로 읽는 한국어 교재
+  lessons/00~15          순서대로 읽는 한국어 교재
   diagram-guide.md       그림의 종류·기호·읽는 순서
 test-support/           공통 Mock 서버·결과 출력 (테스트 전용)
 labs/
@@ -167,3 +169,8 @@ labs 폴더명은 `단원번호-읽기순서-이름`을 사용합니다.<br>
 
 자료를 작성·수정하는 사람은 [프로젝트 내부 교육 하네스](../education-harness/README.md)를 참고하세요.<br>
 학습을 진행하는 데 이 제작 안내를 읽을 필요는 없습니다.
+
+## 15단원: 로컬 Ollama 의사결정
+
+[15단원 교재](docs/lessons/15-ollama-decisions.md)와 [실행·중지 안내](labs/15-00-ollama-decisions/README.md)를 따라 로컬 모델로 고객 요청을 판단합니다.<br>
+Ollama 설치부터 Choice·Yes/No·Score, 여러 질문·필드 입력을 순서대로 실습합니다.

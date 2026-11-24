@@ -83,7 +83,7 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(500);
 <details>
 <summary>Spring AI·Jackson의 호출 경로와 RuntimeException 상속 관계</summary>
 
-아래 내용은 Spring AI 2.0.2와 Jackson 3.1.7에서 확인한 내부 구현입니다.
+아래 내용은 Spring AI 2.1.0과 Jackson 3.1.8에서 확인한 내부 구현입니다.
 
 | 단계 | 실행하는 코드 | 역할 |
 |---|---|---|
@@ -96,7 +96,7 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(500);
 
 `CallResponseSpec`은 인터페이스입니다.<br>
 구현체인 `DefaultChatClient.DefaultCallResponseSpec.entity()`는 `BeanOutputConverter`를 만들어 변환 처리를 맡깁니다.<br>
-Spring AI 2.0.2의 `BeanOutputConverter.convert()` 구현은 다음과 같습니다.<br>
+Spring AI 2.1.0의 `BeanOutputConverter.convert()` 구현은 다음과 같습니다.<br>
 **라이브러리 소스의 메서드 본문이며, 실습에 추가할 코드는 아닙니다.**
 
 ```java
@@ -112,7 +112,7 @@ public T convert(String text) {
 여기서 `jsonMapper`는 Jackson의 `JsonMapper` 객체이고, `readValue(String, JavaType)` 구현은 상위 클래스인 **`tools.jackson.databind.ObjectMapper`**에 있습니다.<br>
 `BeanOutputConverter` 자체에 `throw new RuntimeException(...)`이 있는 것이 아니라, **호출한 Jackson 메서드 내부에서 발생한 예외가 밖으로 전파됩니다.**
 
-현재 사용하는 Jackson **3.1.7**에서 `"이것은 JSON이 아닙니다."`를 읽도록 직접 실행해 확인한 경로는 다음과 같습니다.<br>
+현재 사용하는 Jackson **3.1.8**에서 `"이것은 JSON이 아닙니다."`를 읽도록 직접 실행해 확인한 경로는 다음과 같습니다.<br>
 아래는 주요 호출을 순서대로 정리한 것이며 일부 내부 호출은 생략했습니다.
 
 ```text

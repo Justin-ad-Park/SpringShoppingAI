@@ -92,7 +92,7 @@ new OrderedLogAdvisor("modelB", 1);
 
 ### 실행 위치가 달라지는 내부 호출
 
-Spring AI 2.0.2의 `DefaultAroundAdvisorChain`은 order가 작은 Advisor부터 실행하도록 정렬합니다.<br>
+Spring AI 2.1.0의 `DefaultAroundAdvisorChain`은 order가 작은 Advisor부터 실행하도록 정렬합니다.<br>
 `ToolCallingAdvisor`는 반복할 때 `copy(this)`로 **자기 뒤에 있는 Advisor들만** 다시 실행하므로, 앞에 있는 Advisor의 before는 반복되지 않습니다.<br>
 아래에서 이 내부 호출과 출력 순서를 연결해 설명합니다.<br>
 `ToolCallingAdvisor`의 순서 값을 직접 바꿨다면 상수인 `DEFAULT_ORDER` 대신 실제 설정한 값과 비교해야 합니다.
@@ -164,7 +164,7 @@ public class Lesson07ToolLoopOrderChatService {
 따라서 `request`의 응답 후 처리는 그 객체의 반복문 전체가 끝나 반환할 때 실행됩니다.
 
 `ToolCallingAdvisor` 내부 반복문에는 다음 코드가 있습니다.<br>
-Spring AI 2.0.2 구현의 핵심 호출 한 줄을 발췌했습니다.
+Spring AI 2.1.0 구현의 핵심 호출 한 줄을 발췌했습니다.
 
 ```java
 chatClientResponse = callAdvisorChain.copy(this).nextCall(processedChatClientRequest);

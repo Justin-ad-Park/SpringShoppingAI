@@ -1,0 +1,20 @@
+server:
+  address: 127.0.0.1
+  port: 8115
+spring:
+  application:
+    name: learning15-ollama-decisions
+  config:
+    import: optional:file:.env[.properties]
+  ai:
+    model:
+      chat: none
+      embedding: none
+      decision: ollama
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://127.0.0.1:11434}
+      init:
+        # 서버 준비와 모델 다운로드는 ollamaShell/start.sh 및 ollama pull로 직접 수행한다.
+        pull-model-strategy: never
+      decision:
+        model: ${OLLAMA_DECISION_MODEL:d1-omni:600m}

@@ -103,30 +103,30 @@ Advisor를 누가 구현했는지와 어느 요청에 적용할지는 따로 선
 
 ## 어떤 기능이 제공될까?
 
-이 과정이 사용하는 **Spring AI 2.0.2의 배포 소스**를 기준으로 정리했습니다.<br>
+이 과정이 사용하는 **Spring AI 2.1.0의 배포 소스**를 기준으로 정리했습니다.<br>
 기능을 선택해 등록하는 클래스와 프레임워크 내부에서 사용하는 클래스를 구분합니다.<br>
 클래스 이름을 누르면 해당 버전의 공식 소스를 볼 수 있습니다.<br>
 ‘샘플 위치’가 빈 항목은 이 과정에 실행 샘플이 없습니다.
 
-### Spring AI 2.0.2에서 기본 제공되는 Advisor
+### Spring AI 2.1.0에서 기본 제공되는 Advisor
 
 | 용도 | 클래스 | 하는 일 | 샘플 위치 |
 |---|---|---|---|
-| 로깅 | [`SimpleLoggerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SimpleLoggerAdvisor.java) | 요청과 정상 응답을 DEBUG 로그로 출력 | [08-1](08-advisors/01-built-in.md) |
-| 대화 메모리 | [`MessageChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/MessageChatMemoryAdvisor.java) | 이전 대화를 메시지 목록으로 모델 입력에 넣고 현재 대화를 저장 | [08-3](08-advisors/03-memory.md) |
-| 대화 메모리 | [`VectorStoreChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/VectorStoreChatMemoryAdvisor.java) | 벡터 저장소에서 관련 대화를 검색해 시스템 메시지에 넣고 대화를 저장 |  |
-| 검색 기반 답변(RAG) | [`QuestionAnswerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/QuestionAnswerAdvisor.java) | 벡터 저장소에서 질문과 관련된 문서를 검색해 모델 입력에 추가 | [10-2](10-rag/02-standard-advisor.md) |
-| 검색 기반 답변(RAG) | [`RetrievalAugmentationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-rag/src/main/java/org/springframework/ai/rag/advisor/RetrievalAugmentationAdvisor.java) | 질문 변환·문서 검색·문맥 구성 등 여러 검색 단계를 조합해 답변 생성을 지원 |  |
-| 도구 호출 | [`ToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallingAdvisor.java) | 모델이 요청한 도구를 실행하고 결과를 모델에 다시 보내는 반복 호출을 처리 | [08-6](08-advisors/06-tool-loop.md) |
-| 도구 탐색 | [`ToolSearchToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/advisors/spring-ai-tool-search-advisor/src/main/java/org/springframework/ai/chat/client/advisor/toolsearch/ToolSearchToolCallingAdvisor.java) | 많은 도구 중 필요한 도구를 검색하고 그 정의를 모델에 순차적으로 제공하며 실행 |  |
-| 입력 차단 | [`SafeGuardAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SafeGuardAdvisor.java) | 사용자 입력에 설정한 금칙어가 있으면 모델 호출을 차단하고 정해진 응답을 반환. 단순 단어 검사이므로 종합적인 유해성 판정 기능은 아님 |  |
-| 구조화 응답 검증 | [`StructuredOutputValidationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/StructuredOutputValidationAdvisor.java) | 모델의 JSON 응답을 스키마로 검사하고 실패하면 오류를 알려 정해진 횟수 안에서 재요청. 스트리밍 응답은 지원하지 않음 |  |
-| 응답 캐시 | [`SemanticCacheAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/vector-stores/spring-ai-redis-semantic-cache/src/main/java/org/springframework/ai/chat/cache/semantic/SemanticCacheAdvisor.java) | 의미가 비슷한 질문의 캐시된 답변을 찾으면 재사용하고, 없으면 모델을 호출해 답변을 캐시에 저장 |  |
+| 로깅 | [`SimpleLoggerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SimpleLoggerAdvisor.java) | 요청과 정상 응답을 DEBUG 로그로 출력 | [08-1](08-advisors/01-built-in.md) |
+| 대화 메모리 | [`MessageChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/MessageChatMemoryAdvisor.java) | 이전 대화를 메시지 목록으로 모델 입력에 넣고 현재 대화를 저장 | [08-3](08-advisors/03-memory.md) |
+| 대화 메모리 | [`VectorStoreChatMemoryAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/VectorStoreChatMemoryAdvisor.java) | 벡터 저장소에서 관련 대화를 검색해 시스템 메시지에 넣고 대화를 저장 |  |
+| 검색 기반 답변(RAG) | [`QuestionAnswerAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/QuestionAnswerAdvisor.java) | 벡터 저장소에서 질문과 관련된 문서를 검색해 모델 입력에 추가 | [10-2](10-rag/02-standard-advisor.md) |
+| 검색 기반 답변(RAG) | [`RetrievalAugmentationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-rag/src/main/java/org/springframework/ai/rag/advisor/RetrievalAugmentationAdvisor.java) | 질문 변환·문서 검색·문맥 구성 등 여러 검색 단계를 조합해 답변 생성을 지원 |  |
+| 도구 호출 | [`ToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallingAdvisor.java) | 모델이 요청한 도구를 실행하고 결과를 모델에 다시 보내는 반복 호출을 처리 | [08-6](08-advisors/06-tool-loop.md) |
+| 도구 탐색 | [`ToolSearchToolCallingAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/advisors/spring-ai-tool-search-advisor/src/main/java/org/springframework/ai/chat/client/advisor/toolsearch/ToolSearchToolCallingAdvisor.java) | 많은 도구 중 필요한 도구를 검색하고 그 정의를 모델에 순차적으로 제공하며 실행 |  |
+| 입력 차단 | [`SafeGuardAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/SafeGuardAdvisor.java) | 사용자 입력에 설정한 금칙어가 있으면 모델 호출을 차단하고 정해진 응답을 반환. 단순 단어 검사이므로 종합적인 유해성 판정 기능은 아님 |  |
+| 구조화 응답 검증 | [`StructuredOutputValidationAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/StructuredOutputValidationAdvisor.java) | 모델의 JSON 응답을 스키마로 검사하고 실패하면 오류를 알려 정해진 횟수 안에서 재요청. 스트리밍 응답은 지원하지 않음 |  |
+| 응답 캐시 | [`SemanticCacheAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/vector-stores/spring-ai-redis-semantic-cache/src/main/java/org/springframework/ai/chat/cache/semantic/SemanticCacheAdvisor.java) | 의미가 비슷한 질문의 캐시된 답변을 찾으면 재사용하고, 없으면 모델을 호출해 답변을 캐시에 저장 |  |
 
 Spring AI가 제공한다는 것은 라이브러리에 해당 기능을 구현한 클래스가 있다는 뜻입니다.<br>
 모두가 08단원 모듈에 포함되거나 자동으로 활성화되는 것은 아닙니다.<br>
 벡터 검색·RAG·도구 탐색·캐시는 해당 모듈 의존성과 저장소 등 필요한 설정을 추가해야 사용할 수 있습니다.<br>
-`ToolCallingAdvisor`는 이 과정의 Spring AI 2.0.2 기본 구성에서 ChatClient가 자동 연결합니다.<br>
+`ToolCallingAdvisor`는 이 과정의 Spring AI 2.1.0 기본 구성에서 ChatClient가 자동 연결합니다.<br>
 08-6에서는 도구 반복 자체를, 08-7에서는 그 앞뒤에 배치한 Advisor의 실행 범위를 비교합니다.
 
 ### ChatClient가 자동으로 연결하는 모델 호출용 Advisor
@@ -137,8 +137,8 @@ Spring AI의 `ChatClient`는 내부 구현인 `DefaultChatClient`에서 Advisor 
 
 | 클래스 | 하는 일 | 샘플 위치 |
 |---|---|---|
-| [`ChatModelCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelCallAdvisor.java) | 일반 호출을 `ChatModel.call(...)`에 전달 | |
-| [`ChatModelStreamAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelStreamAdvisor.java) | 스트리밍 호출을 `ChatModel.stream(...)`에 전달 | |
+| [`ChatModelCallAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelCallAdvisor.java) | 일반 호출을 `ChatModel.call(...)`에 전달 | |
+| [`ChatModelStreamAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ChatModelStreamAdvisor.java) | 스트리밍 호출을 `ChatModel.stream(...)`에 전달 | |
 
 Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4](08-advisors/04-chain.md)처럼 직접 구현할 수도 있습니다.
 
@@ -193,7 +193,7 @@ Spring AI가 제공하는 Advisor로 해결되지 않는 공통 처리는 [08-4]
 
 ## 참고 자료
 
-Advisor 목록은 [Spring AI 2.0.2 공식 소스](https://github.com/spring-projects/spring-ai/tree/v2.0.2)를 기준으로 작성했습니다.
+Advisor 목록은 [Spring AI 2.1.0 공식 소스](https://github.com/spring-projects/spring-ai/tree/v2.1.0)를 기준으로 작성했습니다.
 
 - [Spring AI Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html): Advisor의 역할·인터페이스·순서 기준.
 - [Spring AI ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html): ChatClient의 모든 요청에 적용하는 설정·현재 요청의 설정·로깅 사용법.

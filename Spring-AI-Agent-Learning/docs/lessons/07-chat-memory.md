@@ -53,6 +53,12 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 개념 참고: [Spring AI의 대화 메모리 설명](https://docs.spring.io/spring-ai/reference/api/chat-memory.html).
 
+## Spring AI 2.1에서 이 실습 읽기
+
+이 단원은 이전 메시지의 조회·재전달·저장을 이해하도록 기존 `ChatMemory` 예제를 유지합니다.<br>
+Spring AI 2.1에서는 이 API가 deprecated되어 컴파일 경고가 나오지만, 이 실습의 메시지 창·저장 동작은 그대로 사용할 수 있습니다.<br>
+새로 도입된 Session Memory로 이전하는 내용은 [공식 업그레이드 안내](https://docs.spring.io/spring-ai/reference/upgrade-notes.html)를 참고하세요.
+
 ## ChatMemory와 ChatMemoryRepository의 역할
 
 다음 표는 두 인터페이스와 이번 실습에서 사용하는 구현체를 함께 보여줍니다.
@@ -70,7 +76,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 
 ### Spring AI가 제공하는 ChatMemory 구현체
 
-이 프로젝트에서 사용하는 **Spring AI 2.0.2의 기본 제공 `ChatMemory` 구현체는 `MessageWindowChatMemory` 하나 입니다.** [공식 문서의 Memory Types 절](https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_types)에서도 이 구현체를 소개합니다.
+이 프로젝트에서 사용하는 **Spring AI 2.1.0의 기본 제공 `ChatMemory` 구현체는 `MessageWindowChatMemory` 하나 입니다.** [공식 문서의 Memory Types 절](https://docs.spring.io/spring-ai/reference/api/chat-memory.html#_memory_types)에서도 이 구현체를 소개합니다.
 
 | 구현체 | 보관 정책 | 주요 설정 |
 |---|---|---|
@@ -82,7 +88,7 @@ Spring AI는 대화 메시지를 저장하고 조회할 수 있는 기능을 제
 ### 저장 위치는 ChatMemoryRepository로 선택
 
 위 표의 `InMemoryChatMemoryRepository`는 이번 실습에서 사용하는 저장소입니다.<br>
-Spring AI 2.0.2는 InMemory·JDBC·Cassandra·Neo4j·MongoDB·Redis 저장소 구현을 제공합니다.<br>
+Spring AI 2.1.0는 InMemory·JDBC·Cassandra·Neo4j·MongoDB·Redis 저장소 구현을 제공합니다.<br>
 이들은 보관 정책을 정하는 `ChatMemory` 구현체와 구분합니다.
 
 **`ChatMemoryRepository`의 역할과 구현체별 특징은 [07-01의 저장소 종류](07-chat-memory/01-messages.md#spring-ai가-제공하는-대화-저장소-종류)에서 추가로 설명합니다.**
@@ -164,7 +170,7 @@ JDBC 연결·저장소 선택 소주제는 독립 앱 [07-02-JDBC](../../labs/07
 ## 참고 자료
 
 - [Spring AI — Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html): API 역할과 저장소 선택의 기준입니다.<br>
-  예제의 동작은 프로젝트가 사용하는 2.0.2 소스와 대조했습니다.
+  예제의 동작은 프로젝트가 사용하는 2.1.0 소스와 대조했습니다.
 - [Manfred Ng / Baeldung — Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory): 저장소에서 ChatClient 연결로 이어지는 튜토리얼의 설명 순서를 참고했습니다.<br>
   1.0.0 기반 코드이므로 설정을 그대로 복사하지 않습니다.
 - [Dan Vega — AI for Java Developers 공개 강의 안내](https://www.danvega.dev/newsletter/2025/06/30/ai-for-java-developers-course): 대화 관리가 포함된 강의의 공개 소개를 확인했습니다.<br>

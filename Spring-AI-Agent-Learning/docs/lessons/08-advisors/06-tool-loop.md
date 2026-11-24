@@ -44,7 +44,7 @@ sequenceDiagram
 
 ## 반복을 담당하는 ToolCallingAdvisor
 
-Spring AI 2.0.2의 `ChatClient`는 `ToolCallingAdvisor`를 자동으로 연결합니다.<br>
+Spring AI 2.1.0의 `ChatClient`는 `ToolCallingAdvisor`를 자동으로 연결합니다.<br>
 이 객체가 모델 응답에 도구 요청이 있는지 확인하고, 있으면 `ToolCallingManager`에 도구 실행을 맡긴 뒤 결과를 담아 모델에 다시 요청합니다.<br>
 응답에 도구 요청이 없으면 반복을 마치고 답변을 반환합니다.<br>
 도구 결과를 바로 반환하도록 설정한 경우 등 다른 종료 방식도 있지만, 이 예제에서는 기본 흐름만 사용합니다.

@@ -116,7 +116,7 @@ Spring Boot는 이 값들을 라이브러리의 설정 객체에 담고, OpenAI 
 
 <details><summary>선택 참고: 자동 설정의 실제 활성 조건</summary>
 
-Spring AI 2.0.2의 `OpenAiChatAutoConfiguration`에는 다음 조건이 붙어 있습니다.<br>
+Spring AI 2.1.0의 `OpenAiChatAutoConfiguration`에는 다음 조건이 붙어 있습니다.<br>
 아래는 라이브러리의 실제 조건을 보여 주는 발췌이며 애플리케이션에 추가할 코드는 아닙니다.
 
 ```java
@@ -223,7 +223,7 @@ OpenAI와 Anthropic을 함께 사용하고 `@Qualifier`로 주입할 ChatClient�
 
 </details>
 
-설명 확인 기준: 저장소가 사용하는 Spring AI 2.0.2의 Starter 의존성,
+설명 확인 기준: 저장소가 사용하는 Spring AI 2.1.0의 Starter 의존성,
 `OpenAiChatAutoConfiguration`의 제공 업체 조건, `ChatClientAutoConfiguration`의 Builder 생성 코드를 확인했습니다.
 
 [02단원으로 돌아가기](../02-first-call.md) · [실습 설정과 실행 안내](../../../labs/02-00-first-chat/README.md)

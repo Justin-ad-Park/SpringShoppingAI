@@ -1,0 +1,7 @@
+spring:
+  config:
+    import: ""
+  ai:
+    ollama:
+      decision:
+        model: learning-decision-model

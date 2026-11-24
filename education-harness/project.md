@@ -46,7 +46,7 @@
 - [그림 기준](../Spring-AI-Agent-Learning/docs/diagram-guide.md): 공통 기준에 더해 모델의 판단·도구 실행·호출 경계 구분.
 - [루트 build.gradle](../build.gradle), [settings.gradle](../settings.gradle), 각 실습 빌드·설정 파일에서 실제 버전과 등록을 확인.
 
-초기 확인 기준은 Java 21 / Spring Boot 4.0.9 / Spring AI 2.0.2입니다.<br>
+현재 공통 버전은 Java 21 / Spring Boot 4.2.0 / Spring AI 2.1.0입니다.<br>
 숫자만 복사하지 말고 변경 시 실제 빌드를 다시 확인합니다.<br>
 API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로 대조합니다.<br>
 문서를 개선한다는 이유로 버전을 올리지 않습니다.
@@ -83,6 +83,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
 | 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.IntentModelQualityOpenAiLiveTest` |
 | 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.JevLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.JevLiveTest` (실제 Jev) |
+| 15 Ollama 의사결정 | `15-00-ollama-decisions` | `com.example.ailearning.l15ollama.OllamaDecisionLocalModelTest`<br>`com.example.ailearning.l15ollama.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l15ollama.OllamaDecisionLiveTest` (실제 로컬 Ollama) |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -232,7 +233,7 @@ return client
 ## Spring AI 설명에서 확인할 동작
 
 - 공통 `spring.ai.openai.*`와 기능별 `spring.ai.openai.chat.*`·`spring.ai.openai.embedding.*`가 같은 연결 속성을 지정하면 사용 버전의 우선순위를 확인합니다.<br>
-  2.0.2에서는 기능별 값이 있으면 공통 값보다 우선하므로, 테스트의 timeout 변경이 기존 기능별 설정에 가려지지 않는지 확인합니다.<br>
+  2.1.0에서는 기능별 값이 있으면 공통 값보다 우선하므로, 테스트의 timeout 변경이 기존 기능별 설정에 가려지지 않는지 확인합니다.<br>
   URL·시간 제한을 변경한 로컬 테스트가 실제로 대체 서버에 연결하고 의도한 대기·실패 동작을 보이는지 확인하며, 이를 실제 API 연결 검증으로 기록하지 않습니다.
 
 - ChatClient의 객체 생성·요청 구성·실행 시점과 Advisor의 메시지 저장 정책은 사용 버전의 실제 소스와 대조합니다.<br>

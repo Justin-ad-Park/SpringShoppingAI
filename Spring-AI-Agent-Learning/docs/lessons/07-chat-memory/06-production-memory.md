@@ -6,7 +6,7 @@
 최근 문맥과 전체 이력·업무 상태를 구분하고, 영구 저장소를 연결할 때 바뀌는 책임을 설명합니다.<br>
 Advisor 연결은 [08단원](../08-advisors.md)을 배운 뒤 다시 읽어도 됩니다.
 
-이 문서는 **공개 튜토리얼·공급사의 연동 가이드와 Spring AI 2.0.2 소스를 바탕으로 정리한 설계 예시**입니다.<br>
+이 문서는 **공개 튜토리얼·공급사의 연동 가이드와 Spring AI 2.1.0 소스를 바탕으로 정리한 설계 예시**입니다.<br>
 특정 쇼핑몰의 실제 운영 구성을 확인한 사례 보고서는 아닙니다.<br>
 저장소 연결의 실행 예제는 07-1의 테스트 패키지에 있으며, 이 문서는 운영 설계를 다룹니다.<br>
 기본 채팅 실습은 계속 메모리 저장을 사용합니다.
@@ -90,7 +90,7 @@ Dan Vega의 [Compacting Chat Memory Advisor 예제](https://github.com/danvega/c
 **`MessageWindowChatMemory` 자체의 자동 요약 기능이 아닙니다.** 08단원 이후 선택 심화로 읽고, 기본 수업에서는 먼저 창 밖으로 사라지는 정보를 관찰합니다.
 
 도구 호출까지 포함하는 Agent라면 저장할 메시지 종류도 확인해야 합니다.<br>
-2.0.2의 JDBC 저장소는 도구 호출을 담은 assistant 메시지와 도구 응답 메시지를 저장하지 않는 제약이 있습니다.<br>
+2.1.0의 JDBC 저장소는 도구 호출을 담은 assistant 메시지와 도구 응답 메시지를 저장하지 않는 제약이 있습니다.<br>
 텍스트 대화의 영구 저장과 도구 실행 전체의 감사 기록은 같은 보장이 아닙니다.<br>
 실제 연동 전에 사용 버전의 소스와 [공식 제한 사항](https://docs.spring.io/spring-ai/reference/api/chat-memory.html)을 확인합니다.
 
@@ -126,7 +126,7 @@ Dan Vega의 [Compacting Chat Memory Advisor 예제](https://github.com/danvega/c
 
 | 출처 | 확인한 내용과 이 문서에 반영한 점 | 읽을 때 주의할 점 |
 |---|---|---|
-| [Spring AI — Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html) / Spring 프로젝트 | 메모리·전체 이력 구분, JDBC 연결과 메시지 지원 제약 | 이 교재의 기준은 2.0.2. 문서는 이후 변경될 수 있음 |
+| [Spring AI — Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html) / Spring 프로젝트 | 메모리·전체 이력 구분, JDBC 연결과 메시지 지원 제약 | 이 교재의 기준은 2.1.0. 문서는 이후 변경될 수 있음 |
 | [Chat Memory](https://docs.oracle.com/en/database/oracle/oracle-database/26/aintg/spring-ai-integration-guide/chat-memory.html) / Oracle | DB 영구 저장·스키마 관리·문맥 재전달의 연결 | 공급사 연동 가이드이며 특정 고객의 운영 실적은 아님 |
 | [Chat Memory in Spring AI](https://www.baeldung.com/spring-ai-chat-memory) / Manfred Ng, Baeldung | 메모리에서 저장소와 ChatClient로 이어지는 튜토리얼 구성 | 1.0.0 예제. 세션 범위 서비스는 해당 예제의 선택이며 필수 구조가 아님 |
 | [Chat Memory in Spring AI 2.0](https://ankurm.com/spring-ai-2-0-chat-memory-jdbc-redis-windowed-conversations/) / Ankur | 저자가 공개한 DB 연동·동시성 실험을 확인하고 운영 검토 항목에 반영 | 2.0.1·별도 실행 환경. 해당 실험을 이 저장소에서 재실행한 것은 아님 |

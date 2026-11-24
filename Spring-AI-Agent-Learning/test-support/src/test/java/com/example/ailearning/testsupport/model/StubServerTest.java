@@ -196,7 +196,7 @@ class StubServerTest {
         try (var model = new AnthropicStubServer(); var client = HttpClient.newHttpClient()) {
             model.setMessageResponseText("Anthropic 응답");
             var request = HttpRequest.newBuilder(URI.create(model.getBaseUrl() + "/v1/messages"))
-                    .header("x-api-key", "local-anthropic")
+                    .header("Authorization", "Bearer local-anthropic")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"model\":\"test\"}"))
                     .build();
             var response = output.printHttpResponse(client.send(request, HttpResponse.BodyHandlers.ofString()));
@@ -207,7 +207,7 @@ class StubServerTest {
             assertEquals("Anthropic 응답", body
                             .at("/content/0/text")
                             .asString());
-            assertEquals(java.util.List.of("local-anthropic"), model.getMessageApiKeyHeaders());
+            assertEquals(java.util.List.of("Bearer local-anthropic"), model.getMessageAuthorizationHeaders());
             model.resetMessageResponseAndRequests();
             assertTrue(model
                             .getMessageRequests()

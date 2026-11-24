@@ -150,7 +150,7 @@ class LiveEvaluationTest {
                         path.toFile(),
                         Map.of(
                                 "springAiVersion",
-                                "2.0.2",
+                                org.springframework.ai.chat.client.ChatClient.class.getPackage().getImplementationVersion(),
                                 "executedAt",
                                 java.time.Instant.now().toString(),
                                 "scope",

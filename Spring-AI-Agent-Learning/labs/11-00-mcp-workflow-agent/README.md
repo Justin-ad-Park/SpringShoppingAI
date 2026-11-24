@@ -17,7 +17,7 @@
 
 ## 설정과 실행
 
-Java 21·Spring AI 2.0.2는 루트 빌드에서 관리합니다.<br>
+Java 21·Spring AI 2.1.0는 루트 빌드에서 관리합니다.<br>
 루트 `.env`에 `OPENAI_API_KEY`, `OPENAI_MODEL`을 준비합니다.<br>
 실행 위치는 저장소 루트입니다.<br>
 수동 실행은 터미널 두 개에서 각각 수행합니다.

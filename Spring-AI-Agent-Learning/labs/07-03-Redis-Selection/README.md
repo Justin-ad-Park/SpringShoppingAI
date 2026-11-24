@@ -90,7 +90,7 @@ Redis URI는 환경 변수로 전달하고 실제 인증 값은 코드·로그�
 
 ### 실제 Redis Stack 테스트
 
-Spring AI 2.0.2 저장소는 RedisJSON과 검색 기능이 필요합니다.<br>
+Spring AI 2.1.0 저장소는 RedisJSON과 검색 기능이 필요합니다.<br>
 일반 Redis 서버만으로 실행된다고 가정하지 않습니다.<br>
 기존 Docker Desktop을 실행한 뒤 [runShell 실행·종료 안내](runShell/README.md)의 스크립트를 사용합니다.<br>
 기본 Redis 포트는 16379입니다.<br>
@@ -109,7 +109,7 @@ bash Spring-AI-Agent-Learning/labs/07-03-Redis-Selection/runShell/stop-redis.sh
 InMemory 로컬 테스트는 Redis 빈이 생성되지 않는지와 모델 실패 시 대화 보존도 확인합니다.<br>
 전체 `test`에는 실제 Redis Live 테스트가 포함되므로 로컬 검증에는 클래스 필터를 사용합니다.
 
-Jedis는 Spring AI 2.0.2의 RedisClient API와 맞는 7.4.1로 명시했습니다.<br>
+Jedis는 Spring AI 2.1.0 Redis 저장소가 사용하는 8.0.2로 맞췄습니다.<br>
 버전 갱신 시 Spring AI·Boot의 관리 버전과 함께 확인합니다.
 
 ## 상용 구성에 적용할 때

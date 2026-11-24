@@ -7,7 +7,7 @@
 
 이 문서는 기술 선택 이유와 권장 구성을 설명합니다.<br>
 아래 내용은 도입 제안이며, 모든 기능이 이미 구현된 것은 아닙니다.<br>
-확인 기준일은 **2026-11-12**이며, Spring AI 설명은 저장소의 [build.gradle](../../../../build.gradle)에 선언된 2.0.2를 기준으로 합니다.<br>
+확인 기준일은 **2026-11-12**이며, Spring AI 설명은 저장소의 [build.gradle](../../../../build.gradle)에 선언된 2.1.0을 기준으로 합니다.<br>
 프레임워크 전반의 비교는 [Spring AI와 LangChain](01-SpringAIvsLangChain.md)을 참고하세요.
 
 ## 1. Spring AI가 이 프로젝트에 적합한 이유

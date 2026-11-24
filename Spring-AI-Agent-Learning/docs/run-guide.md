@@ -147,3 +147,10 @@ Live의 문장은 실행마다 달라질 수 있습니다.<br>
 
 12단원의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다.<br>
 요청 횟수는 고정 HTTP 서버가 받은 기록으로 확인하며, 실제 모델 연결은 각 모듈의 Live 클래스로 구분합니다.
+
+## 15단원 로컬 Ollama 의사결정
+
+15단원은 OpenAI 대신 내 PC의 Ollama 서버에 요청합니다.<br>
+API 키 없이 기본 주소 `http://127.0.0.1:11434`와 모델 `d1-omni:600m`을 사용합니다.<br>
+[설치·구동·중지 안내](lessons/15-ollama-decisions/01-install-and-run.md)를 먼저 진행한 뒤 [실습 README](../labs/15-00-ollama-decisions/README.md)의 명령을 따릅니다.<br>
+주소·모델을 바꿀 때만 루트 `.env`의 `OLLAMA_BASE_URL`·`OLLAMA_DECISION_MODEL`을 지정합니다.

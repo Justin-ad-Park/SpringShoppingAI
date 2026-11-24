@@ -9,3 +9,6 @@ tasks.named('test') {
     workingDir rootProject.projectDir
     testLogging { showStandardStreams = true }
 }
+
+// 실제 모델 품질 비교만 실행하는 테스트 전용 모듈이므로 실행형 JAR은 만들지 않는다.
+tasks.named('bootJar') { enabled = false }

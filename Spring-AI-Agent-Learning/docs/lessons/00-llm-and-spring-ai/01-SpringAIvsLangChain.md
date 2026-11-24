@@ -9,7 +9,7 @@
 같은 LLM 기능을 만들 때 Spring AI와 LangChain이 각각 무엇을 제공하는지 설명합니다.<br>
 팀의 언어·기존 서비스·처리 흐름·운영 조건을 기준으로 하나를 선택하거나, 두 기술을 나누어 사용하는 이유를 제시합니다.
 
-**확인 기준일: 2026-11-12.** Spring AI는 이 저장소의 [build.gradle](../../../../build.gradle)에 선언된 2.0.2와 공식 참조 문서를 기준으로 설명합니다.<br>
+**비교 자료 확인일: 2026-11-12. Spring AI 실습 버전 갱신일: 2026-11-24.** Spring AI는 이 저장소의 [build.gradle](../../../../build.gradle)에 선언된 2.1.0과 공식 참조 문서를 기준으로 설명합니다.<br>
 LangChain은 Python·JavaScript/TypeScript 공식 문서와 공개 API의 릴리스 정책을 참고합니다.<br>
 통합 대상과 API는 달라질 수 있으므로 도입 시 사용할 버전의 지원 기능을 다시 확인합니다.
 
@@ -111,7 +111,7 @@ Actuator를 추가하는 것만으로 모든 모델 호출 내용과 품질 평�
 
 같은 목적의 기능을 한 행에 놓았습니다.<br>
 이름이 같지 않아도 유사한 역할이면 대응시켰습니다.<br>
-왼쪽은 **LangChain + LangGraph + LangSmith 생태계**, 오른쪽은 **Spring AI 2.0.2와 Spring Boot 연동**입니다.<br>
+왼쪽은 **LangChain + LangGraph + LangSmith 생태계**, 오른쪽은 **Spring AI 2.1.0과 Spring Boot 연동**입니다.<br>
 LangGraph와 LangSmith는 별도 구성요소이며, LangSmith는 플랫폼 이용 조건도 별도로 확인해야 합니다.<br>
 LangChain 쪽은 Python 공식 문서를 중심으로 비교하므로 JS/TS의 지원 범위는 별도 확인이 필요합니다.
 
@@ -178,7 +178,7 @@ LangChain의 핵심 API와, LangGraph·LangSmith를 함께 사용하는 생태�
 | 에이전트·오케스트레이션 | LangChain 에이전트와 LangGraph의 명시적 상태·분기·반복·재개 기능 | 도구 호출 루프·Advisor·메모리 제공. 장기 실행 상태·복구·복잡한 분기는 요구사항에 맞춰 별도 설계 검토 |
 | 통합 범위 | 폭넓은 통합 카탈로그. 언어·패키지·관리 주체별 지원 차이 확인 필요 | 주요 모델·벡터DB·MCP 지원. 원하는 기능의 제공 업체별 지원 여부 확인 필요 |
 | 관측·평가 | LangSmith 등과 연결해 추적·평가·모니터링 구성 | Micrometer·Actuator와 기존 관측 도구 연결, 평가 기능 활용 |
-| 성숙도·버전 | 오래된 예제와 현재 API가 혼재할 수 있음. 주요 패키지에는 1.0 이후 공개 API 호환성 정책이 있음 | 상대적으로 나중에 시작했지만 안정 버전을 제공. 이 과정은 2.0.2 사용. Spring Boot·AI 버전 호환성과 마이그레이션 확인 필요 |
+| 성숙도·버전 | 오래된 예제와 현재 API가 혼재할 수 있음. 주요 패키지에는 1.0 이후 공개 API 호환성 정책이 있음 | 상대적으로 나중에 시작했지만 안정 버전을 제공. 이 과정은 2.1.0 사용. Spring Boot·AI 버전 호환성과 마이그레이션 확인 필요 |
 
 LangGraph의 상태·실행 제어는 [공식 개요](https://docs.langchain.com/oss/python/langgraph/overview),
 LangChain의 공개 API 호환성은 [릴리스 정책](https://docs.langchain.com/oss/python/release-policy)에서 확인할 수 있습니다.<br>

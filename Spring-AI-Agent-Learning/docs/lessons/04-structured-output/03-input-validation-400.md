@@ -55,14 +55,14 @@ Controller 본문의 중단점에서 멈추지 않는 것도, 그 본문을 실�
 
 기본 실습에서는 위의 역할 구분과 테스트 결과를 이해하면 됩니다.<br>
 내부 소스를 따라가고 싶을 때만 아래 내용을 펼쳐 보세요.<br>
-Spring Framework 7.0.10 기준입니다.
+Spring Framework 7.1.0 기준입니다.
 
 <details>
 <summary>입력 검증 예외가 만들어지고 400이 저장되는 코드</summary>
 
 ## 어떤 예외가 발생하고 어디에서 400을 지정할까?
 
-현재처럼 Controller의 `String` 매개변수에 직접 제약을 붙인 경우, Spring Framework **7.0.10**의 MVC 메서드 검증 경로는 다음과 같습니다.
+현재처럼 Controller의 `String` 매개변수에 직접 제약을 붙인 경우, Spring Framework **7.1.0**의 MVC 메서드 검증 경로는 다음과 같습니다.
 
 | 단계 | 담당 코드 | 처리 |
 |---|---|---|
@@ -74,7 +74,7 @@ Spring Framework 7.0.10 기준입니다.
 ### 1. 검증 실패를 발견하면 예외 객체를 만듭니다
 
 `HandlerMethodValidator.applyArgumentValidation()`은 검증 결과에 오류가 있으면 다음 코드를 실행합니다.<br>
-**Spring Framework 7.0.10 소스의 발췌이며, 실습에 추가할 코드는 아닙니다.**
+**Spring Framework 7.1.0 소스의 발췌이며, 실습에 추가할 코드는 아닙니다.**
 
 ```java
 throw new HandlerMethodValidationException(
