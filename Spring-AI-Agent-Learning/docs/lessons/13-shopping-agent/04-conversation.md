@@ -23,10 +23,10 @@
 
 ## 조회·실행·저장 책임을 나누기
 
-[CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselService.java)는 다음 순서로 처리합니다.
+[Lesson04CounselService](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04CounselService.java)는 다음 순서로 처리합니다.
 
 1. 소유자와 대화 ID를 조합한 키로 `ChatMemory`에서 이전 메시지를 읽습니다.
-2. 이전 메시지의 복사본과 현재 질문을 `CounselWorkflow`에 전달합니다.<br>
+2. 이전 메시지의 복사본과 현재 질문을 `Lesson02CounselWorkflow`에 전달합니다.<br>
    Workflow는 현재 질문을 추가해 의도 추출과 도구 선택에 사용합니다.
 3. 검증 결과가 저장 가능한 상태이면 현재 질문을 `UserMessage`, 답변을 `AssistantMessage`로 함께 저장합니다.
 4. 응답에는 상담 결과와 저장된 메시지 수를 담습니다.
@@ -105,7 +105,7 @@ private final ChatMemory conversationMemory = MessageWindowChatMemory.builder()
 먼저 외부 API를 호출하지 않는 로컬 테스트로 연결·검증·저장 정책을 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*ShoppingAgentLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson04ShoppingAgentLocalModelTest'
 ```
 
 실제 실행은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 사용합니다.<br>
@@ -144,9 +144,9 @@ curl -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
 curl -X DELETE -b /tmp/learning13.cookies http://127.0.0.1:8102/api/counsel/demo
 ```
 
-[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)의 `후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다`는 카테고리·예산·P03·저장 메시지 수를 검증합니다.<br>
+[Lesson04ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentLocalModelTest.java)의 `후속_질문에서_예산을_유지하고_결과_없는_조건도_기억한다`는 카테고리·예산·P03·저장 메시지 수를 검증합니다.<br>
 실패 시 기존 기록 유지와 세션 격리도 별도 테스트로 확인합니다.<br>
-고정 서버의 결과이므로 실제 언어 이해·도구 선택 품질은 [Live 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentOpenAiLiveTest.java)와 별도 질문 세트로 평가합니다.
+고정 서버의 결과이므로 실제 언어 이해·도구 선택 품질은 [Live 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentOpenAiLiveTest.java)와 별도 질문 세트로 평가합니다.
 
 전체 대기·모델 요청 수 제한, trace와 늦은 답변 미저장은 선택 실습 [13-8](08-execution-limits.md)에서 추가합니다.
 

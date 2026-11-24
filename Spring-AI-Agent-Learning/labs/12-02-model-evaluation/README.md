@@ -4,7 +4,7 @@
 이 모듈은 다른 실습과 독립이며 실행 애플리케이션·설정·테스트를 포함합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:bootRun
 ```
@@ -21,16 +21,26 @@ bootRun은 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL로 실제 평가 호출�
 이 의존성은 테스트에만 적용됩니다.<br>
 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
 
-- `EvaluationApiLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
-- `EvaluationApiOpenAiLiveTest`: 실제 OpenAI에 연결합니다.<br>
+- `Lesson02EvaluationApiLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `Lesson02EvaluationApiOpenAiLiveTest`: 실제 OpenAI에 연결합니다.<br>
   루트 `.env`가 필요하며 API 사용량이 발생합니다.
 - 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다.<br>
   출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiOpenAiLiveTest
 ```
 
 IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다.<br>
 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
+
+## 소주제 번호로 코드 찾기
+
+번호가 붙은 클래스는 처음 소개하는 소주제의 예제입니다.<br>
+Application·공통 Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.<br>
+후속 소주제는 앞서 만든 클래스를 재사용할 수 있습니다.
+
+| 소주제 | 실행 코드 | 전용 테스트 |
+|---|---|---|
+| 12-2 | [Lesson02AnswerEvaluator](src/main/java/com/example/ailearning/l12judge/lesson02_modeljudge/Lesson02AnswerEvaluator.java) | [Lesson02EvaluationApiLocalModelTest](src/test/java/com/example/ailearning/l12judge/lesson02_modeljudge/Lesson02EvaluationApiLocalModelTest.java) · [Lesson02EvaluationApiOpenAiLiveTest](src/test/java/com/example/ailearning/l12judge/lesson02_modeljudge/Lesson02EvaluationApiOpenAiLiveTest.java) |

@@ -23,17 +23,17 @@
 
 ## Java 코드는 첫 호출 그대로
 
-[ObservedChatService](../../../labs/12-04-observability/src/main/java/com/example/ailearning/l12observe/ObservedChatService.java) 전체입니다.
+[Lesson04ObservedChatService](../../../labs/12-04-observability/src/main/java/com/example/ailearning/l12observe/lesson04_observability/Lesson04ObservedChatService.java) 전체입니다.
 
 ```java
-package com.example.ailearning.l12observe;
+package com.example.ailearning.l12observe.lesson04_observability;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ObservedChatService {
+public class Lesson04ObservedChatService {
     private final ChatClient chatClient;
-    public ObservedChatService(ChatClient.Builder builder) { chatClient = builder.build(); }
+    public Lesson04ObservedChatService(ChatClient.Builder builder) { chatClient = builder.build(); }
 
     public String ask(String question) {
         return chatClient
@@ -65,7 +65,7 @@ management:
 ```mermaid
 sequenceDiagram
     actor U as 학습자
-    participant C as ObservedChatService
+    participant C as Lesson04ObservedChatService
     participant AI as Spring AI
     participant M as 외부 모델
     participant R as Micrometer
@@ -91,7 +91,7 @@ sequenceDiagram
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.ObservationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootRun
 ```
@@ -132,7 +132,7 @@ curl -sS 'http://127.0.0.1:8105/actuator/metrics/gen_ai.client.token.usage?tag=g
 
 ## 테스트
 
-`ObservationLocalModelTest`의 2개 테스트는 실제 Boot·Spring AI·Micrometer·Actuator와 로컬 모델 HTTP 서버를 사용합니다.<br>
+`Lesson04ObservationLocalModelTest`의 2개 테스트는 실제 Boot·Spring AI·Micrometer·Actuator와 로컬 모델 HTTP 서버를 사용합니다.<br>
 기본 모델 타이머 증가, 고정 usage의 입력 10+출력 5=15 토큰 증가, 지표 조회에 추가 모델 호출이 없음을 확인합니다.<br>
 이 수치는 가짜 서버의 고정 검증 값이며 실제 모델 사용량 예측치가 아닙니다.
 

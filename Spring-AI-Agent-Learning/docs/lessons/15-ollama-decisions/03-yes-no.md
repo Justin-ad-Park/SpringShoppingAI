@@ -8,10 +8,10 @@ Ollama에 보낼 때는 `noul` 타입으로 변환되고, `YesNoAnswer.getProbab
 
 ## 실행 코드 읽기
 
-[HumanSupportRequestService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/HumanSupportRequestService.java)의 전체 코드입니다.
+[Lesson03HumanSupportRequestService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l15ollama;
+package com.example.ailearning.l15ollama.lesson03_yesno;
 
 import com.example.ailearning.l15ollama.domain.HumanSupportAction;
 import com.example.ailearning.l15ollama.domain.SupportRoutingPolicy;
@@ -22,17 +22,17 @@ import org.springframework.stereotype.Service;
 
 /** 15-3: 사람 상담원 연결을 원하는지 참일 확률로 판단한다. */
 @Service
-public class HumanSupportRequestService {
+public class Lesson03HumanSupportRequestService {
     public record HumanSupportResult(double yesProbability, HumanSupportAction action) {}
 
-    static final YesNoQuestion HUMAN_SUPPORT_QUESTION = YesNoQuestion.builder()
+    public static final YesNoQuestion HUMAN_SUPPORT_QUESTION = YesNoQuestion.builder()
             .text("고객이 사람 상담원 연결을 요청하나요?")
             .whenYes("사람 상담원과 직접 대화하고 싶다는 요청")
             .whenNo("사람 상담원 연결을 요청하지 않거나 자동 안내를 원하는 문의")
             .build();
     private final DecisionModel decisionModel;
 
-    public HumanSupportRequestService(DecisionModel decisionModel) {
+    public Lesson03HumanSupportRequestService(DecisionModel decisionModel) {
         this.decisionModel = decisionModel;
     }
 
@@ -72,8 +72,8 @@ curl -sS http://127.0.0.1:8115/api/ollama/human-support \
   --data-raw '자동 응답 말고 사람 상담원과 이야기하고 싶어요.'
 ```
 
-고정 응답으로 요청·결과를 확인하려면 [OllamaDecisionLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLocalModelTest.java)를 읽습니다.<br>
-실제 판단은 [OllamaDecisionLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLiveTest.java)로 확인합니다.<br>
+고정 응답으로 요청·결과를 확인하려면 [Lesson03HumanSupportRequestLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestLocalModelTest.java)를 읽습니다.<br>
+실제 판단은 [Lesson03HumanSupportRequestLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestLiveTest.java)로 확인합니다.<br>
 실행 명령과 준비 순서는 [실습 README](../../../labs/15-00-ollama-decisions/README.md)에 있습니다.
 
 [15단원 목차](../15-ollama-decisions.md)

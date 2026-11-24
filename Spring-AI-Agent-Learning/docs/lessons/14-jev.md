@@ -119,7 +119,7 @@ Choice·Score·Noul은 같은 키와 모델을 사용합니다.<br>
 저장소 루트에서 다음 명령은 실제 Jev나 OpenAI를 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*LocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
 ```
 
 로컬 테스트는 고정 HTTP 응답을 실제 SDK로 읽는 연결과 Java 정책을 확인합니다.<br>

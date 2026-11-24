@@ -80,7 +80,7 @@ spring:
 ```mermaid
 sequenceDiagram
     participant C as HTTP 클라이언트
-    participant S as IntentClassificationService
+    participant S as Lesson02IntentClassificationService
     participant D as OllamaDecisionModel
     participant O as 로컬 Ollama
     participant P as SupportRoutingPolicy
@@ -142,13 +142,13 @@ curl -sS http://127.0.0.1:8115/api/ollama/intent   -H 'Content-Type: text/plain;
 아래 명령은 Ollama 설치나 실제 모델 없이 고정 응답 서버로 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*OllamaDecisionLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*LocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:bootJar
 ```
 
 실제 로컬 모델은 Ollama와 모델을 준비한 뒤 별도 클래스로 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*OllamaDecisionLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*LiveTest'
 ```
 
 Live 테스트는 실제 판단값을 출력하고 명확한 문의의 의도·상대적인 시급성 등을 확인합니다.<br>

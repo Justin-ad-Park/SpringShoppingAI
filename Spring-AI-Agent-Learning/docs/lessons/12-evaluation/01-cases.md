@@ -5,7 +5,7 @@
 
 **이번 목표:** 고정된 질문과 기대 결과를 정하고 실제 답변과 비교하는 방법을 이해합니다.
 
-**코드 읽기 안내:** RuleBasedEvaluator의 기대 값 비교가 핵심입니다.<br>
+**코드 읽기 안내:** Lesson01RuleBasedEvaluator의 기대 값 비교가 핵심입니다.<br>
 점수가 높아도 사례가 좁으면 실제 품질을 대표하지 못합니다.
 
 ## 답변을 비교할 기준 정하기
@@ -42,18 +42,18 @@
 
 ## 준비된 답변을 규칙으로 평가하기
 
-먼저 [RuleBasedEvaluator](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/rules/RuleBasedEvaluator.java)를 읽습니다.<br>
+먼저 [Lesson01RuleBasedEvaluator](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluator.java)를 읽습니다.<br>
 기대 상태·출처·필수 문구와 준비된 후보 답변을 비교합니다.<br>
 이 클래스는 Spring이나 모델 없이 실행됩니다.
 
 ```java
-package com.example.ailearning.l12evaluation.rules;
+package com.example.ailearning.l12evaluation.lesson01_cases;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** 12-1: 준비된 답변을 기대값과 비교한다. 답변 생성·검색·계측은 하지 않는다. */
-public class RuleBasedEvaluator {
+public class Lesson01RuleBasedEvaluator {
     public record ExpectedAnswer(String status, List<String> sourceIds, String requiredText) {}
     public record CandidateAnswer(String status, List<String> sourceIds, String text) {}
 
@@ -73,10 +73,10 @@ public class RuleBasedEvaluator {
 
 ## 실행과 결과
 
-[RuleBasedEvaluatorUnitTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/rules/RuleBasedEvaluatorUnitTest.java)는 7일 답변의 통과와 30일 답변의 문구 실패를 출력하고 검증합니다.
+[Lesson01RuleBasedEvaluatorUnitTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluatorUnitTest.java)는 7일 답변의 통과와 30일 답변의 문구 실패를 출력하고 검증합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*RuleBasedEvaluatorUnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson01RuleBasedEvaluatorUnitTest'
 ```
 
 테스트는 후보 A에 빈 목록 `[]`, 후보 B에 `[expected text missing]`을 기대합니다.<br>
@@ -84,7 +84,7 @@ public class RuleBasedEvaluator {
 
 실패 사유 목록이 비면 정한 규칙을 통과한 것입니다.<br>
 문장의 의미까지 보증하지는 않습니다.<br>
-모델이 만든 실제 답변을 이 규칙으로 검사하는 [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java)는 [12-5](05-failures.md)에서 검색·생성·계측과 결합합니다.
+모델이 만든 실제 답변을 이 규칙으로 검사하는 [Lesson01EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationRunner.java)는 [12-5](05-failures.md)에서 검색·생성·계측과 결합합니다.
 
 ## 확인 질문
 

@@ -5,9 +5,12 @@
 
 | 수업 | 코드 | 검증 |
 |---|---|---|
-| 13-1·2 | [CounselWorkflow](src/main/java/com/example/ailearning/l13shopping/workflow/CounselWorkflow.java) | [ShoppingAgentLocalModelTest](src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java): 동기 직접 호출·도구 제공 범위 |
-| 13-3 | [CounselResultVerifier](src/main/java/com/example/ailearning/l13shopping/workflow/CounselResultVerifier.java) | 같은 테스트의 미확인 ID·예산 초과 거부 |
-| 13-4 | [CounselService](src/main/java/com/example/ailearning/l13shopping/CounselService.java) | 같은 테스트의 조건 유지·실패·세션 격리·삭제 |
+| 13-1·2 | [Lesson02CounselWorkflow](src/main/java/com/example/ailearning/l13shopping/lesson02_intent/Lesson02CounselWorkflow.java) | [Lesson04ShoppingAgentLocalModelTest](src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentLocalModelTest.java): 동기 직접 호출·도구 제공 범위 · [Live](src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentOpenAiLiveTest.java) |
+| 13-3 | [Lesson03CounselResultVerifier](src/main/java/com/example/ailearning/l13shopping/lesson03_verification/Lesson03CounselResultVerifier.java) | 같은 테스트의 미확인 ID·예산 초과 거부 |
+| 13-4 | [Lesson04CounselService](src/main/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04CounselService.java) | 같은 테스트의 조건 유지·실패·세션 격리·삭제 |
+
+패키지의 `lessonNN_주제`와 클래스의 `LessonNN`은 해당 소주제 번호입니다.<br>
+공통 Application·Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*LocalModelTest'
@@ -15,7 +18,7 @@
 ```
 
 로컬 테스트는 외부 모델을 호출하지 않습니다.<br>
-[Live](src/test/java/com/example/ailearning/l13shopping/ShoppingAgentOpenAiLiveTest.java)와 앱은 루트 `.env`의 키·채팅 모델·임베딩 모델을 사용하며 시작 시 문서 임베딩부터 실제 API를 호출합니다.<br>
+[Live](src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentOpenAiLiveTest.java)와 앱은 루트 `.env`의 키·채팅 모델·임베딩 모델을 사용하며 시작 시 문서 임베딩부터 실제 API를 호출합니다.<br>
 포트는 8102이며 요청 예시는 교재 13-4에 있습니다.<br>
 종료는 Ctrl+C입니다.
 

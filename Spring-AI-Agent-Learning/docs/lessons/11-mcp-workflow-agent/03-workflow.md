@@ -1,7 +1,7 @@
 # 11-3. Workflow: Java가 도구 호출 순서를 정하기
 
 목표는 **모델이 추출한 조건을 Java가 받아 검색 → 계산을 정해진 순서로 실행하는 것**입니다.<br>
-04단원의 구조화 응답을 사용하는 [SearchConditionExtractor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
+04단원의 구조화 응답을 사용하는 [Lesson03SearchConditionExtractor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson03_workflow/Lesson03SearchConditionExtractor.java)가 질문을 `SearchConditions`로 바꿉니다.
 
 | 필드 | 의미 |
 |---|---|
@@ -11,7 +11,7 @@
 
 ```mermaid
 sequenceDiagram
-    participant J as McpWorkflowService
+    participant J as Lesson03McpWorkflowService
     participant L as 모델
     participant M as shopping-mcp
     J->>L: 질문에서 조건 추출
@@ -40,13 +40,15 @@ sequenceDiagram
 | 마지막 `null` | 추가 검색 조건을 강제로 덮어쓰지 않음. 조건 고정이 필요한 Hybrid 방식은 11-5에서 학습 |
 
 
-[전체 소스: McpWorkflowService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpWorkflowService.java)
+[전체 소스: Lesson03McpWorkflowService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson03_workflow/Lesson03McpWorkflowService.java)
 
 ```java
-package com.example.ailearning.l11mcp;
+package com.example.ailearning.l11mcp.lesson03_workflow;
+
+import com.example.ailearning.l11mcp.McpRunResult;
 
 import com.example.ailearning.l11mcp.tools.McpToolExecutor;
-import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+import com.example.ailearning.l11mcp.lesson02_directcall.Lesson02ShoppingMcpGateway;
 
 import com.example.ailearning.l11mcp.domain.SearchConditions;
 
@@ -58,14 +60,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class McpWorkflowService {
-    private final SearchConditionExtractor searchConditionExtractor;
-    private final ShoppingMcpGateway shoppingMcpGateway;
+public class Lesson03McpWorkflowService {
+    private final Lesson03SearchConditionExtractor searchConditionExtractor;
+    private final Lesson02ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
     private final int maxToolCallAttempts;
 
-    public McpWorkflowService(SearchConditionExtractor searchConditionExtractor,
-            ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
+    public Lesson03McpWorkflowService(Lesson03SearchConditionExtractor searchConditionExtractor,
+            Lesson02ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
             @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
         this.searchConditionExtractor = searchConditionExtractor;
         this.shoppingMcpGateway = shoppingMcpGateway;

@@ -15,14 +15,14 @@ curl http://127.0.0.1:8106/api/mcp/shipping-policy
 
 ## 직접 콜백을 구성하는 경우
 
-이 실습의 직접 호출은 `ShoppingMcpGateway`를 거칩니다.<br>
+이 실습의 직접 호출은 `Lesson02ShoppingMcpGateway`를 거칩니다.<br>
 이 객체는 서버에서 조회한 도구를 이름으로 찾아 실행할 수 있게 준비합니다.<br>
 아래에서는 도구 이름을 지정해 호출하는 경로를 읽습니다.<br>
 모델이 도구를 선택하도록 연결하는 방법은 [모델 연결 보충](02-provider-model.md)에서 따로 배웁니다.
 
 ## 도구 목록을 실행 가능한 객체로 연결하기
 
-[전체 소스: ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/tools/ShoppingMcpGateway.java)
+[전체 소스: Lesson02ShoppingMcpGateway.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson02_directcall/Lesson02ShoppingMcpGateway.java)
 
 서버 도구마다 callback 하나를 만들고, 각 callback이 같은 MCP 클라이언트를 통해 호출을 전달합니다.
 
@@ -32,13 +32,13 @@ classDiagram
         <<interface>>
         call(input)
     }
-    class ShoppingMcpGateway {
+    class Lesson02ShoppingMcpGateway {
         listToolNames()
         call(toolName, arguments)
     }
     class SyncMcpToolCallback
     class McpSyncClient
-    ShoppingMcpGateway o-- SyncMcpToolCallback : 도구별 보관
+    Lesson02ShoppingMcpGateway o-- SyncMcpToolCallback : 도구별 보관
     SyncMcpToolCallback ..|> ToolCallback
     SyncMcpToolCallback --> McpSyncClient : MCP 요청 전달
 ```

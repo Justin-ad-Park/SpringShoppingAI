@@ -14,7 +14,7 @@
 | 도구 호출 응답 수신 | 원격 응답을 받음 | 업무 성공과 응답 내용의 타당성 |
 | 업무 결과 검증 | 필요한 조회·계산 조건 통과 | 주문 확정 같은 다른 업무의 완료 |
 
-이 샘플의 `ShoppingMcpGateway.parseToolResult()`는 JSON 텍스트 블록 하나를 읽는 자체 계약입니다.<br>
+이 샘플의 `Lesson02ShoppingMcpGateway.parseToolResult()`는 JSON 텍스트 블록 하나를 읽는 자체 계약입니다.<br>
 MCP 결과의 모든 형태를 처리하는 범용 파서가 아닙니다.<br>
 다른 서버를 연결할 때 content 형식·오류 표현·도구 이름 충돌을 확인해야 합니다.
 

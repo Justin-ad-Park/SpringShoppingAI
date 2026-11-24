@@ -42,10 +42,12 @@
 
 ## 전체 서비스
 
-[BasicVectorSearchService](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/BasicVectorSearchService.java)의 전체 코드입니다.
+[Lesson02BasicVectorSearchService](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/lesson02_store/Lesson02BasicVectorSearchService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l09search;
+package com.example.ailearning.l09search.lesson02_store;
+
+import com.example.ailearning.l09search.PolicyDocuments;
 
 import java.util.List;
 import org.springframework.ai.document.Document;
@@ -58,10 +60,10 @@ import org.springframework.stereotype.Service;
 /** 09-2: 문서 적재와 query·topK 검색만 연결한다. */
 @Service
 @Profile("basic-search")
-public class BasicVectorSearchService {
+public class Lesson02BasicVectorSearchService {
     private final SimpleVectorStore vectorStore;
 
-    public BasicVectorSearchService(EmbeddingModel embeddingModel) {
+    public Lesson02BasicVectorSearchService(EmbeddingModel embeddingModel) {
         vectorStore = SimpleVectorStore.builder(embeddingModel)
                 .build();
         vectorStore.add(PolicyDocuments.createDocuments());
@@ -84,7 +86,7 @@ public class BasicVectorSearchService {
 
 위 코드의 생성자와 `search()`를 나누어 읽으면 임베딩이 실행되는 두 시점을 구분할 수 있습니다.
 
-1. 서버 시작 시 위 `BasicVectorSearchService` 생성자가 저장소를 만들고 `add(...)`로 정책 문서 세 개를 전달합니다.<br>
+1. 서버 시작 시 위 `Lesson02BasicVectorSearchService` 생성자가 저장소를 만들고 `add(...)`로 정책 문서 세 개를 전달합니다.<br>
    저장소는 연결된 `EmbeddingModel`로 문서를 임베딩해 보관합니다.
 2. 검색 요청이 오면 `search()`가 질문과 `topK`를 `similaritySearch(...)`에 전달합니다.<br>
    저장소는 같은 `EmbeddingModel`로 질문을 임베딩합니다.
@@ -106,12 +108,12 @@ public class BasicVectorSearchService {
 
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests '*BasicVectorSearchLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests '*Lesson02BasicVectorSearchLocalModelTest'
 ./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootRun --args='--spring.profiles.active=basic-search'
 curl --get http://127.0.0.1:8099/api/search/basic --data-urlencode 'query=운송 요금' --data-urlencode 'topK=1'
 ```
 
-[테스트](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/BasicVectorSearchLocalModelTest.java)는 고정 벡터로 문서를 적재하고 검색 ID와 개수를 확인합니다.<br>
+[테스트](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/lesson02_store/Lesson02BasicVectorSearchLocalModelTest.java)는 고정 벡터로 문서를 적재하고 검색 ID와 개수를 확인합니다.<br>
 외부 API를 호출하지 않습니다.<br>
 실제 실행은 루트 `.env`를 사용하며 시작 시 문서, 검색 시 질문의 임베딩 API를 호출합니다.<br>
 종료는 Ctrl+C입니다.
@@ -138,7 +140,7 @@ curl --get http://127.0.0.1:8099/api/search/basic --data-urlencode 'query=운송
 확인 후 1로 되돌립니다.<br>
 검색 결과 수가 늘었다고 필요한 자료가 더 잘 검색된 것은 아니므로 추가된 원문의 관련성도 판단합니다.
 
-실제 모델 연결은 [BasicVectorSearchOpenAiLiveTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/BasicVectorSearchOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
+실제 모델 연결은 [Lesson02BasicVectorSearchOpenAiLiveTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/lesson02_store/Lesson02BasicVectorSearchOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 
 ## 확인 질문

@@ -76,12 +76,12 @@
 
 ## 4. Spring AI에서 요청 모델을 바꿉니다
 
-테스트는 앞 실습의 `IntentClassificationService`를 사용합니다.<br>
+테스트는 앞 실습의 `Lesson05IntentClassificationService`를 사용합니다.<br>
 분류표와 프롬프트를 복제하지 않고 Gradle 프로젝트 의존성으로 재사용합니다.<br>
 `ChatClient.Builder.clone()`으로 기존 연결 설정을 복사한 다음, `OpenAiChatOptions`에서 모델 ID만 지정해 새 분류기를 만듭니다.
 
 ```java
-var classifier = new IntentClassificationService(
+var classifier = new Lesson05IntentClassificationService(
         chatClientBuilder.clone()
                 .defaultOptions(OpenAiChatOptions.builder().model(model)),
         intentCatalog,
@@ -98,7 +98,7 @@ var classifier = new IntentClassificationService(
 설정한 모델 ID를 계정에서 사용할 수 있어야 하고 사용량 비용이 발생합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-06-intent-quality-evaluation:test --tests '*IntentModelQualityOpenAiLiveTest' --console=plain
+./gradlew :Spring-AI-Agent-Learning:labs:13-06-intent-quality-evaluation:test --tests '*Lesson06IntentModelQualityOpenAiLiveTest' --console=plain
 ```
 
 출력의 `정확도`는 이번 다섯 질문의 정답 일치 비율입니다.<br>

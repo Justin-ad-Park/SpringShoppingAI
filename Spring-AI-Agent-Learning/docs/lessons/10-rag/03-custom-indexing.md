@@ -5,7 +5,7 @@
 
 **이번 목표:** 검색한 정책의 원문 위치를 출처로 확인할 수 있도록 문서 ID와 출처 정보를 붙여 적재합니다.
 
-**코드 읽기 안내:** PolicyLoader의 구분자는 이 예제를 위한 단순한 규칙입니다.<br>
+**코드 읽기 안내:** Lesson03PolicyLoader의 구분자는 이 예제를 위한 단순한 규칙입니다.<br>
 범용 문서 파서나 표준 청킹 알고리즘이라고 생각하지 마세요.
 
 ## 왜 직접 구현할까?
@@ -48,7 +48,7 @@ flowchart LR
 미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.
 ```
 
-`PolicyLoader`는 이 부분을 다음 값을 가진 Document 하나로 만듭니다.
+`Lesson03PolicyLoader`는 이 부분을 다음 값을 가진 Document 하나로 만듭니다.
 
 | Document의 값 | 변환 결과 | 원문에서 가져온 부분 |
 |---|---|---|
@@ -61,11 +61,11 @@ flowchart LR
 
 ## 문서를 읽고 Document 목록 만들기
 
-다음은 [PolicyLoader.java](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/policy/PolicyLoader.java)의 전체 코드입니다.<br>
+다음은 [Lesson03PolicyLoader.java](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoader.java)의 전체 코드입니다.<br>
 `split()`으로 제목과 본문을 구분하고, `Document.builder()`에서 위 표의 값을 채우는 부분을 연결해 읽으세요.
 
 ```java
-package com.example.ailearning.l10rag.policy;
+package com.example.ailearning.l10rag.lesson03_indexing;
 
 import org.springframework.ai.document.Document;
 import org.springframework.core.io.ClassPathResource;
@@ -76,8 +76,8 @@ import java.util.List;
 import java.util.Map;
 
 /** 읽기 → 제목 단위 분할 → 출처 메타데이터 부여. 짧은 학습 문서 전용이다. */
-public final class PolicyLoader {
-    private PolicyLoader() {}
+public final class Lesson03PolicyLoader {
+    private Lesson03PolicyLoader() {}
     public static List<Document> loadDocuments() throws IOException {
         String markdown;
         try (var input = new ClassPathResource("policies.md").getInputStream()) {
@@ -107,18 +107,18 @@ public final class PolicyLoader {
 
 ## 만든 문서를 벡터 저장소에 적재하기
 
-다음은 [PolicySearch](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/policy/PolicySearch.java)의 생성자 발췌입니다.<br>
+다음은 [Lesson03PolicySearch](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicySearch.java)의 생성자 발췌입니다.<br>
 서버 시작 시 Spring이 이 객체를 만들면서 정책 문서를 적재합니다.
 
 ```java
-public PolicySearch(EmbeddingModel embeddingModel) throws IOException {
+public Lesson03PolicySearch(EmbeddingModel embeddingModel) throws IOException {
     policyVectorStore = SimpleVectorStore.builder(embeddingModel)
             .build();
-    policyVectorStore.add(PolicyLoader.loadDocuments());
+    policyVectorStore.add(Lesson03PolicyLoader.loadDocuments());
 }
 ```
 
-`PolicyLoader.loadDocuments()`는 파일을 읽어 위 표처럼 ID·본문·출처를 담은 문서 목록을 만듭니다.<br>
+`Lesson03PolicyLoader.loadDocuments()`는 파일을 읽어 위 표처럼 ID·본문·출처를 담은 문서 목록을 만듭니다.<br>
 그 목록을 받은 `add(...)`가 연결된 임베딩 모델로 본문을 벡터로 바꾸어 저장합니다.<br>
 문서 목록 만들기와 임베딩·저장은 서로 다른 단계입니다.
 

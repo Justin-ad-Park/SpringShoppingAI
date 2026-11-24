@@ -18,7 +18,7 @@
 ```mermaid
 sequenceDiagram
     actor U as 사용자
-    participant S as AdvisorRagService
+    participant S as Lesson02AdvisorRagService
     participant A as Spring AI QuestionAnswerAdvisor
     participant V as SimpleVectorStore
     participant M as 외부 모델
@@ -35,10 +35,10 @@ sequenceDiagram
 그림은 동작의 책임을 요약합니다.<br>
 실제 모델 호출은 Advisor 뒤의 Spring AI 체인을 통해 실행됩니다.<br>
 Service 전체는 아래처럼 짧게 유지합니다.<br>
-먼저 생성자 끝의 Advisor 설정과 `answer()`를 읽고, 검색 자료는 앞 수업의 PolicyDocumentIndexer가 준비합니다.
+먼저 생성자 끝의 Advisor 설정과 `answer()`를 읽고, 검색 자료는 앞 수업의 Lesson01PolicyDocumentIndexer가 준비합니다.
 
 ```java
-package com.example.ailearning.l10advisor;
+package com.example.ailearning.l10advisor.lesson02_advisor;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
@@ -48,10 +48,10 @@ import org.springframework.stereotype.Service;
 
 @org.springframework.context.annotation.Profile("!indexing-only")
 @Service
-public class AdvisorRagService {
+public class Lesson02AdvisorRagService {
     private final ChatClient chatClient;
 
-    public AdvisorRagService(ChatClient.Builder builder, SimpleVectorStore policyVectorStore) {
+    public Lesson02AdvisorRagService(ChatClient.Builder builder, SimpleVectorStore policyVectorStore) {
         // 질문 시: Advisor가 검색 결과를 프롬프트에 추가합니다.
         var questionAnswerAdvisor = QuestionAnswerAdvisor.builder(policyVectorStore)
                 .searchRequest(SearchRequest.builder()
@@ -112,7 +112,7 @@ curl -sS http://127.0.0.1:8103/api/advisor-rag \
 2. 현재 정책 파일은 짧아 한 조각만 적재될 수 있습니다.<br>
    이때 `topK`를 1에서 2로 늘려도 문서 수는 늘지 않습니다.<br>
    `topK`가 반환 수의 보장이 아닌 상한임을 설명하세요.
-3. 검색 문서가 프롬프트에 들어간 근거는 [AdvisorRagLocalModelTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/AdvisorRagLocalModelTest.java)의 `Reader와_Splitter와_Advisor로_문서를_모델에_전달한다`에서 확인합니다.<br>
+3. 검색 문서가 프롬프트에 들어간 근거는 [Lesson02AdvisorRagLocalModelTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/lesson02_advisor/Lesson02AdvisorRagLocalModelTest.java)의 `Reader와_Splitter와_Advisor로_문서를_모델에_전달한다`에서 확인합니다.<br>
    현재 실제 API는 답변만 반환하므로 답변 문자열만으로 검색 결과 수나 전체 프롬프트를 확인할 수는 없습니다.
 4. 빈 검색에서도 생성이 실행되는 현재 동작을 확인합니다.<br>
    생성 생략이 필요한 경우에는 뒤의 10-4·5에서 Java 분기를 추가합니다.

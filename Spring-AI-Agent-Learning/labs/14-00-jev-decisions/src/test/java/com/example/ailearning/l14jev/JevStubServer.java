@@ -10,15 +10,15 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 /** Jev 전용 고정 응답 HTTP 대역입니다. 의미 판단 대신 요청 형식·역직렬화·분기를 검증합니다. */
-final class JevStubServer implements AutoCloseable {
-    static final JsonMapper JSON = JsonMapper.builder().build();
+public final class JevStubServer implements AutoCloseable {
+    public static final JsonMapper JSON = JsonMapper.builder().build();
     private final HttpServer server;
     private final List<JsonNode> requests = new CopyOnWriteArrayList<>();
     private volatile String responseBody = "{}";
     private volatile int status = 200;
     private volatile String authorization;
 
-    JevStubServer() {
+    public JevStubServer() {
         try {
             server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         } catch (IOException error) {
@@ -37,26 +37,26 @@ final class JevStubServer implements AutoCloseable {
         server.start();
     }
 
-    String baseUrl() {
+    public String baseUrl() {
         return "http://127.0.0.1:" + server.getAddress().getPort();
     }
 
-    void reset() {
+    public void reset() {
         requests.clear();
         authorization = null;
         respond(200, "{}");
     }
 
-    void respond(int status, String body) {
+    public void respond(int status, String body) {
         this.status = status;
         this.responseBody = body;
     }
 
-    List<JsonNode> requests() {
+    public List<JsonNode> requests() {
         return List.copyOf(requests);
     }
 
-    String authorization() {
+    public String authorization() {
         return authorization;
     }
 

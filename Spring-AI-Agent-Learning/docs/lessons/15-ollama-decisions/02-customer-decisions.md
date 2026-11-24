@@ -17,10 +17,10 @@
 
 ## 실행 코드 읽기
 
-[IntentClassificationService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/IntentClassificationService.java)의 전체 코드입니다.
+[Lesson02IntentClassificationService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l15ollama;
+package com.example.ailearning.l15ollama.lesson02_choice;
 
 import com.example.ailearning.l15ollama.domain.ShoppingIntent;
 import com.example.ailearning.l15ollama.domain.SupportRoutingPolicy;
@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 
 /** 15-2: 정해진 쇼핑 의도 중 하나를 선택한다. */
 @Service
-public class IntentClassificationService {
+public class Lesson02IntentClassificationService {
     public record IntentResult(ShoppingIntent predictedIntent, Double confidence,
                                Map<String, Double> probabilities, boolean clarificationRequired) {}
 
-    static final ChoiceQuestion INTENT_QUESTION = ChoiceQuestion.builder()
+    public static final ChoiceQuestion INTENT_QUESTION = ChoiceQuestion.builder()
             .text("고객 메시지의 주된 쇼핑 의도를 하나 선택하세요.")
             .option("PRODUCT_SEARCH", "상품 검색, 추천, 상품 특징이나 가격 문의")
             .option("ORDER_DELIVERY", "이미 주문한 상품의 주문 상태 또는 배송 조회")
@@ -45,7 +45,7 @@ public class IntentClassificationService {
             .build();
     private final DecisionModel decisionModel;
 
-    public IntentClassificationService(DecisionModel decisionModel) {
+    public Lesson02IntentClassificationService(DecisionModel decisionModel) {
         this.decisionModel = decisionModel;
     }
 
@@ -84,8 +84,8 @@ curl -sS http://127.0.0.1:8115/api/ollama/intent \
   --data-raw '3만원 이하 텀블러를 추천해 주세요.'
 ```
 
-고정 응답으로 요청·결과를 확인하려면 [OllamaDecisionLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLocalModelTest.java)를 읽습니다.<br>
-실제 판단은 [OllamaDecisionLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLiveTest.java)로 확인합니다.<br>
+고정 응답으로 요청·결과를 확인하려면 [Lesson02IntentClassificationLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationLocalModelTest.java)를 읽습니다.<br>
+실제 판단은 [Lesson02IntentClassificationLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationLiveTest.java)로 확인합니다.<br>
 실행 명령과 준비 순서는 [실습 README](../../../labs/15-00-ollama-decisions/README.md)에 있습니다.
 
 [15단원 목차](../15-ollama-decisions.md)

@@ -9,7 +9,7 @@
 
 ## 응답을 채택할지 결정하는 코드
 
-다음은 [RagService.verifyCitations()](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/RagService.java)의 실제 코드입니다.<br>
+다음은 [Lesson04RagService.verifyCitations()](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagService.java)의 실제 코드입니다.<br>
 `unverifiedAnswer`는 모델 응답 객체이고, `retrievedPolicies`는 이번 질문으로 실제 검색한 정책 목록입니다.
 
 ```java
@@ -62,7 +62,7 @@ ANSWERED는 **모든 문장이 근거로 증명되었다는 뜻은 아닙니다.
 모든 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-03-custom-rag:test --tests com.example.ailearning.l10rag.RagLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:10-03-custom-rag:test --tests com.example.ailearning.l10rag.lesson04_generation.Lesson04RagLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:10-03-custom-rag:bootRun
 curl --get http://127.0.0.1:8100/api/rag/sources \
   --data-urlencode 'question=미개봉 상품 반품 기간은?'
@@ -91,13 +91,13 @@ curl -sS http://127.0.0.1:8100/api/rag \
 4. 청크를 너무 잘게 나누면 “7일”만 남고 무엇의 기간인지 사라질 수 있습니다.<br>
    문맥 보존과 검색 정밀도의 균형을 생각합니다.
 
-[RagLocalModelTest](../../../labs/10-03-custom-rag/src/test/java/com/example/ailearning/l10rag/RagLocalModelTest.java)는 실제 임베딩/채팅 어댑터를 로컬 고정 서버로 연결해 6개 경로를 검증합니다.<br>
+[Lesson04RagLocalModelTest](../../../labs/10-03-custom-rag/src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagLocalModelTest.java)는 실제 임베딩/채팅 어댑터를 로컬 고정 서버로 연결해 6개 경로를 검증합니다.<br>
 정상 근거 전달, 생성 생략, 잘못된 출처, 답변 보류, 형식 오류, 입력 검증을 재현하며 실제 답변 품질 평가는 아닙니다.<br>
 다음 단원에서 고정 질문 세트와 실행 기록을 이용해 개선 여부를 비교합니다.
 
 ## 실제 답변을 해석하기
 
-[RagOpenAiLiveTest](../../../labs/10-03-custom-rag/src/test/java/com/example/ailearning/l10rag/RagOpenAiLiveTest.java)는 답변 채택 상태·빈 답변 여부·출처 존재를 검사합니다.<br>
+[Lesson04RagOpenAiLiveTest](../../../labs/10-03-custom-rag/src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagOpenAiLiveTest.java)는 답변 채택 상태·빈 답변 여부·출처 존재를 검사합니다.<br>
 출처가 실제 주장을 뒷받침하는지는 다음 순서로 별도 확인합니다.<br>
 자연어 문장은 달라질 수 있어 문장 전체의 일치로 판정하지 않습니다.
 

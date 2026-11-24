@@ -29,8 +29,8 @@
 
 ## 2. 구조와 실행 흐름
 
-처음에는 그림에서 `CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `CounselResultVerifier`의 경로를 따라가세요.<br>
-`CounselService`는 검증 결과를 대화 메모리에 저장합니다.<br>
+처음에는 그림에서 `Lesson02CounselWorkflow` → 상품·정책 도구 → `CounselToolResults` → `Lesson03CounselResultVerifier`의 경로를 따라가세요.<br>
+`Lesson04CounselService`는 검증 결과를 대화 메모리에 저장합니다.<br>
 실행 제한은 별도 [13-8](08-execution-limits.md)에서 추가합니다.<br>
 클래스 전체를 먼저 암기할 필요는 없습니다.
 
@@ -39,13 +39,13 @@
 
 ```mermaid
 classDiagram
-    CounselService --> CounselWorkflow : 상담 실행
-    CounselWorkflow --> Intent : 조건 추출
-    CounselService --> ChatMemory : 이전 대화 조회와 확정 저장
-    CounselWorkflow --> ProductTools : 상품 도구 제공
-    CounselWorkflow --> PolicyTools : 정책 도구 제공
-    CounselWorkflow --> CounselToolResults : 요청별 조회 결과 기록
-    CounselWorkflow --> CounselResultVerifier : 선택 결과 검증
+    Lesson04CounselService --> Lesson02CounselWorkflow : 상담 실행
+    Lesson02CounselWorkflow --> Intent : 조건 추출
+    Lesson04CounselService --> ChatMemory : 이전 대화 조회와 확정 저장
+    Lesson02CounselWorkflow --> ProductTools : 상품 도구 제공
+    Lesson02CounselWorkflow --> PolicyTools : 정책 도구 제공
+    Lesson02CounselWorkflow --> CounselToolResults : 요청별 조회 결과 기록
+    Lesson02CounselWorkflow --> Lesson03CounselResultVerifier : 선택 결과 검증
     ProductTools --> ProductCatalog : 가격과 배송비 조회
     ProductTools --> CounselToolResults : 조회 결과 기록
     PolicyTools --> PolicySearch : 정책 벡터 검색
@@ -54,7 +54,7 @@ classDiagram
 
 `CounselToolResults`는 **이번 요청에서 도구가 조회한 결과를 모아 두는 객체**입니다.<br>
 대화 메모리와 다릅니다.<br>
-메모리는 이전 대화를 재사용하고, `CounselToolResults`는 이번 답변의 상품 ID·출처 ID를 `CounselResultVerifier`가 검사할 수 있게 보관합니다.<br>
+메모리는 이전 대화를 재사용하고, `CounselToolResults`는 이번 답변의 상품 ID·출처 ID를 `Lesson03CounselResultVerifier`가 검사할 수 있게 보관합니다.<br>
 도구 객체와 이 기록은 요청마다 새로 만들므로 다른 요청의 조회 사실을 섞지 않습니다.
 
 ```mermaid
@@ -88,8 +88,8 @@ flowchart TD
 2. [PolicySearch](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/policy/PolicySearch.java), [PolicyLoader](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/policy/PolicyLoader.java), [PolicySearchResult](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/policy/PolicySearchResult.java): 09~10의 문서 적재·검색.
 3. [Intent](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/domain/Intent.java), [CounselToolResults](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselToolResults.java), [CandidateEvidenceSelection](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CandidateEvidenceSelection.java): 추출한 조건·실제 조회 사실·모델이 선택한 ID 구분.
 4. [ProductTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/tools/ProductTools.java), [PolicyTools](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/tools/PolicyTools.java): 도구 실행과 결과 기록.
-5. [CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselWorkflow.java): 다음 [13-2](02-intent.md)의 `processCounselRequest()`, [CounselResultVerifier](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselResultVerifier.java)의 검증을 읽고, [13-4](04-conversation.md)에서 `CounselService.chat()`의 저장·실패 처리를 확인합니다.
-6. [CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
+5. [Lesson02CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson02_intent/Lesson02CounselWorkflow.java): 다음 [13-2](02-intent.md)의 `processCounselRequest()`, [Lesson03CounselResultVerifier](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson03_verification/Lesson03CounselResultVerifier.java)의 검증을 읽고, [13-4](04-conversation.md)에서 `Lesson04CounselService.chat()`의 저장·실패 처리를 확인합니다.
+6. [Lesson04CounselController](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04CounselController.java): 07과 같은 쿠키 세션 소유자와 대화 ID.
 
 
 ## 확인 질문

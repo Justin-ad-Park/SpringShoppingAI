@@ -28,11 +28,11 @@
 
 ## 실행 코드
 
-[PolicyDocumentIndexer](../../../labs/10-00-rag-advisor/src/main/java/com/example/ailearning/l10advisor/PolicyDocumentIndexer.java)의 전체 코드입니다.<br>
+[Lesson01PolicyDocumentIndexer](../../../labs/10-00-rag-advisor/src/main/java/com/example/ailearning/l10advisor/lesson01_indexing/Lesson01PolicyDocumentIndexer.java)의 전체 코드입니다.<br>
 `@Bean`으로 준비한 저장소를 다음 수업의 Service가 생성자로 받습니다.
 
 ```java
-package com.example.ailearning.l10advisor;
+package com.example.ailearning.l10advisor.lesson01_indexing;
 
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.reader.TextReader;
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 
 /** 표준 Reader·Splitter로 검색 자료를 준비한다. 채팅 모델은 호출하지 않는다. */
 @Configuration(proxyBeanMethods = false)
-public class PolicyDocumentIndexer {
+public class Lesson01PolicyDocumentIndexer {
     @Bean
     public SimpleVectorStore policyVectorStore(EmbeddingModel embeddingModel) {
         var policyReader = new TextReader(new ClassPathResource("return-policy.txt"));
@@ -81,17 +81,17 @@ Spring은 이 `@Bean` 메서드가 반환한 저장소를 빈으로 등록합니
 
 ## 채팅 없이 적재 검증하기
 
-[PolicyIndexingLocalModelTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/PolicyIndexingLocalModelTest.java)는 `indexing-only` 프로필로 답변용 Service·Controller를 제외합니다.<br>
+[Lesson01PolicyIndexingLocalModelTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/lesson01_indexing/Lesson01PolicyIndexingLocalModelTest.java)는 `indexing-only` 프로필로 답변용 Service·Controller를 제외합니다.<br>
 고정 임베딩 응답으로 문서 검색을 확인하고 채팅 호출이 없음을 검증합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag-advisor:test --tests '*PolicyIndexingLocalModelTest' --tests '*TokenTextSplitterUnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:10-00-rag-advisor:test --tests '*Lesson01PolicyIndexingLocalModelTest' --tests '*Lesson01TokenTextSplitterUnitTest'
 ```
 
-[TokenTextSplitterUnitTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/TokenTextSplitterUnitTest.java)는 긴 문서의 분할만 검증합니다.<br>
+[Lesson01TokenTextSplitterUnitTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/lesson01_indexing/Lesson01TokenTextSplitterUnitTest.java)는 긴 문서의 분할만 검증합니다.<br>
 외부 모델 API는 호출하지 않습니다.
 
-실제 모델 연결은 [PolicyIndexingOpenAiLiveTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/PolicyIndexingOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
+실제 모델 연결은 [Lesson01PolicyIndexingOpenAiLiveTest](../../../labs/10-00-rag-advisor/src/test/java/com/example/ailearning/l10advisor/lesson01_indexing/Lesson01PolicyIndexingOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 
 ## 실행 결과에서 확인할 것

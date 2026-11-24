@@ -7,10 +7,10 @@ Score는 서로 다른 분야를 고르는 Choice와 달리 **낮음부터 높�
 
 ## 실행 코드 읽기
 
-[SupportPriorityService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/SupportPriorityService.java)의 전체 코드입니다.
+[Lesson04SupportPriorityService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l15ollama;
+package com.example.ailearning.l15ollama.lesson04_score;
 
 import com.example.ailearning.l15ollama.domain.SupportPriority;
 import com.example.ailearning.l15ollama.domain.SupportRoutingPolicy;
@@ -22,17 +22,17 @@ import org.springframework.stereotype.Service;
 
 /** 15-4: 순서가 있는 세 기준으로 시급성을 평가한다. */
 @Service
-public class SupportPriorityService {
+public class Lesson04SupportPriorityService {
     public record PriorityResult(double score, int nearestLevel, Double confidence,
                                  List<Double> probabilities, SupportPriority priority) {}
 
-    static final ScoreQuestion URGENCY_QUESTION = ScoreQuestion.of("얼마나 시급한 고객 문의인가요?",
+    public static final ScoreQuestion URGENCY_QUESTION = ScoreQuestion.of("얼마나 시급한 고객 문의인가요?",
             "일반 문의: 시간 제약이나 현재 문제가 없는 정보 문의",
             "현재 문제: 고객이 불편을 겪지만 임박한 마감은 없음",
             "즉시 확인 필요: 오늘 마감이나 즉시 처리해야 할 문제가 있음");
     private final DecisionModel decisionModel;
 
-    public SupportPriorityService(DecisionModel decisionModel) {
+    public Lesson04SupportPriorityService(DecisionModel decisionModel) {
         this.decisionModel = decisionModel;
     }
 
@@ -73,8 +73,8 @@ curl -sS http://127.0.0.1:8115/api/ollama/priority \
   --data-raw '취소 마감이 오늘 한 시간 뒤인데 아직 처리가 안 됐어요.'
 ```
 
-고정 응답으로 요청·결과를 확인하려면 [OllamaDecisionLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLocalModelTest.java)를 읽습니다.<br>
-실제 판단은 [OllamaDecisionLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLiveTest.java)로 확인합니다.<br>
+고정 응답으로 요청·결과를 확인하려면 [Lesson04SupportPriorityLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityLocalModelTest.java)를 읽습니다.<br>
+실제 판단은 [Lesson04SupportPriorityLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityLiveTest.java)로 확인합니다.<br>
 실행 명령과 준비 순서는 [실습 README](../../../labs/15-00-ollama-decisions/README.md)에 있습니다.
 
 [15단원 목차](../15-ollama-decisions.md)

@@ -8,10 +8,10 @@
 
 ## 실행 코드 읽기
 
-[OrderContextDecisionService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/OrderContextDecisionService.java)의 전체 코드입니다.
+[Lesson06OrderContextDecisionService](../../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextDecisionService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l15ollama;
+package com.example.ailearning.l15ollama.lesson06_fields;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -25,14 +25,14 @@ import org.springframework.stereotype.Service;
 
 /** 15-6: 고객 메시지와 주문 정보를 이름 붙은 필드로 함께 전달한다. */
 @Service
-public class OrderContextDecisionService {
+public class Lesson06OrderContextDecisionService {
     public record OrderInquiry(@NotBlank @Size(max = 2000) String message,
                                @NotBlank @Size(max = 40) String orderStatus,
                                @Min(0) int daysSinceDelivery) {}
     public record OrderContextResult(String nextAction, Map<String, Double> probabilities) {}
     private final DecisionModel decisionModel;
 
-    public OrderContextDecisionService(DecisionModel decisionModel) {
+    public Lesson06OrderContextDecisionService(DecisionModel decisionModel) {
         this.decisionModel = decisionModel;
     }
 
@@ -45,9 +45,9 @@ public class OrderContextDecisionService {
                 .fields(fields)
                 .question("next_action", ChoiceQuestion.builder()
                         .text("고객 메시지와 주문 상태를 함께 보고 어떤 안내가 필요한지 고르세요.")
-                        .option("CHECK_DELIVERY", "배송 완료 전 주문의 위치나 도착일을 묻는 문의")
-                        .option("EXPLAIN_RETURN", "배송 완료된 주문의 반품 방법을 묻는 문의")
-                        .option("ASK_CLARIFICATION", "주문 상태와 요청이 맞지 않거나 추가 정보가 필요한 문의")
+                        .option("ORDER_PAYMENT", "주문 또는 결제 관련 문의")
+                        .option("EXPLAIN_RETURN", "배송이 완료된 상품의 반품 방법을 묻는 문의")
+                        .option("OTHER_QUESTION", "단순 문의 또는 서비스 정책 문의")
                         .build())
                 .build();
         var response = decisionModel.call(prompt);
@@ -84,8 +84,8 @@ curl -sS http://127.0.0.1:8115/api/ollama/order-context \
   --data-raw '{"message":"받은 상품을 반품하고 싶어요.","orderStatus":"DELIVERED","daysSinceDelivery":2}'
 ```
 
-고정 응답으로 요청·결과를 확인하려면 [OllamaDecisionLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLocalModelTest.java)를 읽습니다.<br>
-실제 판단은 [OllamaDecisionLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLiveTest.java)로 확인합니다.<br>
+고정 응답으로 요청·결과를 확인하려면 [Lesson06OrderContextLocalModelTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextLocalModelTest.java)를 읽습니다.<br>
+실제 판단은 [Lesson06OrderContextLiveTest](../../../labs/15-00-ollama-decisions/src/test/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextLiveTest.java)로 확인합니다.<br>
 실행 명령과 준비 순서는 [실습 README](../../../labs/15-00-ollama-decisions/README.md)에 있습니다.
 
 ## 기본 모델의 실제 결과 읽기

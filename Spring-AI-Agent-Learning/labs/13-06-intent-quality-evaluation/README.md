@@ -10,7 +10,7 @@
 실제 OpenAI API를 호출하므로 `.env`의 키와 모델 접근 권한이 필요하고 사용량 비용이 발생합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-06-intent-quality-evaluation:test --tests '*IntentModelQualityOpenAiLiveTest' --console=plain
+./gradlew :Spring-AI-Agent-Learning:labs:13-06-intent-quality-evaluation:test --tests '*Lesson06IntentModelQualityOpenAiLiveTest' --console=plain
 ```
 
 ## 무엇을 비교하나요?
@@ -36,3 +36,11 @@ MATCH가 아닌 경우에는 해당 판단과 두 코드가 모두 비어 있어
 
 실습은 기존 `13-05-intent-classification`의 코드·분류표·프롬프트를 Gradle 의존성으로 재사용합니다.<br>
 평가 문항의 질문·기대 정답은 모델 비교 실험용 자료이며 분류표 자체를 복제해 두지 않습니다.
+
+## 소주제 번호로 코드 찾기
+
+13-5에서 만든 분류 서비스를 재사용하고, 13-6의 비교 실행 코드는 테스트 패키지에 둡니다.
+
+| 소주제 | 실행 코드 | 전용 테스트 |
+|---|---|---|
+| 13-6 | [Lesson05IntentClassificationService](../13-05-intent-classification/src/main/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationService.java) 재사용 | [Lesson06IntentModelQualityOpenAiLiveTest](src/test/java/com/example/ailearning/l13intenteval/lesson06_quality/Lesson06IntentModelQualityOpenAiLiveTest.java) |

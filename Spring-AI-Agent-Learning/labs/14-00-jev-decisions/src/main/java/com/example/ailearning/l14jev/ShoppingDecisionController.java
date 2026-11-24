@@ -1,8 +1,12 @@
 package com.example.ailearning.l14jev;
 
-import com.example.ailearning.l14jev.IntentClassificationService.IntentClassificationResult;
-import com.example.ailearning.l14jev.SupportPriorityService.SupportPriorityResult;
-import com.example.ailearning.l14jev.HumanSupportRequestService.HumanSupportRequestResult;
+import com.example.ailearning.l14jev.lesson01_choice.Lesson01IntentClassificationService;
+import com.example.ailearning.l14jev.lesson02_score.Lesson02SupportPriorityService;
+import com.example.ailearning.l14jev.lesson03_noul.Lesson03HumanSupportRequestService;
+
+import com.example.ailearning.l14jev.lesson01_choice.Lesson01IntentClassificationService.IntentClassificationResult;
+import com.example.ailearning.l14jev.lesson02_score.Lesson02SupportPriorityService.SupportPriorityResult;
+import com.example.ailearning.l14jev.lesson03_noul.Lesson03HumanSupportRequestService.HumanSupportRequestResult;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
@@ -14,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/jev")
 public class ShoppingDecisionController {
-    private final IntentClassificationService intentService;
-    private final SupportPriorityService priorityService;
-    private final HumanSupportRequestService humanSupportRequestService;
+    private final Lesson01IntentClassificationService intentService;
+    private final Lesson02SupportPriorityService priorityService;
+    private final Lesson03HumanSupportRequestService humanSupportRequestService;
 
-    public ShoppingDecisionController(IntentClassificationService intentService,
-            SupportPriorityService priorityService, HumanSupportRequestService humanSupportRequestService) {
+    public ShoppingDecisionController(Lesson01IntentClassificationService intentService,
+            Lesson02SupportPriorityService priorityService, Lesson03HumanSupportRequestService humanSupportRequestService) {
         this.intentService = intentService;
         this.priorityService = priorityService;
         this.humanSupportRequestService = humanSupportRequestService;

@@ -42,10 +42,10 @@ HTTP 요청이 서버에 도착해 대기하는 시간이나 최종 응답을 �
 
 | 코드 | 추가 책임 |
 |---|---|
-| [LimitedAgentRequestExecutor](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/support/LimitedAgentRequestExecutor.java) | 별도 작업으로 실행하고 전체 대기 시간 초과 시 취소 요청 |
+| [Lesson08LimitedAgentRequestExecutor](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedAgentRequestExecutor.java) | 별도 작업으로 실행하고 전체 대기 시간 초과 시 취소 요청 |
 | [RunState](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/support/RunState.java) | 여러 단계의 모델 요청 시도 수·마감 확인과 실행 내역 보관 |
-| [CounselWorkflow](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/workflow/CounselWorkflow.java) | 호출 계측을 위한 ChatModel 포장과 도구 상한 응답 확인 |
-| [CounselService](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/CounselService.java) | 실행 실패·시간 초과이면 새 대화를 저장하지 않음 |
+| [Lesson08CounselWorkflow](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08CounselWorkflow.java) | 호출 계측을 위한 ChatModel 포장과 도구 상한 응답 확인 |
+| [Lesson08CounselService](../../../labs/13-08-limited-agent/src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08CounselService.java) | 실행 실패·시간 초과이면 새 대화를 저장하지 않음 |
 
 Spring AI의 API 요청 타임아웃과 도구 호출 상한을 재구현한 것이 아닙니다.<br>
 사용자 요청 전체를 제한하는 자체 코드와 제공되는 요청별 설정을 구분합니다.
@@ -57,9 +57,9 @@ Spring AI의 API 요청 타임아웃과 도구 호출 상한을 재구현한 것
 ./gradlew :Spring-AI-Agent-Learning:labs:13-08-limited-agent:bootRun
 ```
 
-[LimitedShoppingAgentLocalModelTest](../../../labs/13-08-limited-agent/src/test/java/com/example/ailearning/l13limited/LimitedShoppingAgentLocalModelTest.java)는 기존 상담과 함께 모델 상한·도구 상한·시간 초과 뒤 늦은 답변 미저장을 검증합니다.<br>
+[Lesson08LimitedShoppingAgentLocalModelTest](../../../labs/13-08-limited-agent/src/test/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedShoppingAgentLocalModelTest.java)는 기존 상담과 함께 모델 상한·도구 상한·시간 초과 뒤 늦은 답변 미저장을 검증합니다.<br>
 외부 모델은 호출하지 않습니다.<br>
-`bootRun`과 [Live](../../../labs/13-08-limited-agent/src/test/java/com/example/ailearning/l13limited/LimitedShoppingAgentOpenAiLiveTest.java)는 루트 `.env`를 사용하며 실제 채팅·임베딩 API를 호출합니다.<br>
+`bootRun`과 [Live](../../../labs/13-08-limited-agent/src/test/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedShoppingAgentOpenAiLiveTest.java)는 루트 `.env`를 사용하며 실제 채팅·임베딩 API를 호출합니다.<br>
 포트는 8118, 경로는 `/api/counsel/demo`입니다.<br>
 종료는 Ctrl+C입니다.
 

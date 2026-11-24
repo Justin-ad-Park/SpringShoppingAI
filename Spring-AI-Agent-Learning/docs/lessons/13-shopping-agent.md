@@ -42,7 +42,7 @@ Spring AI는 모델 연결·도구 호출·대화 메시지 같은 구성 요소
 | 후보 선택 | 모델이 추천할 상품·근거의 ID를 고르는 일 | `CandidateEvidenceSelection` |
 | 실제 조회 결과 | 이번 요청에서 도구가 반환한 데이터 | `CounselToolResults` |
 | 출처 | 검색한 정책 원문과 그 식별값 | `PolicySearchResult`와 선택한 `sourceIds` |
-| 검증된 상담 결과 | 조회 사실·예산 등 현재 검사 범위를 통과한 결과 | `CounselResultVerifier`와 `CounselResult` |
+| 검증된 상담 결과 | 조회 사실·예산 등 현재 검사 범위를 통과한 결과 | `Lesson03CounselResultVerifier`와 `CounselResult` |
 
 `Intent`, `CounselResult`, 검증 상태는 **이 샘플이 정의한 자료형과 정책**입니다.<br>
 Spring AI의 표준 Agent 상태나 필수 클래스가 아닙니다.<br>
@@ -69,15 +69,15 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 
 | 단계 | 먼저 확인할 것 | 읽을 코드·테스트 |
 |---|---|---|
-| 1. 한 번의 상담 | 조건 추출 → 도구 조회 → 실제 사실 검증 | `CounselWorkflow.processCounselRequest()`와 동기 상담 테스트. 이전 대화는 빈 목록으로 전달 |
-| 2. 후속 대화 | 변경하지 않은 예산·카테고리 유지와 저장 시점 | 13-4의 `CounselService`와 후속 질문 테스트 |
+| 1. 한 번의 상담 | 조건 추출 → 도구 조회 → 실제 사실 검증 | `Lesson02CounselWorkflow.processCounselRequest()`와 동기 상담 테스트. 이전 대화는 빈 목록으로 전달 |
+| 2. 후속 대화 | 변경하지 않은 예산·카테고리 유지와 저장 시점 | 13-4의 `Lesson04CounselService`와 후속 질문 테스트 |
 | 선택 3. 실행 제한 | 모델 요청 수·전체 대기 제한과 늦은 응답 처리 | 별도 [13-8](13-shopping-agent/08-execution-limits.md)의 구현·테스트 |
 
 첫 단계는 아래 테스트 하나로 시작합니다.<br>
 고정 HTTP 응답을 사용하므로 실제 API 키가 필요하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests 'com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest.상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다'
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests 'com.example.ailearning.l13shopping.lesson04_conversation.Lesson04ShoppingAgentLocalModelTest.상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다'
 ```
 
 
@@ -120,7 +120,7 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests com.example.ailearning.l13shopping.lesson04_conversation.Lesson04ShoppingAgentLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:bootRun
 ```

@@ -4,13 +4,17 @@
 
 | 학습 단계 | 구현 | 확인할 테스트 |
 |---|---|---|
-| [11-2 직접 호출](../../docs/lessons/11-mcp-workflow-agent/02-direct-call.md) | ShoppingMcpGateway | `모델_없이_실제_MCP의_도구_목록과_배송_정책을_조회한다` |
-| [11-2 모델 연결 보충](../../docs/lessons/11-mcp-workflow-agent/02-provider-model.md) | [BasicMcpChatService](src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java) | [McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다` |
-| 11-3~6 비교·제약 | ShoppingMcpGateway·McpToolExecutor와 세 Service | 같은 테스트 클래스의 Workflow·Agent·Hybrid 사례 |
+| [11-2 직접 호출](../../docs/lessons/11-mcp-workflow-agent/02-direct-call.md) | [Lesson02ShoppingMcpGateway](src/main/java/com/example/ailearning/l11mcp/lesson02_directcall/Lesson02ShoppingMcpGateway.java) | `모델_없이_실제_MCP의_도구_목록과_배송_정책을_조회한다` |
+| [11-2 모델 연결 보충](../../docs/lessons/11-mcp-workflow-agent/02-provider-model.md) | [Lesson02BasicMcpChatService](src/main/java/com/example/ailearning/l11mcp/lesson02_modelcall/Lesson02BasicMcpChatService.java) | [Lesson06McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다` · [Live](src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonOpenAiLiveTest.java) |
+| 11-3~6 比較・制約 | [Lesson03McpWorkflowService](src/main/java/com/example/ailearning/l11mcp/lesson03_workflow/Lesson03McpWorkflowService.java) · [Lesson04McpAgentService](src/main/java/com/example/ailearning/l11mcp/lesson04_agent/Lesson04McpAgentService.java) · [Lesson05McpHybridService](src/main/java/com/example/ailearning/l11mcp/lesson05_hybrid/Lesson05McpHybridService.java) · McpToolExecutor | 같은 테스트 클래스의 Workflow·Agent·Hybrid 사례 |
+| 11-6 비교 테스트 | 앞 소주제의 세 Service 재사용 | [Lesson06McpComparisonLocalModelTest](src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonLocalModelTest.java) · [Lesson06McpComparisonOpenAiLiveTest](src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonOpenAiLiveTest.java) |
+
+패키지의 `lessonNN_주제`와 클래스의 `LessonNN`은 해당 소주제 번호입니다.<br>
+공통 Application·Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.
 
 `POST /api/mcp/basic`은 text/plain 질문을 받아 제공 Provider로 도구를 연결합니다.<br>
 모델 없는 `/api/mcp/tools`, `/api/mcp/shipping-policy`와 다릅니다.<br>
-[Live](src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)의 Provider 사례는 실제 모델을 호출합니다.
+[Live](src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonOpenAiLiveTest.java)의 Provider 사례는 실제 모델을 호출합니다.
 
 
 [11단원 교재](../../docs/lessons/11-mcp-workflow-agent.md)의 세 방식은 같은 shopping-mcp 서버의 검색·계산 도구를 사용합니다.
@@ -54,7 +58,7 @@ curl http://127.0.0.1:8106/api/mcp/workflow \
 ./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:bootJar
 ```
 
-`McpComparisonLocalModelTest`는 OpenAI 고정 응답과 실제 MCP 서버를 사용합니다.<br>
+`Lesson06McpComparisonLocalModelTest`는 OpenAI 고정 응답과 실제 MCP 서버를 사용합니다.<br>
 키나 수동 서버 실행 없이 동작하며 외부 API를 호출하지 않습니다.<br>
 테스트 전용 `McpTestServer`가 shopping-mcp를 임의 포트로 실행·종료합니다.<br>
 운영 코드는 shopping-mcp 클래스를 import하지 않습니다.<br>
@@ -68,13 +72,13 @@ curl http://127.0.0.1:8106/api/mcp/workflow \
 ./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*OpenAiLiveTest'
 ```
 
-`McpComparisonOpenAiLiveTest`는 실제 OpenAI에 연결하고 MCP 서버는 자동 실행합니다.<br>
+`Lesson06McpComparisonOpenAiLiveTest`는 실제 OpenAI에 연결하고 MCP 서버는 자동 실행합니다.<br>
 전체 test에도 Live가 포함됩니다.<br>
 실제 모델의 도구 선택은 고정되지 않으며, 고정 데이터의 금액과 의미 있는 도구 실행을 검증합니다.
 
 ## 코드 읽기 순서
 
-ShoppingMcpController의 HTTP 진입점 → ShoppingMcpGateway의 목록·직접 호출 → SearchConditionExtractor → McpWorkflowService → McpAgentService → McpHybridService 순서입니다.<br>
+ShoppingMcpController의 HTTP 진입점 → Lesson02ShoppingMcpGateway의 목록·직접 호출 → Lesson03SearchConditionExtractor → Lesson03McpWorkflowService → Lesson04McpAgentService → Lesson05McpHybridService 순서입니다.<br>
 McpToolExecutor은 기록·상한을 제공하는 보조 코드이며, 조건 고정 부분은 Hybrid 수업에서 읽습니다.<br>
 연결 실패는 shopping-mcp 실행 여부와 URL, 포트 충돌을 확인하세요.<br>
 IDE에서 새 모듈의 Run 아이콘이 없으면 루트 Gradle 프로젝트를 다시 동기화합니다.

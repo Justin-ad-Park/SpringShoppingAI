@@ -15,7 +15,7 @@ Noul은 이 조건이 참일 확률을 0~1로 반환합니다.
 
 ## 코드 읽기
 
-[HumanSupportRequestService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/HumanSupportRequestService.java)의 질문 정의입니다.
+[Lesson03HumanSupportRequestService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03HumanSupportRequestService.java)의 질문 정의입니다.
 
 ```java
 private static final Noul HUMAN_SUPPORT_QUESTION = Noul.builder()
@@ -77,14 +77,14 @@ curl -X POST http://localhost:8114/api/jev/human-support -H 'Content-Type: text/
 
 ## 검증
 
-[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 Noul 요청 기준과 응답 변환, 0.9와 0.5에서의 분기를 검사합니다.<br>
+[Lesson03JevNoulLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03JevNoulLocalModelTest.java)는 Noul 요청 기준과 응답 변환, 0.9와 0.5에서의 분기를 검사합니다.<br>
 [정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.2·0.8 양쪽 경계를 확인합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest.Noul*' --tests '*SupportRoutingPolicyUnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson03JevNoulLocalModelTest.Noul*' --tests '*SupportRoutingPolicyUnitTest'
 ```
 
-실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
+실제 Jev의 판단은 [Lesson03JevNoulLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03JevNoulLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
 [Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
 
 ## 확인 질문

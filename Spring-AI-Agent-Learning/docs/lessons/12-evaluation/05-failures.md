@@ -11,7 +11,7 @@
 ## 앞에서 배운 기능을 RAG 평가에 결합하기
 
 12-1은 준비된 답변의 규칙 검사, 12-3은 검색 없는 채팅 사용량 조회였습니다.<br>
-여기서는 [EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/EvaluationRunner.java)가 실제 RAG를 호출한 뒤 같은 RuleBasedEvaluator로 결과를 비교합니다.<br>
+여기서는 [Lesson01EvaluationRunner](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationRunner.java)가 실제 RAG를 호출한 뒤 같은 Lesson01RuleBasedEvaluator로 결과를 비교합니다.<br>
 [RagService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)는 `.responseEntity(...)`로 구조화 답변과 사용량을 함께 읽고 전체 검색·생성 시간과 실패 종류를 보관합니다.<br>
 이 통합 실행은 usage-only 프로필 없이 시작합니다.
 
@@ -85,7 +85,7 @@ private RagMetrics createMetricsSnapshot(long startedAtNanos, RequestMetrics req
 | 미개봉 반품 기간은? | `ANSWERED` | `return-sealed` | `7일` |
 | 우주 여행 비용은? | `NO_CONTEXT` | 없음 | 빈 문자열 |
 
-`EvaluationRunner`는 파일을 읽어 각 질문을 `RagService.answer()`에 전달하고, 실제 상태·출처·답변을 12-1의 `RuleBasedEvaluator`로 검사합니다.<br>
+`Lesson01EvaluationRunner`는 파일을 읽어 각 질문을 `RagService.answer()`에 전달하고, 실제 상태·출처·답변을 12-1의 `Lesson01RuleBasedEvaluator`로 검사합니다.<br>
 사례별 결과에는 실패 사유와 실제 답변·측정값을 함께 담습니다.<br>
 무관한 질문의 빈 필수 문구는 문구 검사로는 제한하지 않는다는 의미이며, 기대 상태와 출처 조건은 별도로 검사합니다.
 
@@ -106,7 +106,7 @@ private RagMetrics createMetricsSnapshot(long startedAtNanos, RequestMetrics req
 ```mermaid
 sequenceDiagram
     actor User as 사용자
-    participant App as Java EvaluationRunner
+    participant App as Java Lesson01EvaluationRunner
     participant Rag as Java RagService
     participant Model as 외부 모델 API
     User->>App: 고정 평가 실행
@@ -159,7 +159,7 @@ SDK 재시도는 0회, 요청 타임아웃은 교육 샘플의 기본값인 5초
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests com.example.ailearning.l12evaluation.EvaluationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests com.example.ailearning.l12evaluation.lesson01_cases.Lesson01EvaluationLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:bootRun
 curl -sS http://127.0.0.1:8101/api/evaluation/ask \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '미개봉 반품 기간은?'
@@ -186,7 +186,7 @@ curl -sS -X POST http://127.0.0.1:8101/api/evaluation/run
 대기 시간과 재시도가 서로 다른 설정임을 설명해 보세요.<br>
 실제 서버의 정상 지연과 로컬 테스트의 인위적인 지연도 구분합니다.
 
-[EvaluationLocalModelTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/EvaluationLocalModelTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.<br>
+[Lesson01EvaluationLocalModelTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationLocalModelTest.java)는 정상 사례 평가와 usage 기록, 잘못된 주장, 429·형식 오류·타임아웃을 재현합니다.<br>
 usage의 10/5 토큰 등은 **테스트 API가 제공하는 고정 값**입니다.<br>
 실제 비용이나 품질로 표시하지 않습니다.<br>
 기본 요청 타임아웃은 5초이며, 이 로컬 테스트 클래스는 `spring.ai.openai.timeout=500ms`로 덮어써 느린 응답을 빠르게 검증합니다.

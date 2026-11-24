@@ -1,5 +1,7 @@
 package com.example.ailearning.l11mcp.tools;
 
+import com.example.ailearning.l11mcp.lesson02_directcall.Lesson02ShoppingMcpGateway;
+
 import com.example.ailearning.l11mcp.domain.SearchConditions;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ import static com.example.ailearning.l11mcp.McpRunResult.ToolCall;
 
 /** 요청 한 건의 MCP 도구를 상한 안에서 실행하고, 조건 검사와 실행 결과 기록을 추가한다. */
 public final class McpToolExecutor {
-    private final ShoppingMcpGateway shoppingMcpGateway;
+    private final Lesson02ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
     private final int maxToolCallAttempts;
     private final SearchConditions fixedSearchConditions;
@@ -22,7 +24,7 @@ public final class McpToolExecutor {
     private List<String> searchedProductIds;
     private JsonNode lastCartQuote;
 
-    public McpToolExecutor(ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
+    public McpToolExecutor(Lesson02ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
             int maxToolCallAttempts, SearchConditions fixedSearchConditions) {
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.objectMapper = objectMapper;

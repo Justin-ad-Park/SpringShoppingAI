@@ -44,31 +44,34 @@ curl -sS http://127.0.0.1:8115/api/ollama/intent \
 변경할 때만 루트 `.env`에 `OLLAMA_BASE_URL`·`OLLAMA_DECISION_MODEL`을 설정합니다.<br>
 로컬 모델을 사용하는 기본 실습에는 API 키가 필요하지 않습니다.
 
-| 소주제 | 실행 코드 | API | 해당 로컬 테스트 메서드 |
-|---|---|---|---|
-| 15-2 Choice | [IntentClassificationService](src/main/java/com/example/ailearning/l15ollama/IntentClassificationService.java) | POST /api/ollama/intent, text/plain | `Choice로_쇼핑_의도와_항목별_확률을_받는다` |
-| 15-3 Yes/No | [HumanSupportRequestService](src/main/java/com/example/ailearning/l15ollama/HumanSupportRequestService.java) | POST /api/ollama/human-support, text/plain | `YesNo는_noul로_전송되고_참일_확률을_반환한다` |
-| 15-4 Score | [SupportPriorityService](src/main/java/com/example/ailearning/l15ollama/SupportPriorityService.java) | POST /api/ollama/priority, text/plain | `Score의_소수_점수와_대표_단계를_구분한다` |
-| 15-5 여러 질문 | [CustomerAssessmentService](src/main/java/com/example/ailearning/l15ollama/CustomerAssessmentService.java) | POST /api/ollama/assessment, text/plain | `세_질문을_한번의_모델_요청에_함께_전달한다` |
-| 15-6 필드 입력 | [OrderContextDecisionService](src/main/java/com/example/ailearning/l15ollama/OrderContextDecisionService.java) | POST /api/ollama/order-context, application/json | `고객_문장과_주문_필드를_순서를_유지한_JSON으로_전달한다` |
+| 소주제 | 실행 코드 | API | 해당 로컬 테스트 메서드 | 전용 테스트 |
+|---|---|---|---|---|
+| 15-2 Choice | [Lesson02IntentClassificationService](src/main/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationService.java) | POST /api/ollama/intent, text/plain | `Choice로_쇼핑_의도와_항목별_확률을_받는다` | [Lesson02IntentClassificationLocalModelTest](src/test/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationLocalModelTest.java) · [Lesson02IntentClassificationLiveTest](src/test/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationLiveTest.java) |
+| 15-3 Yes/No | [Lesson03HumanSupportRequestService](src/main/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestService.java) | POST /api/ollama/human-support, text/plain | `YesNo는_noul로_전송되고_참일_확률을_반환한다` | [Lesson03HumanSupportRequestLocalModelTest](src/test/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestLocalModelTest.java) · [Lesson03HumanSupportRequestLiveTest](src/test/java/com/example/ailearning/l15ollama/lesson03_yesno/Lesson03HumanSupportRequestLiveTest.java) |
+| 15-4 Score | [Lesson04SupportPriorityService](src/main/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityService.java) | POST /api/ollama/priority, text/plain | `Score의_소수_점수와_대표_단계를_구분한다` | [Lesson04SupportPriorityLocalModelTest](src/test/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityLocalModelTest.java) · [Lesson04SupportPriorityLiveTest](src/test/java/com/example/ailearning/l15ollama/lesson04_score/Lesson04SupportPriorityLiveTest.java) |
+| 15-5 여러 질문 | [Lesson05CustomerAssessmentService](src/main/java/com/example/ailearning/l15ollama/lesson05_multiple/Lesson05CustomerAssessmentService.java) | POST /api/ollama/assessment, text/plain | `세_질문을_한번의_모델_요청에_함께_전달한다` | [Lesson05CustomerAssessmentLocalModelTest](src/test/java/com/example/ailearning/l15ollama/lesson05_multiple/Lesson05CustomerAssessmentLocalModelTest.java) · [Lesson05CustomerAssessmentLiveTest](src/test/java/com/example/ailearning/l15ollama/lesson05_multiple/Lesson05CustomerAssessmentLiveTest.java) |
+| 15-6 필드 입력 | [Lesson06OrderContextDecisionService](src/main/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextDecisionService.java) | POST /api/ollama/order-context, application/json | `고객_문장과_주문_필드를_순서를_유지한_JSON으로_전달한다` | [Lesson06OrderContextLocalModelTest](src/test/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextLocalModelTest.java) · [Lesson06OrderContextLiveTest](src/test/java/com/example/ailearning/l15ollama/lesson06_fields/Lesson06OrderContextLiveTest.java) |
+
+패키지의 `lessonNN_주제`와 클래스의 `LessonNN`은 해당 소주제 번호입니다.<br>
+공통 Application·Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.
 
 ## 3. 테스트
 
 실제 모델 없이 Starter·HTTP·판단값 변환과 정책 경계를 검증합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*OllamaDecisionLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*LocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:bootJar
 ```
 
-- [OllamaDecisionLocalModelTest](src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLocalModelTest.java): 고정 응답 서버를 사용하며 Ollama 설치가 필요 없습니다.
+- 소주제별 LocalModelTest: 고정 응답 서버를 사용하며 Ollama 설치가 필요 없습니다. 위의 코드 안내 표에서 해당 테스트를 찾습니다.
 - [SupportRoutingPolicyUnitTest](src/test/java/com/example/ailearning/l15ollama/domain/SupportRoutingPolicyUnitTest.java): 모델·Spring 없이 Java의 임계값 처리를 검사합니다.
-- [OllamaDecisionLiveTest](src/test/java/com/example/ailearning/l15ollama/OllamaDecisionLiveTest.java): 실제 로컬 Ollama를 호출하고 판단 결과를 출력합니다.
+- 소주제별 LiveTest: 실제 로컬 Ollama를 호출하고 판단 결과를 출력합니다. 위의 코드 안내 표에서 해당 테스트를 찾습니다.
 
 서버·모델 준비 후 실제 판단을 확인합니다.<br>
 아래 다섯 테스트는 합계 여덟 번의 실제 모델 요청을 보냅니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*OllamaDecisionLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:15-00-ollama-decisions:test --tests '*LiveTest'
 ```
 
 기본 모델의 실제 실행 결과는 **5개 중 4개 통과·1개 실패**였습니다.<br>

@@ -187,7 +187,7 @@ JSON과 프롬프트는 시작 시 한 번 읽으므로 변경 뒤 서버를 재
 
 ### 4-3. 한 번의 요청으로 두 코드를 받습니다
 
-[Service.classify()](../../../labs/13-05-intent-classification/src/main/java/com/example/ailearning/l13intent/IntentClassificationService.java)의 실제 메서드 발췌입니다.
+[Service.classify()](../../../labs/13-05-intent-classification/src/main/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationService.java)의 실제 메서드 발췌입니다.
 
 ```java
     public Result classify(String question) {
@@ -284,7 +284,7 @@ API는 message 안내 문구를 반환합니다.<br>
 먼저 API 키 없이 단위 테스트와 로컬 고정 응답 테스트를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentCatalogUnitTest' --tests '*IntentClassificationLocalModelTest' :Spring-AI-Agent-Learning:labs:13-05-intent-classification:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentCatalogUnitTest' --tests '*Lesson05IntentClassificationLocalModelTest' :Spring-AI-Agent-Learning:labs:13-05-intent-classification:bootJar
 ```
 
 실제 실행에는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
@@ -312,7 +312,7 @@ SDK 자동 재시도는 0회입니다.<br>
 종료는 Ctrl+C입니다.
 
 [단위 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/domain/IntentCatalogUnitTest.java)는 코드 조합 검사를 확인합니다.<br>
-[로컬 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationLocalModelTest.java)는 실제 Spring AI 요청에 JSON 트리·출력 예시가 들어가는지, 요청이 한 번인지, 변환·보류·오류 처리가 맞는지 검사합니다.<br>
+[로컬 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationLocalModelTest.java)는 실제 Spring AI 요청에 JSON 트리·출력 예시가 들어가는지, 요청이 한 번인지, 변환·보류·오류 처리가 맞는지 검사합니다.<br>
 고정 모델 응답을 사용하므로 실제 한국어 분류 정확도 검사는 아닙니다.
 
 ## 7. 상용 사례: 업무를 나누고 담당 처리로 연결하기
@@ -352,16 +352,16 @@ Dialogflow CX는 후보 점수가 정해 둔 최소 점수(임계값)에 못 미
 
 ## 9. 상용 품질 평가와 업무 연결
 
-[로컬 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationLocalModelTest.java)는 후보 축소·코드 소속 검사·보류 처리·입력/모델 오류를 확인합니다.<br>
+[로컬 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationLocalModelTest.java)는 후보 축소·코드 소속 검사·보류 처리·입력/모델 오류를 확인합니다.<br>
 모델이 어떤 응답을 반환할지 미리 정한 테스트이므로 실제 한국어 문의를 올바르게 분류했는지 평가하지는 않습니다.
 
-[Live 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/IntentClassificationOpenAiLiveTest.java)는 반품 수거 일정과 환불 입금 시점 문의 두 사례의 대분류·소분류를 확인합니다.<br>
+[Live 테스트](../../../labs/13-05-intent-classification/src/test/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationOpenAiLiveTest.java)는 반품 수거 일정과 환불 입금 시점 문의 두 사례의 대분류·소분류를 확인합니다.<br>
 전체 40개 의도의 품질 검증은 아닙니다.<br>
 같은 질문 세트로 여러 모델을 비교하는 실습은 [13-6](06-intent-quality-evaluation.md)에서 별도로 다룹니다.
 
 ```bash
 # 실제 OpenAI 호출이며 API 사용량이 발생합니다.
-./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentClassificationOpenAiLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*Lesson05IntentClassificationOpenAiLiveTest'
 ```
 
 ### 분류 기준과 평가 질문 준비하기

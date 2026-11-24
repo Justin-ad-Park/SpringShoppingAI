@@ -71,19 +71,19 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 07 저장소 보충: 선택 | `07-03-Redis-Selection` | `com.example.ailearning.l07selection.InMemorySelectionLocalModelTest` | `com.example.ailearning.l07selection.RedisMemoryRepositoryLiveTest` (Redis만 호출) |
 | 07 저장소 보충: 런타임 | `07-07-runtime-memory` | 없음 (Redis 필요) | `com.example.ailearning.l07runtime.IntentMemoryRedisLiveTest` (실제 Redis + 고정 응답 모델) |
 | 08 Advisor | `08-00-advisors` | `com.example.ailearning.l08advisors.lesson01_logging.Lesson01LoggingLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson02_registration.Lesson02AdvisorRegistrationLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson03_memory.Lesson03MemoryAdvisorLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson04_beforeafter.Lesson04BeforeAfterLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson05_order.Lesson05AdvisorOrderLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson06_toolloop.Lesson06ToolLoopLocalModelTest`<br>`com.example.ailearning.l08advisors.lesson07_looporder.Lesson07ToolLoopOrderLocalModelTest` | `com.example.ailearning.l08advisors.lesson01_logging.Lesson01LoggingOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson02_registration.Lesson02AdvisorRegistrationOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson03_memory.Lesson03MemoryAdvisorOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson04_beforeafter.Lesson04BeforeAfterOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson05_order.Lesson05AdvisorOrderOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson06_toolloop.Lesson06ToolLoopOpenAiLiveTest`<br>`com.example.ailearning.l08advisors.lesson07_looporder.Lesson07ToolLoopOrderOpenAiLiveTest` |
-| 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.SearchLocalModelTest`<br>`com.example.ailearning.l09search.EmbeddingOnlyLocalModelTest`<br>`com.example.ailearning.l09search.BasicVectorSearchLocalModelTest` | `com.example.ailearning.l09search.SearchOpenAiLiveTest`<br>`com.example.ailearning.l09search.EmbeddingOnlyOpenAiLiveTest`<br>`com.example.ailearning.l09search.BasicVectorSearchOpenAiLiveTest` |
-| 10-1·10-2 표준 API | `10-00-rag-advisor` | `com.example.ailearning.l10advisor.AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.PolicyIndexingLocalModelTest`<br>`com.example.ailearning.l10advisor.TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.AdvisorRagOpenAiLiveTest`<br>`com.example.ailearning.l10advisor.PolicyIndexingOpenAiLiveTest` |
-| 10-3~5 직접 RAG | `10-03-custom-rag` | `com.example.ailearning.l10rag.RagLocalModelTest` | `com.example.ailearning.l10rag.RagOpenAiLiveTest` |
-| 11 MCP 세 실행 방식 | `11-00-mcp-workflow-agent` | `com.example.ailearning.l11mcp.McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.domain.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.McpComparisonOpenAiLiveTest` |
-| 12 평가·실패 | `12-00-evaluation` | `com.example.ailearning.l12evaluation.EvaluationLocalModelTest`<br>`com.example.ailearning.l12evaluation.TokenUsageLocalModelTest`<br>`com.example.ailearning.l12evaluation.rules.RuleBasedEvaluatorUnitTest` | `com.example.ailearning.l12evaluation.EvaluationOpenAiLiveTest`<br>`com.example.ailearning.l12evaluation.TokenUsageOpenAiLiveTest` |
-| 12-2 모델 평가 | `12-02-model-evaluation` | `com.example.ailearning.l12judge.EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.EvaluationApiOpenAiLiveTest` |
-| 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.ObservationLocalModelTest` | `com.example.ailearning.l12observe.ObservationOpenAiLiveTest` |
-| 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.ShoppingAgentOpenAiLiveTest` |
-| 13 보충 8 실행 제한 | `13-08-limited-agent` | `com.example.ailearning.l13limited.LimitedShoppingAgentLocalModelTest` | `com.example.ailearning.l13limited.LimitedShoppingAgentOpenAiLiveTest` |
-| 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.IntentClassificationOpenAiLiveTest` |
-| 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.IntentModelQualityOpenAiLiveTest` |
-| 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.JevLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.JevLiveTest` (실제 Jev) |
-| 15 Ollama 의사결정 | `15-00-ollama-decisions` | `com.example.ailearning.l15ollama.OllamaDecisionLocalModelTest`<br>`com.example.ailearning.l15ollama.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l15ollama.OllamaDecisionLiveTest` (실제 로컬 Ollama) |
+| 09 임베딩·검색 | `09-00-embeddings-search` | `com.example.ailearning.l09search.lesson03_search.Lesson03SearchLocalModelTest`<br>`com.example.ailearning.l09search.lesson01_vectors.Lesson01EmbeddingOnlyLocalModelTest`<br>`com.example.ailearning.l09search.lesson02_store.Lesson02BasicVectorSearchLocalModelTest` | `com.example.ailearning.l09search.lesson03_search.Lesson03SearchOpenAiLiveTest`<br>`com.example.ailearning.l09search.lesson01_vectors.Lesson01EmbeddingOnlyOpenAiLiveTest`<br>`com.example.ailearning.l09search.lesson02_store.Lesson02BasicVectorSearchOpenAiLiveTest` |
+| 10-1·10-2 표준 API | `10-00-rag-advisor` | `com.example.ailearning.l10advisor.lesson02_advisor.Lesson02AdvisorRagLocalModelTest`<br>`com.example.ailearning.l10advisor.lesson01_indexing.Lesson01PolicyIndexingLocalModelTest`<br>`com.example.ailearning.l10advisor.lesson01_indexing.Lesson01TokenTextSplitterUnitTest` | `com.example.ailearning.l10advisor.lesson02_advisor.Lesson02AdvisorRagOpenAiLiveTest`<br>`com.example.ailearning.l10advisor.lesson01_indexing.Lesson01PolicyIndexingOpenAiLiveTest` |
+| 10-3~5 직접 RAG | `10-03-custom-rag` | `com.example.ailearning.l10rag.lesson04_generation.Lesson04RagLocalModelTest` | `com.example.ailearning.l10rag.lesson04_generation.Lesson04RagOpenAiLiveTest` |
+| 11 MCP 세 실행 방식 | `11-00-mcp-workflow-agent` | `com.example.ailearning.l11mcp.lesson06_comparison.Lesson06McpComparisonLocalModelTest`<br>`com.example.ailearning.l11mcp.domain.SearchConditionsUnitTest` | `com.example.ailearning.l11mcp.lesson06_comparison.Lesson06McpComparisonOpenAiLiveTest` |
+| 12 평가·실패 | `12-00-evaluation` | `com.example.ailearning.l12evaluation.lesson01_cases.Lesson01EvaluationLocalModelTest`<br>`com.example.ailearning.l12evaluation.lesson03_usage.Lesson03TokenUsageLocalModelTest`<br>`com.example.ailearning.l12evaluation.lesson01_cases.Lesson01RuleBasedEvaluatorUnitTest` | `com.example.ailearning.l12evaluation.lesson01_cases.Lesson01EvaluationOpenAiLiveTest`<br>`com.example.ailearning.l12evaluation.lesson03_usage.Lesson03TokenUsageOpenAiLiveTest` |
+| 12-2 모델 평가 | `12-02-model-evaluation` | `com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiLocalModelTest` | `com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiOpenAiLiveTest` |
+| 12-4 관측 | `12-04-observability` | `com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationLocalModelTest` | `com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationOpenAiLiveTest` |
+| 13 상담 Agent | `13-00-shopping-agent` | `com.example.ailearning.l13shopping.lesson04_conversation.Lesson04ShoppingAgentLocalModelTest` | `com.example.ailearning.l13shopping.lesson04_conversation.Lesson04ShoppingAgentOpenAiLiveTest` |
+| 13 보충 8 실행 제한 | `13-08-limited-agent` | `com.example.ailearning.l13limited.lesson08_limits.Lesson08LimitedShoppingAgentLocalModelTest` | `com.example.ailearning.l13limited.lesson08_limits.Lesson08LimitedShoppingAgentOpenAiLiveTest` |
+| 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.lesson05_intent.Lesson05IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.lesson05_intent.Lesson05IntentClassificationOpenAiLiveTest` |
+| 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.lesson06_quality.Lesson06IntentModelQualityOpenAiLiveTest` |
+| 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.lesson01_choice.Lesson01JevChoiceLocalModelTest`<br>`com.example.ailearning.l14jev.lesson02_score.Lesson02JevScoreLocalModelTest`<br>`com.example.ailearning.l14jev.lesson03_noul.Lesson03JevNoulLocalModelTest`<br>`com.example.ailearning.l14jev.JevInputValidationLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.lesson01_choice.Lesson01JevChoiceLiveTest`<br>`com.example.ailearning.l14jev.lesson02_score.Lesson02JevScoreLiveTest`<br>`com.example.ailearning.l14jev.lesson03_noul.Lesson03JevNoulLiveTest` |
+| 15 Ollama 의사결정 | `15-00-ollama-decisions` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLocalModelTest`<br>`com.example.ailearning.l15ollama.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLiveTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLiveTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLiveTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLiveTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.
 
@@ -107,7 +107,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 - 현재 사용법과 과거 검증 기록을 구분합니다.<br>
   과거 명령의 당시 이름은 보존하되 파일 링크는 현재 위치에 연결하고 새 검증 결과를 별도로 남깁니다.
 - 이 규칙은 labs 실행 모듈의 이름에 적용합니다.<br>
-  docs의 단원 경로·소주제 파일명은 기존 체계를 유지하며, 정렬만을 위해 Java 패키지를 바꾸지 않습니다.
+  docs의 단원 경로·소주제 파일명은 기존 체계를 유지하며, Java 패키지·클래스는 아래 소주제별 이름 기준을 적용합니다.
 
 예상 이름순:
 
@@ -161,7 +161,27 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 같은 Gradle 모듈의 별도 클래스·패키지 | 실행 환경과 의존성은 같지만 학습 개념·상태를 구분해 읽어야 하는 경우. [08장](../Spring-AI-Agent-Learning/labs/08-00-advisors/README.md)처럼 소수업별 Service·테스트를 직접 연결 |
 | 별도 실행 모듈 | 의존성·인프라·설정이 달라지거나, 확장이 기본 예제의 실행과 이해를 방해하는 경우. 해당 모듈의 실행·테스트 안내를 함께 제공 |
 
-소수업마다 Controller·Application·설정을 복제하거나 `Lesson01…` 같은 명명 형식을 일괄 적용하지 않습니다.
+소수업마다 Controller·Application·설정을 복제하지 않습니다.
+
+### 소주제 번호로 실행 코드 찾기
+
+08단원처럼 문서의 소주제 번호와 패키지·클래스 이름을 연결합니다.<br>
+이 과정의 소주제 전용 실행 코드와 테스트에 적용하며, 역할별 패키지 구분은 유지합니다.
+
+- 패키지는 `lessonNN_주제`, 클래스는 `LessonNN역할`로 작성합니다.<br>
+  예: 15-2 Choice의 `lesson02_choice.Lesson02IntentClassificationService`와 `Lesson02IntentClassificationLocalModelTest`.
+- 전용 Controller와 테스트도 해당 소주제 패키지에 둡니다.<br>
+  운영 코드와 테스트 코드의 번호·주제를 맞춥니다.
+- 후속 소주제에서 재사용하는 실행 코드는 최초 소개한 소주제에 두고, 후속 문서는 해당 클래스·메서드로 연결합니다.<br>
+  문서 순서를 바꾸면 번호·경로·클래스·연결 문서를 함께 확인합니다.
+- 여러 소주제가 공유하는 Application·Controller·도메인·자료형·설정·테스트 보조 코드에는 임의의 소주제 번호를 붙이지 않습니다.<br>
+  공통 검증도 번호를 붙이기 위해 복제하지 않으며, README에서 적용 범위를 밝힙니다.
+- 서로 다른 학습 흐름을 검증하는 테스트는 소주제별 클래스로 나누고 기존 입력·assertion을 보존합니다.<br>
+  같은 흐름의 짧은 비교까지 클래스로 나누지는 않습니다.
+- 개념 설명만 하는 소주제에 이름을 맞추기 위한 빈 클래스·패키지·모듈을 만들지 않습니다.<br>
+  08단원 이전 예제는 별도 요청 없이 일괄 개명하지 않습니다.
+- 이름을 바꾸면 import·생성자·Spring 탐색 범위·테스트 선택 명령·교재 코드와 소스 링크를 함께 갱신합니다.<br>
+  HTTP·도구·JSON 계약은 내부 클래스 이름 변경과 구분합니다.
 
 ### 역할별 패키지
 
@@ -200,7 +220,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 
 14장은 Spring AI Community의 TypeSafe Starter 0.4.0과 전용 TypeSafeClient를 사용합니다.<br>
 실제 실행은 TYPESAFE_API_KEY·선택 모델 TYPESAFE_DEFAULT_MODEL, 기본 주소는 spring.ai.typesafe.base-url로 설정합니다.<br>
-JevLocalModelTest는 YAML의 더미 키·모델과 동적 대역 주소를 사용하며, JevLiveTest만 실제 Jev를 호출합니다.
+14단원의 소주제별 LocalModelTest는 YAML의 더미 키·모델과 동적 대역 주소를 사용하며, LiveTest만 실제 Jev를 호출합니다.
 
 07-2·07-3의 저장소 확장은 `07-02-JDBC`, `07-03-Redis-Selection`에서 독립 실행합니다.<br>
 기본 모듈에는 외부 저장소 의존성이 없습니다.<br>

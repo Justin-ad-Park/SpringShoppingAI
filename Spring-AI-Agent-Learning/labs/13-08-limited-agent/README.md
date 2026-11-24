@@ -5,11 +5,16 @@
 
 | 읽을 코드 | 확인할 책임 |
 |---|---|
-| [CounselWorkflow](src/main/java/com/example/ailearning/l13limited/workflow/CounselWorkflow.java) | 기본 상담 + 계측·제한 응답 처리 |
-| [LimitedAgentRequestExecutor](src/main/java/com/example/ailearning/l13limited/support/LimitedAgentRequestExecutor.java) | 전체 대기·취소 |
+| [Lesson08CounselService](src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08CounselService.java) | 상담 이력 관리와 Workflow 연결 |
+| [Lesson08CounselResultVerifier](src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08CounselResultVerifier.java) | 조회 결과에 근거한 답변 검증 |
+| [Lesson08CounselWorkflow](src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08CounselWorkflow.java) | 기본 상담 + 계측·제한 응답 처리 |
+| [Lesson08LimitedAgentRequestExecutor](src/main/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedAgentRequestExecutor.java) | 전체 대기·취소 |
 | [RunState](src/main/java/com/example/ailearning/l13limited/support/RunState.java) | 모델 요청 시도 수·마감·trace |
-| [로컬 테스트](src/test/java/com/example/ailearning/l13limited/LimitedShoppingAgentLocalModelTest.java) | 상담·모델 상한·도구 상한·늦은 답변 미저장 |
-| [Live](src/test/java/com/example/ailearning/l13limited/LimitedShoppingAgentOpenAiLiveTest.java) | 실제 도구 선택과 후속 대화 |
+| [로컬 테스트](src/test/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedShoppingAgentLocalModelTest.java) | 상담·모델 상한·도구 상한·늦은 답변 미저장 |
+| [Live](src/test/java/com/example/ailearning/l13limited/lesson08_limits/Lesson08LimitedShoppingAgentOpenAiLiveTest.java) | 실제 도구 선택과 후속 대화 |
+
+패키지의 `lessonNN_주제`와 클래스의 `LessonNN`은 해당 소주제 번호입니다.<br>
+공통 Application·Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:13-08-limited-agent:test --tests '*LocalModelTest'

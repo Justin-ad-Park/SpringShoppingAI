@@ -19,7 +19,7 @@
 
 ## 로컬 통합 테스트
 
-[테스트 전체 소스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)를 실행합니다.
+[테스트 전체 소스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonLocalModelTest.java)를 실행합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*LocalModelTest' --tests '*UnitTest'
@@ -46,7 +46,7 @@ OpenAI에만 고정 HTTP 응답 서버를 사용합니다.<br>
 
 ## 실제 OpenAI 테스트
 
-루트 `.env` 설정을 준비한 뒤 [Live 클래스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonOpenAiLiveTest.java)를 실행합니다.
+루트 `.env` 설정을 준비한 뒤 [Live 클래스](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonOpenAiLiveTest.java)를 실행합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:11-00-mcp-workflow-agent:test --tests '*OpenAiLiveTest'

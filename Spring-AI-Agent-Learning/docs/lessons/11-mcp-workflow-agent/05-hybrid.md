@@ -20,13 +20,17 @@ flowchart TD
 
 ## 서비스 전체 코드
 
-[전체 소스: McpHybridService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpHybridService.java)
+[전체 소스: Lesson05McpHybridService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson05_hybrid/Lesson05McpHybridService.java)
 
 ```java
-package com.example.ailearning.l11mcp;
+package com.example.ailearning.l11mcp.lesson05_hybrid;
+
+import com.example.ailearning.l11mcp.McpRunResult;
+import com.example.ailearning.l11mcp.lesson03_workflow.Lesson03SearchConditionExtractor;
+import com.example.ailearning.l11mcp.lesson04_agent.Lesson04McpAgentService;
 
 import com.example.ailearning.l11mcp.tools.McpToolExecutor;
-import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+import com.example.ailearning.l11mcp.lesson02_directcall.Lesson02ShoppingMcpGateway;
 
 import com.example.ailearning.l11mcp.domain.SearchConditions;
 
@@ -37,15 +41,15 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 
 @Service
-public class McpHybridService {
-    private final SearchConditionExtractor searchConditionExtractor;
-    private final McpAgentService agentService;
-    private final ShoppingMcpGateway shoppingMcpGateway;
+public class Lesson05McpHybridService {
+    private final Lesson03SearchConditionExtractor searchConditionExtractor;
+    private final Lesson04McpAgentService agentService;
+    private final Lesson02ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
     private final int maxToolCallAttempts;
 
-    public McpHybridService(SearchConditionExtractor searchConditionExtractor, McpAgentService agentService,
-            ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
+    public Lesson05McpHybridService(Lesson03SearchConditionExtractor searchConditionExtractor, Lesson04McpAgentService agentService,
+            Lesson02ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
             @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
         this.searchConditionExtractor = searchConditionExtractor;
         this.agentService = agentService;

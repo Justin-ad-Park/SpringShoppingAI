@@ -23,7 +23,7 @@ Choice는 애플리케이션이 제공한 선택지 중 하나를 고릅니다.<
 
 ## 코드 읽기
 
-[IntentClassificationService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java)의 `INTENT_QUESTION`이 각 선택지의 설명을 정의합니다.<br>
+[Lesson01IntentClassificationService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01IntentClassificationService.java)의 `INTENT_QUESTION`이 각 선택지의 설명을 정의합니다.<br>
 다음은 `classifyIntent()`의 실제 발췌입니다.
 
 ```java
@@ -70,14 +70,14 @@ curl -X POST http://localhost:8114/api/jev/intent -H 'Content-Type: text/plain; 
 
 ## 검증
 
-[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 `state`·선택지·모델명·더미 인증 헤더가 실제 HTTP 요청에 담기는지와 낮은 confidence에서 보류하는지 검사합니다.<br>
+[Lesson01JevChoiceLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01JevChoiceLocalModelTest.java)는 `state`·선택지·모델명·더미 인증 헤더가 실제 HTTP 요청에 담기는지와 낮은 confidence에서 보류하는지 검사합니다.<br>
 실제 Jev의 분류 품질은 확인하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest.Choice*'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson01JevChoiceLocalModelTest.Choice*'
 ```
 
-실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
+실제 Jev의 판단은 [Lesson01JevChoiceLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01JevChoiceLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
 [Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
 
 ## 확인 질문

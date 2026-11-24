@@ -50,7 +50,7 @@
   평가 모델이 그 기준을 통과했다고 판정한 결과입니다.<br>
   근거와의 일치도 평가가 원문 자체의 진실성을 증명하지는 않으며, 다양한 반례와 사람 검토가 필요합니다.”
 
-확인 근거: [AnswerEvaluator.java](../../Spring-AI-Agent-Learning/labs/12-02-model-evaluation/src/main/java/com/example/ailearning/l12judge/AnswerEvaluator.java)의 `.evaluate(request).isPass()`.
+확인 근거: [Lesson02AnswerEvaluator.java](../../Spring-AI-Agent-Learning/labs/12-02-model-evaluation/src/main/java/com/example/ailearning/l12judge/lesson02_modeljudge/Lesson02AnswerEvaluator.java)의 `.evaluate(request).isPass()`.
 
 ### 3. ‘쿠키가 다르다’의 대상 — 중간
 
@@ -91,7 +91,7 @@
   선택한 태그 범위의 누적 총 토큰 수가 15라는 뜻입니다.<br>
   모델 호출 수는 `gen_ai.client.operation`의 COUNT를 별도로 확인합니다.”
 
-본문과 [ObservationLocalModelTest](../../Spring-AI-Agent-Learning/labs/12-04-observability/src/test/java/com/example/ailearning/l12observe/ObservationLocalModelTest.java)는 이미 이 지표·태그를 구분합니다.<br>
+본문과 [Lesson04ObservationLocalModelTest](../../Spring-AI-Agent-Learning/labs/12-04-observability/src/test/java/com/example/ailearning/l12observe/lesson04_observability/Lesson04ObservationLocalModelTest.java)는 이미 이 지표·태그를 구분합니다.<br>
 수치 오류가 아니라 질문 대상의 명시 수준 문제입니다.
 
 ### 6. Advisor 실행 횟수의 전제 — 낮음

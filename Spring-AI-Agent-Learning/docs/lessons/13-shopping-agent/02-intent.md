@@ -35,7 +35,7 @@ Java는 이 순서를 고정하고, 모델은 제공된 도구 안에서 다음 
 {"task":"SHOPPING","category":"음료","totalBudget":30000}
 ```
 
-[CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/workflow/CounselWorkflow.java)의 `extractRequestIntent()` 발췌입니다.<br>
+[Lesson02CounselWorkflow](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson02_intent/Lesson02CounselWorkflow.java)의 `extractRequestIntent()` 발췌입니다.<br>
 `chatClient`는 생성자에서 주입받은 `ChatClient.Builder`로 만들며, `conversationMessages`는 이전 대화에 현재 질문을 추가한 메시지 목록입니다.
 
 ```java
@@ -127,7 +127,7 @@ private CandidateEvidenceSelection selectEvidenceWithTools(List<Message> convers
 
 `sourceIds`는 정책 검색 결과의 식별값입니다.<br>
 예를 들어 `return-sealed`는 미개봉 반품 정책을 가리킵니다.<br>
-모델이 ID를 골랐다는 사실과 그 ID를 실제로 조회했다는 사실은 다르므로, 다음 단계에서 `CounselResultVerifier`가 선택값과 조회 기록을 대조합니다.
+모델이 ID를 골랐다는 사실과 그 ID를 실제로 조회했다는 사실은 다르므로, 다음 단계에서 `Lesson03CounselResultVerifier`가 선택값과 조회 기록을 대조합니다.
 
 바깥 흐름을 조정하는 `processCounselRequest()`는 다음과 같습니다.<br>
 아래 메서드의 검증기·조회 객체는 생성자 주입으로 준비되며, 전체 클래스는 앞의 소스 링크에서 확인합니다.
@@ -162,10 +162,10 @@ public CounselResult processCounselRequest(String customerQuestion,
 이전 메시지를 빈 목록으로 전달해 한 번의 상담을 직접 처리하며 외부 API는 호출하지 않습니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*ShoppingAgentLocalModelTest.상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다'
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson04ShoppingAgentLocalModelTest.상담_흐름은_대화_저장이나_별도_실행기_없이_직접_호출할_수_있다'
 ```
 
-[ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/ShoppingAgentLocalModelTest.java)에서 `CounselResult`의 상태·상품·정책 근거를 확인합니다.<br>
+[Lesson04ShoppingAgentLocalModelTest](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson04_conversation/Lesson04ShoppingAgentLocalModelTest.java)에서 `CounselResult`의 상태·상품·정책 근거를 확인합니다.<br>
 정책 질문 테스트에서는 모델로 전달한 도구 목록에 상품 도구가 없는지도 검사합니다.<br>
 고정 응답 테스트는 연결과 분기를 검증하며 실제 모델의 의도 해석 능력을 평가하지는 않습니다.
 

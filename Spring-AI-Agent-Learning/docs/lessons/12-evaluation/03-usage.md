@@ -45,21 +45,21 @@
 
 ## 한 응답에서 답변과 사용량을 꺼내기
 
-[TokenUsageService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/usage/TokenUsageService.java)의 전체 코드입니다.
+[Lesson03TokenUsageService](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageService.java)의 전체 코드입니다.
 
 ```java
-package com.example.ailearning.l12evaluation.usage;
+package com.example.ailearning.l12evaluation.lesson03_usage;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 /** 12-3: 채팅 응답 한 번에서 답변과 토큰 수를 함께 읽는다. */
 @Service
-public class TokenUsageService {
+public class Lesson03TokenUsageService {
     public record Reply(String answer, Integer inputTokens, Integer outputTokens) {}
     private final ChatClient chatClient;
 
-    public TokenUsageService(ChatClient.Builder builder) {
+    public Lesson03TokenUsageService(ChatClient.Builder builder) {
         chatClient = builder.build();
     }
 
@@ -101,12 +101,12 @@ usage가 없거나 전체 토큰이 양수로 보고되지 않으면 두 필드�
 서버 실행 후 `curl`은 다른 터미널에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*TokenUsageLocalModelTest'
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson03TokenUsageLocalModelTest'
 ./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:bootRun --args='--spring.profiles.active=usage-only --spring.ai.model.embedding=none'
 curl http://127.0.0.1:8101/api/evaluation/usage -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '안녕'
 ```
 
-[TokenUsageLocalModelTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/TokenUsageLocalModelTest.java)는 고정 답변과 10/5 토큰을 받아 채팅 요청 한 번, 임베딩 요청 없음까지 검증합니다.<br>
+[Lesson03TokenUsageLocalModelTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageLocalModelTest.java)는 고정 답변과 10/5 토큰을 받아 채팅 요청 한 번, 임베딩 요청 없음까지 검증합니다.<br>
 외부 모델은 호출하지 않습니다.<br>
 `bootRun`은 루트 `.env`의 키·채팅 모델로 실제 API를 호출합니다.<br>
 종료는 Ctrl+C입니다.
@@ -148,7 +148,7 @@ curl http://127.0.0.1:8101/api/evaluation/usage -H 'Content-Type: text/plain; ch
 다음 단계인 [12-5](05-failures.md)에서는 구조화 답변·사용량·전체 검색 및 생성 시간·실패 상태를 결합합니다.<br>
 채팅 응답의 토큰 수와 전체 처리 시간은 측정 범위가 다릅니다.
 
-실제 모델 연결은 [TokenUsageOpenAiLiveTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/TokenUsageOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
+실제 모델 연결은 [Lesson03TokenUsageOpenAiLiveTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageOpenAiLiveTest.java)를 별도로 실행해 확인합니다.<br>
 루트 `.env`가 필요하며 API 사용량이 발생합니다.
 
 ## 확인 질문

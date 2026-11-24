@@ -24,7 +24,7 @@ LLM-as-a-judge는 **모델이 다른 답변의 평가자 역할을 맡는 방식
 ```mermaid
 sequenceDiagram
     actor U as 학습자
-    participant C as EvaluationController
+    participant C as Lesson02EvaluationController
     participant E as Spring AI Evaluator
     participant M as 평가 모델
     U->>C: 질문과 근거와 후보 답변
@@ -37,15 +37,15 @@ sequenceDiagram
 
 그림에는 답변을 새로 만드는 호출이 없습니다.<br>
 학습자는 평가할 답변을 HTTP 요청으로 전달합니다.<br>
-`AnswerEvaluator`는 답변을 새로 생성하지 않고, 전달받은 답변을 평가하기 위해 모델을 호출합니다.<br>
+`Lesson02AnswerEvaluator`는 답변을 새로 생성하지 않고, 전달받은 답변을 평가하기 위해 모델을 호출합니다.<br>
 두 API 중 하나를 선택해 관련성 또는 사실 일치를 평가합니다.
 
 ## Service를 한 메서드씩 읽기
 
-[AnswerEvaluator.java](../../../labs/12-02-model-evaluation/src/main/java/com/example/ailearning/l12judge/AnswerEvaluator.java) 전체입니다.
+[Lesson02AnswerEvaluator.java](../../../labs/12-02-model-evaluation/src/main/java/com/example/ailearning/l12judge/lesson02_modeljudge/Lesson02AnswerEvaluator.java) 전체입니다.
 
 ```java
-package com.example.ailearning.l12judge;
+package com.example.ailearning.l12judge.lesson02_modeljudge;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.evaluation.RelevancyEvaluator;
@@ -56,11 +56,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AnswerEvaluator {
+public class Lesson02AnswerEvaluator {
     private final RelevancyEvaluator relevancyEvaluator;
     private final FactCheckingEvaluator factCheckingEvaluator;
 
-    public AnswerEvaluator(ChatClient.Builder builder) {
+    public Lesson02AnswerEvaluator(ChatClient.Builder builder) {
         relevancyEvaluator = new RelevancyEvaluator(builder.clone());
         factCheckingEvaluator = FactCheckingEvaluator.builder(builder.clone())
                 .build();
@@ -101,7 +101,7 @@ question 필드도 유효한 문자열로 전달합니다.<br>
 먼저 로컬 고정 모델 테스트를 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.EvaluationApiLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:test --tests com.example.ailearning.l12judge.lesson02_modeljudge.Lesson02EvaluationApiLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:12-02-model-evaluation:bootJar
 ```
 
@@ -130,7 +130,7 @@ curl -sS http://127.0.0.1:8104/api/evaluate/facts \
 
 ## 테스트가 확인한 범위
 
-`EvaluationApiLocalModelTest`의 4개 테스트는 로컬 HTTP 서버가 YES·NO·예상 밖 문자열을 돌려줍니다.<br>
+`Lesson02EvaluationApiLocalModelTest`의 4개 테스트는 로컬 HTTP 서버가 YES·NO·예상 밖 문자열을 돌려줍니다.<br>
 질문·근거·주장이 실제 Spring AI 평가 프롬프트에 포함되는지, 응답이 true/false로 변환되는지,
 빈 입력이 모델 호출 전에 거부되는지 확인합니다.<br>
 평가 모델의 판단 정확도를 검증하는 테스트는 아닙니다.

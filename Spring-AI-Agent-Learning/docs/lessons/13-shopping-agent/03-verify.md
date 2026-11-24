@@ -13,7 +13,7 @@
 `ProductPriceDetail`은 상품 한 건의 금액 정보이며, 여러 상품은 `List<ProductPriceDetail>`로 표현합니다.<br>
 `CandidateEvidenceSelection`에는 `productIds`, `sourceIds`만 있습니다.<br>
 자연어 답변 문장은 받지 않습니다.<br>
-`CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다.<br>
+`Lesson03CounselResultVerifier.verifySelection()`이 실제 도구 결과와 비교합니다.<br>
 검증 후 `createVerifiedAnswer()`가 실제 금액과 정책 원문으로 표시 문장을 만듭니다.
 
 ```java
@@ -88,7 +88,7 @@
 <details>
 <summary>해설</summary>
 
-`CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다.<br>
+`Lesson03CounselResultVerifier.verifySelection()`이 상품 ID는 `CounselToolResults.priceDetailFor()`에서, 정책 ID는 `policyResultFor()`에서 찾아 조회 사실이 없으면 거절합니다.<br>
 다만 상품과 정책을 함께 요청했는지까지 검사하지 않아, 유효한 상품만 선택하고 정책 출처를 누락해도 `VERIFIED`가 될 수 있습니다.
 
 </details>

@@ -1,6 +1,10 @@
 package com.example.ailearning.l11mcp;
 
-import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+import com.example.ailearning.l11mcp.lesson03_workflow.Lesson03McpWorkflowService;
+import com.example.ailearning.l11mcp.lesson04_agent.Lesson04McpAgentService;
+import com.example.ailearning.l11mcp.lesson05_hybrid.Lesson05McpHybridService;
+
+import com.example.ailearning.l11mcp.lesson02_directcall.Lesson02ShoppingMcpGateway;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,13 +17,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/mcp")
 public class ShoppingMcpController {
-    private final ShoppingMcpGateway shoppingMcpGateway;
-    private final McpWorkflowService workflowService;
-    private final McpAgentService agentService;
-    private final McpHybridService hybridService;
+    private final Lesson02ShoppingMcpGateway shoppingMcpGateway;
+    private final Lesson03McpWorkflowService workflowService;
+    private final Lesson04McpAgentService agentService;
+    private final Lesson05McpHybridService hybridService;
 
-    public ShoppingMcpController(ShoppingMcpGateway shoppingMcpGateway,
-            McpWorkflowService workflowService, McpAgentService agentService, McpHybridService hybridService) {
+    public ShoppingMcpController(Lesson02ShoppingMcpGateway shoppingMcpGateway,
+            Lesson03McpWorkflowService workflowService, Lesson04McpAgentService agentService, Lesson05McpHybridService hybridService) {
         this.shoppingMcpGateway = shoppingMcpGateway;
         this.workflowService = workflowService;
         this.agentService = agentService;

@@ -94,7 +94,7 @@ Spring AI는 임베딩 모델 호출과 벡터 저장소 연결을 돕습니다.
 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests com.example.ailearning.l09search.SearchLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests com.example.ailearning.l09search.lesson03_search.Lesson03SearchLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootRun
 ```

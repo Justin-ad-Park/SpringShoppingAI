@@ -11,7 +11,7 @@
 ## 기본 검색에서 비교·필터로 확장하기
 
 이 수업은 프로필을 지정하지 않은 기본 실행입니다.<br>
-[SearchService](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/SearchService.java)의 `compareSearchResults()`가 문자열 검색과 벡터 검색을 묶고, `searchByVector()`가 하한·카테고리 필터를 추가합니다.<br>
+[Lesson03SearchService](../../../labs/09-00-embeddings-search/src/main/java/com/example/ailearning/l09search/lesson03_search/Lesson03SearchService.java)의 `compareSearchResults()`가 문자열 검색과 벡터 검색을 묶고, `searchByVector()`가 하한·카테고리 필터를 추가합니다.<br>
 09-2의 query·topK 검색과 차이를 비교하세요.
 
 ## 추가할 검색 조건의 뜻
@@ -40,7 +40,7 @@
 
 ## 09-2의 검색 코드에 조건 추가하기
 
-다음은 `SearchService.searchByVector()`의 실제 메서드입니다.<br>
+다음은 `Lesson03SearchService.searchByVector()`의 실제 메서드입니다.<br>
 09-2의 `query`·`topK` 설정에 유사도 하한과 카테고리 필터를 추가합니다.
 
 ```java
@@ -78,7 +78,7 @@ private List<SearchHit> searchByVector(String query, int topK, double threshold,
 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests com.example.ailearning.l09search.SearchLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:test --tests com.example.ailearning.l09search.lesson03_search.Lesson03SearchLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:09-00-embeddings-search:bootRun
 curl -sS http://127.0.0.1:8099/api/embedding \
   -H 'Content-Type: text/plain; charset=UTF-8' --data-raw '배송비'
@@ -106,7 +106,7 @@ bootRun은 **시작 시 문서 임베딩부터 실제 API를 호출**합니다.<
 카테고리가 잘못되거나 topK/threshold가 범위를 벗어나면 400입니다.<br>
 threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0.5는 서비스 품질을 보장하는 값이 아닙니다.
 
-[SearchLocalModelTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchLocalModelTest.java)는 실제 어댑터와 저장소를 사용합니다.<br>
+[Lesson03SearchLocalModelTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/lesson03_search/Lesson03SearchLocalModelTest.java)는 실제 어댑터와 저장소를 사용합니다.<br>
 테스트 서버는 정해진 단어군에 3차원 직교 벡터를 반환해 적재·검색·필터를 재현합니다.<br>
 임베딩 API의 정상 벡터 반환과 검색 API의 잘못된 조건 거부는 서로 다른 테스트로 확인합니다.<br>
 잘못된 topK·threshold·category는 매개변수 테스트로 각각 실행하므로 어떤 조건에서 실패했는지 구분할 수 있습니다.<br>
@@ -115,7 +115,7 @@ threshold 숫자는 실제 질문 세트로 조정해야 하며, 이 예제의 0
 
 ## 실제 검색 결과를 해석하기
 
-[SearchOpenAiLiveTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/SearchOpenAiLiveTest.java)는 벡터가 생성되고 검색 결과가 반환되는지 검사합니다.<br>
+[Lesson03SearchOpenAiLiveTest](../../../labs/09-00-embeddings-search/src/test/java/com/example/ailearning/l09search/lesson03_search/Lesson03SearchOpenAiLiveTest.java)는 벡터가 생성되고 검색 결과가 반환되는지 검사합니다.<br>
 테스트에서 threshold를 0.0으로 두므로 결과가 있다는 사실만으로 관련 문서를 잘 찾았다고 판단할 수 없습니다.
 
 출력의 ID·원문·점수를 아래 기준으로 비교합니다.<br>

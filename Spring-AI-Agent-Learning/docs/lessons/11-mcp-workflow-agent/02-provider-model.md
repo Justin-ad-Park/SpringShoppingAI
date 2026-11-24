@@ -12,12 +12,12 @@
 
 ## 제공되는 Provider로 모델에 연결하기
 
-원격 도구를 모델이 선택하게 연결하는 최소 코드는 [BasicMcpChatService](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/basic/BasicMcpChatService.java)입니다.<br>
+원격 도구를 모델이 선택하게 연결하는 최소 코드는 [Lesson02BasicMcpChatService](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson02_modelcall/Lesson02BasicMcpChatService.java)입니다.<br>
 제공되는 `SyncMcpToolCallbackProvider`가 도구 목록을 콜백으로 만들고 Spring AI가 실제 원격 호출을 연결합니다.<br>
 아래는 전체 Service입니다.
 
 ```java
-package com.example.ailearning.l11mcp.basic;
+package com.example.ailearning.l11mcp.lesson02_modelcall;
 
 import io.modelcontextprotocol.client.McpSyncClient;
 import java.util.List;
@@ -28,11 +28,11 @@ import org.springframework.stereotype.Service;
 
 /** 11-2: 제공되는 Provider로 MCP 도구를 모델에 연결한다. 자체 실행기를 사용하지 않는다. */
 @Service
-public class BasicMcpChatService {
+public class Lesson02BasicMcpChatService {
     private final ChatClient chatClient;
     private final SyncMcpToolCallbackProvider toolProvider;
 
-    public BasicMcpChatService(ChatClient.Builder builder, List<McpSyncClient> mcpClients) {
+    public Lesson02BasicMcpChatService(ChatClient.Builder builder, List<McpSyncClient> mcpClients) {
         chatClient = builder.build();
         toolProvider = SyncMcpToolCallbackProvider.builder()
                 .mcpClients(mcpClients)
@@ -60,7 +60,7 @@ curl http://127.0.0.1:8106/api/mcp/basic -H 'Content-Type: text/plain; charset=U
 
 이 요청은 실제 채팅 모델과 MCP 서버를 사용합니다.<br>
 모델을 호출하지 않는 [11-2의 도구 목록·배송 정책 조회 API](02-direct-call.md)와 구분하세요.<br>
-[로컬 테스트](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다`는 도구 이름을 Provider에서 얻어 고정 모델이 선택하게 하고, 실제 MCP 결과가 다음 모델 입력에 들어갔는지 검사합니다.
+[로컬 테스트](../../../labs/11-00-mcp-workflow-agent/src/test/java/com/example/ailearning/l11mcp/lesson06_comparison/Lesson06McpComparisonLocalModelTest.java)의 `제공_Provider만으로_원격_도구_결과를_모델에_전달한다`는 도구 이름을 Provider에서 얻어 고정 모델이 선택하게 하고, 실제 MCP 결과가 다음 모델 입력에 들어갔는지 검사합니다.
 
 ## 직접 호출과 비교하기
 

@@ -8,7 +8,7 @@ Spring AI 본체의 ChatModel 대신 **Spring AI Community의 TypeSafe Starter 0
 
 1. [application.yml](src/main/resources/application.yml): 키·주소·모델·타임아웃·재시도 설정.
 2. [ShoppingDecisionController](src/main/java/com/example/ailearning/l14jev/ShoppingDecisionController.java): text/plain 요청을 세 Service에 전달.
-3. [IntentClassificationService](src/main/java/com/example/ailearning/l14jev/IntentClassificationService.java), [SupportPriorityService](src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java), [HumanSupportRequestService](src/main/java/com/example/ailearning/l14jev/HumanSupportRequestService.java): 질문 정의 → 요청 생성 → HTTP 호출 → 타입별 응답 조회.
+3. [Lesson01IntentClassificationService](src/main/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01IntentClassificationService.java), [Lesson02SupportPriorityService](src/main/java/com/example/ailearning/l14jev/lesson02_score/Lesson02SupportPriorityService.java), [Lesson03HumanSupportRequestService](src/main/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03HumanSupportRequestService.java): 질문 정의 → 요청 생성 → HTTP 호출 → 타입별 응답 조회.
 4. [SupportRoutingPolicy](src/main/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicy.java): 분류 결과를 서비스 처리 기준으로 변환.<br>
    상태 변경·업무 도구 실행은 없습니다.
 
@@ -33,7 +33,7 @@ SDK 응답과 Java 정책을 적용한 서비스 결과를 구분하며, Live �
 모든 Gradle 명령은 저장소 루트에서 실행합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*LocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
 ```
 
 테스트는 application-test.yml에서 루트 .env 읽기를 끄고 더미 키·모델을 사용합니다.<br>
@@ -42,9 +42,9 @@ SDK 응답과 Java 정책을 적용한 서비스 결과를 구분하며, Live �
 
 | 테스트 | 확인 범위 |
 |---|---|
-| JevLocalModelTest | 실제 SDK·Starter·Controller·정책 연결, 요청 state·criteria·모델·인증 헤더, 응답 변환, 공백 입력 400, 모델 장애·타입 오류 전파 |
+| 소주제별 LocalModelTest · 공통 JevInputValidationLocalModelTest | 실제 SDK·Starter·Controller·정책 연결, 요청 state·criteria·모델·인증 헤더, 응답 변환, 공백 입력 400, 모델 장애·타입 오류 전파 |
 | SupportRoutingPolicyUnitTest | confidence 0.7, score 0.5·1.5, Noul 0.2·0.8의 경계값 |
-| JevLiveTest | 상품 추천·배송 문의의 의도 구분, 일반·긴급 문의의 Score 비교, 상담원 요청·비요청의 Noul 비교. 소수 예제이며 품질 통계는 측정하지 않음 |
+| 소주제별 LiveTest | 상품 추천·배송 문의의 의도 구분, 일반·긴급 문의의 Score 비교, 상담원 요청·비요청의 Noul 비교. 소수 예제이며 품질 통계는 측정하지 않음 |
 
 테스트별 시작 이름과 HTTP 결과를 출력하며 assertion으로 검증합니다.<br>
 고정 응답 테스트가 한국어 의미 판단을 검증하는 것은 아닙니다.<br>
@@ -86,15 +86,15 @@ curl -X POST http://localhost:8114/api/jev/human-support -H 'Content-Type: text/
 로컬 검증용 클래스 필터를 빼면 Live도 실행되므로 주의합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*LiveTest'
 ```
 
 ### Live 기능별 선택 실행
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLiveTest.Choice*'
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLiveTest.Score*'
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLiveTest.Noul*'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson01JevChoiceLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson02JevScoreLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson03JevNoulLiveTest'
 ```
 
 각 기능을 선택하면 두 고객 요청과 결과를 출력합니다.<br>
@@ -117,3 +117,15 @@ Choice는 명확한 두 요청의 예상 의도를 검증하고, Score·Noul은 
   이번 기본 예제는 기능별로 한 질문만 보냅니다.
 
 [Choice](../../docs/lessons/14-jev/01-choice-intent.md) · [Score](../../docs/lessons/14-jev/02-score-priority.md) · [Noul](../../docs/lessons/14-jev/03-noul-human-support.md)
+
+## 소주제 번호로 코드 찾기
+
+번호가 붙은 클래스는 처음 소개하는 소주제의 예제입니다.<br>
+Application·공통 Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.<br>
+후속 소주제는 앞서 만든 클래스를 재사용할 수 있습니다.
+
+| 소주제 | 실행 코드 | 전용 테스트 |
+|---|---|---|
+| 14-1 | [Lesson01IntentClassificationService](src/main/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01IntentClassificationService.java) | [Lesson01JevChoiceLocalModelTest](src/test/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01JevChoiceLocalModelTest.java) · [Lesson01JevChoiceLiveTest](src/test/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01JevChoiceLiveTest.java) |
+| 14-2 | [Lesson02SupportPriorityService](src/main/java/com/example/ailearning/l14jev/lesson02_score/Lesson02SupportPriorityService.java) | [Lesson02JevScoreLocalModelTest](src/test/java/com/example/ailearning/l14jev/lesson02_score/Lesson02JevScoreLocalModelTest.java) · [Lesson02JevScoreLiveTest](src/test/java/com/example/ailearning/l14jev/lesson02_score/Lesson02JevScoreLiveTest.java) |
+| 14-3 | [Lesson03HumanSupportRequestService](src/main/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03HumanSupportRequestService.java) | [Lesson03JevNoulLocalModelTest](src/test/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03JevNoulLocalModelTest.java) · [Lesson03JevNoulLiveTest](src/test/java/com/example/ailearning/l14jev/lesson03_noul/Lesson03JevNoulLiveTest.java) |

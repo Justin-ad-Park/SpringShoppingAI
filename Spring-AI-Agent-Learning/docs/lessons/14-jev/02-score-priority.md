@@ -22,7 +22,7 @@ Score는 애플리케이션이 낮은 단계부터 나열한 기준으로 고객
 
 ## 코드 읽기
 
-[SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다.<br>
+[Lesson02SupportPriorityService](../../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/lesson02_score/Lesson02SupportPriorityService.java)는 `Score.of(질문, 낮은 단계, 중간 단계, 높은 단계)`로 기준을 정의합니다.<br>
 다음은 `assessPriority()`의 실제 발췌입니다.
 
 ```java
@@ -38,7 +38,7 @@ Score는 애플리케이션이 낮은 단계부터 나열한 기준으로 고객
     }
 ```
 
-`SupportPriorityService.assessPriority()`는 Jev 응답에서 점수·confidence·항목별 확률을 읽고, `SupportRoutingPolicy`가 정한 상담 우선순위와 함께 `SupportPriorityResult`로 반환합니다.
+`Lesson02SupportPriorityService.assessPriority()`는 Jev 응답에서 점수·confidence·항목별 확률을 읽고, `SupportRoutingPolicy`가 정한 상담 우선순위와 함께 `SupportPriorityResult`로 반환합니다.
 
 모델의 `score`는 단계별 확률을 반영한 값이므로 소수가 가능합니다.<br>
 예를 들어 0·1·2 단계의 확률이 각각 0.1·0.2·0.7이면 `0×0.1 + 1×0.2 + 2×0.7 = 1.6`입니다.<br>
@@ -73,14 +73,14 @@ Jev 원본 응답에는 단계 설명인 `legend`도 포함됩니다.<br>
 
 ## 검증
 
-[JevLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLocalModelTest.java)는 순서 있는 기준 배열의 전송과 소수 점수 변환을 검사합니다.<br>
+[Lesson02JevScoreLocalModelTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson02_score/Lesson02JevScoreLocalModelTest.java)는 순서 있는 기준 배열의 전송과 소수 점수 변환을 검사합니다.<br>
 [정책 단위 테스트](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/domain/SupportRoutingPolicyUnitTest.java)는 0.5·1.5·0.7 경계와 낮은 confidence의 REVIEW 우선 적용을 검증합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*JevLocalModelTest.Score*' --tests '*SupportRoutingPolicyUnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*Lesson02JevScoreLocalModelTest.Score*' --tests '*SupportRoutingPolicyUnitTest'
 ```
 
-실제 Jev의 판단은 [JevLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/JevLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
+실제 Jev의 판단은 [Lesson02JevScoreLiveTest](../../../labs/14-00-jev-decisions/src/test/java/com/example/ailearning/l14jev/lesson02_score/Lesson02JevScoreLiveTest.java)에서 대조 입력 두 개로 확인할 수 있습니다.<br>
 [Live 기능별 선택 실행](../../../labs/14-00-jev-decisions/README.md#live-기능별-선택-실행) 명령은 실제 API를 호출하며 사용량이 발생합니다.
 
 ## 확인 질문

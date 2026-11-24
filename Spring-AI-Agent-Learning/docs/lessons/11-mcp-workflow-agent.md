@@ -54,11 +54,11 @@ MCP로 연결한 같은 도구를 고정 절차에서도, 모델이 선택하는
 | API | 역할 | 이 예제에서의 위치 |
 |---|---|---|
 | `McpSyncClient` | MCP Java SDK의 동기 클라이언트 | 서버의 도구 목록 조회와 호출 |
-| `SyncMcpToolCallback` | 원격 도구를 Spring AI 도구 계약으로 연결 | `ShoppingMcpGateway`에서 생성 |
+| `SyncMcpToolCallback` | 원격 도구를 Spring AI 도구 계약으로 연결 | `Lesson02ShoppingMcpGateway`에서 생성 |
 | `ToolCallback` | 도구 정의와 실행 방법을 다루는 Spring AI 인터페이스 | 직접 실행과 모델에 제공할 도구의 연결 |
 | `ChatClient`의 `.toolCallbacks(...)` | 이번 모델 요청에서 사용할 도구 등록 | Agent와 Hybrid 방식 |
 
-자동 설정이 클라이언트 연결을 준비하고, 예제의 `ShoppingMcpGateway`가 서버 목록을 읽어 콜백을 만듭니다.<br>
+자동 설정이 클라이언트 연결을 준비하고, 예제의 `Lesson02ShoppingMcpGateway`가 서버 목록을 읽어 콜백을 만듭니다.<br>
 모델이 도구 이름과 인자를 출력하면 Java가 콜백을 실행하고, MCP 클라이언트가 서버로 전달합니다.<br>
 모델이 직접 서버 주소에 접속하는 구조가 아닙니다.
 

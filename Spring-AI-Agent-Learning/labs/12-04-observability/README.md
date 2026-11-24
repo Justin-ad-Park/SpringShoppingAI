@@ -6,7 +6,7 @@
 저장소 루트에서:
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.ObservationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationLocalModelTest
 ./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootJar
 ./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:bootRun
 ```
@@ -23,16 +23,26 @@ bootRun은 루트 .env의 OPENAI_API_KEY, OPENAI_MODEL로 실제 호출합니다
 이 의존성은 테스트에만 적용됩니다.<br>
 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
 
-- `ObservationLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
-- `ObservationOpenAiLiveTest`: 실제 OpenAI에 연결합니다.<br>
+- `Lesson04ObservationLocalModelTest`: 로컬 고정 응답으로 정상·실패 처리를 재현합니다.
+- `Lesson04ObservationOpenAiLiveTest`: 실제 OpenAI에 연결합니다.<br>
   루트 `.env`가 필요하며 API 사용량이 발생합니다.
 - 콘솔에서 테스트 시작 시 빈 줄과 `===== [ 테스트 메서드명 ] ======`을 한 번 출력하고, 그 아래에서 응답·검증 대상 값을 확인합니다.<br>
   출력과 별도로 `assertThat` 검증도 유지합니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.ObservationLocalModelTest
-./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.ObservationOpenAiLiveTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationLocalModelTest
+./gradlew :Spring-AI-Agent-Learning:labs:12-04-observability:test --tests com.example.ailearning.l12observe.lesson04_observability.Lesson04ObservationOpenAiLiveTest
 ```
 
 IntelliJ에서는 원하는 테스트 클래스나 한글 메서드의 Run을 선택합니다.<br>
 클래스 필터 없이 모듈의 전체 `test`를 실행하면 Live도 포함됩니다.
+
+## 소주제 번호로 코드 찾기
+
+번호가 붙은 클래스는 처음 소개하는 소주제의 예제입니다.<br>
+Application·공통 Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.<br>
+후속 소주제는 앞서 만든 클래스를 재사용할 수 있습니다.
+
+| 소주제 | 실행 코드 | 전용 테스트 |
+|---|---|---|
+| 12-4 | [Lesson04ObservedChatService](src/main/java/com/example/ailearning/l12observe/lesson04_observability/Lesson04ObservedChatService.java) | [Lesson04ObservationLocalModelTest](src/test/java/com/example/ailearning/l12observe/lesson04_observability/Lesson04ObservationLocalModelTest.java) · [Lesson04ObservationOpenAiLiveTest](src/test/java/com/example/ailearning/l12observe/lesson04_observability/Lesson04ObservationOpenAiLiveTest.java) |

@@ -15,7 +15,7 @@ SageMaker나 모델 재학습은 사용하지 않습니다.
 1. [분류표](src/main/resources/intent-catalog.json): main_intent는 대분류, sub_intents는 그 업무의 소분류 목록입니다.<br>
    총 10개 업무·40개 소분류입니다.
 2. [프롬프트](src/main/resources/prompts/intent-classification.txt): 필드의 의미·분류 규칙·문의/응답 예시·JSON 트리를 넣을 위치를 읽습니다.
-3. [Service](src/main/java/com/example/ailearning/l13intent/IntentClassificationService.java): 생성자에서 JSON 트리를 삽입하고 classify()에서 한 번 요청해 두 코드를 함께 받습니다.
+3. [Service](src/main/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationService.java): 생성자에서 JSON 트리를 삽입하고 classify()에서 한 번 요청해 두 코드를 함께 받습니다.
 4. [IntentCatalog](src/main/java/com/example/ailearning/l13intent/domain/IntentCatalog.java): containsPair()가 같은 가지의 코드 조합인지 검사합니다.
 
 의도 분류만 수행하는 독립 모듈이며 기본 상담 모듈을 실행하거나 수정할 필요가 없습니다.<br>
@@ -28,7 +28,7 @@ UnitTest는 코드 조합, LocalModelTest는 실제 전송 트리·응답 변환
 로컬 모델은 고정 HTTP 응답이며 실제 의도 분류 정확도의 증거는 아닙니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentCatalogUnitTest' --tests '*IntentClassificationLocalModelTest' :Spring-AI-Agent-Learning:labs:13-05-intent-classification:bootJar
+./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentCatalogUnitTest' --tests '*Lesson05IntentClassificationLocalModelTest' :Spring-AI-Agent-Learning:labs:13-05-intent-classification:bootJar
 ```
 
 각 테스트는 TestNamePrinter로 메서드명을 한 번 출력합니다.<br>
@@ -54,7 +54,7 @@ curl -sS http://127.0.0.1:8107/api/intents \
 
 ```bash
 # 실제 OpenAI 호출이며 API 사용량이 발생합니다.
-./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*IntentClassificationOpenAiLiveTest'
+./gradlew :Spring-AI-Agent-Learning:labs:13-05-intent-classification:test --tests '*Lesson05IntentClassificationOpenAiLiveTest'
 ```
 
 Live는 프롬프트의 출력 예시와 다른 반품 수거 일정 문의 한 사례를 확인합니다.<br>
@@ -76,3 +76,13 @@ API는 `main_intent`·`sub_intent`를 반환하고, 소분류는 FEE처럼 부�
 
 
 다른 OpenAI 모델과 분류 품질을 비교하는 Live 실습은 [13-6 의도 분류 모델 품질 비교](../13-06-intent-quality-evaluation/README.md)에서 진행합니다.
+
+## 소주제 번호로 코드 찾기
+
+번호가 붙은 클래스는 처음 소개하는 소주제의 예제입니다.<br>
+Application·공통 Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.<br>
+후속 소주제는 앞서 만든 클래스를 재사용할 수 있습니다.
+
+| 소주제 | 실행 코드 | 전용 테스트 |
+|---|---|---|
+| 13-5 | [Lesson05IntentClassificationService](src/main/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationService.java) | [Lesson05IntentClassificationLocalModelTest](src/test/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationLocalModelTest.java) · [Lesson05IntentClassificationOpenAiLiveTest](src/test/java/com/example/ailearning/l13intent/lesson05_intent/Lesson05IntentClassificationOpenAiLiveTest.java) |

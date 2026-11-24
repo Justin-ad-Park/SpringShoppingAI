@@ -76,7 +76,7 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 | 5 | [실패·지연·재시도 관찰](12-evaluation/05-failures.md) | `12-00-evaluation` | 잘못된 답변과 요청 실패 구분, 02·05 보충 테스트로 제약·재시도 결과 비교 |
 | 선택 6 | [평가 결과로 변경을 판단하고 운영에서 관찰하기](12-evaluation/06-production-evaluation.md) | 설계 보충 | 고정 사례·반복 평가·운영 지표를 함께 해석 |
 
-12-1은 모델 없는 RuleBasedEvaluatorUnitTest, 12-3은 usage-only 프로필의 TokenUsageService로 시작합니다.<br>
+12-1은 모델 없는 Lesson01RuleBasedEvaluatorUnitTest, 12-3은 usage-only 프로필의 Lesson03TokenUsageService로 시작합니다.<br>
 실제 RAG와 규칙·사용량·실패를 결합하는 실행은 12-5입니다.<br>
 구현·테스트 대응은 [README](../../labs/12-00-evaluation/README.md)에 있습니다.
 
@@ -89,7 +89,7 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 명령은 저장소 루트 기준입니다.
 
 ```bash
-./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*RuleBasedEvaluatorUnitTest'
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson01RuleBasedEvaluatorUnitTest'
 ```
 
 표준 API 추가 수업은 표에 적힌 별도 모듈의 README 명령을 사용합니다.

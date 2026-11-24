@@ -6,7 +6,7 @@
 
 ```mermaid
 sequenceDiagram
-    participant A as McpAgentService
+    participant A as Lesson04McpAgentService
     participant L as 모델
     participant M as shopping-mcp
     A->>L: 질문 + 도구 설명·입력 스키마
@@ -27,7 +27,7 @@ sequenceDiagram
 
 ## 실행 기록을 추가한 Agent
 
-[11-2 모델 연결 보충](02-provider-model.md)의 `BasicMcpChatService`가 제공 Provider만 사용하는 최소 예제입니다.<br>
+[11-2 모델 연결 보충](02-provider-model.md)의 `Lesson02BasicMcpChatService`가 제공 Provider만 사용하는 최소 예제입니다.<br>
 이 수업은 비교 실험을 위해 `McpToolExecutor`로 호출 기록과 실행 상한을 추가합니다.<br>
 Hybrid에서 사용하는 인자 제한은 여기서는 적용하지 않습니다.<br>
 기본 연결과 자체 제어를 구분해 읽으세요.
@@ -39,13 +39,15 @@ Hybrid에서 사용하는 인자 제한은 여기서는 적용하지 않습니�
 생성자의 `maxToolCallAttempts`는 호출 시도 상한이며, 마지막 `null`은 11-5의 추가 조건 고정을 사용하지 않는다는 뜻입니다.
 
 
-[전체 소스: McpAgentService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/McpAgentService.java)
+[전체 소스: Lesson04McpAgentService.java](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/lesson04_agent/Lesson04McpAgentService.java)
 
 ```java
-package com.example.ailearning.l11mcp;
+package com.example.ailearning.l11mcp.lesson04_agent;
+
+import com.example.ailearning.l11mcp.McpRunResult;
 
 import com.example.ailearning.l11mcp.tools.McpToolExecutor;
-import com.example.ailearning.l11mcp.tools.ShoppingMcpGateway;
+import com.example.ailearning.l11mcp.lesson02_directcall.Lesson02ShoppingMcpGateway;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +55,7 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
-public class McpAgentService {
+public class Lesson04McpAgentService {
     private static final String MCP_AGENT_INSTRUCTION = """
             TASK:MCP_AGENT
             제공된 MCP 도구 중 필요한 도구와 인자를 선택하세요.
@@ -64,12 +66,12 @@ public class McpAgentService {
             도구가 필요 없는 인사에는 도구 없이 답하세요.
             """;
     private final ChatClient chatClient;
-    private final ShoppingMcpGateway shoppingMcpGateway;
+    private final Lesson02ShoppingMcpGateway shoppingMcpGateway;
     private final ObjectMapper objectMapper;
     private final int maxToolCallAttempts;
 
-    public McpAgentService(ChatClient.Builder builder,
-            ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
+    public Lesson04McpAgentService(ChatClient.Builder builder,
+            Lesson02ShoppingMcpGateway shoppingMcpGateway, ObjectMapper objectMapper,
             @Value("${learning.mcp.max-tool-calls}") int maxToolCallAttempts) {
         this.chatClient = builder.build();
         this.shoppingMcpGateway = shoppingMcpGateway;
@@ -109,7 +111,7 @@ public class McpAgentService {
 11-3의 요청에서 URL 끝을 `/agent`로 바꿔 실행합니다.<br>
 `toolCalls`의 이름·인자·결과를 확인하세요.<br>
 고정 모델 테스트는 일부러 “총액은 1원”이라는 잘못된 최종 문장을 반환합니다.<br>
-`McpAgentService`가 모델의 최종 답변에 적힌 금액을 검증하지 않고 그대로 반환하는 점을 확인합니다.<br>
+`Lesson04McpAgentService`가 모델의 최종 답변에 적힌 금액을 검증하지 않고 그대로 반환하는 점을 확인합니다.<br>
 다음 수업에서는 Hybrid 방식의 서비스에 금액 검증을 추가합니다.
 
 ## 확인 질문
