@@ -48,7 +48,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 문맥 | 08 Advisor | 기본 로거 → 등록 범위 → 메모리 파라미터 → 단일 Advisor 전후 처리 → 두 Advisor의 order → 도구 재요청 → 반복 기준 배치 | 소수업별 Service·LocalModel·Live로 단일 호출·정렬·도구 반복을 따로 확인한 뒤 연결 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-00-embeddings-search.md) |
 | 임베딩 확장 | 09 보충 1 DJL 로컬 임베딩 | 로컬 E5 모델 준비 → DJL 추론 → Spring AI 어댑터 → 정책 검색 | 질문·문서 접두어와 로컬 추론을 설명하고 09단원 방식으로 결과 검증 | [교재·실습](lessons/09-01-djl-embeddings.md) |
-| 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
+| 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 관련 정책 항목 검색 → 필요한 내용으로 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
 | 연결 | 11 MCP Workflow·Agent·Hybrid | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
 | 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |

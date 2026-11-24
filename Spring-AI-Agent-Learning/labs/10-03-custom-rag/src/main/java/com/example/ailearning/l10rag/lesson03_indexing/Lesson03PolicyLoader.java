@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** 읽기 → 제목 단위 분할 → 출처 메타데이터 부여. 짧은 학습 문서 전용이다. */
+/** 하나의 정책 파일을 ## 항목별로 나누고 ID·원문·출처를 부여한다. 이 교재의 Markdown 형식 전용이다. */
 public final class Lesson03PolicyLoader {
     private Lesson03PolicyLoader() {}
     public static List<Document> loadDocuments() throws IOException {

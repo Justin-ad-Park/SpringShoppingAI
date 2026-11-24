@@ -75,8 +75,60 @@ class Lesson04RagLocalModelTest {
                 .getFirst()
                 .path("messages")
                 .toString();
-        assertThat(messages).contains("REFERENCE_START", "return-sealed", "7일", "return-opened");
+        output.printValue("채팅 모델에 전달한 질문과 정책 항목", messages);
+        assertThat(messages).contains("REFERENCE_START", "미개봉 반품 기간", "return-sealed", "7일", "return-opened");
+        assertThat(messages).doesNotContain("[shipping]", "[delivery-schedule]", "[refund]", "[coupon]", "무료배송", "쿠폰은 주문서");
         assertThat(MODEL.embeddings().getRequests().toString()).contains("미개봉", "반품");
+    }
+
+    @Test
+    void 배송비_질문에는_관련_정책만_채팅_모델에_전달한다() throws Exception {
+        // Given: 배송비 근거를 인용하는 모델 응답을 준비한다.
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage(
+                "{\"answerable\":true,\"answer\":\"상품 금액 30000원 이상이면 무료배송입니다.\",\"sourceIds\":[\"shipping\"]}"));
+
+        // When: 여러 정책이 들어 있는 문서에서 배송비를 문의한다.
+        var response = post("무료배송은 얼마부터인가요?");
+
+        // Then: 원본의 다른 항목은 보내지 않고, 배송비 계산에 필요한 조건은 함께 보낸다.
+        String messages = MODEL
+                .chat()
+                .getRequests()
+                .getFirst()
+                .path("messages")
+                .toString();
+        output.printValue("채팅 모델에 전달한 질문과 정책 항목", messages);
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(messages).contains("무료배송은 얼마부터인가요?", "[shipping]", "30000원", "할인 후 결제 금액", "합산");
+        assertThat(messages).doesNotContain("[delivery-schedule]", "[return-sealed]", "[return-opened]", "[refund]", "[coupon]", "원래 결제한 수단");
+    }
+
+    @Test
+    void 개봉_반품_질문에는_제한과_예외를_함께_전달한다() throws Exception {
+        // Given: 질문에 필요한 반품 제한만 답한 모델 응답을 준비한다.
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage(
+                "{\"answerable\":true,\"answer\":\"개봉한 상품은 단순 변심으로 반품할 수 없습니다.\",\"sourceIds\":[\"return-opened\"]}"));
+
+        // When: 개봉한 상품의 단순 변심 반품 가능 여부를 문의한다.
+        var response = post("상품을 개봉했는데 단순 변심으로 반품할 수 있나요?");
+
+        // Then: Java는 예외 문장을 임의로 지우지 않고 해당 정책 항목을 통째로 전달한다.
+        String messages = MODEL
+                .chat()
+                .getRequests()
+                .getFirst()
+                .path("messages")
+                .toString();
+        output.printValue("채팅 모델에 전달한 질문과 정책 항목", messages);
+        var body = OpenAiStubServer.JSON.readTree(response.body());
+        assertThat(body.path("status").asString()).isEqualTo("ANSWERED");
+        assertThat(body.path("sources").get(0).path("id").asString()).isEqualTo("return-opened");
+        assertThat(messages).contains("[return-opened]", "단순 변심으로 반품할 수 없습니다", "불량", "주문과 다른 상품");
+        assertThat(messages).doesNotContain("[shipping]", "[delivery-schedule]", "[refund]", "[coupon]");
     }
 
     @Test
@@ -154,13 +206,22 @@ class Lesson04RagLocalModelTest {
         server
                 .embeddings()
                 .setVectorFunction(text -> {
-                    if (text.contains("배송") || text.contains("운송")) {
-                        return new float[]{1, 0, 0};
+                    if (text.contains("배송비") || text.contains("무료배송") || text.contains("운송 요금")) {
+                        return new float[]{1, 0, 0, 0, 0, 0};
+                    }
+                    if (text.contains("환불")) {
+                        return new float[]{0, 0, 0, 1, 0, 0};
                     }
                     if (text.contains("반품") || text.contains("개봉")) {
-                        return new float[]{0, 1, 0};
+                        return new float[]{0, 0, 1, 0, 0, 0};
                     }
-                    return new float[]{0, 0, 1};
+                    if (text.contains("발송") || text.contains("배송")) {
+                        return new float[]{0, 1, 0, 0, 0, 0};
+                    }
+                    if (text.contains("쿠폰")) {
+                        return new float[]{0, 0, 0, 0, 1, 0};
+                    }
+                    return new float[]{0, 0, 0, 0, 0, 1};
                 });
         return server;
     }

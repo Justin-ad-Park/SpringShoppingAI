@@ -9,13 +9,14 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.stereotype.Service;
 
-/** 시작할 때 정책 문서를 적재하고, 질문과 가까운 정책을 검색한다. */
+/** 시작할 때 정책 항목별 원문을 적재하고, 질문과 가까운 항목만 검색한다. */
 @Service
 public class Lesson03PolicySearch {
     private final SimpleVectorStore policyVectorStore;
 
     public Lesson03PolicySearch(EmbeddingModel embeddingModel) throws IOException {
-        policyVectorStore = SimpleVectorStore.builder(embeddingModel).build();
+        policyVectorStore = SimpleVectorStore.builder(embeddingModel)
+                .build();
         policyVectorStore.add(Lesson03PolicyLoader.loadDocuments());
     }
 

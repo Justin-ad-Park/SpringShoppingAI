@@ -3,7 +3,7 @@
 **실행 코드·설정·테스트:** [labs/10-03-custom-rag](../../../labs/10-03-custom-rag/README.md).<br>
 저장소 루트에서 해당 README의 명령으로 실행합니다.
 
-**이번 목표:** 검색한 정책의 원문 위치를 출처로 확인할 수 있도록 문서 ID와 출처 정보를 붙여 적재합니다.
+**이번 목표:** 여러 정책이 담긴 파일을 항목별로 나누고, 원문과 출처를 연결해 검색할 수 있도록 적재합니다.
 
 **코드 읽기 안내:** Lesson03PolicyLoader의 구분자는 이 예제를 위한 단순한 규칙입니다.<br>
 범용 문서 파서나 표준 청킹 알고리즘이라고 생각하지 마세요.
@@ -25,11 +25,25 @@ RAG(Retrieval Augmented Generation)는 이 문서를 참고 자료로 모델에 
 
 ## 먼저 문서를 읽고 나누기
 
-`src/main/resources/policies.md`에는 학습용 배송·반품 정책이 있습니다.<br>
-하나의 긴 문서보다 질문에 필요한 작은 부분을 검색하도록 나누는 단위를 **청크(chunk)**라고 부릅니다.<br>
-이번 문서는 짧아 `##` 제목별로 분할합니다.<br>
-일반 PDF·웹 문서의 범용 분할기를 구현한 것은 아닙니다.<br>
-읽기 → 분할/메타데이터 부여 → 저장을 문서 적재 파이프라인이라고 이해하면 됩니다.
+[policies.md](../../../labs/10-03-custom-rag/src/main/resources/policies.md)는 배송비·발송 일정·미개봉 반품·개봉 반품·환불·쿠폰 정책을 한 파일에 담습니다.<br>
+각 정책에는 조건과 안내를 설명하는 문장이 여러 개 있습니다.
+
+검색할 수 있도록 나눈 문서 조각을 **청크(chunk)**라고 부릅니다.<br>
+이 예제는 `##` 제목 하나와 그 아래 본문을 정책 항목으로 보고, 본문 전체를 Document 하나에 담습니다.<br>
+정책의 조건과 예외를 함께 읽을 수 있도록 항목 안의 문장을 임의로 잘라내지 않습니다.
+
+| 파일의 제목 | 검색할 내용 |
+|---|---|
+| `shipping` | 배송비·무료배송 기준·주문 금액 합산 |
+| `delivery-schedule` | 발송 시점·도착 예상·지연 안내 |
+| `return-sealed` | 미개봉 반품 기한·접수 방법·제한 조건 |
+| `return-opened` | 개봉 후 단순 변심 제한·불량 등 예외·접수 방법 |
+| `refund` | 검수 후 환불·결제 수단·반영 기간 |
+| `coupon` | 사용 조건·유효 기간·복원 조건 |
+
+원본 파일을 그대로 저장하면 검색 결과 하나에 서로 다른 정책이 모두 포함될 수 있습니다.<br>
+항목별로 나누면 다음 수업에서 질문과 관련된 항목만 검색해 모델에 전달할 수 있습니다.<br>
+이 파서는 이 교재의 Markdown 형식용이며, 10-1의 TokenTextSplitter와 달리 제목 경계로 분할합니다.
 
 ```mermaid
 flowchart LR
@@ -45,7 +59,9 @@ flowchart LR
 
 ```markdown
 ## return-sealed
-미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.
+미개봉 상품은 수령 후 7일 이내 반품을 신청할 수 있습니다.
+포장과 구성품을 보관한 상태로 주문 내역에서 반품을 접수해야 하며, 상품을 임의로 보내기 전에 회수 안내를 받아야 합니다.
+상품별로 별도 안내된 반품 제한 조건이 있으면 그 조건도 함께 확인합니다.
 ```
 
 `Lesson03PolicyLoader`는 이 부분을 다음 값을 가진 Document 하나로 만듭니다.
@@ -53,11 +69,11 @@ flowchart LR
 | Document의 값 | 변환 결과 | 원문에서 가져온 부분 |
 |---|---|---|
 | ID | `return-sealed` | `##` 뒤의 제목 |
-| 본문 | 미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다. | 제목 다음의 내용 |
+| 본문 | 위 세 문장 전체 | 제목 다음부터 다음 `##` 이전까지의 내용 |
 | 메타데이터의 `source` | `policies.md#return-sealed` | 파일 이름과 위 ID를 연결 |
 
 이렇게 만든 ID와 출처는 나중에 검색한 정책을 식별하고 답변의 출처를 표시할 때 사용합니다.<br>
-배송·개봉 반품 정책도 같은 방식으로 바꾸어 `List<Document>`에 담습니다.
+나머지 다섯 정책도 같은 방식으로 바꾸어 `List<Document>`에 담습니다.
 
 ## 문서를 읽고 Document 목록 만들기
 
@@ -75,7 +91,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** 읽기 → 제목 단위 분할 → 출처 메타데이터 부여. 짧은 학습 문서 전용이다. */
+/** 하나의 정책 파일을 ## 항목별로 나누고 ID·원문·출처를 부여한다. 이 교재의 Markdown 형식 전용이다. */
 public final class Lesson03PolicyLoader {
     private Lesson03PolicyLoader() {}
     public static List<Document> loadDocuments() throws IOException {
@@ -125,6 +141,15 @@ public Lesson03PolicySearch(EmbeddingModel embeddingModel) throws IOException {
 질문이 오면 이미 적재한 문서를 검색하며, 그때마다 파일을 다시 읽어 적재하지 않습니다.<br>
 이 저장소는 프로세스 메모리에 보관되므로 서버를 재시작하면 문서를 다시 읽고 임베딩합니다.
 
+
+## 파일 분할 결과 확인하기
+
+[Lesson03PolicyLoaderUnitTest](../../../labs/10-03-custom-rag/src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoaderUnitTest.java)는 모델 없이 실제 정책 파일을 읽습니다.<br>
+콘솔에서 여섯 항목의 원문과 출처를 확인하고, 개봉 반품의 제한과 예외가 같은 조각에 남는지 검사합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:10-03-custom-rag:test --tests '*Lesson03PolicyLoaderUnitTest'
+```
 
 ## 확인 질문
 
