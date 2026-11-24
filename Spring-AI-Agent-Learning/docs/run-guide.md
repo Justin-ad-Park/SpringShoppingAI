@@ -155,9 +155,9 @@ API 키 없이 기본 주소 `http://127.0.0.1:11434`와 모델 `d1-omni:600m`�
 [설치·구동·중지 안내](lessons/15-ollama-decisions/01-install-and-run.md)를 먼저 진행한 뒤 [실습 README](../labs/15-00-ollama-decisions/README.md)의 명령을 따릅니다.<br>
 주소·모델을 바꿀 때만 루트 `.env`의 `OLLAMA_BASE_URL`·`OLLAMA_DECISION_MODEL`을 지정합니다.
 
-## 16단원 DJL 로컬 임베딩
+## 09단원 선택 보충: DJL 로컬 임베딩
 
-[모델 준비 안내](lessons/16-djl-embeddings/01-model-setup.md)를 먼저 진행합니다.<br>
+[모델 준비 안내](lessons/09-01-djl-embeddings/01-model-setup.md)를 먼저 진행합니다.<br>
 OpenAI 키나 Ollama 서버 없이 Java 프로세스에서 로컬 E5 모델을 실행합니다.<br>
 기본 포트는 8116이며, 모델 경로를 바꿀 때만 루트 `.env`에 `DJL_EMBEDDING_MODEL_PATH`를 지정합니다.<br>
-모델 없는 단위 테스트와 실제 로컬 모델 테스트는 [실습 README](../labs/16-00-djl-embeddings/README.md)에서 선택합니다.
+모델 없는 단위 테스트와 실제 로컬 모델 테스트는 [실습 README](../labs/09-01-djl-embeddings/README.md)에서 선택합니다.

@@ -47,13 +47,13 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-2·07-3의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 기본 로거 → 등록 범위 → 메모리 파라미터 → 단일 Advisor 전후 처리 → 두 Advisor의 order → 도구 재요청 → 반복 기준 배치 | 소수업별 Service·LocalModel·Live로 단일 호출·정렬·도구 반복을 따로 확인한 뒤 연결 | [교재·실습 완성](lessons/08-advisors.md) |
 | 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
+| 임베딩 확장 | 09 보충 1 DJL 로컬 임베딩 | 로컬 E5 모델 준비 → DJL 추론 → Spring AI 어댑터 → 정책 검색 | 질문·문서 접두어와 로컬 추론을 설명하고 09단원 방식으로 결과 검증 | [교재·실습](lessons/09-01-djl-embeddings.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
 | 연결 | 11 MCP Workflow·Agent·Hybrid | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |
 | 검증 | 12 평가와 운영 기초 | 고정 질문 평가 → Evaluator(답변의 관련성·근거 충실도를 평가하는 도구) 실습 / usage → Actuator(애플리케이션 상태와 호출 시간·토큰 사용량 등의 지표를 확인하는 Spring Boot 기능) 실습 / 실패 처리 | 코드 오류와 모델 품질 문제 구분 | [교재·실습 완성](lessons/12-evaluation.md) |
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 | 판단 확장 | 14 Jev | Choice 의도 분류·Score 시급성·Noul 상담원 요청, 커뮤니티 Starter와 전용 클라이언트 | 모델 판단값과 Java 처리 기준을 구분 | [교재·실습](lessons/14-jev.md) |
 | 판단 확장 | 15 Ollama | 로컬 설치·시작·중지, DecisionModel의 Choice·Yes/No·Score, 여러 질문·필드 입력 | 로컬 모델 판단과 Java 처리 정책을 구분 | [교재·실습](lessons/15-ollama-decisions.md) |
-| 임베딩 확장 | 16 DJL 로컬 임베딩 | 로컬 E5 모델 준비 → DJL 추론 → Spring AI 어댑터 → 정책 검색 | 질문·문서 접두어와 로컬 추론을 설명하고 09단원 방식으로 결과 검증 | [교재·실습](lessons/16-djl-embeddings.md) |
 
 13단원 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다.<br>
 상용 사례를 함께 읽습니다.<br>
@@ -84,7 +84,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
 | [13-5 계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md) | `13-05-intent-classification` | AWS 기반 JSON 의도 트리·단일 요청·코드 조합 단위 테스트·로컬/Live 테스트 |
 | [13-6 모델별 의도 분류 품질 비교](lessons/13-shopping-agent/06-intent-quality-evaluation.md) | `13-06-intent-quality-evaluation` | 동일 질문 세트로 저비용 OpenAI 모델 3종을 비교하는 Live 평가 |
-| [16 DJL 로컬 임베딩](lessons/16-djl-embeddings.md) | `16-00-djl-embeddings` | 모델 변환·E5 입력·Spring AI 연결 단위 테스트·실제 로컬 모델 검색 |
+| [09 보충 1 DJL 로컬 임베딩](lessons/09-01-djl-embeddings.md) | `09-01-djl-embeddings` | 모델 변환·E5 입력·Spring AI 연결 단위 테스트·실제 로컬 모델 검색 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.<br>
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.<br>

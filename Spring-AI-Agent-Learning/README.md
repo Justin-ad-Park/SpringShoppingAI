@@ -9,7 +9,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 ## 이번에 작성한 범위
 
-기초 00~03과 04~16 교재·실습을 작성했습니다.<br>
+기초 00~03과 04~15 교재·실습과 09단원 DJL 선택 보충을 작성했습니다.<br>
 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.<br>
 각 실행 단원은 독립 모듈로 구성하며, 단원별 테스트와 JAR 빌드 결과를 검증 기록에 정리합니다.<br>
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.<br>
@@ -23,7 +23,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 [초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요.<br>
 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.<br>
 04단원은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다.<br>
-05~16은 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
+05~15는 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
 ## 어디부터 읽을까요?
@@ -40,13 +40,13 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 8 | [07. 대화 메모리](docs/lessons/07-chat-memory.md) | 이전 질문·응답을 다음 프롬프트에 재전달·대화 격리 |
 | 9 | [08. Advisor](docs/lessons/08-advisors.md) | 호출 전후 순서·메모리 자동 연결·도구 루프 |
 | 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
-| 11 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
-| 12 | [11. MCP Workflow·Agent·Hybrid](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
-| 13 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
-| 14 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
-| 15 | [14. Jev의 Choice·Score·Noul](docs/lessons/14-jev.md) | 의도·시급성·상담원 요청 판단과 Java 정책 연결 |
-| 16 | [15. Ollama 로컬 의사결정](docs/lessons/15-ollama-decisions.md) | 설치·시작·중지, Choice·Yes/No·Score, 여러 질문·필드 입력 |
-| 17 | [16. DJL 로컬 임베딩](docs/lessons/16-djl-embeddings.md) | 한국어 E5 모델 준비·벡터 생성·Spring AI 연결·정책 검색 |
+| 11 | [09 보충 1. DJL 로컬 임베딩](docs/lessons/09-01-djl-embeddings.md) | 한국어 E5 모델 준비·벡터 생성·Spring AI 연결·정책 검색 |
+| 12 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
+| 13 | [11. MCP Workflow·Agent·Hybrid](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |
+| 14 | [12. 평가와 운영 기초](docs/lessons/12-evaluation.md) | 고정 질문 평가·usage/지연·실패 분류 |
+| 15 | [13. 작은 쇼핑 상담 Agent](docs/lessons/13-shopping-agent.md) | 상품·정책 도구 선택·후속 질문·검증·실패 시 메모리 유지 |
+| 16 | [14. Jev의 Choice·Score·Noul](docs/lessons/14-jev.md) | 의도·시급성·상담원 요청 판단과 Java 정책 연결 |
+| 17 | [15. Ollama 로컬 의사결정](docs/lessons/15-ollama-decisions.md) | 설치·시작·중지, Choice·Yes/No·Score, 여러 질문·필드 입력 |
 | 이후 | [전체 교육 계획](docs/curriculum.md) | 이후 배울 개념과 완료 기준 확인 |
 | 필요할 때 | [레퍼런스 안내](docs/references.md) | 지금 읽을 공식 문서 부분만 선택 |
 
@@ -176,7 +176,7 @@ labs 폴더명은 `단원번호-읽기순서-이름`을 사용합니다.<br>
 [15단원 교재](docs/lessons/15-ollama-decisions.md)와 [실행·중지 안내](labs/15-00-ollama-decisions/README.md)를 따라 로컬 모델로 고객 요청을 판단합니다.<br>
 Ollama 설치부터 Choice·Yes/No·Score, 여러 질문·필드 입력을 순서대로 실습합니다.
 
-## 16단원: DJL 로컬 임베딩
+## 09단원 선택 보충: DJL 로컬 임베딩
 
-[16단원 교재](docs/lessons/16-djl-embeddings.md)와 [실습 README](labs/16-00-djl-embeddings/README.md)에서 `multilingual-e5-small-ko-v2`를 준비하고 Java에서 직접 임베딩합니다.<br>
+[DJL 보충 교재](docs/lessons/09-01-djl-embeddings.md)와 [실습 README](labs/09-01-djl-embeddings/README.md)에서 `multilingual-e5-small-ko-v2`를 준비하고 Java에서 직접 임베딩합니다.<br>
 09단원의 정책 검색을 로컬 모델로 실행하며, 질문·문서 접두어와 Spring AI 어댑터를 순서대로 배웁니다.

@@ -1,0 +1,69 @@
+package com.example.ailearning.l09djl.lesson04_search;
+
+import com.example.ailearning.l09djl.PolicyDocuments;
+
+import org.springframework.context.annotation.Profile;
+
+import org.springframework.ai.document.Document;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Set;
+
+@Profile("!embedding-only")
+@Service
+public class Lesson04SearchService {
+    public record SearchHit(String id, String text, String category, Double score) {}
+    public record SearchComparison(List<SearchHit> keywordHits, List<SearchHit> vectorHits) {}
+    private final SimpleVectorStore policyVectorStore;
+
+    public Lesson04SearchService(EmbeddingModel embeddingModel) {
+        policyVectorStore = SimpleVectorStore.builder(embeddingModel)
+                .build();
+        policyVectorStore.add(PolicyDocuments.createDocuments()); // 시작 시 문서를 임베딩해 인메모리 저장소에 적재한다.
+    }
+
+    public SearchComparison compareSearchResults(String query, int topK, double threshold, String category) {
+        if (category != null && !Set.of("shipping", "returns")
+                .contains(category))
+            throw new IllegalArgumentException("category는 shipping/returns입니다.");
+        List<SearchHit> keywordHits = searchByKeyword(query, category);
+        List<SearchHit> vectorHits = searchByVector(query, topK, threshold, category);
+        return new SearchComparison(keywordHits, vectorHits);
+    }
+
+    private List<SearchHit> searchByKeyword(String query, String category) {
+        return PolicyDocuments.createDocuments()
+                .stream()
+                .filter(document -> category == null || category.equals(document
+                                .getMetadata()
+                                .get("category")))
+                .filter(document -> document
+                        .getText()
+                        .contains(query))
+                .map(this::toSearchHit)
+                .toList();
+    }
+
+    private List<SearchHit> searchByVector(String query, int topK, double threshold, String category) {
+        var vectorSearchRequest = SearchRequest.builder()
+                .query(query)
+                .topK(topK)
+                .similarityThreshold(threshold);
+        // 허용 목록으로 검사한 메타데이터 값만 필터에 사용한다.
+        if (category != null) vectorSearchRequest.filterExpression("category == '" + category + "'");
+        return policyVectorStore
+                .similaritySearch(vectorSearchRequest.build())
+                .stream()
+                .map(this::toSearchHit)
+                .toList();
+    }
+
+    private SearchHit toSearchHit(Document document) {
+        return new SearchHit(document.getId(), document.getText(), (String) document
+                .getMetadata()
+                .get("category"), document.getScore());
+    }
+}

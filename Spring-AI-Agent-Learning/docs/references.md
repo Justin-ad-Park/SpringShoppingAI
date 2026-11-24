@@ -142,7 +142,7 @@ Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/�
 실습은 Spring AI 2.1.0의 `OllamaDecisionModel` 소스와 배포 의존성으로 대조했습니다.<br>
 로컬 설치 안내와 실제 모델 실행의 검증 여부는 [15단원 검증 기록](verification/15-ollama-and-ai21-upgrade.md)에 구분합니다.
 
-## 16단원 DJL 로컬 임베딩
+## 09단원 선택 보충: DJL 로컬 임베딩
 
 - [모델 카드](https://huggingface.co/dragonkue/multilingual-e5-small-ko-v2): 모델 사양과 E5 접두어·평균 풀링·정규화 사용법.
 - [DJL 토크나이저와 모델 변환](https://docs.djl.ai/master/extensions/tokenizers/index.html): Hugging Face 모델을 Java에서 사용하기 위한 준비.
@@ -150,4 +150,4 @@ Maven Central의 Starter·SDK 0.4.0 소스 JAR에서 실제 패키지·질문/�
 - [Spring AI 임베딩 인터페이스](https://docs.spring.io/spring-ai/reference/api/embeddings.html): 기존 벡터 저장소와 로컬 추론을 연결하는 기준.
 
 내부 참고 프로젝트의 임베딩 코드·설치 안내에서 추론에 필요한 부분을 추려 독립 실습으로 구성했습니다.<br>
-설치 경로·라이브러리 조합·실제 로컬 모델 테스트 결과는 [16단원 검증 기록](verification/16-djl-embeddings.md)에 있습니다.
+설치 경로·라이브러리 조합·실제 로컬 모델 테스트 결과는 [DJL 설치·추론 검증 기록](verification/16-djl-embeddings.md)에 있습니다.
