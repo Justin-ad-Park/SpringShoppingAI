@@ -53,6 +53,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 통합 | 13 작은 상담 Agent | 이전 실습을 연결, 상품·정책·대화의 책임 통합 | 성공·실패 사례를 재현하고 설명 | [교재·실습 완성](lessons/13-shopping-agent.md) |
 | 판단 확장 | 14 Jev | Choice 의도 분류·Score 시급성·Noul 상담원 요청, 커뮤니티 Starter와 전용 클라이언트 | 모델 판단값과 Java 처리 기준을 구분 | [교재·실습](lessons/14-jev.md) |
 | 판단 확장 | 15 Ollama | 로컬 설치·시작·중지, DecisionModel의 Choice·Yes/No·Score, 여러 질문·필드 입력 | 로컬 모델 판단과 Java 처리 정책을 구분 | [교재·실습](lessons/15-ollama-decisions.md) |
+| 임베딩 확장 | 16 DJL 로컬 임베딩 | 로컬 E5 모델 준비 → DJL 추론 → Spring AI 어댑터 → 정책 검색 | 질문·문서 접두어와 로컬 추론을 설명하고 09단원 방식으로 결과 검증 | [교재·실습](lessons/16-djl-embeddings.md) |
 
 13단원 선택 보충 [계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md)는 의도·추출 정보·업무 실행을 구분한 뒤 AWS 공식 예제의 전체 의도 트리를 참고해 한 번의 모델 요청으로 대분류 10개·소분류 40개 중 조합을 선택하고, 모호함·범위 밖·복수 요청을 보류합니다.<br>
 상용 사례를 함께 읽습니다.<br>
@@ -83,6 +84,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | [12-4 관측](lessons/12-evaluation/04-actuator.md) | `12-04-observability` | Chat API·Actuator와 실제 지표 조회 테스트 |
 | [13-5 계층형 의도 분류](lessons/13-shopping-agent/05-intent-classification.md) | `13-05-intent-classification` | AWS 기반 JSON 의도 트리·단일 요청·코드 조합 단위 테스트·로컬/Live 테스트 |
 | [13-6 모델별 의도 분류 품질 비교](lessons/13-shopping-agent/06-intent-quality-evaluation.md) | `13-06-intent-quality-evaluation` | 동일 질문 세트로 저비용 OpenAI 모델 3종을 비교하는 Live 평가 |
+| [16 DJL 로컬 임베딩](lessons/16-djl-embeddings.md) | `16-00-djl-embeddings` | 모델 변환·E5 입력·Spring AI 연결 단위 테스트·실제 로컬 모델 검색 |
 
 하나의 기능을 나눠 설명하는 수업끼리는 완성된 실행 모듈을 공유합니다.<br>
 기능이 다른 추가 실습은 패키지·의존성·포트를 분리하고, 앞 단원 서비스를 호출하거나 미래 단원의 클래스를 import하지 않습니다.<br>

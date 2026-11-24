@@ -1,0 +1,12 @@
+server:
+  address: 127.0.0.1
+  port: 8116
+spring:
+  application:
+    name: learning16-djl-embeddings
+  config:
+    import: optional:file:.env[.properties]
+learning:
+  embedding:
+    # 모델 파일은 JAR 밖에 둡니다. 기본 경로는 저장소 루트 기준입니다.
+    model-path: ${DJL_EMBEDDING_MODEL_PATH:Spring-AI-Agent-Learning/labs/16-00-djl-embeddings/models/multilingual-e5-small-ko-v2}
