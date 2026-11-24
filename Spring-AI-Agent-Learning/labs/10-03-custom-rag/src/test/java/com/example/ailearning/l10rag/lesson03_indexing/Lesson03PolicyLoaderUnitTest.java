@@ -14,12 +14,16 @@ class Lesson03PolicyLoaderUnitTest {
     }
 
     @Test
-    void 한_파일의_여러_정책을_항목별로_나누고_출처를_유지한다() throws Exception {
+    void 폴더의_정책_파일들을_항목별로_나누고_출처를_유지한다() throws Exception {
         var documents = Lesson03PolicyLoader.loadDocuments();
         documents.forEach(document -> System.out.printf("정책 항목 [%s], 출처=%s%n%s%n%n",
                 document.getId(), document.getMetadata().get("source"), document.getText()));
-        assertThat(documents).extracting(document -> document.getId()).containsExactly("shipping", "delivery-schedule", "return-sealed", "return-opened", "refund", "coupon");
-        assertThat(documents).allSatisfy(document -> assertThat(document.getMetadata().get("source")).isEqualTo("policies.md#" + document.getId()));
+        assertThat(documents).extracting(document -> document.getId()).containsExactlyInAnyOrder("shipping", "delivery-schedule", "return-sealed", "return-opened", "refund", "coupon");
+        var deliveryIds = java.util.Set.of("shipping", "delivery-schedule", "coupon");
+        assertThat(documents).allSatisfy(document -> {
+            String fileName = deliveryIds.contains(document.getId()) ? "delivery-policies.md" : "return-policies.md";
+            assertThat(document.getMetadata().get("source")).isEqualTo("policies/" + fileName + "#" + document.getId());
+        });
     }
 
     @Test

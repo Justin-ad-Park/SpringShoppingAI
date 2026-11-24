@@ -75,7 +75,7 @@ curl -sS http://127.0.0.1:8100/api/rag \
 응답 형태 예시는 다음과 같습니다.
 
 ```json
-{"status":"ANSWERED","answer":"미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.","sources":[{"id":"return-sealed","location":"policies.md#return-sealed"}]}
+{"status":"ANSWERED","answer":"미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.","sources":[{"id":"return-sealed","location":"policies/return-policies.md#return-sealed"}]}
 ```
 
 실제 응답에는 원문과 점수도 포함되며 자연어 문장은 달라질 수 있습니다.<br>
@@ -87,7 +87,7 @@ curl -sS http://127.0.0.1:8100/api/rag \
 1. “미개봉 반품”과 “개봉 반품”의 검색 결과·출처·답변을 비교합니다.
 2. “우주 여행 비용”처럼 무관한 질문을 넣고 검색 점수와 보류 동작을 관찰합니다.<br>
    실제 모델에서 항상 검색 0개가 된다고 가정하지 마세요.
-3. `policies.md`의 7일을 10일로 바꾼 뒤 **재시작해 재적재**합니다.<br>
+3. `policies/return-policies.md`의 7일을 10일로 바꾼 뒤 **재시작해 재적재**합니다.<br>
    답변이 근거 변경을 반영하는지 확인하고 원복합니다.
 4. 청크를 너무 잘게 나누면 “7일”만 남고 무엇의 기간인지 사라질 수 있습니다.<br>
    문맥 보존과 검색 정밀도의 균형을 생각합니다.

@@ -68,7 +68,7 @@ class Lesson04RagLocalModelTest {
         assertThat(response.statusCode()).isEqualTo(200);
         var body = OpenAiStubServer.JSON.readTree(response.body());
         assertThat(body.path("status").asString()).isEqualTo("ANSWERED");
-        assertThat(body.path("sources").get(0).path("location").asString()).isEqualTo("policies.md#return-sealed");
+        assertThat(body.path("sources").get(0).path("location").asString()).isEqualTo("policies/return-policies.md#return-sealed");
         String messages = MODEL
                 .chat()
                 .getRequests()

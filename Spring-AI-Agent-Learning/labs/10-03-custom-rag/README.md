@@ -16,8 +16,9 @@
 
 ## 어떤 내용을 모델에 전달할까?
 
-[정책 파일](src/main/resources/policies.md)에는 배송비·발송 일정·미개봉 반품·개봉 반품·환불·쿠폰의 여섯 항목이 있고, 각 항목은 여러 문장으로 구성됩니다.<br>
-파일 전체를 항목별로 나누어 적재한 다음, 고객 질문으로 검색된 항목만 채팅 LLM에 보냅니다.<br>
+[배송·주문 혜택 정책](src/main/resources/policies/delivery-policies.md)과 [반품·환불 정책](src/main/resources/policies/return-policies.md)에 여섯 항목이 있고, 각 항목은 여러 문장으로 구성됩니다.<br>
+로더는 `policies/` 하위의 모든 `.md` 파일을 찾아 파일별·항목별로 읽습니다.<br>
+정책 파일들을 항목별로 나누어 적재한 다음, 고객 질문으로 검색된 항목만 채팅 LLM에 보냅니다.<br>
 항목 안의 조건과 예외는 함께 유지하고 모델이 질문에 필요한 답변을 작성하도록 요청합니다.
 
 검색 결과는 `/api/rag/sources?question=...`, 답변 생성은 `/api/rag`에서 확인합니다.<br>
@@ -30,7 +31,8 @@
 이 의존성은 테스트에만 적용됩니다.<br>
 각 케이스에서는 약속한 응답·도구 순서·벡터 값과 검증 내용을 읽으세요.
 
-- `Lesson03PolicyLoaderUnitTest`: 모델 없이 실제 정책 파일의 분할·출처·조건과 예외 보존을 확인합니다.
+- `Lesson03PolicyLoaderUnitTest`: 모델 없이 두 정책 파일의 분할·출처·조건과 예외 보존을 확인합니다.
+- `Lesson03PolicyJarLoadingUnitTest`: JAR 내부의 하위 폴더 탐색·확장자 필터·상대 출처를 확인하는 보조 테스트입니다.
 - `Lesson04RagLocalModelTest`: 고정 벡터와 답변으로 전달할 정책 선택·무관한 항목 제외·정상·실패 처리를 확인합니다.
 - `Lesson04RagOpenAiLiveTest`: 검색한 정책 원문·실제 OpenAI의 답변·출처 목록을 출력합니다.
   출력을 위한 별도 검색 때문에 서비스 내부 검색 외에 질문 임베딩이 한 번 더 발생합니다.<br><br>
@@ -57,5 +59,5 @@ Application·공통 Controller·도메인·자료형·테스트 보조 코드는
 
 | 소주제 | 실행 코드 | 전용 테스트 |
 |---|---|---|
-| 10-3 | [Lesson03PolicyLoader](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoader.java) · [Lesson03PolicySearch](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicySearch.java) | [Lesson03PolicyLoaderUnitTest](src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoaderUnitTest.java) |
+| 10-3 | [Lesson03PolicyLoader](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoader.java) · [Lesson03PolicySearch](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicySearch.java) | [Lesson03PolicyLoaderUnitTest](src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoaderUnitTest.java) · [JAR 호환성](src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyJarLoadingUnitTest.java) |
 | 10-4 | [Lesson04RagService](src/main/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagService.java) | [Lesson04RagLocalModelTest](src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagLocalModelTest.java) · [Lesson04RagOpenAiLiveTest](src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagOpenAiLiveTest.java) |
