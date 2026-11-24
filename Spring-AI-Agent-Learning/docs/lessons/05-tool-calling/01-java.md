@@ -90,7 +90,7 @@ public class ProductCatalog {
 
 `search()`는 일반 Java 필터입니다.<br>
 `calculatePriceDetail()`는 모델이 보내는 가격을 받지 않고 ID로 조회한 가격으로 계산합니다.<br>
-[Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/Product.java)와 [ProductPriceDetail](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductPriceDetail.java)는 04장에서 배운 record입니다.
+[Product](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/Product.java)와 [ProductPriceDetail](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/domain/ProductPriceDetail.java)는 04단원에서 배운 record입니다.
 
 
 ## 상품 기능만 테스트하기

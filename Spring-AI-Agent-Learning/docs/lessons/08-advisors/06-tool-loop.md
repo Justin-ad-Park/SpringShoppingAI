@@ -97,11 +97,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class PriceTools {
     @Tool(description = "가상 허브티 P01의 상품 가격만 조회합니다. 배송비는 포함하지 않습니다.")
-    public int getTeaPrice() {
+    public int getTeaPrice(String productName) {
         return 12000;
     }
 }
 ```
+
+`productName`은 모델이 도구 호출을 요청할 때 전달하는 상품명입니다.<br>
+이 도구는 반복 흐름을 확인하는 예제이므로, 전달된 이름으로 검색하지 않고 허브티 가격 12000원을 고정 반환합니다.
 
 ## 실행과 결과 확인
 

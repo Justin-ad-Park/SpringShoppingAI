@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // 실제 Spring AI 어댑터를 사용하되 외부 모델 API만 로컬 HTTP 서버로 대체합니다.
-// 02장에서는 modelProperties와 정상 호출 테스트만 읽고, 서버 구현은 공통 test-support 모듈이 제공합니다.
+// 02단원에서는 modelProperties와 정상 호출 테스트만 읽고, 서버 구현은 공통 test-support 모듈이 제공합니다.
 // RANDOM_PORT는 테스트할 애플리케이션 서버에 사용 가능한 포트를 배정합니다.
 @DisplayName("첫 Chat 호출 — 로컬 MockModel 계약 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -75,7 +75,7 @@ class FirstChatLocalModelTest {
         MODEL_SERVER.close();
     }
 
-    // 02장 핵심: 질문 전달과 고정 응답 반환을 확인합니다.
+    // 02단원 핵심: 질문 전달과 고정 응답 반환을 확인합니다.
     @Test
     @DisplayName("로컬 MockModel에 질문을 전달하고 고정 응답을 반환한다")
     void 로컬_모델에_질문을_보내고_고정_응답을_받는다() throws Exception {
@@ -97,7 +97,7 @@ class FirstChatLocalModelTest {
     }
 
     /**
-     * 02장 보충: Spring MVC/Validation이 모델 호출 전에 잘못된 입력을 거부하는지 확인합니다.
+     * 02단원 보충: Spring MVC/Validation이 모델 호출 전에 잘못된 입력을 거부하는지 확인합니다.
      * https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/support/DefaultHandlerExceptionResolver.html
      * @throws Exception
      */

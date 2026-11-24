@@ -404,4 +404,4 @@ Anthropic 요청은 발생하지 않아야 합니다.<br>
 기본 Builder의 공통 설정까지 보존하는 확장은 [공식 ChatClient 문서의 여러 모델 구성](https://docs.spring.io/spring-ai/reference/api/chatclient.html)을 참고하세요.<br>
 Anthropic 설정 경로는 [공식 Anthropic Chat 문서](https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html)를 기준으로 작성하고, 저장소의 Spring AI 2.0.2에서 테스트했습니다.
 
-[생성자 주입 설명으로 돌아가기](01-constructor-injection.md) · [02장으로 돌아가기](../02-first-call.md)
+[생성자 주입 설명으로 돌아가기](01-constructor-injection.md) · [02단원으로 돌아가기](../02-first-call.md)

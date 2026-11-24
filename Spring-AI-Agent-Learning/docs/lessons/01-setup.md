@@ -13,9 +13,9 @@
 
 [공통 학습 방법](../learning-guide.md)
 
-먼저 [00장](00-llm-and-spring-ai.md)을 읽으세요.<br>
+먼저 [00단원](00-llm-and-spring-ai.md)을 읽으세요.<br>
 이번 목표는 프로젝트를 열고 **실제 API 키 없이 테스트를 통과시키는 것**입니다.<br>
-실제 모델 호출은 02장에서 합니다.
+실제 모델 호출은 02단원에서 합니다.
 
 프레임워크 선택 기준이 궁금하다면 선택 읽기 [Spring AI와 LangChain 비교](00-llm-and-spring-ai/01-SpringAIvsLangChain.md)를 참고하세요.
 
@@ -104,8 +104,8 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 자연어 이해, 실제 모델 접근 권한, 실제 모델 품질은 확인하지 않습니다.<br>
 가짜 서버는 테스트 실행 중에만 동작합니다.<br>
 `bootRun`을 위한 가짜 모델 실행 모드는 제공하지 않습니다.<br>
-이번 장에서는 테스트를 실행하고 결과를 확인하면 충분합니다.<br>
-코드 읽기 범위는 [02장](02-first-call/02-test-code.md)을 참고하세요.
+이번 단원에서는 테스트를 실행하고 결과를 확인하면 충분합니다.<br>
+코드 읽기 범위는 [02단원](02-first-call/02-test-code.md)을 참고하세요.
 
 ## 4. 실제 모델 연결을 위한 설정 준비
 
@@ -119,7 +119,7 @@ Java 코드가 없는 중간 폴더에는 Boot 플러그인을 적용하지 않�
 이 실습은 두 번째 방식으로 `OPENAI_API_KEY`, `OPENAI_MODEL`을 준비합니다.<br>
 `.env`를 만든다고 운영체제의 환경 변수가 설정되는 것은 아닙니다.<br>
 YAML이나 테스트 코드에 실제 키를 적거나, 매번 터미널에서 export할 필요가 없습니다.<br>
-현재는 설정만 준비하며, 실제 모델 호출은 02장에서 진행합니다.
+현재는 설정만 준비하며, 실제 모델 호출은 02단원에서 진행합니다.
 
 설정 파일에는 다음 이름이 있어야 합니다.<br>
 아래 값은 설명용이며 실제 키·접근 가능한 모델 이름으로 설정합니다.
@@ -178,7 +178,7 @@ spring:
 
 ### 설정 준비 후 어디에서 실행할까?
 
-이 장에서는 3절의 Mock 테스트까지 통과하면 됩니다.<br>
+이 단원에서는 3절의 Mock 테스트까지 통과하면 됩니다.<br>
 실제 API 호출은 [02-3. 실제 모델 호출](02-first-call/03-live-model-call.md)에서 서버 실행과 Live 테스트 중 원하는 경로로 진행합니다.<br>
 `FirstChatLocalModelTest`는 로컬 가짜 모델에, `FirstChatOpenAiLiveTest`는 실제 OpenAI에 연결합니다.<br>
 두 클래스에는 태그나 별도 실행 조건이 없습니다.<br>
@@ -199,7 +199,7 @@ spring:
 | 포트 충돌 | 다음 실행에 `LEARNING_PORT=8092 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootRun` 사용 |
 
 기본 로컬 MockModel 테스트까지는 API 키가 없어도 됩니다.<br>
-다음 장의 실제 호출은 키와 모델 접근 권한이 필요합니다.
+다음 단원의 실제 호출은 키와 모델 접근 권한이 필요합니다.
 
 ## 확인 질문
 
@@ -218,7 +218,7 @@ spring:
 
 </details>
 
-테스트를 통과시키고 이 세 가지를 설명하면 다음 장으로 넘어가세요.
+테스트를 통과시키고 이 세 가지를 설명하면 다음 단원으로 넘어가세요.
 
 보충 읽기: [Getting Started](https://docs.spring.io/spring-ai/reference/getting-started.html)의 버전·BOM,
 [OpenAI Chat](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html)의 자동 설정 부분.

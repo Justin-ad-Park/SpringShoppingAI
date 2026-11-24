@@ -27,10 +27,11 @@
 int toolLoopOrder = ToolCallingAdvisor.DEFAULT_ORDER;
 
 new OrderedLogAdvisor("request", toolLoopOrder - 10);
-new OrderedLogAdvisor("model", toolLoopOrder + 10);
+new OrderedLogAdvisor("modelA", toolLoopOrder + 10);
+new OrderedLogAdvisor("modelB", 1);
 ```
 
-위는 두 객체를 만드는 부분만 발췌한 코드입니다.<br>
+위는 세 객체를 만드는 부분만 발췌한 코드입니다.<br>
 실제 등록은 아래 서비스 전체 코드에서 확인합니다.
 
 | 내가 만든 Advisor의 order | 위치 | 실행 시점 |
@@ -41,7 +42,7 @@ new OrderedLogAdvisor("model", toolLoopOrder + 10);
 
 이 표는 `ToolCallingAdvisor`가 기본 순서 값을 사용하고, 요청이 예외 없이 완료되는 경우를 설명합니다.<br>
 앞에 배치한 `request`는 도구 사용 여부와 관계없이 before와 after가 각각 한 번 실행됩니다.<br>
-뒤에 배치한 `model`은 모델을 두 번 요청하면 before와 after도 각각 두 번 실행됩니다.
+뒤에 배치한 `modelA`와 `modelB`는 모델을 두 번 요청하면 각각의 before와 after도 두 번 실행됩니다.
 
 ### 공식 문서 인용: 메모리 Advisor를 반복 바깥과 안에 배치하기
 
@@ -99,12 +100,15 @@ Spring AI 2.0.2의 `DefaultAroundAdvisorChain`은 order가 작은 Advisor부터 
 `-10`, `+10`을 그대로 넣은 것이 아니라 **이미 정해진 기본값에서 10을 빼거나 더한 값**입니다.<br>
 간격 10에는 특별한 뜻이 없고, 기준보다 작거나 크다는 관계가 중요합니다.
 
-이 기본값은 `Ordered.HIGHEST_PRECEDENCE + 300`으로, 08-5의 0·10보다 작은 음수입니다.<br>
+이 기본값은 `Ordered.HIGHEST_PRECEDENCE + 300`인 **-2147483348**입니다.<br>
+`modelA`의 값은 이보다 10 큰 -2147483338이고, `modelB`의 값 1도 이 기본값보다 큽니다.<br>
+두 Advisor 모두 `ToolCallingAdvisor` 뒤에 배치되고, 그중 값이 작은 `modelA`가 먼저 진입합니다.<br>
+음수·양수 여부가 아니라 **기준 Advisor와 비교한 값의 크기**로 위치가 정해집니다.<br>
 따라서 08-5에서 생략했던 내부 객체까지 포함하면 실제 목록은 다음 관계입니다.
 
 ```text
 08-5: ToolCallingAdvisor → A(0) → B(10) → 실제 모델 호출용 Advisor
-08-7: request → ToolCallingAdvisor → model → 실제 모델 호출용 Advisor
+08-7: request → ToolCallingAdvisor → modelA → modelB → 실제 모델 호출용 Advisor
 ```
 
 08-5는 도구를 등록하지 않아 도구 결과에 따른 모델 재요청이 없었습니다.<br>
@@ -115,7 +119,7 @@ Spring AI 2.0.2의 `DefaultAroundAdvisorChain`은 order가 작은 Advisor부터 
 ## 서비스 전체 코드
 
 08-5의 [OrderedLogAdvisor](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson05_order/OrderedLogAdvisor.java)를 그대로 사용합니다.<br>
-`request`와 `model`은 출력할 이름일 뿐 특별한 기능 이름이 아닙니다.
+`request`·`modelA`·`modelB`는 출력할 이름일 뿐 특별한 기능 이름이 아닙니다.
 
 ```java
 package com.example.ailearning.l08advisors.lesson07_looporder;
@@ -145,7 +149,8 @@ public class Lesson07ToolLoopOrderChatService {
                 .prompt()
                 .user(question)
                 .advisors(new OrderedLogAdvisor("request", toolLoopOrder - 10),
-                        new OrderedLogAdvisor("model", toolLoopOrder + 10))
+                        new OrderedLogAdvisor("modelA", toolLoopOrder + 10),
+                        new OrderedLogAdvisor("modelB", 1))
                 .tools(priceTools)
                 .call()
                 .content();
@@ -167,33 +172,42 @@ chatClientResponse = callAdvisorChain.copy(this).nextCall(processedChatClientReq
 
 여기서 `this`는 `ToolCallingAdvisor`입니다.<br>
 `copy(this)`는 정렬된 원래 목록에서 **자기 다음부터 마지막까지의 Advisor들로 새 체인을 구성**합니다.<br>
-이 예제에서는 `model`과 실제 모델 호출 처리만 포함합니다.<br>
+이 예제에서는 `modelA`·`modelB`와 실제 모델 호출 처리만 포함합니다.<br>
 Advisor 객체 자체를 새로 생성한다는 뜻은 아니며, 다음 실행에 사용할 목록을 준비하는 것입니다.<br>
 `ToolCallingAdvisor.adviseCall()`을 자기 자신 안에서 다시 호출하는 것이 아니라, 반복문에서 뒤쪽 체인을 다시 호출하는 구조입니다.<br>
-앞의 `request`를 다시 호출하지 않으므로 `request`는 전체 처리에서 한 번, `model`은 각 반복에서 한 번씩 실행됩니다.
+앞의 `request`를 다시 호출하지 않으므로 `request`는 전체 처리에서 한 번, `modelA`·`modelB`는 각 반복에서 한 번씩 실행됩니다.
 
 ```mermaid
 sequenceDiagram
     participant R as request Advisor
     participant L as ToolCallingAdvisor
-    participant A as model Advisor
+    participant A as modelA Advisor
+    participant B as modelB Advisor
     participant M as 모델
     participant T as PriceTools
     Note over R: request:before
     R->>L: nextCall(request)
     L->>A: 복사한 뒤쪽 체인 실행 1
-    Note over A: model:before
-    A->>M: 모델 요청 1
-    M-->>A: 도구 실행 요청
-    Note over A: model:after
+    Note over A: modelA:before
+    A->>B: nextCall(request)
+    Note over B: modelB:before
+    B->>M: 모델 요청 1
+    M-->>B: 도구 실행 요청
+    Note over B: modelB:after
+    B-->>A: 모델 응답 반환
+    Note over A: modelA:after
     A-->>L: 모델 응답 반환
     L->>T: ToolCallingManager를 통해 가격 조회
     T-->>L: 12000
     L->>A: 도구 결과를 담아 뒤쪽 체인 실행 2
-    Note over A: model:before
-    A->>M: 모델 요청 2
-    M-->>A: 최종 답변
-    Note over A: model:after
+    Note over A: modelA:before
+    A->>B: nextCall(request)
+    Note over B: modelB:before
+    B->>M: 모델 요청 2
+    M-->>B: 최종 답변
+    Note over B: modelB:after
+    B-->>A: 모델 응답 반환
+    Note over A: modelA:after
     A-->>L: 모델 응답 반환
     L-->>R: 반복 종료 후 최종 응답 반환
     Note over R: request:after
@@ -205,19 +219,23 @@ sequenceDiagram
 ```text
 request:before
   [ToolCallingAdvisor 반복 시작]
-    model:before
-      [모델 요청 1 → 도구 실행 요청 응답]
-    model:after
+    modelA:before
+      modelB:before
+        [모델 요청 1 → 도구 실행 요청 응답]
+      modelB:after
+    modelA:after
     [Java 도구 실행 → 12000]
-    model:before
-      [모델 요청 2 → 도구 결과를 바탕으로 최종 답변]
-    model:after
+    modelA:before
+      modelB:before
+        [모델 요청 2 → 도구 결과를 바탕으로 최종 답변]
+      modelB:after
+    modelA:after
   [반복 종료]
 request:after
 ```
 
 04·05의 반대 순서 반환 규칙은 그대로입니다.<br>
-첫 `model:after`는 첫 모델 호출이 끝났다는 뜻입니다.<br>
+첫 `modelB:after`와 `modelA:after`는 첫 모델 호출의 응답을 받아 되돌아오는 처리입니다.<br>
 그 응답이 도구 요청이므로, ToolCallingAdvisor가 도구를 실행하고 뒤쪽 체인을 다시 호출합니다.
 
 ## 실행과 비교
@@ -231,8 +249,8 @@ request:after
 ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*Lesson07ToolLoopOrderOpenAiLiveTest'
 ```
 
-로컬 테스트는 도구 요청·최종 답변을 고정해 `request` 1회, `model` 2회의 전후 출력을 확인합니다.<br>
-도구 요청이 없는 인사는 두 Advisor 모두 한 번만 실행되는지 검사합니다.<br>
+로컬 테스트는 도구 요청·최종 답변을 고정해 `request` 1회, `modelA`·`modelB` 각각 2회의 전후 출력을 확인합니다.<br>
+도구 요청이 없는 인사는 세 Advisor 모두 한 번만 실행되는지 검사합니다.<br>
 Live 테스트는 실제 도구 사용을 확인하되 모델의 도구 재요청 가능성을 고려해 반복 횟수를 정확히 2회로 고정하지 않습니다.
 
 비교 실험으로 `request`의 order를 기본값 + 20으로 바꾸면 이 Advisor도 반복문 뒤쪽에 들어갑니다.<br>
@@ -245,7 +263,7 @@ Live 테스트는 실제 도구 사용을 확인하되 모델의 도구 재요�
 ## 확인 질문
 
 1. 기본 순서 값에서 10을 빼면 모델 호출 횟수가 줄어드나요?
-2. request와 model이 같은 OrderedLogAdvisor 타입인데 실행 횟수가 다른 이유는 무엇인가요?
+2. request와 modelA·modelB가 같은 OrderedLogAdvisor 타입인데 실행 횟수가 다른 이유는 무엇인가요?
 
 <details>
 <summary>해설</summary>
@@ -253,7 +271,7 @@ Live 테스트는 실제 도구 사용을 확인하되 모델의 도구 재요�
 1. 그 숫자는 Advisor의 위치를 정합니다.<br>
    모델 재요청 여부는 도구 요청 응답과 ToolCallingAdvisor의 반복 처리로 결정됩니다.
 2. request는 반복문을 가진 메서드 전체의 반환을 기다립니다.<br>
-   model은 반복문 안에서 실행하는 뒤쪽 체인에 포함되어 각 모델 요청마다 호출됩니다.
+   modelA·modelB는 반복문 안에서 실행하는 뒤쪽 체인에 포함되어 각 모델 요청마다 호출됩니다.
 
 </details>
 

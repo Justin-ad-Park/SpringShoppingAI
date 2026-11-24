@@ -223,4 +223,4 @@ ex.getStatusCode().value() // 400
 
 </details>
 
-[이전: 값 검증 실패와 422](02-value-validation-422.md) · [04장 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)
+[이전: 값 검증 실패와 422](02-value-validation-422.md) · [04단원 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)

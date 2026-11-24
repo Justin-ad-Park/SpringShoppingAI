@@ -4,7 +4,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 목표는 **한 번의 모델 호출을 이해하는 것부터 시작해, 도구를 선택하는 작은 Agent로 확장하는 것**입니다.
 
 이 폴더는 SpringShoppingAI 저장소의 교육용 하위 프로젝트입니다.<br>
-기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 11장에서는 shopping-mcp에 연결해 세 실행 방식을 비교합니다.<br>
+기초 실습은 다른 서비스를 실행하지 않고 사용할 수 있으며, 11단원에서는 shopping-mcp에 연결해 세 실행 방식을 비교합니다.<br>
 기존 Spring-AI-Tutor 교재와는 별도 폴더로 관리합니다.
 
 ## 이번에 작성한 범위
@@ -13,7 +13,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 한 번의 호출 → 구조화 응답 → 도구 → Workflow/Agent → 메모리 → Advisor → 검색/RAG → MCP → 평가 → 통합 상담 순으로 확장합니다.<br>
 각 실행 단원은 독립 모듈이며 테스트와 JAR 빌드를 마친 뒤 단원별로 커밋했습니다.<br>
 [검증 기록](docs/verification.md)과 [다이어그램 기준](docs/diagram-guide.md)을 참고하세요.<br>
-11장 MCP 실습은 기존 shopping-mcp 서버를 사용합니다.<br>
+11단원 MCP 실습은 기존 shopping-mcp 서버를 사용합니다.<br>
 로컬 테스트가 서버를 자동 실행하며, 수동 실행에서는 두 애플리케이션을 실행합니다.<br>
 로컬 테스트의 서버와 결과 출력은 [공통 테스트 도구](test-support/README.md)를 사용합니다.<br>
 단원별 테스트에서는 응답·도구 순서·벡터 값과 검증 내용을 읽습니다.
@@ -22,7 +22,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 [초급 개발자용 학습 방법](docs/learning-guide.md)을 먼저 읽으세요.<br>
 모델 설정은 [실행 설정 안내](docs/run-guide.md)에서 확인합니다.<br>
-04장은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다.<br>
+04단원은 기초 용어부터 변환·검증·실행까지 한 문서에서 읽습니다.<br>
 05~14는 각 단원의 목차에서 소수업으로 나누어 학습합니다.<br>
 개념·핵심 메서드·실행 관찰을 순서대로 읽고, 동시성·실행 상한의 내부 구현은 보충 수업에서 확인합니다.
 
@@ -68,7 +68,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 
 각 모듈 README의 `test`, `bootJar`, `bootRun` 명령을 사용합니다.<br>
 OpenAI 실습은 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
-14장 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다.<br>
+14단원 Jev는 별도 `TYPESAFE_API_KEY`를 사용하며 OpenAI 키가 필요 없습니다.<br>
 RAG는 `OPENAI_EMBEDDING_MODEL`도 필요합니다.<br>
 첫 호출 모듈의 설정·실행 방식은 유지합니다.<br>
 평가·통합 모듈은 현재 단원 번호인 12·13을 사용합니다.
@@ -113,7 +113,7 @@ curl -i http://127.0.0.1:8091/api/chat \
 ```
 
 실제 모델 호출에는 API 사용량과 비용이 발생할 수 있습니다.<br>
-시작/종료와 오류 해결은 01·02장을 참고하세요.
+시작/종료와 오류 해결은 01·02단원을 참고하세요.
 
 ## 폴더 안내
 
@@ -126,26 +126,26 @@ docs/
   diagram-guide.md       그림의 종류·기호·읽는 순서
 test-support/           공통 Mock 서버·결과 출력 (테스트 전용)
 labs/
-  02-00-first-chat/             02장 기본 호출과 03장 프롬프트 실험
-  02-04-multiple-models/        02장 보충 4: OpenAI·Anthropic 모델 선택
-  02-05-model-timeout-retry/    02장 보충 5: 모델 통신 타임아웃·재시도
+  02-00-first-chat/             02단원 기본 호출과 03단원 프롬프트 실험
+  02-04-multiple-models/        02단원 보충 4: OpenAI·Anthropic 모델 선택
+  02-05-model-timeout-retry/    02단원 보충 5: 모델 통신 타임아웃·재시도
   04-00-structured-output/      조건 record와 응답 변환
   05-00-tool-calling/           로컬 Java 도구
-  05-05-tool-call-limits/       05장 보충 5: 도구별·전체 호출 제한
+  05-05-tool-call-limits/       05단원 보충 5: 도구별·전체 호출 제한
   06-00-workflow-agent/         Workflow·Agent·Hybrid 비교
   07-00-chat-memory/            이전 대화의 직접 저장·재전달
   08-00-advisors/               호출 체인·메모리·도구 루프
   09-00-embeddings-search/      임베딩·유사도·필터
   10-03-custom-rag/                    문서 분할·검색·근거 확인
-  10-00-rag-advisor/            10장 기본: 표준 Reader·Splitter·RAG Advisor
+  10-00-rag-advisor/            10단원 기본: 표준 Reader·Splitter·RAG Advisor
   11-00-mcp-workflow-agent/     MCP 도구를 사용하는 세 실행 방식
   12-00-evaluation/             고정 사례 평가·사용량·실패 처리
-  12-02-model-evaluation/       12장 보충 2: Spring AI Evaluator
-  12-04-observability/          12장 보충 4: 기본 메트릭·Actuator
+  12-02-model-evaluation/       12단원 보충 2: Spring AI Evaluator
+  12-04-observability/          12단원 보충 4: 기본 메트릭·Actuator
   13-00-shopping-agent/         상품·정책·후속 질문 통합
-  13-08-limited-agent/          13장 보충 8: 전체 실행 제한·추적
-  13-05-intent-classification/  13장 보충 5: AWS 의도 트리 기반 단일 요청 분류
-  13-06-intent-quality-evaluation/  13장 보충 6: 저비용 모델별 의도 분류 품질 비교
+  13-08-limited-agent/          13단원 보충 8: 전체 실행 제한·추적
+  13-05-intent-classification/  13단원 보충 5: AWS 의도 트리 기반 단일 요청 분류
+  13-06-intent-quality-evaluation/  13단원 보충 6: 저비용 모델별 의도 분류 품질 비교
 ../gradlew               저장소 공통 Gradle Wrapper
 ```
 

@@ -1,6 +1,6 @@
 # 02-1. ChatService 생성자에 OpenAI용 Builder가 전달되기까지
 
-이 문서는 02장의 다음 문장을 풀어서 설명합니다.
+이 문서는 02단원의 다음 문장을 풀어서 설명합니다.
 
 > ChatClient.Builder는 Spring Boot 자동 설정이 준비하고 생성자로 주입합니다.
 
@@ -226,6 +226,6 @@ OpenAI와 Anthropic을 함께 사용하고 `@Qualifier`로 주입할 ChatClient�
 설명 확인 기준: 저장소가 사용하는 Spring AI 2.0.2의 Starter 의존성,
 `OpenAiChatAutoConfiguration`의 제공 업체 조건, `ChatClientAutoConfiguration`의 Builder 생성 코드를 확인했습니다.
 
-[02장으로 돌아가기](../02-first-call.md) · [실습 설정과 실행 안내](../../../labs/02-00-first-chat/README.md)
+[02단원으로 돌아가기](../02-first-call.md) · [실습 설정과 실행 안내](../../../labs/02-00-first-chat/README.md)
 
 [다음: 테스트 코드 읽기 (선택)](02-test-code.md) · [실제 모델 호출](03-live-model-call.md)

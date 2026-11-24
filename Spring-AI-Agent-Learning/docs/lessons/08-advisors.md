@@ -2,8 +2,8 @@
 
 ## 이번 수업의 목표
 
-02장의 ChatClient 호출을 이해하면 시작할 수 있습니다.<br>
-메모리 예제에서는 07장, 도구 예제에서는 05장의 내용을 연결합니다.
+02단원의 ChatClient 호출을 이해하면 시작할 수 있습니다.<br>
+메모리 예제에서는 07단원, 도구 예제에서는 05단원의 내용을 연결합니다.
 
 - Advisor가 필요한 이유와 Spring AI가 제공하는 활용을 설명합니다.
 - 모든 요청에 적용할 기능과 이번 요청에만 추가할 기능을 구분합니다.
@@ -124,7 +124,7 @@ Advisor를 누가 구현했는지와 어느 요청에 적용할지는 따로 선
 | 응답 캐시 | [`SemanticCacheAdvisor`](https://github.com/spring-projects/spring-ai/blob/v2.0.2/vector-stores/spring-ai-redis-semantic-cache/src/main/java/org/springframework/ai/chat/cache/semantic/SemanticCacheAdvisor.java) | 의미가 비슷한 질문의 캐시된 답변을 찾으면 재사용하고, 없으면 모델을 호출해 답변을 캐시에 저장 |  |
 
 Spring AI가 제공한다는 것은 라이브러리에 해당 기능을 구현한 클래스가 있다는 뜻입니다.<br>
-모두가 08장 모듈에 포함되거나 자동으로 활성화되는 것은 아닙니다.<br>
+모두가 08단원 모듈에 포함되거나 자동으로 활성화되는 것은 아닙니다.<br>
 벡터 검색·RAG·도구 탐색·캐시는 해당 모듈 의존성과 저장소 등 필요한 설정을 추가해야 사용할 수 있습니다.<br>
 `ToolCallingAdvisor`는 이 과정의 Spring AI 2.0.2 기본 구성에서 ChatClient가 자동 연결합니다.<br>
 08-6에서는 도구 반복 자체를, 08-7에서는 그 앞뒤에 배치한 Advisor의 실행 범위를 비교합니다.
@@ -199,6 +199,6 @@ Advisor 목록은 [Spring AI 2.0.2 공식 소스](https://github.com/spring-proj
 - [Spring AI ChatClient](https://docs.spring.io/spring-ai/reference/api/chatclient.html): ChatClient의 모든 요청에 적용하는 설정·현재 요청의 설정·로깅 사용법.
 - [Spring AI Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html): 메모리 연결과 대화 ID.
 - [Spring Blog — Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): Advisor 체인의 도구 루프.
-- [07~13장 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 외부 자료의 확인 범위와 버전 주의점.
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료): 외부 자료의 확인 범위와 버전 주의점.
 
-[학습 방법](../learning-guide.md) · [교육 계획](../curriculum.md) · [이전: 07장](07-chat-memory.md) · [시작: 08-1](08-advisors/01-built-in.md) · [다음 단원: 09장](09-embeddings-search.md)
+[학습 방법](../learning-guide.md) · [교육 계획](../curriculum.md) · [이전: 07단원](07-chat-memory.md) · [시작: 08-1](08-advisors/01-built-in.md) · [다음 단원: 09단원](09-embeddings-search.md)

@@ -241,7 +241,7 @@ MODEL
 ```
 
 테스트는 이 응답을 실제 서비스에 전달해 record 변환과 검증을 확인합니다.<br>
-테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04장에서-먼저-읽을-코드)에 있습니다.
+테스트 준비에서 채팅 상태를 비우는 이유와 보조 코드 읽기 순서는 [공통 도구 안내](../../test-support/README.md#04단원에서-먼저-읽을-코드)에 있습니다.
 
 [StructuredOutputLocalModelTest](../../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)는 로컬 고정 응답 서버로 다음 동작을 확인합니다.
 
@@ -258,7 +258,7 @@ MODEL
 
 ### 5.1. 보충: 예외는 어디에서 발생하고 HTTP 상태는 누가 정할까?
 
-정상 변환·값 검증을 이해했다면 첫 학습에서는 이 절을 건너뛰고 05장으로 넘어가도 됩니다.<br>
+정상 변환·값 검증을 이해했다면 첫 학습에서는 이 절을 건너뛰고 05단원으로 넘어가도 됩니다.<br>
 아래 문서는 실패 원인을 더 자세히 확인할 때 읽습니다.
 
 먼저 **입력 검사 → 모델 응답 변환 → 변환된 값 검사** 중 어느 단계에서 실패했는지 구분합니다.<br>

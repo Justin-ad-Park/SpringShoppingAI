@@ -262,4 +262,4 @@ Live 테스트는 실제 가격 도구가 실행됐는지 확인합니다.<br>
 반복 안 배치에는 도구 메시지를 저장할 수 있는 저장소가 필요하며, 이 실습의 기본 인메모리 저장소는 이를 지원합니다.<br>
 자동 연결되는 ToolCallingAdvisor가 메모리 Advisor의 위치를 감지하므로, 이 샘플은 ToolCallingAdvisor를 직접 만들거나 내부 대화 기록 설정을 바꾸지 않습니다.
 
-[이전: 도구 반복과 Advisor 배치](07-tool-loop-order.md) · [08장 목차](../08-advisors.md)
+[이전: 도구 반복과 Advisor 배치](07-tool-loop-order.md) · [08단원 목차](../08-advisors.md)

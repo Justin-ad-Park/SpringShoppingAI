@@ -16,7 +16,7 @@ import tools.jackson.databind.JsonNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** 03장 3.3: 기본 시스템 메시지와 요청별 대체를 로컬 모델 요청으로 확인한다. */
+/** 03단원 3.3: 기본 시스템 메시지와 요청별 대체를 로컬 모델 요청으로 확인한다. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
         "spring.config.import=",
         "spring.ai.openai.api-key=local-test-key",
@@ -44,7 +44,7 @@ class SystemMessageDefaultsLocalModelTest {
         MODEL_SERVER.close();
     }
 
-    // 03장: 같은 ChatClient로 기본값 사용 → 요청별 대체 → 기본값 유지 여부를 확인한다.
+    // 03단원: 같은 ChatClient로 기본값 사용 → 요청별 대체 → 기본값 유지 여부를 확인한다.
     @Test
     void defaultSystem은_기본값을_제공하고_system은_현재_요청만_대체한다() {
         MODEL_SERVER

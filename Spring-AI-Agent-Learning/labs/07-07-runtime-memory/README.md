@@ -1,7 +1,7 @@
 # 07-03. 의도에 따라 Runtime ChatMemory 선택하기
 
 **목표:** 분류한 대화 의도를 저장소 Enum으로 바꾸고, `chat(storage, ...)`의 Enum 파라미터로 요청마다 메모리를 선택합니다.<br>
-선수 지식은 04장의 구조화 응답, 07장의 직접 메모리 조회·저장, 07-02의 Redis 연결입니다.<br>
+선수 지식은 04단원의 구조화 응답, 07단원의 직접 메모리 조회·저장, 07-02의 Redis 연결입니다.<br>
 다른 실습 모듈을 import하지 않는 독립 앱입니다.
 
 
@@ -201,4 +201,4 @@ TTL·Redis 영속화·세션 재시작 뒤 사용자 재연결과 다중 서버�
 
 </details>
 
-[07장 목차](../../docs/lessons/07-chat-memory.md) · [07-02 시작 시 선택](../07-03-Redis-Selection/README.md)
+[07단원 목차](../../docs/lessons/07-chat-memory.md) · [07-02 시작 시 선택](../07-03-Redis-Selection/README.md)

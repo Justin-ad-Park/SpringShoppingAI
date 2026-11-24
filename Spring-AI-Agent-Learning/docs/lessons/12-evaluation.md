@@ -120,6 +120,6 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 - [Canonical / Ubuntu — Spring AI and Observability](https://ubuntu.com/developers/docs/tutorials/java-advanced/spring-ai/springai-observability/): RAG 실행과 메트릭 조회를 연결하는 실습 구성을 참고했습니다.<br>
   해당 자료의 Prometheus 구성을 현재 실습에 추가한 것은 아닙니다.
 - [Anthropic — Demystifying evals for AI agents](https://www.anthropic.com/research/demystifying-evals-for-ai-agents): 여러 평가 기준·반복 실행·실제 결과를 분리하는 방법을 참고했습니다.
-- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료)
 
 [이전: 11단원 MCP](11-mcp-workflow-agent.md) · [다음: 13단원 통합](13-shopping-agent.md)

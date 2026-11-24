@@ -6,7 +6,7 @@ Spring Academy의 **배경 개념 → Spring AI 구현 → 실습** 구성을 �
 
 ## 기획자와 함께 읽기
 
-AI 기능을 기획하는 구성원은 [00장](lessons/00-llm-and-spring-ai.md)에서 모델과 Spring AI의 관계를 익힌 뒤, 04~13장 메인 문서의 **개념 먼저 이해하기** 부분을 순서대로 읽습니다.<br>
+AI 기능을 기획하는 구성원은 [00단원](lessons/00-llm-and-spring-ai.md)에서 모델과 Spring AI의 관계를 익힌 뒤, 04~13단원 메인 문서의 **개념 먼저 이해하기** 부분을 순서대로 읽습니다.<br>
 새 용어·쇼핑 서비스 예시·각 기능의 역할을 코드 실행 없이 확인할 수 있습니다.
 
 구현을 맡은 개발자는 이어지는 실습 안내와 소수업을 학습합니다.<br>
@@ -69,7 +69,7 @@ AI 기능을 기획하는 구성원은 [00장](lessons/00-llm-and-spring-ai.md)�
 ## 도메인 코드와 AI 연결 코드 구분하기
 
 도메인은 서비스가 다루는 업무 영역을 뜻합니다.<br>
-04장 이후 실습에서 `domain` 패키지는 상품·검색 조건·가격 계산처럼 업무 자체를 표현하는 코드입니다.<br>
+04단원 이후 실습에서 `domain` 패키지는 상품·검색 조건·가격 계산처럼 업무 자체를 표현하는 코드입니다.<br>
 먼저 이 기능의 입력과 결과를 이해한 뒤, 바깥의 Service와 도구 클래스에서 Spring AI에 연결하는 방법을 읽으세요.
 
 | 위치 | 읽을 내용 | 예 |
@@ -84,7 +84,7 @@ AI 기능을 기획하는 구성원은 [00장](lessons/00-llm-and-spring-ai.md)�
 
 일부 실습은 Spring의 **프로필(profile)**로 실행할 단계를 고릅니다.<br>
 `@Profile("basic-search")`는 그 프로필을 선택했을 때만 해당 객체를 준비한다는 뜻이고, `@Profile("!embedding-only")`는 그 프로필에서는 제외한다는 뜻입니다.<br>
-09장의 첫 임베딩에서 다음 수업의 문서 적재가 실행되지 않도록 구분하는 데 사용합니다.
+09단원의 첫 임베딩에서 다음 수업의 문서 적재가 실행되지 않도록 구분하는 데 사용합니다.
 
 교재의 `bootRun --args='--spring.profiles.active=…'` 명령을 그대로 실행하세요.<br>
 로컬 테스트는 클래스에 해당 프로필을 지정했으므로 별도 옵션 없이 실행합니다.<br>
@@ -97,7 +97,7 @@ AI 기능을 기획하는 구성원은 [00장](lessons/00-llm-and-spring-ai.md)�
 | Service의 프롬프트·도구 등록·검색 호출 | 직접 읽고 한 줄씩 설명 |
 | Controller·입력 검증 | 익숙한 Spring 연결로 확인 |
 | Spring AI 도구 호출 상한 | [05 보충 5](lessons/05-tool-calling/05-tool-call-limits.md)에서 설정과 제한 초과 응답 확인 |
-| 모델 연결 타임아웃·재시도 | [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md)에서 설정 변경과 실제 HTTP 요청 수 확인. 12장에서 실패 분석에 재활용 |
+| 모델 연결 타임아웃·재시도 | [02 보충 5](lessons/02-first-call/05-model-timeout-retry.md)에서 설정 변경과 실제 HTTP 요청 수 확인. 12단원에서 실패 분석에 재활용 |
 | `test-support`의 Mock 서버·결과 출력 | 공통 검증 도구. 단원에서는 지정한 응답·실제 결과·assertion부터 읽기 |
 | 통합 단원의 여러 도구·메모리 조합 | 각 기능을 따로 실행한 뒤 책임 지도로 확인 |
 
@@ -171,7 +171,7 @@ Anthropic 호출 예제는 주석 처리되어 있으며, 해당 실습 안내�
 
 [Spring Academy 과정](https://spring.academy/courses/spring-ai-intro/)의 기초·고급 패턴·평가/관측·MCP·Agent 구분을 참고했습니다.<br>
 이 교재의 필수 흐름은 한 번의 호출 → 도구·메모리·검색 → 평가 → 작은 상담 Agent입니다.<br>
-MCP는 11장에서 단계적으로 학습합니다.<br>
+MCP는 11단원에서 단계적으로 학습합니다.<br>
 멀티 Agent·A2A는 필수 과정 이후의 선택 확장입니다.
 
 [전체 학습 지도](curriculum.md) · [첫 수업](lessons/00-llm-and-spring-ai.md)

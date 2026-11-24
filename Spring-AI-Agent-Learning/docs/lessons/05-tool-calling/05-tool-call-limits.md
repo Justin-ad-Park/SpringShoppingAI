@@ -235,4 +235,4 @@ spring:
 
 </details>
 
-[Spring AI 공식 도구 제한](https://docs.spring.io/spring-ai/reference/api/tools.html#_tool_call_limits) · [이전: Spy 검증](04-spy-and-inorder.md) · [05장 목차](../05-tool-calling.md) · [관련: 모델 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md) · [12장에서 재활용](../12-evaluation/05-failures.md)
+[Spring AI 공식 도구 제한](https://docs.spring.io/spring-ai/reference/api/tools.html#_tool_call_limits) · [이전: Spy 검증](04-spy-and-inorder.md) · [05단원 목차](../05-tool-calling.md) · [관련: 모델 타임아웃·재시도](../02-first-call/05-model-timeout-retry.md) · [12단원에서 재활용](../12-evaluation/05-failures.md)

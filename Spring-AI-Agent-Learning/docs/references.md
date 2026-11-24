@@ -1,6 +1,6 @@
 # 레퍼런스: 무엇을 언제 읽을까?
 
-검토 갱신: 2026-11-12(07~13장 보강 자료).<br>
+검토 갱신: 2026-11-12(07~13단원 보강 자료).<br>
 이 문서는 링크 모음보다 읽는 순서와 용도에 초점을 둡니다.<br>
 한국어 교재를 먼저 읽고 막힌 개념에 해당하는 절만 찾아보세요.
 
@@ -26,7 +26,7 @@
 | 08 | [Spring 공식 블로그: Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/) | 도구 루프와 Advisor 관계의 설명이 좋음. 처음에는 앞부분만 읽고 고급 확장은 생략 |
 | 09~10 | [Retrieval Augmented Generation](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html) | 검색과 답변 생성을 연결하는 기준. 임베딩·검색 개념을 배운 후 읽기 |
 | 12 | [Evaluation Testing](https://docs.spring.io/spring-ai/reference/api/testing.html), [Observability](https://docs.spring.io/spring-ai/reference/observability/index.html) | 품질 평가와 호출 관측을 분리해서 학습. LLM 평가자의 점수도 절대적인 정답 판정은 아님 |
-| 11장 | [MCP Overview](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html) | 11장 연결·직접 호출을 학습할 때 원격 도구의 역할 확인 |
+| 11단원 | [MCP Overview](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html) | 11단원 연결·직접 호출을 학습할 때 원격 도구의 역할 확인 |
 
 ## 블로그·강좌·예제 검토
 
@@ -44,7 +44,7 @@
 입문 흐름 전체를 하나의 블로그에 맡기기보다, 자체 한국어 교재가 선수 지식을 연결하고 공식 자료로 사실을 확인하는 방식을 택했습니다.<br>
 블로그의 코드가 짧다는 이유만으로 초보자에게 쉬운 것은 아닙니다.
 
-## 07~13장 보강에 사용한 교육 자료
+## 07~13단원 보강에 사용한 교육 자료
 
 확인일: 2026-11-12.<br>
 아래는 공개 본문·예제 또는 강의 소개를 실제로 확인한 범위입니다.<br>
@@ -115,7 +115,7 @@ SageMaker 배포와 파인튜닝 절차는 이번 구현 범위에 넣지 않습
 평가 결과는 교육용 다섯 문항의 정답 일치율이지 OpenAI가 보증한 모델 품질 순위나 전체 서비스 정확도가 아닙니다.
 
 
-## 14장 Jev의 근거 자료
+## 14단원 Jev의 근거 자료
 
 확인일: 2026-11-13.<br>
 Spring AI 본체의 채팅 제공 업체와 커뮤니티 확장을 구분합니다.

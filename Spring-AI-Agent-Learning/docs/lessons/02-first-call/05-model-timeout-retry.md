@@ -179,7 +179,7 @@ Spring 컨텍스트를 다시 만드는 테스트 실행으로 요청 수가 2�
 이때 기존 1회 assertion도 기대값이 달라져 실패한다는 점을 함께 확인합니다.<br>
 완성된 두 테스트 클래스가 이 비교의 원본입니다.
 
-## 12장에서 다시 활용하기
+## 12단원에서 다시 활용하기
 
 [12-5 실패 관찰](../12-evaluation/05-failures.md)에서는 이 두 테스트 클래스의 예외와 실제 요청 수를 다시 읽습니다.<br>
 토큰 사용량·호출 지표와 연결할 때 **Service의 ask() 호출 1회와 SDK의 HTTP 요청 2회가 다를 수 있음**을 구분합니다.<br>
@@ -212,4 +212,4 @@ spring:
 
 </details>
 
-[Spring AI 연결 설정](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html#_connection_properties) · [이전: 다중 모델](04-multiple-models.md) · [02장 목차](../02-first-call.md) · [관련: 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md) · [12장 목차](../12-evaluation.md)
+[Spring AI 연결 설정](https://docs.spring.io/spring-ai/reference/api/chat/openai-chat.html#_connection_properties) · [이전: 다중 모델](04-multiple-models.md) · [02단원 목차](../02-first-call.md) · [관련: 도구 호출 제한](../05-tool-calling/05-tool-call-limits.md) · [12단원 목차](../12-evaluation.md)

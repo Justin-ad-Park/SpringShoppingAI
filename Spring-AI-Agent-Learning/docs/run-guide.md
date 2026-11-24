@@ -26,15 +26,15 @@ OPENAI_EMBEDDING_MODEL=<사용 가능한 임베딩 모델 ID>
 | `10-03-custom-rag`, `10-00-rag-advisor`, `12-00-evaluation`, `13-00-shopping-agent`, `13-08-limited-agent` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL` |
 | `02-04-multiple-models` | `OPENAI_API_KEY`, `OPENAI_MODEL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
-`13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13장 선택 보충입니다.<br>
+`13-05-intent-classification`과 `13-06-intent-quality-evaluation`은 13단원 선택 보충입니다.<br>
 둘 다 `OPENAI_API_KEY`가 필요하며 임베딩 모델은 사용하지 않습니다.<br>
 13-5는 기본 `OPENAI_MODEL`을 사용하고, 13-6은 테스트 코드에 적은 세 모델 ID를 각각 요청하므로 해당 모델 접근 권한이 필요합니다.<br>
 [13-5 실행 안내](../labs/13-05-intent-classification/README.md)와 [13-6 실행 안내](../labs/13-06-intent-quality-evaluation/README.md)를 따릅니다.
 
-14장 Jev는 OpenAI 대신 TypeSafe API를 호출합니다.<br>
+14단원 Jev는 OpenAI 대신 TypeSafe API를 호출합니다.<br>
 `14-00-jev-decisions`는 루트 `.env`의 `TYPESAFE_API_KEY`와 선택 값 `TYPESAFE_DEFAULT_MODEL`(기본 jev-latest)을 사용합니다.<br>
 연결 주소는 해당 YAML의 `spring.ai.typesafe.base-url`이며, 로컬 테스트는 이 주소만 고정 응답 서버로 변경합니다.<br>
-[14장 실행 안내](../labs/14-00-jev-decisions/README.md)를 따릅니다.
+[14단원 실행 안내](../labs/14-00-jev-decisions/README.md)를 따릅니다.
 
 두 제공 업체를 사용하는 선택 실습에서만 Anthropic 키와 모델 ID를 추가합니다.<br>
 모델 ID는 계정에서 접근 가능하고 해당 실습의 기능을 지원하는 값을 사용합니다.
@@ -128,14 +128,14 @@ IntelliJ에서도 원하는 클래스나 메서드의 Run을 선택합니다.
 Live의 문장은 실행마다 달라질 수 있습니다.<br>
 실제 도구 선택·검색 품질·평가 결과는 출력으로 확인하며, 고정 응답 테스트의 결과와 구분합니다.
 
-## 11장 MCP 실습
+## 11단원 MCP 실습
 
 [실행 안내](../labs/11-00-mcp-workflow-agent/README.md)를 따릅니다.<br>
 수동 실행은 shopping-mcp(기본 8082)와 학습 앱(기본 8106)을 각각 시작합니다.<br>
 로컬 테스트는 MCP 서버를 자동 실행하고 OpenAI 응답만 고정합니다.<br>
 실제 외부 모델 테스트는 별도 OpenAiLiveTest 클래스입니다.
 
-## 02·05장의 별도 보충 실습
+## 02·05단원의 별도 보충 실습
 
 기본 Workflow 모듈과 각각 독립 실행합니다.<br>
 두 모듈 모두 루트 `.env`의 채팅 키·모델만 사용합니다.
@@ -145,5 +145,5 @@ Live의 문장은 실행마다 달라질 수 있습니다.<br>
 | [05 보충 5: 도구 호출 횟수 제한](lessons/05-tool-calling/05-tool-call-limits.md) | [05-05-tool-call-limits](../labs/05-05-tool-call-limits/README.md) | 8110 |
 | [02 보충 5: 타임아웃·재시도](lessons/02-first-call/05-model-timeout-retry.md) | [02-05-model-timeout-retry](../labs/02-05-model-timeout-retry/README.md) | 8111 |
 
-12장의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다.<br>
+12단원의 실패·관측 수업에서도 같은 로컬 테스트를 실행합니다.<br>
 요청 횟수는 고정 HTTP 서버가 받은 기록으로 확인하며, 실제 모델 연결은 각 모듈의 Live 클래스로 구분합니다.

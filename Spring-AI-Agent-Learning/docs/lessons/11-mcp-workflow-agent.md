@@ -131,6 +131,6 @@ RAG는 MCP의 필수 조건이 아닙니다.
   프로토콜 문서의 최신 확장 전체를 이번 구현이 제공한다는 뜻은 아닙니다.
 - [Dan Vega — Build AI-Powered Apps with MCP Clients in Spring AI](https://www.youtube.com/watch?v=TSFkdlreRMQ): 공개 강의 소개에서 원격 서버와 Spring AI 클라이언트를 연결하는 구성을 확인했습니다.<br>
   영상 본문 전체는 확인하지 못했습니다.
-- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료)
 
 [이전: 10단원 RAG](10-rag.md) · [다음: 12단원 평가와 운영](12-evaluation.md) · [전체 교육 계획](../curriculum.md)

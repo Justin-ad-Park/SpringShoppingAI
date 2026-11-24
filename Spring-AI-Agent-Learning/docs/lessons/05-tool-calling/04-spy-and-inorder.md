@@ -186,7 +186,7 @@ ToolCallPrinter.printMockitoDetails(shoppingTools); // 호출 위치·스텁 설
 ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 이름·인자를 실행 순서대로 출력
 ```
 
-05장 보충 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
+05단원 보충 도구 호출 제한 실습도 같은 `printToolCalls(shoppingTools)`를 사용합니다.
 
 
 ## 확인 질문
@@ -206,4 +206,4 @@ ToolCallPrinter.printToolCalls(shoppingTools);      // 실제 호출 횟수와 �
 
 </details>
 
-[이전: 도구 결과가 모델로 돌아가는 과정](03-loop.md) · [다음: 도구 호출 제한](05-tool-call-limits.md) · [05장 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)
+[이전: 도구 결과가 모델로 돌아가는 과정](03-loop.md) · [다음: 도구 호출 제한](05-tool-call-limits.md) · [05단원 목차](../05-tool-calling.md) · [학습 방법](../../learning-guide.md)

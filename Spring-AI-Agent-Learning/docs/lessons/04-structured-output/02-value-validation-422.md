@@ -100,4 +100,4 @@ assertThat(postQuestion("음료 추천").statusCode()).isEqualTo(422);
 
 </details>
 
-[이전: entity() 변환 실패와 500](01-entity-conversion-500.md) · [다음: 입력 검증 실패와 400](03-input-validation-400.md) · [04장 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)
+[이전: entity() 변환 실패와 500](01-entity-conversion-500.md) · [다음: 입력 검증 실패와 400](03-input-validation-400.md) · [04단원 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)

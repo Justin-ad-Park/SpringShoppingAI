@@ -1,6 +1,6 @@
 # 08-3. 메모리 Advisor로 후속 대화 연결하기
 
-**이번 목표:** 07장에서 직접 작성한 이전 메시지 조회·전달·저장을 `MessageChatMemoryAdvisor`로 연결하고, 후속 요청에 대화가 전달되는지 확인합니다.
+**이번 목표:** 07단원에서 직접 작성한 이전 메시지 조회·전달·저장을 `MessageChatMemoryAdvisor`로 연결하고, 후속 요청에 대화가 전달되는지 확인합니다.
 
 이 수업은 `lesson03_memory` 패키지의 [Lesson03MemoryAdvisorChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson03_memory/Lesson03MemoryAdvisorChatService.java)를 읽습니다.<br>
 [08-2](02-registration.md)의 기본 등록에 메모리 기능을 연결하는 수업입니다.
@@ -15,7 +15,7 @@
 ```
 
 모델은 앞선 요청을 스스로 보관하지 않습니다.<br>
-07장에서는 서비스가 이전 메시지를 읽어 새 질문과 합친 뒤, 정상 답변을 확인하고 대화를 저장했습니다.<br>
+07단원에서는 서비스가 이전 메시지를 읽어 새 질문과 합친 뒤, 정상 답변을 확인하고 대화를 저장했습니다.<br>
 이번에는 그 처리를 Spring AI의 기본 제공 `MessageChatMemoryAdvisor`에 맡깁니다.
 
 | 객체 | 이 예제의 역할 |
@@ -24,7 +24,7 @@
 | `MessageChatMemoryAdvisor` | 이전 메시지를 프롬프트에 포함하고 현재 대화를 저장 |
 | `ChatMemory.CONVERSATION_ID` | 이번 요청에서 사용할 대화를 지정하는 매개변수 키 |
 
-저장소·메시지 창 정책 자체는 [07장](../07-chat-memory.md)의 기능입니다.<br>
+저장소·메시지 창 정책 자체는 [07단원](../07-chat-memory.md)의 기능입니다.<br>
 이번에 새로 배우는 부분은 **그 메모리를 ChatClient의 호출 과정에 연결하는 방법**입니다.
 
 ## 서비스에서 달라지는 코드
@@ -32,7 +32,7 @@
 아래는 이 수업의 서비스 전체 코드입니다.<br>
 등록과 호출을 분리해서 읽으세요.<br>
 `defaultSystem(...)`은 이 ChatClient의 기본 시스템 메시지를 설정합니다.<br>
-요청별 `.system(...)`과의 차이는 [03장의 기본 시스템 메시지 실습](../03-chatclient-and-prompts.md#33-모든-요청에-사용할-기본-시스템-메시지-설정하기)에서 확인할 수 있습니다.
+요청별 `.system(...)`과의 차이는 [03단원의 기본 시스템 메시지 실습](../03-chatclient-and-prompts.md#33-모든-요청에-사용할-기본-시스템-메시지-설정하기)에서 확인할 수 있습니다.
 
 ```java
 package com.example.ailearning.l08advisors.lesson03_memory;
@@ -252,12 +252,12 @@ Spring AI 2.0.2가 제공하는 `MessageChatMemoryAdvisor`는 모델 호출 전�
 
 | 구현 | 사용자 질문 저장 시점 | 모델 호출 실패 시 |
 |---|---|---|
-| 07장의 `MemoryChatService` | 정상 답변을 확인한 뒤 질문·답변을 함께 저장 | 이번 질문·답변을 저장하지 않음 |
+| 07단원의 `MemoryChatService` | 정상 답변을 확인한 뒤 질문·답변을 함께 저장 | 이번 질문·답변을 저장하지 않음 |
 | `MessageChatMemoryAdvisor` | 모델 호출 전에 질문 저장, 정상 응답 후 답변 저장 | 이번 사용자 질문이 남을 수 있음 |
 
 이 차이는 `모델_실패_후에도_기본_메모리_Advisor가_먼저_저장한_질문은_남는다` LocalModel 테스트에서 HTTP 503을 재현해 확인합니다.<br>
 저장 기능을 `MessageChatMemoryAdvisor`에 맡기면 저장 시점도 그 클래스의 구현을 따릅니다.<br>
-07장의 성공 후 저장 정책까지 그대로 유지되는 것은 아닙니다.
+07단원의 성공 후 저장 정책까지 그대로 유지되는 것은 아닙니다.
 
 ## 확인 질문
 

@@ -88,7 +88,7 @@ public class ToolChatService {
 }
 ```
 
-03장과 비교해 핵심으로 추가된 코드는 `.tools(tools)`입니다.<br>
+03단원과 비교해 핵심으로 추가된 코드는 `.tools(tools)`입니다.<br>
 여기서 `tools`는 ShoppingTools 객체이고, Spring AI는 `@Tool` 메서드에서 도구 설명과 인자 구조를 만듭니다.<br>
 모델은 `{"productId":"P02"}` 같은 인자를 요청합니다.<br>
 Java 객체를 모델 서버로 보내서 실행시키는 방식이 아닙니다.

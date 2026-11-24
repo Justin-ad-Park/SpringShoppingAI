@@ -16,11 +16,11 @@
 허용 길이보다 정확히 한 글자 긴 입력을 만듭니다.<br>
 Controller와 같은 상수를 사용하며, HTTP 400과 모델 요청 0회를 확인합니다.
 
-아래 두 테스트는 03장 실습이며, [PromptMessagesLocalModelTest.java](../../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)에 있습니다.
+아래 두 테스트는 03단원 실습이며, [PromptMessagesLocalModelTest.java](../../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)에 있습니다.
 
-`system과_user_메시지를_한_요청에_함께_전달한다()`는 03장의 키 없는 메시지 전달 실습에서 읽습니다.<br>
+`system과_user_메시지를_한_요청에_함께_전달한다()`는 03단원의 키 없는 메시지 전달 실습에서 읽습니다.<br>
 서비스 소스를 바꾸지 않고 테스트 안에서 system/user 요청을 구성합니다.<br>
-`다음_요청에_이전_대화를_자동으로_포함하지_않는다()`는 03장의 대화 기억 실험에서 읽습니다.<br>
+`다음_요청에_이전_대화를_자동으로_포함하지_않는다()`는 03단원의 대화 기억 실험에서 읽습니다.<br>
 
 인증 헤더 검증은 선택 심화입니다.<br>
 `ask()`는 애플리케이션 요청을 보내며, 가짜 서버와 출력은 [공통 테스트 도구](../../../test-support/README.md)가 제공합니다.
@@ -67,4 +67,4 @@ HTTP 처리와 요청 기록은 공통 모듈이 담당하므로 첫 실습에�
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
 
-[이전: 생성자 주입](01-constructor-injection.md) · [다음: 실제 모델 호출](03-live-model-call.md) · [02장 본문](../02-first-call.md)
+[이전: 생성자 주입](01-constructor-injection.md) · [다음: 실제 모델 호출](03-live-model-call.md) · [02단원 본문](../02-first-call.md)

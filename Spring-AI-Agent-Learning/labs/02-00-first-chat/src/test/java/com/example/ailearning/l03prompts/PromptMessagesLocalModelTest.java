@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** 03장: system/user 전달과 이전 대화가 자동 포함되지 않는 요청을 확인한다. */
+/** 03단원: system/user 전달과 이전 대화가 자동 포함되지 않는 요청을 확인한다. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "spring.config.import=")
 class PromptMessagesLocalModelTest {
@@ -60,7 +60,7 @@ class PromptMessagesLocalModelTest {
         MODEL_SERVER.close();
     }
 
-    // 03장: 서비스 소스를 바꾸지 않고 같은 system/user 구성을 로컬 모델 서버에 전달한다.
+    // 03단원: 서비스 소스를 바꾸지 않고 같은 system/user 구성을 로컬 모델 서버에 전달한다.
     @Test
     void system과_user_메시지를_한_요청에_함께_전달한다() {
         // Given: 고정 응답 서버와 두 메시지에 담을 내용
@@ -88,7 +88,7 @@ class PromptMessagesLocalModelTest {
         assertThat(messages.get(1).path("content").asText()).isEqualTo(question);
     }
 
-    // 03장에서 읽기: 두 번째 요청에 현재 질문만 담기는지 확인합니다.
+    // 03단원에서 읽기: 두 번째 요청에 현재 질문만 담기는지 확인합니다.
     // 실제 모델의 기억 능력을 평가하는 테스트는 아닙니다.
     @Test
     @DisplayName("로컬 MockModel의 다음 요청에 이전 대화를 자동 포함하지 않는다")

@@ -131,7 +131,7 @@ public class BudgetProductTools {
 
 ## 실행과 관찰
 
-[01장의 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 [실습 README](../../../labs/06-00-workflow-agent/README.md)의 명령으로 실행합니다.
+[01단원의 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비) 후 [실습 README](../../../labs/06-00-workflow-agent/README.md)의 명령으로 실행합니다.
 
 | 입력 | Workflow | Agent | Hybrid |
 |---|---|---|---|

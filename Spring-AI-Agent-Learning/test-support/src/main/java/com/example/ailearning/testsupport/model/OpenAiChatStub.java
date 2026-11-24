@@ -28,7 +28,7 @@ public final class OpenAiChatStub {
 
     /**
      * 요청 시작 시 설정을 읽고 오류 응답 또는 OpenAI 형식의 채팅 응답을 만든다.
-     * <p>사용 단원: 채팅 요청을 보내는 02·04~08·10~13장. HTTP 서버가 내부적으로 호출한다.
+     * <p>사용 단원: 채팅 요청을 보내는 02·04~08·10~13단원. HTTP 서버가 내부적으로 호출한다.
      */
     private StubHttpServer.Response createChatHttpResponse(JsonNode request) {
         ChatResponseSettings.Snapshot settingsForRequest = chatResponseSettings.createSnapshot();
@@ -56,7 +56,7 @@ public final class OpenAiChatStub {
 
     /**
      * 문자열을 content에 담은 assistant 메시지 JSON을 만든다. 전체 HTTP 본문은 아직 만들지 않는다.
-     * <p>사용 단원: 02·05~08·10~13장. 분기·순차 응답 안에서 메시지를 조립할 때 사용한다.
+     * <p>사용 단원: 02·05~08·10~13단원. 분기·순차 응답 안에서 메시지를 조립할 때 사용한다.
      */
     public static ObjectNode createAssistantTextMessage(String content) {
         return OpenAiResponseBody.createAssistantTextMessage(content);
@@ -72,7 +72,7 @@ public final class OpenAiChatStub {
 
     /**
      * 미리 만든 assistant 메시지를 복사해 고정 응답으로 지정한다.
-     * <p>사용 단원: 02·05~08·10~12장. 텍스트나 도구 호출 메시지를 직접 지정할 때 사용한다.
+     * <p>사용 단원: 02·05~08·10~12단원. 텍스트나 도구 호출 메시지를 직접 지정할 때 사용한다.
      */
     public OpenAiChatStub setResponseMessage(ObjectNode assistantMessage) {
         ObjectNode fixedAssistantMessage = assistantMessage.deepCopy();
@@ -116,7 +116,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 응답에 넣을 입력·출력 토큰 수를 지정한다. 실제 사용량을 계산하지 않는다.
-     * <p>사용 단원: 02 첫 호출·다중 모델, 10-04-rag-advisor, 12장 실습, 13 종합 실습.
+     * <p>사용 단원: 02 첫 호출·다중 모델, 10-04-rag-advisor, 12단원 실습, 13 종합 실습.
      */
     public OpenAiChatStub setTokenUsage(int inputTokens, int outputTokens) {
         chatResponseSettings.setTokenUsage(inputTokens, outputTokens);
@@ -125,7 +125,7 @@ public final class OpenAiChatStub {
 
     /**
      * 채팅 요청 기록·응답 함수·순서·오류·지연을 초기화한다. 토큰 사용량과 임베딩 설정·기록은 유지한다.
-     * <p>사용 단원: 02·04~08·10~13장의 테스트 준비. 공유 서버의 이전 테스트 상태를 비운다.
+     * <p>사용 단원: 02·04~08·10~13단원의 테스트 준비. 공유 서버의 이전 테스트 상태를 비운다.
      */
     public synchronized void resetResponsesAndRequests() {
         httpServer.clearRecordedRequests(PATH);
@@ -134,7 +134,7 @@ public final class OpenAiChatStub {
 
     /**
      * 이 서버가 받은 채팅 요청 JSON 목록을 조회한다.
-     * <p>사용 단원: 02·04~08·10~13장. 전송 메시지·도구 정의·모델 호출 횟수 등을 검증한다.
+     * <p>사용 단원: 02·04~08·10~13단원. 전송 메시지·도구 정의·모델 호출 횟수 등을 검증한다.
      */
     public List<JsonNode> getRequests() {
         return httpServer.getRequestBodies(PATH);

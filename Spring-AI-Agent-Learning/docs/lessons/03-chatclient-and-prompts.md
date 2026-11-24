@@ -3,7 +3,7 @@
 ## 한 번에 읽을 범위
 
 아래 세 주제를 순서대로 읽고 실습합니다.<br>
-00장 보충에서 익힌 프롬프트 구성을 02장의 실행 코드에 적용합니다.<br>
+00단원 보충에서 익힌 프롬프트 구성을 02단원의 실행 코드에 적용합니다.<br>
 테스트 서버의 내부 구현은 직접 작성하지 않아도 됩니다.
 
 | 순서 | 읽고 해볼 것 | 여기서 확인할 것 |
@@ -14,10 +14,10 @@
 
 [공통 학습 방법](../learning-guide.md)
 
-02장의 코드와 같은 실습 프로젝트를 사용합니다.<br>
+02단원의 코드와 같은 실습 프로젝트를 사용합니다.<br>
 새 라이브러리를 추가하지 않고 메시지 한 줄만 바꿉니다.
 
-선수 내용: [00장 보충의 역할 개요](00-llm-and-spring-ai/01-prompt-and-messages.md#spring-ai에서-구분하는-네-가지-역할)와 [예시 1·2](00-llm-and-spring-ai/01-prompt-and-messages.md#예시-1-사용자-메시지-하나로-구성한-프롬프트).<br>
+선수 내용: [00단원 보충의 역할 개요](00-llm-and-spring-ai/01-prompt-and-messages.md#spring-ai에서-구분하는-네-가지-역할)와 [예시 1·2](00-llm-and-spring-ai/01-prompt-and-messages.md#예시-1-사용자-메시지-하나로-구성한-프롬프트).<br>
 메시지 역할, `.prompt().user(...)`·`.system(...)`, `.call().content()`의 기본 구성은 이 보충 문서를 기준으로 읽습니다.<br>
 이번 단원은 **클라이언트를 어디에서 만들고 재사용하는지, 코드 변경이 실제 요청에 어떻게 반영되는지**를 확인합니다.
 
@@ -65,7 +65,7 @@ public class ChatService {
   요청마다 새 ChatClient를 만드는 코드는 없습니다.
 - `ask()`에는 이전 질문·답변을 저장하거나 다음 요청에 추가하는 코드가 없습니다.<br>
   실제 전송 메시지는 4절의 로컬 테스트로 확인합니다.
-- Builder를 직접 `new`로 만들지 않은 이유와 OpenAI 연결이 준비되는 과정은 [02장 생성자 주입 설명](02-first-call/01-constructor-injection.md)에서 다시 확인할 수 있습니다.<br>
+- Builder를 직접 `new`로 만들지 않은 이유와 OpenAI 연결이 준비되는 과정은 [02단원 생성자 주입 설명](02-first-call/01-constructor-injection.md)에서 다시 확인할 수 있습니다.<br>
   클라이언트 재사용과 대화 기억은 별개의 기능입니다.
 
 ## 3. 실험: 서비스에 응답 원칙 추가하기
@@ -76,7 +76,7 @@ public class ChatService {
 
 ### 3.1. 실제 모델의 답변 비교하기
 
-먼저 [01장의 루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비하세요.<br>
+먼저 [01단원의 루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비하세요.<br>
 호출에는 비용이 발생할 수 있습니다.
 
 먼저 원본 코드를 실행하고 다른 터미널에서 수정 전 응답을 저장합니다.<br>
@@ -95,13 +95,13 @@ cat /tmp/learning03-before.txt
 
 이제 2절에서 읽은 `ChatService.ask()`의 `chatClient.prompt()` 다음, `.user(message)` 앞에 다음 한 줄을 추가합니다.<br>
 아래는 **추가할 줄만 발췌**한 코드입니다.<br>
-package·import·생성자·Controller·설정 파일은 02장 그대로 둡니다.
+package·import·생성자·Controller·설정 파일은 02단원 그대로 둡니다.
 
 ```java
 .system("Spring 입문자를 가르치는 튜터입니다. 쉬운 한국어로 세 문장 이내로 설명하세요.")
 ```
 
-기본 구성은 [00장 보충의 예시 2](00-llm-and-spring-ai/01-prompt-and-messages.md#예시-2-여러-메시지로-구성한-프롬프트)와 같습니다.<br>
+기본 구성은 [00단원 보충의 예시 2](00-llm-and-spring-ai/01-prompt-and-messages.md#예시-2-여러-메시지로-구성한-프롬프트)와 같습니다.<br>
 여기서는 이미 실행한 서비스에 지시를 추가하고, 같은 사용자 질문의 응답이 어떻게 달라지는지 비교합니다.
 
 기존 서버를 Ctrl+C로 종료하고 같은 터미널에서 다시 실행합니다.
@@ -174,7 +174,7 @@ Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
 
 아래 코드는 [SystemMessageDefaultsLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)의 `defaultSystem은_기본값을_제공하고_system은_현재_요청만_대체한다`와 같은 흐름의 실행 예제입니다.<br>
 `builder`는 앞서 배운 대로 Spring이 주입한 `ChatClient.Builder`입니다.<br>
-같은 실행 모듈의 03장 전용 `l03prompts` 패키지에 실습 테스트를 분리했습니다.<br>
+같은 실행 모듈의 03단원 전용 `l03prompts` 패키지에 실습 테스트를 분리했습니다.<br>
 기존 `ChatService`를 수정하지 않고 테스트에서 별도 ChatClient를 만들어 비교합니다.
 
 ```java
@@ -262,7 +262,7 @@ curl -sS http://127.0.0.1:8091/api/chat \
   --data-raw '제 이름이 무엇인가요?'
 ```
 
-[00장 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.<br>
+[00단원 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.<br>
 지금 실행한 `ask()`는 매 요청의 `message`만 전달합니다.<br>
 두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.<br>
 모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.<br>
@@ -272,7 +272,7 @@ curl -sS http://127.0.0.1:8091/api/chat \
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.다음_요청에_이전_대화를_자동으로_포함하지_않는다'
 ```
 
-[07장 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.
+[07단원 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.
 
 ## 5. 이번 실습에서 프롬프트와 코드의 책임
 

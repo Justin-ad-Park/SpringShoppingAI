@@ -1,6 +1,6 @@
 # 1. entity() 변환 실패가 HTTP 500가 되는 과정
 
-04장 본문에서 정상 변환을 확인한 뒤 읽는 보충 설명입니다.<br>
+04단원 본문에서 정상 변환을 확인한 뒤 읽는 보충 설명입니다.<br>
 HTTP 요청과 Controller의 관계가 낯설면 [웹 요청의 기본 흐름](00-web-request-basics.md)을 먼저 읽으세요.
 
 ## 1. 실패를 재현하기
@@ -183,4 +183,4 @@ MVC를 거치는 HTTP 요청이어야 위 처리 끝에서 HTTP 500 응답을 �
 
 </details>
 
-[웹 요청의 기본 흐름](00-web-request-basics.md) · [다음: 값 검증 실패와 422](02-value-validation-422.md) · [04장 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)
+[웹 요청의 기본 흐름](00-web-request-basics.md) · [다음: 값 검증 실패와 422](02-value-validation-422.md) · [04단원 본문으로](../04-structured-output.md#5-실패는-테스트로-확인하기)

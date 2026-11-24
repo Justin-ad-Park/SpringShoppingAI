@@ -127,6 +127,6 @@ Splitter도 임베딩 모델이 아니며 문서를 조각으로 나눕니다.<b
 - [Spring AI RAG](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html): 표준 API와 확장 흐름의 기준입니다.
 - [Christian Tzolov / Spring Blog — Modular RAG](https://spring.io/blog/2026/10/02/spring-ai-modular-rag-typesafe-jev/): 검색된 문서가 주제와 비슷해도 답변 근거로 유용하지 않을 수 있다는 설명을 참고했습니다.<br>
   해당 글의 확장 모듈은 이번 실습에 추가하지 않습니다.
-- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료)
 
 [이전: 09단원](09-embeddings-search.md) · [다음: 11단원](11-mcp-workflow-agent.md)

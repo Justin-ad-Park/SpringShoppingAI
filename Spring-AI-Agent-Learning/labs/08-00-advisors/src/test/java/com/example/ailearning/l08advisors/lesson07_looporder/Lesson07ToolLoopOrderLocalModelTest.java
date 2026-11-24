@@ -45,7 +45,7 @@ class Lesson07ToolLoopOrderLocalModelTest {
     @Test
     void 반복_앞의_Advisor는_한번_뒤의_Advisor는_모델_요청마다_실행된다(CapturedOutput logs) {
         MODEL.chat().setResponseSequence(
-                createAssistantToolCallMessage("price-1", "getTeaPrice", "{}"),
+                createAssistantToolCallMessage("price-1", "getTeaPrice", "{\"productName\":\"허브티\"}"),
                 createAssistantTextMessage("허브티 가격은 12000원입니다."));
 
         String answer = service.chat("허브티 가격은 얼마인가요?");

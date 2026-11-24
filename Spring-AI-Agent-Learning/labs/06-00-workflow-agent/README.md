@@ -1,6 +1,6 @@
 # 06 Workflow·Agent·Hybrid 방식
 
-[06장 교육 문서](../../docs/lessons/06-workflow-agent.md)를 따라 같은 쇼핑 요청의 처리 방식을 비교합니다.<br>
+[06단원 교육 문서](../../docs/lessons/06-workflow-agent.md)를 따라 같은 쇼핑 요청의 처리 방식을 비교합니다.<br>
 기본 모듈은 직접 만든 횟수 계수·시간 제한·스레드 실행 코드를 사용하지 않습니다.<br>
 금액·카테고리 검증과 결과 없음 처리는 업무 요구사항으로 유지합니다.
 
@@ -66,7 +66,7 @@ Live 테스트는 실제 모델의 해석·도구 사용을 검사합니다.<br>
 예산 필터·경계값은 `BudgetProductToolsUnitTest`, 모델에 전달되는 상품·금액과 도구 연결은 `WorkflowAgentLocalModelTest`로 별도 검증합니다.<br>
 이 검사는 최종 자연어 답변 전체의 사실성 평가까지 포함하지 않습니다.
 
-검증문이 낯설면 [06장 보충: 테스트 검증 코드 읽기](../../docs/lessons/06-workflow-agent/04-test-assertions.md)를 참고하세요.<br>
+검증문이 낯설면 [06단원 보충: 테스트 검증 코드 읽기](../../docs/lessons/06-workflow-agent/04-test-assertions.md)를 참고하세요.<br>
 모델 HTTP 요청 수는 로컬 테스트의 `MODEL.chat().getRequests()`로 확인합니다.<br>
 기본 고정 시나리오는 Workflow 2회, Agent 4회, Hybrid 3회이며 실제 모델의 횟수는 달라질 수 있습니다.
 

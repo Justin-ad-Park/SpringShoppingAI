@@ -32,7 +32,7 @@ sequenceDiagram
 이 그림은 **모델이 검색 도구를 한 번 선택한 경우**입니다.<br>
 인사는 도구 없이 끝날 수 있고 배송비 질문은 추가 호출이 생길 수 있습니다.<br>
 Spring AI 2.0의 도구 루프가 이 반복을 처리합니다.<br>
-지금은 사용법을 익히고 Advisor 구조는 08장에서 배웁니다.<br>
+지금은 사용법을 익히고 Advisor 구조는 08단원에서 배웁니다.<br>
 최상위 `.call().content()` 한 번에도 실제 모델 요청은 여러 번 발생할 수 있습니다.
 
 ## 읽는 순서와 실행
@@ -41,7 +41,7 @@ Spring AI 2.0의 도구 루프가 이 반복을 처리합니다.<br>
 Product → ProductPriceDetail → ProductCatalog → ShoppingTools → ToolChatService → [ToolController](../../../labs/05-00-tool-calling/src/main/java/com/example/ailearning/l05tools/ToolController.java) 순서입니다.
 
 명령은 모두 저장소 루트에서 실행합니다.<br>
-`bootRun` 전에는 [01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
+`bootRun` 전에는 [01단원 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 도구 호출을 지원하는 Chat 모델을 선택합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:05-00-tool-calling:test --tests com.example.ailearning.l05tools.ToolCallingLocalModelTest
@@ -86,7 +86,7 @@ curl -i http://127.0.0.1:8095/api/tools/chat \
 `인사는_도구를_호출하지_않고_답할_수_있다`은 요청 1개를 확인합니다.<br>
 이는 고정 응답으로 만든 두 흐름의 비교이며 실제 모델의 선택을 측정한 값이 아닙니다.<br>
 실제 모델이 요청한 도구의 실행은 [05-4의 Spy 로그](04-spy-and-inorder.md#실행)에서 이름·인자·순서로 확인합니다.<br>
-06장의 HTTP 응답에서는 최종 문장과 후보를 비교하고, 실제 카탈로그 호출 기록은 [06장 Live 테스트 안내](../../../labs/06-00-workflow-agent/README.md#실제-모델-연결)의 콘솔 로그로 확인합니다.<br>
+06단원의 HTTP 응답에서는 최종 문장과 후보를 비교하고, 실제 카탈로그 호출 기록은 [06단원 Live 테스트 안내](../../../labs/06-00-workflow-agent/README.md#실제-모델-연결)의 콘솔 로그로 확인합니다.<br>
 모델 HTTP 요청 수는 고정 응답 테스트 서버의 요청 기록으로 확인하며, 카탈로그 호출 횟수와 구분합니다.<br>
 코드를 바꾸는 실험은 서버를 종료한 뒤 다시 시작하고, 실험 후 원복한 코드로도 재시작합니다.
 

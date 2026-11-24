@@ -44,9 +44,9 @@ import com.example.ailearning.testsupport.output.TestOutput;
 Java에서는 상위 패키지와 하위 패키지도 서로 다른 패키지이므로, 구현 지원 클래스 중 상위 `model`에서 사용하는 타입과 메서드는 `public`입니다.<br>
 실습 테스트는 이 구현 클래스 대신 루트의 API를 사용합니다.
 
-## 04장에서 먼저 읽을 코드
+## 04단원에서 먼저 읽을 코드
 
-[04장 로컬 테스트](../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `MODEL`은 테스트들이 공유하는 서버입니다.
+[04단원 로컬 테스트](../labs/04-00-structured-output/src/test/java/com/example/ailearning/l04structured/StructuredOutputLocalModelTest.java)의 `MODEL`은 테스트들이 공유하는 서버입니다.
 
 ```java
 private static final OpenAiStubServer MODEL = new OpenAiStubServer();
@@ -168,14 +168,14 @@ try (var userABrowser = appClient.newSession(); var userBBrowser = appClient.new
 
 | 사용 코드 | 역할·연결 단원 |
 |---|---|
-| `MODEL.chat().setResponseText(...)` | 고정 문장·JSON 문자열 지정. 04장 |
+| `MODEL.chat().setResponseText(...)` | 고정 문장·JSON 문자열 지정. 04단원 |
 | `MODEL.chat().setResponseMessage(...)` | assistant 메시지 직접 지정. 채팅 실습 |
-| `MODEL.chat().setResponseSequence(...)` | 요청마다 다음 메시지 반환. 소진되면 실패. 05·08장 |
-| `MODEL.chat().setResponseFunction(request -> ...)` | 요청에 따른 분기. 06·11·12·13장 |
-| `MODEL.chat().setHttpStatus(...)`, `setResponseDelay(...)` | 오류·시간 초과 재현. 08·12·13장 |
+| `MODEL.chat().setResponseSequence(...)` | 요청마다 다음 메시지 반환. 소진되면 실패. 05·08단원 |
+| `MODEL.chat().setResponseFunction(request -> ...)` | 요청에 따른 분기. 06·11·12·13단원 |
+| `MODEL.chat().setHttpStatus(...)`, `setResponseDelay(...)` | 오류·시간 초과 재현. 08·12·13단원 |
 | `MODEL.chat().setTokenUsage(input, output)` | 채팅 사용량 고정값 지정 |
 | `MODEL.chat().getRequests()` | 채팅 요청·메시지·호출 횟수 확인 |
-| `MODEL.embeddings().setVectorFunction(text -> ...)` | 테스트용 벡터 함수 지정. 09장 이후 관련 실습 |
+| `MODEL.embeddings().setVectorFunction(text -> ...)` | 테스트용 벡터 함수 지정. 09단원 이후 관련 실습 |
 | `MODEL.embeddings().getRequests()` | 문서 적재·질문 임베딩 요청 확인 |
 
 임베딩 설정은 문서 초기 적재보다 먼저 필요하므로 해당 단원은 `createModelServer()`에서 지정합니다.<br>

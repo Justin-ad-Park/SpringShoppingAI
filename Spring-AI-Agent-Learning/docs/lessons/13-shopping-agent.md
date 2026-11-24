@@ -153,7 +153,7 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 - [Anthropic — Building effective agents](https://www.anthropic.com/research/building-effective-agents): 고정 흐름과 모델 선택의 구분, 단순한 구성에서 시작하는 설계 기준을 참고했습니다.
 - [Microsoft — Spring AI for Beginners](https://github.com/microsoft/Spring-AI-for-Beginners): 개별 기능을 RAG·도구·MCP·Agent로 연결하는 공개 교육 과정의 학습 구성을 참고했습니다.<br>
   Azure 배포 코드를 옮긴 것은 아닙니다.
-- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료): 확인 범위와 버전 차이를 설명합니다.<br>
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료): 확인 범위와 버전 차이를 설명합니다.<br>
   13-5·6의 기존 출처는 각 소수업에서 확인합니다.
 
 [이전: 12단원](12-evaluation.md) · [다음: 14단원 Jev](14-jev.md) · [전체 교육 계획](../curriculum.md)

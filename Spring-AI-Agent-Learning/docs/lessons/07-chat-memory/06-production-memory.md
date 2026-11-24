@@ -4,7 +4,7 @@
 
 [07-1~3](../07-chat-memory.md)의 기본 실습을 마친 뒤 읽는 선택 보충입니다.<br>
 최근 문맥과 전체 이력·업무 상태를 구분하고, 영구 저장소를 연결할 때 바뀌는 책임을 설명합니다.<br>
-Advisor 연결은 [08장](../08-advisors.md)을 배운 뒤 다시 읽어도 됩니다.
+Advisor 연결은 [08단원](../08-advisors.md)을 배운 뒤 다시 읽어도 됩니다.
 
 이 문서는 **공개 튜토리얼·공급사의 연동 가이드와 Spring AI 2.0.2 소스를 바탕으로 정리한 설계 예시**입니다.<br>
 특정 쇼핑몰의 실제 운영 구성을 확인한 사례 보고서는 아닙니다.<br>
@@ -87,7 +87,7 @@ Spring AI의 `ChatMemory`는 전체 이력 보관을 대신하지 않습니다.<
 | 관련 과거 내용 검색 | 긴 이력에서 필요한 일부를 선택 | 검색 누락·오래된 정보와 현재 조건 충돌 |
 
 Dan Vega의 [Compacting Chat Memory Advisor 예제](https://github.com/danvega/compacting-chat-memory-advisor)는 오래된 대화를 요약하는 확장을 보여 줍니다.<br>
-**`MessageWindowChatMemory` 자체의 자동 요약 기능이 아닙니다.** 08장 이후 선택 심화로 읽고, 기본 수업에서는 먼저 창 밖으로 사라지는 정보를 관찰합니다.
+**`MessageWindowChatMemory` 자체의 자동 요약 기능이 아닙니다.** 08단원 이후 선택 심화로 읽고, 기본 수업에서는 먼저 창 밖으로 사라지는 정보를 관찰합니다.
 
 도구 호출까지 포함하는 Agent라면 저장할 메시지 종류도 확인해야 합니다.<br>
 2.0.2의 JDBC 저장소는 도구 호출을 담은 assistant 메시지와 도구 응답 메시지를 저장하지 않는 제약이 있습니다.<br>
@@ -136,4 +136,4 @@ Dan Vega의 [Compacting Chat Memory Advisor 예제](https://github.com/danvega/c
 위 자료에서 확인한 기능을 바탕으로 쇼핑 상담의 입력·보관·권한·실패 정책을 구성했습니다.<br>
 표의 운영 기준과 쇼핑 시나리오는 이 교재의 설계 제안입니다.
 
-[이전: 07-5](05-isolation.md) · [07장 목차](../07-chat-memory.md) · [다음: 08장 Advisor](../08-advisors.md)
+[이전: 07-5](05-isolation.md) · [07단원 목차](../07-chat-memory.md) · [다음: 08단원 Advisor](../08-advisors.md)

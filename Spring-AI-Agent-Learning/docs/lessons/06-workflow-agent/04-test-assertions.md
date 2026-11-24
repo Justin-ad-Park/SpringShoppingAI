@@ -1,6 +1,6 @@
-# 06장 보충. 테스트 검증 코드 읽기
+# 06단원 보충. 테스트 검증 코드 읽기
 
-[06장](../06-workflow-agent.md)의 세 실행 방식을 읽은 뒤, 테스트 검증문이 낯설 때 보는 **선택 보충**입니다.<br>
+[06단원](../06-workflow-agent.md)의 세 실행 방식을 읽은 뒤, 테스트 검증문이 낯설 때 보는 **선택 보충**입니다.<br>
 [Live 테스트](../../../labs/06-00-workflow-agent/src/test/java/com/example/ailearning/l06decisions/WorkflowAgentOpenAiLiveTest.java), [로컬 테스트](../../../labs/06-00-workflow-agent/src/test/java/com/example/ailearning/l06decisions/WorkflowAgentLocalModelTest.java), [도구 단위 테스트](../../../labs/06-00-workflow-agent/src/test/java/com/example/ailearning/l06decisions/BudgetProductToolsUnitTest.java)를 함께 봅니다.
 
 **이번 목표:** 반환값 검사, 실제 메서드 호출 기록 검사, 모델에 전달된 메시지 검사를 구분합니다.
@@ -8,7 +8,7 @@
 ## 1. 검증 메서드 지도: 표 순서대로 읽기
 
 AssertJ는 **반환된 값**, Mockito는 **이미 실행된 호출 기록**을 검사합니다.<br>
-이 페이지에서 연결한 06장 테스트의 검증 메서드를 아래 순서대로 설명합니다.<br>
+이 페이지에서 연결한 06단원 테스트의 검증 메서드를 아래 순서대로 설명합니다.<br>
 `search`, `calculatePriceDetail` 등은 검사 대상인 업무 메서드입니다.
 
 | 라이브러리 | 메서드·표현 | 기능 | 설명 절 |
@@ -313,4 +313,4 @@ Live 테스트는 모델이 필요한 조회를 생략하거나 조건을 잘못
 
 </details>
 
-[06장 목차로 돌아가기](../06-workflow-agent.md) · [05-4 Spy·InOrder 설명](../05-tool-calling/04-spy-and-inorder.md) · [학습 방법](../../learning-guide.md)
+[06단원 목차로 돌아가기](../06-workflow-agent.md) · [05-4 Spy·InOrder 설명](../05-tool-calling/04-spy-and-inorder.md) · [학습 방법](../../learning-guide.md)

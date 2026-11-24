@@ -1,6 +1,6 @@
 # 02-3. 실제 모델 호출
 
-[01장](../01-setup.md)에서 설명한 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
+[01단원](../01-setup.md)에서 설명한 저장소 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`을 사용합니다.<br>
 두 가지 실행 경로 중 하나를 선택하세요.
 
 | 경로 | 확인하는 범위 | 준비 |
@@ -69,4 +69,4 @@ IntelliJ에서는 클래스 또는 메서드의 Run으로 실행합니다.<br>
 필터 없이 이 모듈의 `test`를 실행하면 Mock과 Live 두 클래스가 모두 실행됩니다.<br>
 `--rerun-tasks`는 이전 실행 결과를 재사용하지 않고 다시 실행하는 옵션입니다.
 
-[이전: 테스트 코드 읽기](02-test-code.md) · [다음: 질문만 바꾸는 실험](../02-first-call.md#5-질문만-바꿔-보기) · [02장 본문](../02-first-call.md)
+[이전: 테스트 코드 읽기](02-test-code.md) · [다음: 질문만 바꾸는 실험](../02-first-call.md#5-질문만-바꿔-보기) · [02단원 본문](../02-first-call.md)

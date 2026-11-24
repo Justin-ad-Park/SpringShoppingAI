@@ -19,7 +19,7 @@ ID 검증과 synchronized는 Spring/Java 보충 설명입니다.
 
 ## 실행: 기억 없는 경로와 있는 경로 비교
 
-[01장 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 저장소 루트에서 실행합니다.
+[01단원 루트 .env 설정](../01-setup.md#4-실제-모델-연결을-위한-설정-준비)를 설정하고 저장소 루트에서 실행합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:07-00-chat-memory:test --tests com.example.ailearning.l07memory.MemoryLocalModelTest

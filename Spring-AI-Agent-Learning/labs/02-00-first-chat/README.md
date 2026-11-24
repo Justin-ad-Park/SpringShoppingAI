@@ -1,6 +1,6 @@
 # 실습 01: 첫 모델 호출
 
-먼저 [교재 01장](../../docs/lessons/01-setup.md)을 읽습니다.<br>
+먼저 [교재 01단원](../../docs/lessons/01-setup.md)을 읽습니다.<br>
 아래 명령은 모두 **저장소 루트**에서 실행합니다.
 
 ```bash
@@ -54,8 +54,8 @@ curl -i http://127.0.0.1:8091/api/chat \
    가짜 서버 구현은 제공된 보조 코드로 사용
 
 첫 실습에서는 설정과 `ChatService.ask()`의 호출 흐름을 이해하면 충분합니다.<br>
-입력 검증 테스트는 보충, system/user 전달과 대화 기억 테스트는 03장, 인증 헤더 검증은 선택 심화로 읽습니다.<br>
-03장의 [PromptMessagesLocalModelTest](src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)는 서비스 소스를 바꾸지 않고 로컬 고정 응답 서버로 system/user 메시지가 전달되는지 확인합니다.<br>
+입력 검증 테스트는 보충, system/user 전달과 대화 기억 테스트는 03단원, 인증 헤더 검증은 선택 심화로 읽습니다.<br>
+03단원의 [PromptMessagesLocalModelTest](src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)는 서비스 소스를 바꾸지 않고 로컬 고정 응답 서버로 system/user 메시지가 전달되는지 확인합니다.<br>
 두 번째 질문에 이전 대화가 자동으로 포함되지 않는지도 확인합니다.<br>
 아래 명령은 이 두 테스트를 실행하며 실제 OpenAI를 호출하지 않습니다.
 
@@ -63,14 +63,14 @@ curl -i http://127.0.0.1:8091/api/chat \
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests 'com.example.ailearning.l03prompts.PromptMessagesLocalModelTest'
 ```
 
-03장 3.3의 기본 시스템 메시지 실습은 별도 `l03prompts` 패키지의 [SystemMessageDefaultsLocalModelTest](src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)에 있습니다.<br>
+03단원 3.3의 기본 시스템 메시지 실습은 별도 `l03prompts` 패키지의 [SystemMessageDefaultsLocalModelTest](src/test/java/com/example/ailearning/l03prompts/SystemMessageDefaultsLocalModelTest.java)에 있습니다.<br>
 기본값 사용·요청별 대체·기본값 유지를 모델에 전달된 메시지로 확인하며 외부 API를 호출하지 않습니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests 'com.example.ailearning.l03prompts.SystemMessageDefaultsLocalModelTest'
 ```
 
-테스트 설정과 두 HTTP 서버의 역할은 [02장의 테스트 코드 읽기](../../docs/lessons/02-first-call/02-test-code.md)에서 설명합니다.
+테스트 설정과 두 HTTP 서버의 역할은 [02단원의 테스트 코드 읽기](../../docs/lessons/02-first-call/02-test-code.md)에서 설명합니다.
 
 이 실습은 이전 대화·도구·RAG를 사용하지 않습니다.<br>
 테스트의 고정 응답은 실제 AI 답변이 아닙니다.<br>

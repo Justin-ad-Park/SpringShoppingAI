@@ -128,6 +128,6 @@ Spring AI는 임베딩 모델 호출과 벡터 저장소 연결을 돕습니다.
 - [Spring AI Vector Databases](https://docs.spring.io/spring-ai/reference/api/vectordbs.html): `VectorStore`와 검색 요청의 기준입니다.
 - [Oded Shopen / Spring Blog — AI Meets Spring Petclinic, Part II](https://spring.io/blog/2024/09/27/ai-meets-spring-petclinic-implementing-an-ai-assistant-with-spring-ai-part/): 서로 다른 표현을 의미 검색으로 연결하는 업무 예시를 참고했습니다.<br>
   2024년 코드를 현재 API의 기준으로 사용하지 않습니다.
-- [07~13단원 참고 자료 안내](../references.md#0713장-보강에-사용한-교육-자료)
+- [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료)
 
 [이전: 08단원](08-advisors.md) · [다음: 10단원](10-rag.md)
