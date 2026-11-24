@@ -20,4 +20,4 @@
 - 실행 코드 변경이 없어 애플리케이션 테스트·외부 API 호출은 실행하지 않았습니다. 그림은 내용과 문법을 변경하지 않아 렌더링도 다시 검사하지 않았습니다.
 - 단일 에이전트가 검토·수정·정적 검증을 수행했습니다. 별도 세션의 행동 평가와 실제 학습자 수업 검증은 수행하지 않았습니다.
 
-[09단원](../lessons/09-embeddings-search.md) · [11-2 모델 연결 보충](../lessons/11-mcp-workflow-agent/02-provider-model.md)
+[09단원](../lessons/09-00-embeddings-search.md) · [11-2 모델 연결 보충](../lessons/11-mcp-workflow-agent/02-provider-model.md)

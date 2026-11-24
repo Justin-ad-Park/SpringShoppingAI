@@ -201,4 +201,4 @@ Advisor 목록은 [Spring AI 2.1.0 공식 소스](https://github.com/spring-proj
 - [Spring Blog — Tool Calling in Spring AI 2.0](https://spring.io/blog/2026/06/15/spring-ai-composable-tool-calling/): Advisor 체인의 도구 루프.
 - [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료): 외부 자료의 확인 범위와 버전 주의점.
 
-[학습 방법](../learning-guide.md) · [교육 계획](../curriculum.md) · [이전: 07단원](07-chat-memory.md) · [시작: 08-1](08-advisors/01-built-in.md) · [다음 단원: 09단원](09-embeddings-search.md)
+[학습 방법](../learning-guide.md) · [교육 계획](../curriculum.md) · [이전: 07단원](07-chat-memory.md) · [시작: 08-1](08-advisors/01-built-in.md) · [다음 단원: 09단원](09-00-embeddings-search.md)

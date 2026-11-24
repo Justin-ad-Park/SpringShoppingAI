@@ -119,4 +119,4 @@ OpenAI에서 사용하던 유사도 하한을 로컬 모델에 그대로 적용�
 
 </details>
 
-[09단원 검색 실험 복습](../09-embeddings-search/03-search.md) · [DJL 보충 목차](../09-01-djl-embeddings.md)
+[09단원 검색 실험 복습](../09-00-embeddings-search/03-search.md) · [DJL 보충 목차](../09-01-djl-embeddings.md)

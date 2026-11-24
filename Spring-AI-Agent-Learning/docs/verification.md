@@ -75,7 +75,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 | 단원 | 실행 모듈 | 테스트 | 결과 |
 |---|---|---:|---|
 | 08 Advisor | 08-advisors | 4 | 통과 |
-| 09 임베딩과 검색 | 09-embeddings-search | 4 | 통과 |
+| 09 임베딩과 검색 | 09-00-embeddings-search | 4 | 통과 |
 | 10 RAG | 10-rag | 6 | 통과 |
 | 11 평가와 운영 기초 | 11-evaluation | 5 | 통과 |
 | 12 통합 상담 Agent | 12-shopping-agent | 9 | 통과 |

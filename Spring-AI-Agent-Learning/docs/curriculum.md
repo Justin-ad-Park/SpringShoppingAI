@@ -46,7 +46,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | 보충 | [02-5 모델 통신](lessons/02-first-call/05-model-timeout-retry.md) · [05-5 도구 제한](lessons/05-tool-calling/05-tool-call-limits.md) | Spring AI 도구 호출 상한 / SDK 통신 타임아웃·재시도 설정 | 도구 실행 횟수와 HTTP 요청 횟수, 제한 초과와 통신 실패 구분 | 별도 교재·실습 제공 |
 | 문맥 | 07 대화 메모리 | ChatMemory의 보관 정책과 Repository의 저장 역할, 이전 메시지 조회·재전달·저장, 대화 격리 | 후속 질문 처리·메시지 창 확인. 07-2·07-3의 JDBC·Redis/InMemory 선택은 독립 실행 모듈에서 학습 | [교재·실습 완성](lessons/07-chat-memory.md) |
 | 문맥 | 08 Advisor | 기본 로거 → 등록 범위 → 메모리 파라미터 → 단일 Advisor 전후 처리 → 두 Advisor의 order → 도구 재요청 → 반복 기준 배치 | 소수업별 Service·LocalModel·Live로 단일 호출·정렬·도구 반복을 따로 확인한 뒤 연결 | [교재·실습 완성](lessons/08-advisors.md) |
-| 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-embeddings-search.md) |
+| 지식 | 09 임베딩과 검색 | 텍스트의 수치 표현 → 유사도 → 작은 메모리 저장소 | 문자열 검색과 의미 검색 차이 관찰 | [교재·실습 완성](lessons/09-00-embeddings-search.md) |
 | 임베딩 확장 | 09 보충 1 DJL 로컬 임베딩 | 로컬 E5 모델 준비 → DJL 추론 → Spring AI 어댑터 → 정책 검색 | 질문·문서 접두어와 로컬 추론을 설명하고 09단원 방식으로 결과 검증 | [교재·실습](lessons/09-01-djl-embeddings.md) |
 | 지식 | 10 RAG | RAG(관련 자료를 검색해 모델에 함께 전달하고, 그 자료를 바탕으로 답변을 생성하는 방식): 문서 분할 → 검색 → 근거 포함 답변 → 표준 Reader·Splitter·RAG Advisor | 근거 없는 질문·오검색·출처 확인 | [교재·실습 완성](lessons/10-rag.md) |
 | 연결 | 11 MCP Workflow·Agent·Hybrid | MCP 연결 → 직접 호출 → 같은 원격 도구의 세 실행 방식 비교 | 도구 선택 주체·전체 상품 계산·Java 검증 범위 설명 | [교재·실습 완성](lessons/11-mcp-workflow-agent.md) |

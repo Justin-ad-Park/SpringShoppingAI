@@ -32,8 +32,8 @@
 
 | 문서 | 해결할 문제·개념 | 입력→처리→결과 연결 및 해석 |
 |---|---|---|
-| [09-2](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/02-store.md) | 같은 의미의 다른 표현을 검색, query·topK·score·metadata | 문서 적재와 질문 검색의 시점 구분. 같은 모델·차원, 재시작 비용, ID·원문·점수 해석 보존 |
-| [09-3](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/03-search.md) | 유사도 하한과 메타데이터 필터의 차이 | 카테고리·유사도 조건과 topK의 관계 설명 |
+| [09-2](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/02-store.md) | 같은 의미의 다른 표현을 검색, query·topK·score·metadata | 문서 적재와 질문 검색의 시점 구분. 같은 모델·차원, 재시작 비용, ID·원문·점수 해석 보존 |
+| [09-3](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/03-search.md) | 유사도 하한과 메타데이터 필터의 차이 | 카테고리·유사도 조건과 topK의 관계 설명 |
 | [10-1](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/01-standard-indexing.md) | 파일을 검색 자료로 준비하는 이유, 청크·토큰 | get()의 원문 목록→apply()의 조각 목록→add()의 임베딩 저장. 리소스 위치·빈 연결·시작 시 비용·검증 범위 설명 |
 | [12-1](../../Spring-AI-Agent-Learning/docs/lessons/12-evaluation/01-cases.md) | 같은 기준으로 후보 답변 비교 | 기대 상태·출처·문구와 7일/30일 후보 대조. 빈 실패 목록·문구 실패 및 규칙의 한계 설명 |
 | [12-3](../../Spring-AI-Agent-Learning/docs/lessons/12-evaluation/03-usage.md) | 사용량을 읽는 목적, 토큰·입력/출력·Usage | content()와 chatResponse() 차이, 응답→답변·사용량→Reply. 10/5 고정 값의 의미, null과 0 구분, 실제 모델 비교 실습 |

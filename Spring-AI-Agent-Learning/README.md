@@ -39,7 +39,7 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 | 7 | [06. Workflow와 Agent](docs/lessons/06-workflow-agent.md) | 같은 요구의 세 방식·실행 기록·상한 비교 |
 | 8 | [07. 대화 메모리](docs/lessons/07-chat-memory.md) | 이전 질문·응답을 다음 프롬프트에 재전달·대화 격리 |
 | 9 | [08. Advisor](docs/lessons/08-advisors.md) | 호출 전후 순서·메모리 자동 연결·도구 루프 |
-| 10 | [09. 임베딩과 검색](docs/lessons/09-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
+| 10 | [09. 임베딩과 검색](docs/lessons/09-00-embeddings-search.md) | 문서 적재·문자열/벡터 검색·메타데이터 필터 |
 | 11 | [09 보충 1. DJL 로컬 임베딩](docs/lessons/09-01-djl-embeddings.md) | 한국어 E5 모델 준비·벡터 생성·Spring AI 연결·정책 검색 |
 | 12 | [10. RAG](docs/lessons/10-rag.md) | 문서 분할·검색 근거·출처 검사·답변 보류 |
 | 13 | [11. MCP Workflow·Agent·Hybrid](docs/lessons/11-mcp-workflow-agent.md) | 원격 도구 연결·직접 호출·세 실행 방식 비교 |

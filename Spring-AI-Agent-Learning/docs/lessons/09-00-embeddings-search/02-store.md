@@ -164,4 +164,4 @@ curl --get http://127.0.0.1:8099/api/search/basic --data-urlencode 'query=운송
 
 </details>
 
-[이전](01-vectors.md) · [목차](../09-embeddings-search.md) · [다음: 비교와 필터](03-search.md)
+[이전](01-vectors.md) · [목차](../09-00-embeddings-search.md) · [다음: 비교와 필터](03-search.md)

@@ -129,4 +129,4 @@ Splitter도 임베딩 모델이 아니며 문서를 조각으로 나눕니다.<b
   해당 글의 확장 모듈은 이번 실습에 추가하지 않습니다.
 - [07~13단원 참고 자료 안내](../references.md#0713단원-보강에-사용한-교육-자료)
 
-[이전: 09단원](09-embeddings-search.md) · [다음: 11단원](11-mcp-workflow-agent.md)
+[이전: 09단원](09-00-embeddings-search.md) · [다음: 11단원](11-mcp-workflow-agent.md)

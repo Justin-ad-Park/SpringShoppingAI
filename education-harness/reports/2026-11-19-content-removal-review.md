@@ -68,13 +68,13 @@
 
 | 순서 | 위치 | 현재 문제 | 복원·보강할 내용 |
 |---|---|---|---|
-| 1 | [09-2](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/02-store.md) | API 표만으로 개념 이해가 어렵고 비교 전제·저장 수명이 축약됨 | 용어·쇼핑 사례, 적재와 검색의 실행 시점, 같은 모델·차원, 재시작 비용, ID·원문·점수 읽기. 이번 작업에서 적용 |
+| 1 | [09-2](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/02-store.md) | API 표만으로 개념 이해가 어렵고 비교 전제·저장 수명이 축약됨 | 용어·쇼핑 사례, 적재와 검색의 실행 시점, 같은 모델·차원, 재시작 비용, ID·원문·점수 읽기. 이번 작업에서 적용 |
 | 2 | [13-2](../../Spring-AI-Agent-Learning/docs/lessons/13-shopping-agent/02-intent.md) | 전체 서비스 소스와 짧은 요약 위주. 왜 단계를 나누는지 설명 부족 | 고객 질문→Intent 예시, task/category/totalBudget 의미, 의도 추출→허용 도구 구성→모델 선택→검증 흐름. 단계별 발췌와 바로 옆 설명으로 재구성 |
 | 3 | [13-4](../../Spring-AI-Agent-Learning/docs/lessons/13-shopping-agent/04-conversation.md) | 전체 소스에 비해 저장 정책·후속 조건과 관찰 방법 설명 부족 | 상태별 저장 여부·이유, 세 요청의 조건/결과/저장 수 변화, 실패 후 이력, 조회·삭제, 메모리 6개의 단위·수명, 쿠키 역할·실행 비용 복원 |
 | 4 | [10-1](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/01-standard-indexing.md) | API 표와 중첩 호출만 있고 자료가 다음 단계로 넘어가는 설명 부족 | ClassPathResource가 읽는 파일 위치, get()의 Document 목록→apply()의 조각 목록→add()의 임베딩 저장. 청크와 토큰의 뜻, 짧은 문서에서 분할되지 않는 이유 |
 | 5 | [12-1](../../Spring-AI-Agent-Learning/docs/lessons/12-evaluation/01-cases.md), [12-5](../../Spring-AI-Agent-Learning/docs/lessons/12-evaluation/05-failures.md) | 비교기를 단순화한 것은 타당하지만 고정 질문 세트와 통과율 해석 설명이 빠짐 | 12-1에 기대값과 후보 답변의 구체적 짝, 실패 사유 예시. 12-5에 evaluation-cases.json→실행→비교→사례별 결과→passRate 연결과 작은 세트의 한계 복원 |
 | 6 | [12-3](../../Spring-AI-Agent-Learning/docs/lessons/12-evaluation/03-usage.md), 12-5 | 단일 ChatResponse 학습은 쉬워졌지만 통합 예제의 새로운 API·계측 범위 설명이 링크로 대체됨 | 12-3에 입력·출력 토큰 의미와 출력 해석, 12-5에 responseEntity()의 entity()/response()와 Spring MVC 타입 구분, 토큰과 전체 시간의 측정 범위 설명 |
-| 7 | [09-3](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/03-search.md) | threshold·metadata filter를 사용하는 실험은 있으나 이전 용어 표가 제거됨 | 두 용어를 처음 사용하는 위치에서 정의하고 의미 검색 점수와 명시 조건의 차이 설명 |
+| 7 | [09-3](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/03-search.md) | threshold·metadata filter를 사용하는 실험은 있으나 이전 용어 표가 제거됨 | 두 용어를 처음 사용하는 위치에서 정의하고 의미 검색 점수와 명시 조건의 차이 설명 |
 
 13-2의 `searchProducts()`에 인자가 없는 이유도 복원해야 합니다.<br>
 모델이 새 카테고리·예산을 인자로 다시 고르는 대신, Java가 검증한 Intent를 ProductTools가 사용합니다.<br>

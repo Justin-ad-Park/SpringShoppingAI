@@ -83,4 +83,4 @@ curl http://127.0.0.1:8099/api/embedding -H 'Content-Type: text/plain; charset=U
 embedding-only에서는 문서 적재를 하지 않아 실행한 텍스트의 임베딩만 요청합니다.
 </details>
 
-[목차](../09-embeddings-search.md) · [다음: 기본 벡터 검색](02-store.md)
+[목차](../09-00-embeddings-search.md) · [다음: 기본 벡터 검색](02-store.md)

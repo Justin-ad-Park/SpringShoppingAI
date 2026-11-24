@@ -75,9 +75,9 @@
 | [08-advisors/01-chain.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/04-chain.md) | 88행: 제목, 접힌 답 없음 |
 | [08-advisors/02-memory-loop.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/03-memory.md) | 103행: 제목, 접힌 답 없음 |
 | [08-advisors/03-observe.md](../../Spring-AI-Agent-Learning/docs/lessons/08-advisors/06-tool-loop.md) | 72행: 번호 대응; 87행: 제목, 접힌 답 없음 |
-| [09-embeddings-search/01-vectors.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/01-vectors.md) | 53행: 제목, 접힌 답 없음 |
-| [09-embeddings-search/02-store.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/02-store.md) | 155행: 제목, 접힌 답 없음 |
-| [09-embeddings-search/03-search.md](../../Spring-AI-Agent-Learning/docs/lessons/09-embeddings-search/03-search.md) | 46행: 번호 대응; 63행: 제목, 접힌 답 없음 |
+| [09-00-embeddings-search/01-vectors.md](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/01-vectors.md) | 53행: 제목, 접힌 답 없음 |
+| [09-00-embeddings-search/02-store.md](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/02-store.md) | 155행: 제목, 접힌 답 없음 |
+| [09-00-embeddings-search/03-search.md](../../Spring-AI-Agent-Learning/docs/lessons/09-00-embeddings-search/03-search.md) | 46행: 번호 대응; 63행: 제목, 접힌 답 없음 |
 | [10-rag/01-indexing.md](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/03-custom-indexing.md) | 74행: 제목, 접힌 답 없음 |
 | [10-rag/02-generation.md](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/04-custom-generation.md) | 103행: 제목, 접힌 답 없음 |
 | [10-rag/03-evidence.md](../../Spring-AI-Agent-Learning/docs/lessons/10-rag/05-evidence.md) | 94행: 번호 대응; 111행: 제목, 접힌 답 없음 |
@@ -93,7 +93,7 @@
 | [13-shopping-agent/03-verify.md](../../Spring-AI-Agent-Learning/docs/lessons/13-shopping-agent/03-verify.md) | 93행: 제목, 접힌 답 없음 |
 | [13-shopping-agent/04-conversation.md](../../Spring-AI-Agent-Learning/docs/lessons/13-shopping-agent/04-conversation.md) | 116행: 제목, 해설 표제, 번호 대응; 136행: 제목, 접힌 답 없음 |
 
-`05-tool-calling/03-loop.md`, `07-chat-memory/03-isolation.md`, `08-advisors/03-observe.md`, `09-embeddings-search/03-search.md`, `10-rag/03-evidence.md`, `12-evaluation/05-failures.md`, `13-shopping-agent/04-conversation.md`는 확인 질문과 끝의 별도 점검 질문이 함께 있어 병합 대상입니다.
+`05-tool-calling/03-loop.md`, `07-chat-memory/03-isolation.md`, `08-advisors/03-observe.md`, `09-00-embeddings-search/03-search.md`, `10-rag/03-evidence.md`, `12-evaluation/05-failures.md`, `13-shopping-agent/04-conversation.md`는 확인 질문과 끝의 별도 점검 질문이 함께 있어 병합 대상입니다.
 
 ## 최종 검증 범위
 

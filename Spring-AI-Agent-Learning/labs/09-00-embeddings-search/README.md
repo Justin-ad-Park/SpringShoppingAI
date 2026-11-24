@@ -11,7 +11,7 @@
 패키지의 `lessonNN_주제`와 클래스의 `LessonNN`은 해당 소주제 번호입니다.<br>
 공통 Application·Controller·도메인·자료형·테스트 보조 코드는 역할 이름을 유지합니다.
 
-[교재·실행·검증 안내](../../docs/lessons/09-embeddings-search.md)를 먼저 읽습니다.<br>
+[교재·실행·검증 안내](../../docs/lessons/09-00-embeddings-search.md)를 먼저 읽습니다.<br>
 애플리케이션은 다른 단원·기존 쇼핑 서비스에 의존하지 않습니다.<br>
 모든 명령은 저장소 루트에서 실행합니다.
 
