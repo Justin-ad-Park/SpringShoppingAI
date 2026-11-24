@@ -24,21 +24,21 @@ public final class Lesson02DjlEmbeddingService implements AutoCloseable {
                         + modelDirectory.resolve(fileName));
             }
         }
-        embeddingModel = Criteria.builder()
-                .setTypes(String.class, float[].class)
-                .optApplication(Application.NLP.TEXT_EMBEDDING)
-                .optEngine("PyTorch")
-                .optDevice(Device.cpu())
-                .optModelPath(modelDirectory)
-                .optModelName("multilingual-e5-small-ko-v2")
-                .optTranslatorFactory(new TextEmbeddingTranslatorFactory())
-                .optArgument("pooling", "mean")
-                .optArgument("normalize", true)
-                .optArgument("padding", true)
-                .optArgument("truncation", true)
-                .optArgument("maxLength", 512)
-                .build()
-                .loadModel();
+        embeddingModel = Criteria.builder() // 모델 로딩 조건을 설정할 Builder를 만든다.
+                .setTypes(String.class, float[].class) // 입력은 문자열, 출력은 실수 배열로 지정한다.
+                .optApplication(Application.NLP.TEXT_EMBEDDING) // 텍스트 임베딩 작업에 사용할 모델임을 지정한다.
+                .optEngine("PyTorch") // 모델의 연산을 실행할 엔진을 선택한다.
+                .optDevice(Device.cpu()) // GPU 대신 CPU에서 실행한다.
+                .optModelPath(modelDirectory) // 변환한 모델과 tokenizer.json이 있는 로컬 폴더를 지정한다.
+                .optModelName("multilingual-e5-small-ko-v2") // 로드할 .pt 파일의 이름을 확장자 없이 지정한다.
+                .optTranslatorFactory(new TextEmbeddingTranslatorFactory()) // 토큰화와 출력 벡터 변환을 담당할 변환기를 준비한다.
+                .optArgument("pooling", "mean") // 패딩을 제외한 토큰별 벡터를 평균 내 문장 벡터를 만든다.
+                .optArgument("normalize", true) // 문장 벡터의 크기를 1로 맞추는 L2 정규화를 사용한다.
+                .optArgument("padding", true) // 입력을 묶어서 처리할 때 토큰 길이를 맞추는 패딩을 사용한다.
+                .optArgument("truncation", true) // 최대 입력 길이를 넘는 토큰은 잘라낸다.
+                .optArgument("maxLength", 512) // 최대 입력 길이를 문자 수가 아닌 토큰 수로 설정한다.
+                .build() // 지금까지 지정한 조건을 Criteria 객체로 만든다.
+                .loadModel(); // 조건에 따라 모델을 메모리에 로드하고 ZooModel을 반환한다.
     }
 
     public float[] embedQuery(String text) {

@@ -41,14 +41,16 @@
 접두어는 Spring AI나 DJL의 설정값이 아니라 **모델에 전달하는 입력 문자열의 일부**입니다.<br>
 콜론 뒤의 공백을 포함해 붙이며, `E5InputFormatter`가 이 모델의 입력 규칙을 적용합니다.
 
-## DJL이 제공하는 기능
+## 이 실습에서 사용하는 DJL API
 
-| API | 역할 |
-|---|---|
-| `Criteria<String, float[]>` | 입력·출력 타입, 모델 경로, 엔진, 변환 방법 지정 |
-| `ZooModel<String, float[]>` | 로드한 모델과 추론에 필요한 자원 보관 |
-| `Predictor<String, float[]>` | 입력 문장으로 실제 추론 실행 |
-| `TextEmbeddingTranslatorFactory` | 토크나이저와 임베딩 결과 변환 기능 준비 |
+[단원 도입에서 설명한 DJL](../09-01-djl-embeddings.md#djl은-무엇일까)의 모델 로딩·추론 기능을 아래 API와 실제 코드로 연결합니다.
+
+| API | 샘플에서 사용하는 부분 | 실제 역할 |
+|---|---|---|
+| `Criteria<String, float[]>` | 생성자의 [Criteria.builder() → build()](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java) | 문자열을 입력받아 벡터를 반환하도록 모델 경로·CPU 실행·변환 옵션 설정 |
+| `ZooModel<String, float[]>` | [embeddingModel 필드](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java)와 [loadModel()](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java) | 로컬 파일에서 로드한 모델을 보관하고 여러 임베딩 요청에서 재사용 |
+| `Predictor<String, float[]>` | predict()의 [embeddingModel.newPredictor()](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java) | 입력 문장을 실제로 추론해 벡터로 변환. 코드에서는 `var predictor`로 선언하며 호출 후 닫음 |
+| `TextEmbeddingTranslatorFactory` | 생성자의 [optTranslatorFactory(...)](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java) | 토큰화와 모델 출력의 평균 풀링·정규화를 처리할 변환기 준비 |
 
 먼저 [DjlModelConfiguration](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/DjlModelConfiguration.java)이 설정의 모델 경로를 읽어 서비스를 생성합니다.<br>
 모델 로딩 전체 코드는 [Lesson02DjlEmbeddingService 생성자](../../../labs/09-01-djl-embeddings/src/main/java/com/example/ailearning/l09djl/lesson02_vectors/Lesson02DjlEmbeddingService.java)에 있습니다.
@@ -63,6 +65,55 @@
 .optArgument("truncation", true)
 .optArgument("maxLength", 512)
 ```
+
+### 실행 엔진은 어떤 역할일까?
+
+모델 파일에는 학습된 가중치와 계산 구조가 들어 있고, **실행 엔진은 그 모델의 숫자 연산을 수행**합니다.<br>
+현재 샘플은 다음 설정으로 Java 앱이 실행되는 PC의 CPU에서 PyTorch 엔진을 사용합니다.
+
+```java
+.optEngine("PyTorch")
+.optDevice(Device.cpu())
+```
+
+`predictor.predict(...)`를 호출하면 DJL의 PyTorch 연동 기능이 네이티브 라이브러리를 호출해 모델 연산을 실행합니다.<br>
+이 구성에는 별도의 Python 서버나 Ollama 서버가 필요하지 않습니다.<br>
+앱을 다른 서버에 배포하면 그 서버의 CPU에서 계산합니다.
+
+DJL은 다른 실행 엔진도 지원합니다.<br>
+대표적인 엔진과 모델 형식은 다음과 같습니다.
+
+| 엔진 | 사용하는 모델 형식 예 |
+|---|---|
+| PyTorch | 현재 샘플의 TorchScript `.pt` |
+| ONNX Runtime | ONNX 형식의 `.onnx` |
+| TensorFlow | TensorFlow SavedModel |
+
+엔진을 변경하려면 이름 설정과 함께 **해당 엔진이 읽을 모델 파일, Gradle 의존성, 입력·출력 변환 설정**을 맞추고 결과를 확인해야 합니다.<br>
+예를 들어 현재 모델을 ONNX Runtime으로 실행하려면 ONNX 형식으로 변환한 모델과 해당 엔진의 의존성을 준비해야 합니다.
+
+참고: [DJL 공식 지원 엔진 안내](https://docs.djl.ai/master/docs/engine.html#supported-engines).
+
+### optTranslatorFactory()가 준비하는 변환기
+
+`optTranslatorFactory(new TextEmbeddingTranslatorFactory())`는 **DJL이 사용할 임베딩 변환기의 생성 방법을 지정**합니다.<br>
+`Factory`는 객체를 만드는 역할을 뜻하며, 여기서는 실제 입력·출력 처리를 담당하는 `TextEmbeddingTranslator`를 만듭니다.
+
+우리 코드는 `String`을 전달하지만, PyTorch 모델은 문자열을 그대로 계산하지 못합니다.<br>
+변환기는 모델 폴더의 `tokenizer.json`을 사용하는 토크나이저로 문장을 토큰 번호로 바꿉니다.<br>
+그 번호를 입력받은 모델이 토큰별 벡터를 계산하면, 변환기는 그 결과를 문장 하나의 임베딩 벡터로 정리합니다.
+
+```text
+입력 문자열: "query: 배송비는 얼마인가요?"
+ → 변환기: 토크나이저로 모델 입력 생성
+ → PyTorch 모델: 토큰별 벡터 계산
+ → 변환기: 평균 풀링으로 문장 벡터 생성
+ → 변환기: 정규화로 벡터의 크기를 1로 맞춤
+ → 반환값: float[] — 이 모델에서는 384개 숫자
+```
+
+위 코드의 `pooling=mean`은 토큰별 벡터를 평균으로 합치는 방법을, `normalize=true`는 결과를 L2 정규화하도록 지정합니다.<br>
+팩토리는 이 옵션을 반영한 변환기를 준비하고, 이후 `predictor.predict(formattedText)`를 실행할 때 변환기와 모델이 함께 위 과정을 수행합니다.
 
 `padding`은 묶어 처리할 입력의 길이를 맞추는 설정이고, `truncation`은 최대 토큰 수를 넘는 부분을 자르는 설정입니다.<br>
 긴 원문을 보존해 검색하려면 10단원에서 배운 문서 분할을 먼저 적용해야 합니다.
