@@ -158,6 +158,9 @@ public class Lesson07ToolLoopOrderChatService {
 }
 ```
 
+Spring AI 2.1.0에서 `.call()`은 `ToolCallingAdvisor`와 `ChatModelCallAdvisor`를 포함한 체인을 준비합니다.<br>
+이 예제에서 `.content()`는 준비된 체인의 첫 Advisor를 실행하고, 처리가 끝나면 최종 응답의 텍스트를 반환합니다.
+
 ## 왜 앞의 Advisor는 한 번, 뒤의 Advisor는 반복할까?
 
 `request`가 `nextCall(...)`로 호출하는 다음 객체는 `ToolCallingAdvisor`입니다.<br>
@@ -171,10 +174,9 @@ chatClientResponse = callAdvisorChain.copy(this).nextCall(processedChatClientReq
 ```
 
 여기서 `this`는 `ToolCallingAdvisor`입니다.<br>
-`copy(this)`는 정렬된 원래 목록에서 **자기 다음부터 마지막까지의 Advisor들로 새 체인을 구성**합니다.<br>
-이 예제에서는 `modelA`·`modelB`와 실제 모델 호출 처리만 포함합니다.<br>
-Advisor 객체 자체를 새로 생성한다는 뜻은 아니며, 다음 실행에 사용할 목록을 준비하는 것입니다.<br>
-`ToolCallingAdvisor.adviseCall()`을 자기 자신 안에서 다시 호출하는 것이 아니라, 반복문에서 뒤쪽 체인을 다시 호출하는 구조입니다.<br>
+`nextCall()`은 실행 목록에서 다음 Advisor를 하나씩 꺼내 실행합니다.<br>
+`copy(this)`는 별도로 보관된 정렬 목록에서 **`ToolCallingAdvisor` 뒤에 있는 기존 Advisor 객체들로 새 실행 목록**을 만듭니다.<br>
+같은 `ToolCallingAdvisor.adviseCall()` 안에서 매 반복마다 이 목록을 새로 만들어, 첫 실행을 마친 `modelA`·`modelB`·`ChatModelCallAdvisor`를 다시 실행할 수 있습니다.<br>
 앞의 `request`를 다시 호출하지 않으므로 `request`는 전체 처리에서 한 번, `modelA`·`modelB`는 각 반복에서 한 번씩 실행됩니다.
 
 ```mermaid
@@ -183,6 +185,7 @@ sequenceDiagram
     participant L as ToolCallingAdvisor
     participant A as modelA Advisor
     participant B as modelB Advisor
+    participant C as ChatModelCallAdvisor
     participant M as 모델
     participant T as PriceTools
     Note over R: request:before
@@ -191,20 +194,24 @@ sequenceDiagram
     Note over A: modelA:before
     A->>B: nextCall(request)
     Note over B: modelB:before
-    B->>M: 모델 요청 1
-    M-->>B: 도구 실행 요청
+    B->>C: nextCall(request)
+    C->>M: 모델 요청 1
+    M-->>C: 도구 실행 요청
+    C-->>B: 도구 실행 요청이 담긴 응답
     Note over B: modelB:after
-    B-->>A: 모델 응답 반환
+    B-->>A: 같은 응답 반환
     Note over A: modelA:after
-    A-->>L: 모델 응답 반환
+    A-->>L: 같은 응답 반환
     L->>T: ToolCallingManager를 통해 가격 조회
     T-->>L: 12000
     L->>A: 도구 결과를 담아 뒤쪽 체인 실행 2
     Note over A: modelA:before
     A->>B: nextCall(request)
     Note over B: modelB:before
-    B->>M: 모델 요청 2
-    M-->>B: 최종 답변
+    B->>C: nextCall(request)
+    C->>M: 도구 결과를 포함한 모델 요청 2
+    M-->>C: 최종 답변
+    C-->>B: 최종 답변이 담긴 응답
     Note over B: modelB:after
     B-->>A: 모델 응답 반환
     Note over A: modelA:after
@@ -234,9 +241,9 @@ request:before
 request:after
 ```
 
-04·05의 반대 순서 반환 규칙은 그대로입니다.<br>
-첫 `modelB:after`와 `modelA:after`는 첫 모델 호출의 응답을 받아 되돌아오는 처리입니다.<br>
-그 응답이 도구 요청이므로, ToolCallingAdvisor가 도구를 실행하고 뒤쪽 체인을 다시 호출합니다.
+첫 번째 `modelB:after`와 `modelA:after`는 **도구 실행 요청**이 담긴 모델 응답을 받았을 때 실행됩니다.<br>
+그 응답이 `ToolCallingAdvisor`까지 돌아오면 가격 도구를 실행하고, 도구 결과를 담아 뒤쪽 체인을 다시 호출합니다.<br>
+이 흐름에서 `request:after`는 `ToolCallingAdvisor`가 반복을 끝내고 **최종 답변**이 담긴 응답을 돌려줬을 때 실행됩니다.
 
 ## 실행과 비교
 
@@ -249,8 +256,10 @@ request:after
 ./gradlew :Spring-AI-Agent-Learning:labs:08-00-advisors:test --tests '*Lesson07ToolLoopOrderOpenAiLiveTest'
 ```
 
-로컬 테스트는 도구 요청·최종 답변을 고정해 `request` 1회, `modelA`·`modelB` 각각 2회의 전후 출력을 확인합니다.<br>
-도구 요청이 없는 인사는 세 Advisor 모두 한 번만 실행되는지 검사합니다.<br>
+08-7 로컬 테스트는 **Advisor의 출력 순서와 모델 요청 횟수**를 함께 확인합니다.<br>
+도구 요청과 최종 답변을 하나씩 준비한 테스트에서는 모델 요청이 2회이고, `request`의 전후 출력은 한 쌍, `modelA`·`modelB`는 각각 두 쌍입니다.<br>
+도구 요청이 없는 인사에서는 모델 요청이 1회이고, 세 Advisor 모두 전후 출력이 한 쌍입니다.<br>
+[08-6 로컬 테스트](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson06_toolloop/Lesson06ToolLoopLocalModelTest.java)는 **가격 도구가 실제로 실행됐는지**, 그리고 **두 번째 모델 요청에 도구 결과가 들어갔는지**를 확인합니다.<br>
 Live 테스트는 실제 도구 사용을 확인하되 모델의 도구 재요청 가능성을 고려해 반복 횟수를 정확히 2회로 고정하지 않습니다.
 
 비교 실험으로 `request`의 order를 기본값 + 20으로 바꾸면 이 Advisor도 반복문 뒤쪽에 들어갑니다.<br>
