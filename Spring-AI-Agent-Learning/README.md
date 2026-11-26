@@ -32,8 +32,8 @@ Spring Boot로 간단한 API를 만들 수 있지만 AI와 Spring AI는 처음�
 |---|---|---|
 | 1 | [00. LLM과 Spring AI](docs/lessons/00-llm-and-spring-ai.md) | 용어와 전체 호출 흐름 이해 |
 | 2 | [01. 환경과 프로젝트](docs/lessons/01-setup.md) | Java·Gradle·의존성·설정 확인, API 키 없이 테스트 |
-| 3 | [02. 첫 모델 호출](docs/lessons/02-first-call.md) | 세 클래스의 전체 코드 읽기, 실제 모델 호출 |
-| 4 | [03. ChatClient와 프롬프트](docs/lessons/03-chatclient-and-prompts.md) | 호출 코드 해설, system/user 메시지와 대화 기억 실험 |
+| 3 | [02. 첫 모델 호출](docs/lessons/02-first-call.md) | 첫 로컬 테스트로 호출 흐름 확인, API 키가 있으면 실제 모델에도 질문 보내기 |
+| 4 | [03. ChatClient와 프롬프트](docs/lessons/03-chatclient-and-prompts.md) | 로컬 테스트에서 system/user 전달과 이전 대화가 포함되는지 확인 |
 | 5 | [04. 구조화 응답](docs/lessons/04-structured-output.md) | 문자열과 Java 객체 비교·값 검증 |
 | 6 | [05. Tool Calling](docs/lessons/05-tool-calling.md) | Java 직접 호출과 모델의 도구 선택 비교 |
 | 7 | [06. Workflow와 Agent](docs/lessons/06-workflow-agent.md) | 같은 요구의 세 방식·실행 기록·상한 비교 |

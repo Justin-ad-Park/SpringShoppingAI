@@ -38,7 +38,7 @@ Java record, Reactor, Vector DB, LLM API, Agent 프레임워크 경험은 가정
 | --- | --- | --- | --- | --- |
 | 기초 | 00 LLM과 Spring AI | 모델·토큰·메시지·환각, 호출 흐름 그리기 | Spring AI와 모델의 역할 구분 | 교재 완성 |
 | 기초 | 01 환경과 프로젝트 | Starter·BOM·설정 파일, 로컬 가짜 모델 서버를 이용한 호출 테스트 | 설정과 의존성 위치 설명 | 교재·실습 완성 |
-| 기초 | 02 첫 모델 호출 | Controller → Service → 외부 모델 | 자신의 질문을 보내고 응답 확인 | 교재·실습 완성 |
+| 기초 | 02 첫 모델 호출 | Controller → Service → Spring AI → 모델 API | 로컬 테스트의 요청·응답을 보고 호출 경로 설명. API 키가 있으면 실제 모델에도 질문 보내기 | 교재·실습 완성 |
 | 기초 | 03 ChatClient와 프롬프트 | Builder·메시지 역할, system 추가 실험 | 각 호출 메서드와 기억 부재 설명 | 교재·수정 실험 완성 |
 | 응답 | 04 구조화 응답 | record 설명 → 문자열과 객체 비교 → 상품 조건 추출 | 형식 성공과 값의 정확성 구분·검증 | [교재·실습 완성](lessons/04-structured-output.md) |
 | 도구 | 05 Tool Calling | 일반 Java 상품 서비스 → @Tool → 호출 결과 | 모델은 요청, 애플리케이션은 실행함을 설명 | [교재·실습 완성](lessons/05-tool-calling.md) |

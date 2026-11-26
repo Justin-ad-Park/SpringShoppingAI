@@ -27,18 +27,19 @@
 
 ## 같은 기준으로 답변을 비교하기
 
-“미개봉 반품 기간은?”이라는 질문을 예로 들면, 사람은 먼저 정책 원문에서 기대 기준을 정합니다.<br>
+“미개봉 반품 기간은?”이라는 질문을 예로 들면, 사람은 먼저 [정책 원문](../../../labs/12-00-evaluation/src/main/resources/policies.md)에서 기대 기준을 정합니다.<br>
 평가기가 그 기준을 모델 답변에서 스스로 만들어 내도록 맡기지 않습니다.
 
-| 비교 대상 | 기대 기준 | 후보 답변 A | 후보 답변 B |
-|---|---|---|---|
-| 업무 상태 | `ANSWERED` | `ANSWERED` | `ANSWERED` |
-| 출처 ID | `return-sealed` 포함 | 포함 | 포함 |
-| 필수 문구 | `7일` 포함 | “반품은 7일 이내입니다.” | “반품은 30일 이내입니다.” |
-| 이 규칙의 결과 | 모두 만족하면 통과 | 실패 사유 없음 | 필수 문구 누락 |
+| 비교 대상 | 기대 기준 | 후보 답변 A | 후보 답변 B | 후보 답변 C |
+|---|---|---|---|---|
+| 업무 상태 | `ANSWERED` | `ANSWERED` | `ANSWERED` | `ANSWERED` |
+| 출처 ID | `return-sealed` 포함 | 포함 | 포함 | 포함 |
+| 필수 문구 | `7일` 포함 | “반품은 7일 이내입니다.” | “반품은 30일 이내입니다.” | “반품은 7일이 아니라 30일입니다.” |
+| 규칙 검사 결과 | 모두 만족하면 통과 | 실패 사유 없음 | 필수 문구 누락 | 실패 사유 없음 |
+| 원문과 비교한 반품 기간 | 수령 후 7일 이내 | 기간 일치 | 기간 불일치 | 기간 불일치 |
 
-출처가 같더라도 답변 내용은 다를 수 있습니다.<br>
-후보 A도 이 규칙을 통과한 것이지, 미개봉·수령 후 같은 모든 적용 조건을 완전하게 설명했음을 보장하지는 않습니다.
+세 후보의 출처 ID는 미리 넣은 값입니다.<br>
+후보 C는 `7일`을 포함해 규칙을 통과하지만, 결론은 ‘30일’이어서 원문과 다릅니다.
 
 ## 준비된 답변을 규칙으로 평가하기
 
@@ -73,13 +74,13 @@ public class Lesson01RuleBasedEvaluator {
 
 ## 실행과 결과
 
-[Lesson01RuleBasedEvaluatorUnitTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluatorUnitTest.java)는 7일 답변의 통과와 30일 답변의 문구 실패를 출력하고 검증합니다.
+[Lesson01RuleBasedEvaluatorUnitTest](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluatorUnitTest.java)는 세 후보의 답변과 실패 사유를 출력합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson01RuleBasedEvaluatorUnitTest'
 ```
 
-테스트는 후보 A에 빈 목록 `[]`, 후보 B에 `[expected text missing]`을 기대합니다.<br>
+테스트는 후보 A와 C에 빈 목록 `[]`, 후보 B에 `[expected text missing]`을 기대합니다.<br>
 이 문자열은 샘플이 정의한 실패 사유이며 Spring AI 표준 평가 코드가 아닙니다.
 
 실패 사유 목록이 비면 정한 규칙을 통과한 것입니다.<br>

@@ -70,11 +70,37 @@ public class ChatService {
 
 ## 3. 실험: 서비스에 응답 원칙 추가하기
 
-같은 system/user 구성을 두 가지 방법으로 관찰합니다.<br>
-실제 모델이 지시에 따라 답변을 바꾸는지는 3.1에서, 메시지가 요청에 담기는지는 API 키 없는 3.2에서 확인합니다.<br>
-키가 없다면 [3.2 로컬 테스트](#32-api-키-없이-systemuser-전달-확인하기)부터 진행하세요.
+먼저 로컬 테스트로 system과 user 메시지가 한 요청에 담기는지 확인합니다.<br>
+API 키가 있다면 같은 지시를 받은 실제 모델의 답변도 비교할 수 있습니다.
 
-### 3.1. 실제 모델의 답변 비교하기
+### 3.1. API 키 없이 system/user 전달 확인하기
+
+[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `system과_user_메시지를_한_요청에_함께_전달한다`를 실행합니다.<br>
+`ChatService` 소스는 원본 그대로 두며, 테스트 안에서 같은 요청 구성에 system을 추가합니다.<br>
+Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.system과_user_메시지를_한_요청에_함께_전달한다'
+```
+
+먼저 다음을 예상한 뒤 테스트 코드의 실제 요청 기록과 비교하세요.
+
+| 관찰 대상 | 기대 결과 |
+|---|---|
+| 모델 HTTP 요청 수 | 1회. 메시지 두 개를 한 프롬프트로 전달 |
+| 첫 메시지 | role은 system, content는 튜터 역할과 세 문장 지시 |
+| 두 번째 메시지 | role은 user, content는 “DI가 뭐야?” |
+| 반환 문장 | 서버에 지정한 고정 응답. 지시 내용과 관계없이 같음 |
+
+작은 변경 실습으로 테스트의 `instruction`을 “한 문장으로 설명하세요.”로 바꿉니다.<br>
+다시 실행해 system의 content가 바뀌어도 요청은 한 번이고 답변은 그대로인지 확인합니다.<br>
+검증문은 같은 `instruction` 변수를 사용하므로 내용 변경도 확인합니다.<br>
+실험 후 원래 문구로 복원합니다.
+
+이 테스트는 요청 메시지 전달을 확인합니다.<br>
+모델이 문장 수 지시를 이해하거나 지키는지는 실제 모델로 따로 관찰해야 합니다.
+
+### 3.2. 실제 모델의 답변 비교하기 (선택)
 
 먼저 [01단원의 루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비하세요.<br>
 호출에는 비용이 발생할 수 있습니다.
@@ -132,33 +158,6 @@ system을 추가한 상태라면 메시지 개수 검사가 실패하므로, 원
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests com.example.ailearning.FirstChatLocalModelTest
 ```
-
-### 3.2. API 키 없이 system/user 전달 확인하기
-
-[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `system과_user_메시지를_한_요청에_함께_전달한다`를 실행합니다.<br>
-`ChatService` 소스는 원본 그대로 두며, 테스트 안에서 같은 요청 구성에 system을 추가합니다.<br>
-Spring AI의 실제 어댑터가 로컬 고정 응답 서버로 요청합니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.system과_user_메시지를_한_요청에_함께_전달한다'
-```
-
-먼저 다음을 예상한 뒤 테스트 코드의 실제 요청 기록과 비교하세요.
-
-| 관찰 대상 | 기대 결과 |
-|---|---|
-| 모델 HTTP 요청 수 | 1회. 메시지 두 개를 한 프롬프트로 전달 |
-| 첫 메시지 | role은 system, content는 튜터 역할과 세 문장 지시 |
-| 두 번째 메시지 | role은 user, content는 “DI가 뭐야?” |
-| 반환 문장 | 서버에 지정한 고정 응답. 지시 내용과 관계없이 같음 |
-
-작은 변경 실습으로 테스트의 `instruction`을 “한 문장으로 설명하세요.”로 바꿉니다.<br>
-다시 실행해 system의 content가 바뀌어도 요청은 한 번이고 답변은 그대로인지 확인합니다.<br>
-검증문은 같은 `instruction` 변수를 사용하므로 내용 변경도 확인합니다.<br>
-실험 후 원래 문구로 복원합니다.
-
-이 테스트는 요청 메시지 전달을 확인합니다.<br>
-모델이 문장 수 지시를 이해하거나 지키는지는 실제 모델로 따로 관찰해야 합니다.
 
 ### 3.3. 모든 요청에 사용할 기본 시스템 메시지 설정하기
 
@@ -243,7 +242,23 @@ System.out.println(nextAnswer);
 
 ## 4. 실험: 이전 대화를 보내지 않는 요청
 
-앞 실험의 서버를 Ctrl+C로 종료하고, system 줄을 제거한 원본 코드로 다시 시작합니다.<br>
+[00단원 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.<br>
+02단원의 `ask()`는 매 요청의 `message`만 전달합니다.<br>
+두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.<br>
+모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.<br>
+[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 모델 요청에 현재 질문만 들어갔는지 확인합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.다음_요청에_이전_대화를_자동으로_포함하지_않는다'
+```
+
+테스트에서 두 번째 모델 요청의 메시지가 한 개이고, 내용이 ‘제 이름이 무엇인가요?’인지 확인합니다.
+
+### 실제 모델로 같은 질문 보내기 (선택)
+
+[루트 .env 설정](01-setup.md#4-실제-모델-연결을-위한-설정-준비)을 준비한 경우 다음 방법으로 질문을 보낼 수 있습니다.<br>
+실행 중인 서버가 있다면 Ctrl+C로 종료합니다.<br>
+3.2에서 추가한 system 줄이 남아 있다면 제거하고 원본 코드로 서버를 실행합니다.<br>
 소스만 수정해도 이미 실행 중인 서버에 자동 반영되는 것은 아닙니다.
 
 ```bash
@@ -260,16 +275,6 @@ curl -sS http://127.0.0.1:8091/api/chat \
 curl -sS http://127.0.0.1:8091/api/chat \
   -H 'Content-Type: text/plain; charset=UTF-8' \
   --data-raw '제 이름이 무엇인가요?'
-```
-
-[00단원 보충의 두 단계 대화 예제](00-llm-and-spring-ai/01-prompt-and-messages.md#단순-문장인-assistant-메시지를-chatclient에-전달하기)는 첫 질문·답변을 두 번째 프롬프트에 직접 넣었습니다.<br>
-지금 실행한 `ask()`는 매 요청의 `message`만 전달합니다.<br>
-두 구현에서 **이전 메시지를 넣는 코드가 있는지** 비교하세요.<br>
-모델이 우연히 이름을 맞히는지는 기억 여부의 확실한 증거가 아닙니다.<br>
-[PromptMessagesLocalModelTest](../../labs/02-00-first-chat/src/test/java/com/example/ailearning/l03prompts/PromptMessagesLocalModelTest.java)의 `다음_요청에_이전_대화를_자동으로_포함하지_않는다` 테스트는 두 번째 모델 요청에 현재 질문만 들어갔는지 확인합니다.
-
-```bash
-./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test --tests '*PromptMessagesLocalModelTest.다음_요청에_이전_대화를_자동으로_포함하지_않는다'
 ```
 
 [07단원 대화 메모리](07-chat-memory.md)에서는 이전 대화를 여러 HTTP 요청에 걸쳐 저장·조회하는 구성을 실습합니다.

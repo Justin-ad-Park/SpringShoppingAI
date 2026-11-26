@@ -63,6 +63,25 @@ Spring AI의 API 요청 타임아웃과 도구 호출 상한을 재구현한 것
 포트는 8118, 경로는 `/api/counsel/demo`입니다.<br>
 종료는 Ctrl+C입니다.
 
+### 도구 호출 상한 4회와 1회 비교하기
+
+같은 상품 검색을 계속 요청하는 고정 응답으로 도구 상한을 재현합니다.<br>
+13-8의 앱 설정은 상한 6회이며, 이 로컬 테스트는 `@SpringBootTest`에서 `spring.ai.tools.limits.max-total-tool-calls=4`로 덮어씁니다.<br>
+이 실습에서는 테스트 클래스에 선언한 상한을 변경합니다.
+
+저장소 루트에서 반복 검색을 검증하는 메서드만 실행합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-08-limited-agent:test \
+  --tests '*Lesson08LimitedShoppingAgentLocalModelTest.도구_호출_상한에_도달하면_미완성_대화를_저장하지_않는다'
+```
+
+1. 콘솔의 상담 응답에서 `status=TOOL_LIMIT`, `trace.toolExecutions=4`, `storedMessages=0`을 확인합니다.
+2. 테스트 클래스 위의 `spring.ai.tools.limits.max-total-tool-calls`와 이 메서드가 기대하는 `trace.toolExecutions` 값을 각각 4에서 1로 바꿉니다.<br>
+   같은 명령을 실행해 실제 도구 실행이 1회로 줄고, 종료 상태와 저장 메시지 수는 그대로인지 확인합니다.
+3. 두 값을 4로 복원합니다.<br>
+   테스트 상한은 클래스 전체에 적용됩니다. 정상 상담이 도구를 3회 실행하는 다른 테스트는 원래 설정에서 실행합니다.
+
 ## 확인 질문
 
 모델 API 요청 한 번의 타임아웃만으로 상담 전체의 시간이 제한되나요?

@@ -1,6 +1,6 @@
 # 12-7. 검색 결과와 답변을 따로 평가하기
 
-**이번 목표:** 필요한 정책을 찾지 못한 경우와, 정책을 찾았지만 답변이 틀린 경우를 구분합니다.<br>
+**이번 목표:** 필요한 정책을 찾았는지와 답변에 필수 문구가 있는지를 따로 검사하고, 통과한 답변도 정책 원문과 비교합니다.<br>
 12-1의 규칙 기반 평가와 10단원의 RAG를 배운 뒤 읽는 선택 실습입니다.
 
 ## 같은 질문에서도 실패 원인은 다르다
@@ -13,6 +13,7 @@
 | 배송비 정책만 검색 | 생성하지 않음 | 필요한 문서가 없어 검색 검사 실패 |
 | 미개봉 반품 정책 검색 | 반품은 30일 이내 | 검색 통과, 답변 문구 검사 실패 |
 | 미개봉 반품 정책 검색 | 수령 후 7일 이내 | 두 검사 통과 |
+| 미개봉 반품 정책 검색 | 미개봉 반품은 7일이 아니라 30일 이내 | 두 검사 통과. 원문의 기간과 다름 |
 
 검색한 문서 목록과 모델이 답변에 인용한 출처 목록은 다를 수 있습니다.<br>
 이번에는 **모델이 답변하기 전의 검색 결과**부터 확인합니다.
@@ -55,15 +56,19 @@ System.out.println(result);
 
 ## 실행과 테스트
 
-[로컬 테스트](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationLocalModelTest.java)는 위 세 경우를 실제 벡터 저장소와 고정 모델 응답으로 실행합니다.<br>
+[로컬 테스트](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationLocalModelTest.java)는 위 네 경우를 벡터 저장소와 고정 모델 응답으로 실행합니다.<br>
 오검색 사례에서는 문서 적재 후 질문의 테스트 벡터를 배송비 쪽으로 지정합니다.<br>
 그 사례는 채팅 요청이 0회인지 확인합니다.<br>
-정상 검색 뒤 오답을 낸 사례는 반품 정책이 실제 채팅 요청에 들어갔는지와, 답변에 `7일`이 빠졌다고 판정하는지를 함께 확인합니다.<br>
-이 설정은 실제 모델의 오검색 성능을 측정하는 것이 아니라, 오검색이 발생했을 때 평가가 이를 구분하는지 확인하기 위한 것입니다.
+정책을 찾고 `7일`이 없는 답변을 받은 사례에서는 해당 정책이 채팅 요청에 들어갔는지와 필수 문구 누락을 함께 확인합니다.<br>
+고정 벡터와 응답으로 각 조건에서 검사 결과가 어떻게 달라지는지 비교합니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson07RagStageEvaluationLocalModelTest'
 ```
+
+네 번째 사례에서 `retrievedIds`에 `return-sealed`가 있고, `retrievalPassed`와 `generationEvaluated`가 모두 `true`이며 `generationFailures`가 `[]`인지 확인하세요.<br>
+이어서 [정책 원문](../../../labs/12-00-evaluation/src/main/resources/policies.md)과 `answer`가 말하는 기간을 비교하세요.<br>
+검사 결과가 같은 세 번째와 네 번째 답변 중, 원문에 맞는 기간을 알려주는 답변은 어느 쪽인가요?
 
 [실제 모델 테스트](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationOpenAiLiveTest.java)는 루트 `.env`의 OpenAI 채팅·임베딩 설정을 사용합니다.<br>
 문서 적재·질문 임베딩·답변 생성에 실제 API 사용량이 발생합니다.
@@ -74,7 +79,7 @@ System.out.println(result);
 
 이 실습은 문서 ID 포함과 필수 문자열 포함만 검사합니다.<br>
 정책의 최신성, 답변의 조건·예외 전체, 문장의 의미를 보장하지 않습니다.<br>
-“7일이 아니라 30일”도 문자열 검사를 통과할 수 있다는 12-1의 한계는 그대로입니다.<br>
+같은 문자열 검사에 대한 기본 예제는 [12-1의 후보 답변 비교](01-cases.md#같은-기준으로-답변을-비교하기)에서 다시 확인할 수 있습니다.<br>
 실제 모델 테스트는 생성 결과와 문구 검사 결과를 출력하며, 표현 차이를 사실 오류라고 단정하지 않습니다.<br>
 모델·검색·변환 중 예외가 발생하면 테스트가 실패하며, 운영 오류 분류는 12-5의 주제입니다.
 

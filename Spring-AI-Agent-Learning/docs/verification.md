@@ -3,10 +3,13 @@
 최초 작성: 2026-10-29.<br>
 저장소 내부로 이동 후 재검증: 2026-11-02.<br>
 현재 공통 버전은 Java 21 / Gradle 8.14.5 / Boot 4.2.0 / Spring AI 2.1.0입니다.
-아래 과거 기록의 버전·결과는 당시 검증 환경을 보존합니다.<br>
+아래 과거 기록의 버전·명령·결과는 당시 검증 환경을 보존합니다.<br>
+현재 실행할 명령은 [재검증할 때](#재검증할-때)에서 확인합니다.<br>
 전체 마이그레이션과 232개 테스트 결과는 [변경 기록](../../docs/SPRING-AI-2-MIGRATION.md)을 참고하세요.
 
 ## 확인한 범위
+
+다음 명령과 산출물 경로는 첫 실습의 초기 검증 기록입니다.
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:02-first-chat:test :Spring-AI-Agent-Learning:labs:02-first-chat:bootJar --no-daemon
@@ -36,9 +39,18 @@ MCP 교육 실습과 선택 심화는 아직 구현·검증 완료로 간주하�
 
 ## 재검증할 때
 
-버전이나 코드를 바꾸면 위 명령을 다시 실행합니다.<br>
-system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 검증하는 테스트가 실패할 수 있으므로,
-실험을 마치고 원본으로 복원한 후 테스트를 실행합니다.
+현재 첫 실습의 로컬 테스트와 실행 JAR는 저장소 루트에서 다음 명령으로 확인합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:02-00-first-chat:test \
+  --tests com.example.ailearning.FirstChatLocalModelTest \
+  :Spring-AI-Agent-Learning:labs:02-00-first-chat:bootJar
+```
+
+클래스 필터는 API 키 없이 실행할 로컬 테스트만 고릅니다.<br>
+필터 없는 `test`는 실제 OpenAI 테스트도 실행합니다.<br>
+03단원에서 `ChatService`에 시스템 메시지를 추가했다면 원본으로 복원한 뒤 실행합니다.<br>
+현재 설정과 실행 순서는 [01단원의 로컬 실습](lessons/01-setup.md#3-api-키-없이-테스트-실행)에서 확인합니다.
 
 ## 04~07 추가 검증 — 2026-11-02
 
@@ -51,7 +63,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 | 합계 | 독립 모듈 4개 | 26 | 전체 테스트 통과(실패 0개, 건너뜀 0개) |
 
 각 모듈의 test와 bootJar를 단원별로 실행한 후 커밋했습니다.<br>
-추가로 저장소 루트에서 `./gradlew test bootJar --console=plain` 회귀 빌드가 성공했습니다.<br>
+당시에는 저장소 루트에서 `./gradlew test bootJar --console=plain` 회귀 빌드도 성공했습니다.<br>
 해당 명령의 기존 변경 없는 작업은 Gradle 캐시를 사용합니다.<br>
 기존 MCP/쇼핑 통합 검증 기록과는 별도입니다.
 
@@ -82,7 +94,7 @@ system 메시지를 추가하는 03장 실험 중에는 원본 메시지 수를 
 | 합계 | 독립 모듈 5개 | 28 | 전체 테스트 통과(실패 0개, 건너뜀 0개) |
 
 각 모듈의 test와 bootJar를 실행한 뒤 단원별로 커밋했습니다.<br>
-마지막 회귀 검증 명령은 다음과 같습니다.
+당시 마지막 회귀 검증 명령은 다음과 같습니다.
 
 ```bash
 ./gradlew test bootJar :Spring-AI-Tutor:mcpIntegrationTest :integration-tests:smokeTest :integration-tests:gptPathTest --console=plain

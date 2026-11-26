@@ -4,7 +4,7 @@
 
 | 수업 | 구현 | 테스트·확인할 동작 |
 |---|---|---|
-| 12-1 | [Lesson01RuleBasedEvaluator.evaluate](src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluator.java) | [Lesson01RuleBasedEvaluatorUnitTest](src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluatorUnitTest.java): 모델 없는 기대값 비교 |
+| 12-1 | [Lesson01RuleBasedEvaluator.evaluate](src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluator.java) | [Lesson01RuleBasedEvaluatorUnitTest](src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01RuleBasedEvaluatorUnitTest.java): 모델 없이 기대값을 비교하고 문구 검사를 통과하는 오답 확인 |
 | 12-3 | [Lesson03TokenUsageService.ask](src/main/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageService.java) | [Lesson03TokenUsageLocalModelTest](src/test/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageLocalModelTest.java): 채팅 1회·임베딩 없음 · [Live](src/test/java/com/example/ailearning/l12evaluation/lesson03_usage/Lesson03TokenUsageOpenAiLiveTest.java) |
 | 12-5 | [Lesson01EvaluationRunner](src/main/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationRunner.java)·[RagService](src/main/java/com/example/ailearning/l12evaluation/RagService.java) | [Lesson01EvaluationLocalModelTest](src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationLocalModelTest.java): 실제 평가 연결·토큰·지연·실패 · [Live](src/test/java/com/example/ailearning/l12evaluation/lesson01_cases/Lesson01EvaluationOpenAiLiveTest.java) |
 
@@ -53,7 +53,8 @@ Live 테스트는 채팅·임베딩의 SDK 요청별 `timeout`을 각각 30초�
 ## 선택 실습: 12-7 검색과 답변을 나눠 평가하기
 
 [교재](../../docs/lessons/12-evaluation/07-retrieval-and-generation.md)를 읽고 다음 코드를 확인합니다.<br>
-기본 앱의 HTTP API는 유지하며, 선택 실습은 테스트에서 직접 호출합니다.
+기본 앱의 HTTP API는 유지하며, 선택 실습은 테스트에서 직접 호출합니다.<br>
+같은 질문으로 검색 실패, 정답, 필수 문구가 없는 오답, 필수 문구를 포함한 오답을 비교합니다.
 
 | 역할 | 코드 |
 |---|---|

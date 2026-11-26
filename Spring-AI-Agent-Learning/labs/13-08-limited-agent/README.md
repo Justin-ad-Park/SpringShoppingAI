@@ -22,6 +22,7 @@
 ```
 
 로컬 테스트는 외부 모델을 호출하지 않습니다.<br>
+도구 상한을 4회와 1회로 비교하려면 [반복 검색 테스트 실습](../../docs/lessons/13-shopping-agent/08-execution-limits.md#도구-호출-상한-4회와-1회-비교하기)을 따라갑니다.<br>
 앱과 Live는 루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 읽고 실제 채팅·임베딩 API를 호출합니다.<br>
 포트 8118의 `/api/counsel/demo`로 기본 상담과 같은 질문을 보냅니다.<br>
 종료는 Ctrl+C입니다.

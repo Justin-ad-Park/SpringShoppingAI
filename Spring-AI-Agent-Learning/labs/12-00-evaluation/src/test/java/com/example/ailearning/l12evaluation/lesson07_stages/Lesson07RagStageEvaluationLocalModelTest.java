@@ -57,12 +57,12 @@ class Lesson07RagStageEvaluationLocalModelTest {
     }
 
     @Test
-    void 필요한_문서를_찾아도_답변_기간이_틀리면_생성_검사에서_실패한다() {
+    void 필요한_문서를_찾아도_답변에_필수_문구가_없으면_검사에서_실패한다() {
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("미개봉 반품은 30일 이내입니다."));
         var result = service.evaluate("미개봉 반품 기간은?", List.of("return-sealed"), "7일");
-        System.out.println("검색 통과·생성 실패: " + result);
+        System.out.println("검색 통과·필수 문구 누락: " + result);
         assertThat(result.retrievalPassed()).isTrue();
         assertThat(result.generationEvaluated()).isTrue();
         assertThat(result.generationFailures()).containsExactly("필수 문구 누락: 7일");
@@ -78,6 +78,23 @@ class Lesson07RagStageEvaluationLocalModelTest {
         System.out.println("두 단계 검사 통과: " + result);
         assertThat(result.retrievalPassed()).isTrue();
         assertThat(result.generationEvaluated()).isTrue();
+        assertThat(result.generationFailures()).isEmpty();
+    }
+
+    @Test
+    void 필수_문구를_포함한_오답은_문구_검사를_통과한다() {
+        String incorrectAnswer = "미개봉 반품은 7일이 아니라 30일 이내입니다.";
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage(incorrectAnswer));
+
+        var result = service.evaluate("미개봉 반품 기간은?", List.of("return-sealed"), "7일");
+
+        System.out.println("검색과 문구 검사를 모두 통과한 오답: " + result);
+        assertThat(result.retrievedIds()).contains("return-sealed");
+        assertThat(result.retrievalPassed()).isTrue();
+        assertThat(result.generationEvaluated()).isTrue();
+        assertThat(result.answer()).isEqualTo(incorrectAnswer);
         assertThat(result.generationFailures()).isEmpty();
     }
 
