@@ -50,10 +50,15 @@ System.out.println(result);
 검색 실패로 생략한 경우에는 `generationEvaluated=false`도 함께 읽습니다.<br>
 필요한 ID가 없는 검색을 정상 검색이라고 놓고 프롬프트만 조정하는 실수를 피하기 위한 구분입니다.
 
+`evaluate()`는 `retrievedIds.containsAll(expectedSourceIds)`를 채팅 호출 전에 검사합니다.<br>
+10-4는 문서를 하나라도 찾으면 생성 단계로 넘어가지만, 이 평가에서는 **다른 문서만 찾은 경우에도** 필요한 근거를 놓친 것으로 판단합니다.
+
 ## 실행과 테스트
 
 [로컬 테스트](../../../labs/12-00-evaluation/src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationLocalModelTest.java)는 위 세 경우를 실제 벡터 저장소와 고정 모델 응답으로 실행합니다.<br>
 오검색 사례에서는 문서 적재 후 질문의 테스트 벡터를 배송비 쪽으로 지정합니다.<br>
+그 사례는 채팅 요청이 0회인지 확인합니다.<br>
+정상 검색 뒤 오답을 낸 사례는 반품 정책이 실제 채팅 요청에 들어갔는지와, 답변에 `7일`이 빠졌다고 판정하는지를 함께 확인합니다.<br>
 이 설정은 실제 모델의 오검색 성능을 측정하는 것이 아니라, 오검색이 발생했을 때 평가가 이를 구분하는지 확인하기 위한 것입니다.
 
 ```bash

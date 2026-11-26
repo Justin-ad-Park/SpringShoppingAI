@@ -21,19 +21,25 @@ sequenceDiagram
     participant S as Lesson02AdvisorRagService
     participant A as Spring AI QuestionAnswerAdvisor
     participant V as SimpleVectorStore
+    participant C as ChatModelCallAdvisor
     participant M as 외부 모델
     U->>S: 반품 기간 질문
-    S->>A: 현재 사용자 메시지
-    A->>V: 질문 임베딩과 유사도 검색
+    S->>A: 체인을 통해 현재 사용자 메시지 전달
+    A->>V: similaritySearch(질문과 검색 조건)
     V-->>A: 관련 문서
-    A->>M: 질문과 검색 문서를 담은 프롬프트
-    M-->>A: 답변 텍스트
-    A-->>S: 모델 응답
+    A->>C: 체인에 원문을 덧붙인 요청 전달
+    C->>M: 질문과 검색 문서를 담은 프롬프트
+    M-->>C: 모델 응답
+    C-->>A: 모델 응답 반환
+    A-->>S: 모델 응답과 검색 문서 정보 반환
     S-->>U: 답변
 ```
 
-그림은 동작의 책임을 요약합니다.<br>
-실제 모델 호출은 Advisor 뒤의 Spring AI 체인을 통해 실행됩니다.<br>
+Spring AI 2.1.0에서 `QuestionAnswerAdvisor.before()`가 검색을 요청하고, 찾은 문서의 본문을 사용자 메시지에 덧붙입니다.<br>
+그 요청을 받은 `ChatModelCallAdvisor`가 실제 채팅 모델을 호출합니다.<br>
+응답이 돌아오면 `QuestionAnswerAdvisor.after()`가 검색 문서를 응답의 부가 정보에 담고, 이 Service의 `.content()`는 최종 답변의 텍스트를 반환합니다.<br>
+검색 요청과 사용자 메시지 조립은 [QuestionAnswerAdvisor 소스](https://github.com/spring-projects/spring-ai/blob/v2.1.0/advisors/spring-ai-vector-store-advisor/src/main/java/org/springframework/ai/chat/client/advisor/vectorstore/QuestionAnswerAdvisor.java#L101)에서 확인할 수 있습니다.
+
 Service 전체는 아래처럼 짧게 유지합니다.<br>
 먼저 생성자 끝의 Advisor 설정과 `answer()`를 읽고, 검색 자료는 앞 수업의 Lesson01PolicyDocumentIndexer가 준비합니다.
 
@@ -76,9 +82,9 @@ public class Lesson02AdvisorRagService {
 
 `topK(1)`은 최대 문서 수, `similarityThreshold(0.7)`은 유사도 기준입니다.<br>
 이 수치는 모든 임베딩 모델에 최적인 값이 아니며 실제 질문 세트로 조정합니다.<br>
-기본 Advisor가 빈 검색 결과에서 생성 호출을 생략하거나 출처 ID를 검증한다고 가정하지 마세요.<br>
-이 예제의 빈 검색 테스트에서도 모델 호출은 1회 발생합니다.<br>
-10-5의 보류 규칙과 비교하는 학습 지점입니다.
+검색 결과가 비어도 기본 Advisor의 `before()`는 빈 근거로 사용자 메시지를 구성해 다음 Advisor에 넘깁니다.<br>
+그래서 이 예제의 빈 검색 테스트에서도 채팅 모델 요청은 1회입니다.<br>
+[10-4의 직접 구현](04-custom-generation.md#2-검색-결과에-따라-생성-호출-결정하기)은 서비스에서 빈 검색을 확인해 `NO_CONTEXT`를 반환하므로 채팅 모델을 호출하지 않습니다.
 
 ## 실제 실행
 
@@ -103,7 +109,8 @@ curl -sS http://127.0.0.1:8103/api/advisor-rag \
 
 ## 테스트와 작은 실험
 
-계약 테스트 4개: 실제 문서의 적재·프롬프트 전달, 긴 문서 분할, 빈 검색 시 생성 호출, 빈 입력 거부.<br>
+[10-1의 테스트](01-standard-indexing.md)는 문서 분할·적재·검색을 확인합니다.<br>
+10-2 로컬 테스트는 별도로 채팅 모델에 전송된 `messages`를 읽어 **검색한 원문을 전달했는지**, **검색 결과가 비어도 채팅 호출이 이어지는지**를 확인하고, 공백 입력이 호출 전에 거부되는지도 검사합니다.<br>
 고정 서버는 한국어 이해나 의미 검색 품질을 증명하지 않습니다.<br>
 실제 모델은 bootRun에서 별도로 관찰합니다.
 

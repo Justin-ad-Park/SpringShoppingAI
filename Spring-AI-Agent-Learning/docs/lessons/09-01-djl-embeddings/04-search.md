@@ -30,22 +30,23 @@ sequenceDiagram
     participant A as Lesson03DjlEmbeddingModel
     participant D as Lesson02DjlEmbeddingService
     S->>V: add(정책 문서 3개)
-    V->>A: 문서 일괄 임베딩
     loop 문서마다 한 번씩
+        V->>A: embed(Document)
         A->>D: embedDocument(문서 본문)
         D-->>A: 해당 문서 벡터
+        A-->>V: 해당 문서 벡터
     end
-    A-->>V: 문서 벡터 목록
     V-->>S: 원문·벡터 보관 완료
     S->>V: similaritySearch(질문·조건)
-    V->>A: 문자열 질문 임베딩
+    V->>A: embed(String)
     A->>D: embedQuery(질문)
     D-->>A: 질문 벡터
     A-->>V: 질문 벡터
     V-->>S: 조건에 맞는 유사 문서
 ```
 
-문서를 저장한 뒤 질문을 검색하는 두 시점을 구분합니다.<br>
+[앞 수업의 어댑터 단위 테스트](03-spring-ai.md#모델-없이-연결-검증하기)는 문서와 질문이 각각 어떤 메서드로 전달되는지 확인합니다.<br>
+이 수업의 Live 테스트는 실제 DJL 벡터로 기대한 정책 문서를 찾는지 확인합니다.<br>
 저장소는 앱 메모리에만 있으므로 재시작하면 문서를 다시 임베딩합니다.
 
 ## 실행과 결과 읽기

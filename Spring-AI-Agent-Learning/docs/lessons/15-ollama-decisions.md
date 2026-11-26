@@ -82,17 +82,24 @@ sequenceDiagram
     participant C as HTTP 클라이언트
     participant S as Lesson02IntentClassificationService
     participant D as OllamaDecisionModel
+    participant H as SystemOneClient
     participant O as 로컬 Ollama
     participant P as SupportRoutingPolicy
     C->>S: Controller를 통해 고객 문장 전달
     S->>D: call(입력 문장과 Choice 질문)
-    D->>O: POST /v1/systemone
-    O-->>D: 선택 항목과 확률
+    D->>H: systemOne(변환한 요청)
+    H->>O: POST /v1/systemone
+    O-->>H: 선택 항목과 확률
+    H-->>D: SystemOneResponse
     D-->>S: DecisionResponse
     S->>P: 의도와 confidence로 확인 필요 여부 판단
     P-->>S: clarificationRequired
     S-->>C: Controller를 통해 분류 결과 반환
 ```
+
+Service는 [의도 분류 코드](../../labs/15-00-ollama-decisions/src/main/java/com/example/ailearning/l15ollama/lesson02_choice/Lesson02IntentClassificationService.java)에서 `DecisionPrompt`를 만들어 `DecisionModel.call(...)`에 전달합니다.<br>
+주입된 `OllamaDecisionModel`이 이 요청을 Ollama용 형식으로 바꾸고, 실제 HTTP 전송은 `SystemOneClient`가 맡습니다.<br>
+응답은 `DecisionResponse`로 변환되어 Service로 돌아오며, Service는 `getChoice("intent")`로 답을 꺼내 Java 정책에 전달합니다. [Spring AI Ollama 의사결정 구현 안내](https://docs.spring.io/spring-ai/reference/api/decision/ollama-decision.html)
 
 ## 학습 순서
 

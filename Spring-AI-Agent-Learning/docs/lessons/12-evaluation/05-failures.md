@@ -103,20 +103,37 @@ private RagMetrics createMetricsSnapshot(long startedAtNanos, RequestMetrics req
 
 ## 실패는 어디서 확인할까?
 
+[`RagService.answer()`](../../../labs/12-00-evaluation/src/main/java/com/example/ailearning/l12evaluation/RagService.java)의 `try`는 질문 임베딩·검색부터 답변 변환·검증까지 감쌉니다.<br>
+검색이 정상적으로 끝났는데 결과가 비면 `NO_CONTEXT`로 반환합니다.<br>
+처리 중 예외가 발생하면 `catch`에서 `FAILED`와 `failureKind`를 만들고, 평가 실행기에 넘겨 다음 사례를 계속 처리합니다.
+
 ```mermaid
 sequenceDiagram
     actor User as 사용자
     participant App as Java Lesson01EvaluationRunner
     participant Rag as Java RagService
-    participant Model as 외부 모델 API
+    participant Search as PolicySearch
+    participant Model as 채팅 모델 API
     User->>App: 고정 평가 실행
-    App->>Rag: 질문 실행과 시간 측정 시작
-    Rag->>Model: 모델 호출
-    alt 정상 응답
-        Model-->>Rag: 구조화 답변과 usage
-        Rag-->>App: 답변과 실제 측정치
-    else 429 또는 시간 초과 또는 형식 오류
-        Model-->>Rag: 오류 또는 제한 시간 초과
+    App->>Rag: 질문 전달
+    Note over Rag: answer()에서 시간 측정 시작
+    Rag->>Search: 질문 임베딩과 정책 검색
+    alt 검색 결과가 비어 있음
+        Search-->>Rag: 빈 목록
+        Rag-->>App: NO_CONTEXT와 chatCalls 0
+    else 검색 결과가 있음
+        Search-->>Rag: 정책 원문
+        Rag->>Model: 질문과 근거로 생성 요청
+        alt 채팅과 응답 처리 정상
+            Model-->>Rag: 모델 응답과 토큰 사용량
+            Note over Rag: 응답 변환과 출처 검사
+            Rag-->>App: 처리 결과와 측정값
+        else 채팅 또는 응답 처리 예외
+            Note over Rag: 호출·변환 등의 예외를 catch에서 처리
+            Rag-->>App: FAILED와 failureKind 및 경과 시간
+        end
+    else 검색 중 예외
+        Note over Rag: answer()의 catch에서 예외 처리
         Rag-->>App: FAILED와 failureKind 및 경과 시간
     end
     App->>App: 기대값 비교하고 다음 사례 진행

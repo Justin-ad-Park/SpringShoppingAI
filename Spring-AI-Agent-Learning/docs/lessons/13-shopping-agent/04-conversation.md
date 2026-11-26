@@ -57,7 +57,9 @@ public synchronized Reply chat(String owner, String conversationId, String quest
 }
 ```
 
-메모리에 쓰는 주체를 Service 한 곳으로 모아 상담 실행과 저장 판단을 구분합니다.<br>
+같은 현재 질문을 두 군데에서 다루지만 쓰는 목적이 다릅니다.<br>
+[Workflow의 `processCounselRequest()`](../../../labs/13-00-shopping-agent/src/main/java/com/example/ailearning/l13shopping/lesson02_intent/Lesson02CounselWorkflow.java)는 이전 메시지와 현재 질문으로 **이번 모델 요청에 쓸 목록**을 만듭니다.<br>
+Workflow가 결과를 반환하면 Service가 상태를 확인한 뒤, 저장할 수 있는 결과의 **현재 질문과 최종 답변 두 개**를 `conversationMemory.add(...)`로 기록합니다.<br>
 `synchronized`는 이 Service 객체의 메서드 실행이 겹치지 않게 하는 Java 문법입니다.<br>
 모델 호출까지 순서대로 처리하므로 여러 사용자의 처리량에 제약이 있으며, 운영 환경의 분산 동시성 제어를 제공하는 구성은 아닙니다.
 
@@ -77,6 +79,7 @@ public synchronized Reply chat(String owner, String conversationId, String quest
 
 실패 시에는 이전 기록을 지우지 않고 이번 질문·답변만 추가하지 않습니다.<br>
 검증 상태의 구체적 판정은 [13-3](03-verify.md)을 참고하세요.<br>
+아래 로컬 테스트에서 `NO_RESULTS`가 나온 다음에도 후속 질문에 변경된 카테고리가 이어지는 경우와, 모델 호출 예외 뒤 `storedMessages`가 증가하지 않는 경우를 각각 확인할 수 있습니다.<br>
 HTTP 200이어도 `status`가 실패일 수 있으므로 HTTP 코드와 업무 상태를 구분합니다.
 
 ## 메모리에 남는 범위

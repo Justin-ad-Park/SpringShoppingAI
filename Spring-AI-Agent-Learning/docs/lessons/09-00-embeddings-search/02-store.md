@@ -87,9 +87,9 @@ public class Lesson02BasicVectorSearchService {
 위 코드의 생성자와 `search()`를 나누어 읽으면 임베딩이 실행되는 두 시점을 구분할 수 있습니다.
 
 1. 서버 시작 시 위 `Lesson02BasicVectorSearchService` 생성자가 저장소를 만들고 `add(...)`로 정책 문서 세 개를 전달합니다.<br>
-   저장소는 연결된 `EmbeddingModel`로 문서를 임베딩해 보관합니다.
+   Spring AI 2.1.0의 `SimpleVectorStore.doAdd()`는 문서마다 `embeddingModel.embed(document)`를 호출하고, 문서 ID에 원문·부가 정보·벡터를 함께 연결해 보관합니다.
 2. 검색 요청이 오면 `search()`가 질문과 `topK`를 `similaritySearch(...)`에 전달합니다.<br>
-   저장소는 같은 `EmbeddingModel`로 질문을 임베딩합니다.
+   `SimpleVectorStore.doSimilaritySearch()`는 같은 객체의 `embeddingModel.embed(query)`를 호출해 이번 질문의 벡터를 만듭니다.
 3. 저장소가 질문 벡터와 보관 중인 문서 벡터를 비교하고, 유사도 순서로 최대 `topK`개의 문서를 반환합니다.
 
 개발자가 문서·질문의 숫자 배열을 직접 비교할 필요는 없습니다.<br>

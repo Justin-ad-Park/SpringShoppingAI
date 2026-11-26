@@ -93,13 +93,16 @@ Choice·Score·Noul은 같은 키와 모델을 사용합니다.<br>
 
 ## 요청이 전달되는 순서
 
-1. Controller가 고객 메시지를 받습니다.
-2. 각 Service가 메시지를 `state`, 판단 기준을 `questions`에 넣습니다.
-3. `TypeSafeClient`가 Jev의 `POST /v1/systemone`에 요청을 보냅니다.
-4. Service가 `choice(...)`, `score(...)`, `noul(...)`로 응답을 읽습니다.
-5. Java의 `SupportRoutingPolicy`가 확인 질문·우선순위·상담원 연결 안내 여부를 정합니다.
+의도 분류를 예로 들면 고객이 호출하는 경로와 Service가 Jev에 보내는 경로를 구분할 수 있습니다.
+
+1. [ShoppingDecisionController](../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/ShoppingDecisionController.java)가 `POST /api/jev/intent`로 고객 문장을 받고 Service의 `classifyIntent()`에 넘깁니다.
+2. [Lesson01IntentClassificationService](../../labs/14-00-jev-decisions/src/main/java/com/example/ailearning/l14jev/lesson01_choice/Lesson01IntentClassificationService.java)가 문장을 `state`에, 이름이 `intent`인 선택 질문을 `questions`에 넣습니다.
+3. `TypeSafeClient.systemOne(...)`이 Jev의 `POST /v1/systemone`으로 요청을 보냅니다.
+4. Service가 `choice("intent")`로 그 이름의 답을 읽고, 선택값과 신뢰도를 `SupportRoutingPolicy.requiresIntentClarification(...)`에 넘깁니다.
+5. Java 정책이 정한 `clarificationRequired`와 모델의 분류 결과를 함께 응답으로 반환합니다.
 
 `state`는 판단할 정보, `instructions`는 판단할 질문, `criteria`는 선택지나 평가 기준입니다.<br>
+점수와 상담원 요청 실습은 같은 흐름에서 각각 `score(...)`와 `noul(...)`로 답을 읽습니다.<br>
 고객 문장에 내부 API 이름이나 도구 호출 지시를 넣지 않습니다.<br>
 모델을 호출하는 서비스와 수치로 분기하는 정책을 분리해 읽습니다.
 
@@ -122,7 +125,8 @@ Choice·Score·Noul은 같은 키와 모델을 사용합니다.<br>
 ./gradlew :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:test --tests '*LocalModelTest' --tests '*SupportRoutingPolicyUnitTest' :Spring-AI-Agent-Learning:labs:14-00-jev-decisions:bootJar
 ```
 
-로컬 테스트는 고정 HTTP 응답을 실제 SDK로 읽는 연결과 Java 정책을 확인합니다.<br>
+Choice 로컬 테스트는 `state`·질문 타입이 SDK 요청에 들어갔는지와, 낮은 신뢰도의 응답이 API에서 `clarificationRequired=true`로 바뀌는지 확인합니다.<br>
+`SupportRoutingPolicyUnitTest`는 모델 호출 없이 확인 질문·우선순위·상담원 안내의 경계값을 검사합니다.<br>
 한국어 분류 품질이나 모델 정확도를 증명하지 않습니다.<br>
 실제 호출에는 별도의 `TYPESAFE_API_KEY`가 필요하며 [실습 README](../../labs/14-00-jev-decisions/README.md)의 bootRun·Live 명령을 사용합니다.
 

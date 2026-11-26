@@ -140,6 +140,11 @@ var service = new Lesson08MemoryOrderChatService(chatModel, memoryAdvisor, teaPr
 ```
 
 메모리 Advisor가 ToolCallingAdvisor 뒤에 배치되어 모델을 요청할 때마다 실행됩니다.<br>
+이 샘플의 `ChatClient`는 `ToolCallingAdvisor`를 자동 등록할 때 뒤쪽의 메모리 Advisor를 확인합니다.<br>
+메모리 Advisor가 뒤에 있으면 이전 메시지를 그 Advisor가 붙이도록 설정합니다.<br>
+두 번째 요청을 만들 때 `ToolCallingAdvisor`가 시스템 지침과 방금 받은 도구 결과를 넘기면, `MessageChatMemoryAdvisor.before()`가 메모리에 있던 사용자 질문과 도구 호출 요청을 합칩니다.<br>
+[Spring AI 2.1.0의 자동 등록 코드](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/DefaultChatClient.java#L1271)와 [다음 요청에 넘길 메시지를 고르는 코드](https://github.com/spring-projects/spring-ai/blob/v2.1.0/spring-ai-client-chat/src/main/java/org/springframework/ai/chat/client/advisor/ToolCallingAdvisor.java#L250)에서 이 연결을 확인할 수 있습니다.
+
 도구를 한 번 실행하는 이 로컬 테스트에서는 모델 요청이 두 번이므로 다음 순서로 동작합니다.
 
 | 시점 | 메모리 Advisor 동작 | 이번에 저장하는 메시지 |
@@ -260,6 +265,8 @@ Live 테스트는 실제 가격 도구가 실행됐는지 확인합니다.<br>
 
 공식 웹 문서는 현재 버전의 내용으로 갱신되므로, 이 실습의 동작은 2.1.0 소스와 로컬 테스트를 기준으로 확인합니다.<br>
 반복 안 배치에는 도구 메시지를 저장할 수 있는 저장소가 필요하며, 이 실습의 기본 인메모리 저장소는 이를 지원합니다.<br>
-자동 연결되는 ToolCallingAdvisor가 메모리 Advisor의 위치를 감지하므로, 이 샘플은 ToolCallingAdvisor를 직접 만들거나 내부 대화 기록 설정을 바꾸지 않습니다.
+
+[08-7](07-tool-loop-order.md)은 로거의 출력으로 **체인이 어느 구간에서 다시 실행되는지** 확인합니다.<br>
+이 수업의 [로컬 테스트](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson08_memoryorder/Lesson08MemoryOrderLocalModelTest.java)는 여기에 더해 **메모리에 남은 메시지의 역할과 내용**을 확인합니다.
 
 [이전: 도구 반복과 Advisor 배치](07-tool-loop-order.md) · [08단원 목차](../08-advisors.md)

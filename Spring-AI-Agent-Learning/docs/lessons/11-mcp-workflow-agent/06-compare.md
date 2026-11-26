@@ -10,6 +10,11 @@
 | 최종 금액 표시 | MCP 결과로 Java 작성 | 모델 답변 | MCP 결과로 Java 작성 |
 | 총예산 검사 | Java | 모델 지시 | Java |
 
+세 방식 중 누가 **도구 호출을 시작하는지**는 서비스에서 확인할 수 있습니다.<br>
+Workflow는 `executeTool(...)`을 직접 호출하고, Agent와 Hybrid는 `createToolCallbacks()`로 만든 콜백을 모델 요청에 등록합니다.<br>
+Hybrid에선 같은 콜백을 쓰되, MCP에 보내기 전에 Java가 검색 조건을 확정하고 계산에 전달할 상품 ID를 검사합니다.<br>
+세 방식 모두 실제 원격 실행과 결과 기록은 [McpToolExecutor](../../../labs/11-00-mcp-workflow-agent/src/main/java/com/example/ailearning/l11mcp/tools/McpToolExecutor.java)의 기록용 콜백을 거칩니다.
+
 ## 기록에서 확인하기
 
 세 API의 `toolCalls`는 실제 성공한 MCP 호출의 이름·전송 인자·결과입니다.<br>
@@ -43,6 +48,9 @@
 OpenAI에만 고정 HTTP 응답 서버를 사용합니다.<br>
 준비된 MCP 서버를 수동 실행할 필요는 없습니다.<br>
 이 테스트는 모델의 선택 능력이 아니라, 그 선택을 가정했을 때 애플리케이션과 MCP가 올바르게 연결되는지를 검증합니다.
+
+Agent 경로의 연결 확인에는 다음 모델 요청에 들어간 **도구 결과 메시지**를 보고, Hybrid 경로의 값 검증에는 `toolCalls`의 **실제 전송 인자**와 **HTTP 응답에 표시된 총액**을 봅니다.<br>
+동일한 도구를 호출했다는 사실과, Java가 결과를 검증해 표시했다는 사실을 각각 확인하는 검사입니다.
 
 ## 실제 OpenAI 테스트
 

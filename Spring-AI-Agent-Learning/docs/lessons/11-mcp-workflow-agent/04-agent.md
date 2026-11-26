@@ -7,18 +7,26 @@
 ```mermaid
 sequenceDiagram
     participant A as Lesson04McpAgentService
-    participant L as 모델
-    participant M as shopping-mcp
-    A->>L: 질문 + 도구 설명·입력 스키마
-    L-->>A: searchProducts 호출 요청
-    A->>M: MCP 검색 호출
-    M-->>A: 상품 목록
-    A->>L: 도구 실행 결과
-    L-->>A: quoteCart 호출 요청
-    A->>M: MCP 계산 호출
-    M-->>A: 계산 결과
-    A->>L: 도구 실행 결과
-    L-->>A: 최종 답변
+    participant L as ToolCallingAdvisor
+    participant M as 모델
+    participant T as 기록용 ToolCallback
+    participant S as shopping-mcp
+    A->>L: ChatClient 체인으로 질문과 도구 전달
+    L->>M: 체인을 통해 질문과 도구 정의 전달
+    M-->>L: searchProducts 실행 요청
+    L->>T: 도구 관리자에게 콜백 실행 위임
+    T->>S: 연결된 MCP 콜백으로 검색 요청
+    S-->>T: 상품 목록
+    T-->>L: 기록 후 검색 결과 반환
+    L->>M: 체인을 통해 검색 결과 전달
+    M-->>L: quoteCart 실행 요청
+    L->>T: 도구 관리자에게 콜백 실행 위임
+    T->>S: 연결된 MCP 콜백으로 계산 요청
+    S-->>T: 금액 계산 결과
+    T-->>L: 기록 후 계산 결과 반환
+    L->>M: 체인을 통해 계산 결과 전달
+    M-->>L: 최종 답변
+    L-->>A: 반복 종료 후 응답 반환
 ```
 
 그림은 기본 쇼핑 요청에서 가능한 경로입니다.<br>
@@ -36,6 +44,8 @@ Hybrid에서 사용하는 인자 제한은 여기서는 적용하지 않습니�
 
 11-3과 같은 `McpToolExecutor`를 사용하되, 이번에는 `createToolCallbacks()`로 모델에게 제공할 도구 목록을 받습니다.<br>
 각 콜백은 모델이 실행을 요청했을 때 원격 호출을 보내고 결과를 기록합니다.<br>
+실제 실행은 `ToolCallingAdvisor`가 도구 관리자를 거쳐 시작합니다.<br>
+`McpToolExecutor`가 만든 기록용 콜백은 연결된 MCP 콜백을 호출하고, 전송 인자와 파싱한 결과를 `toolCalls`에 남깁니다.<br>
 생성자의 `maxToolCallAttempts`는 호출 시도 상한이며, 마지막 `null`은 11-5의 추가 조건 고정을 사용하지 않는다는 뜻입니다.
 
 

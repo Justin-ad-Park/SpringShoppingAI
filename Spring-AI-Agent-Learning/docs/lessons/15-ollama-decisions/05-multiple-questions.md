@@ -50,6 +50,8 @@ public class Lesson05CustomerAssessmentService {
 세 Service의 질문 상수는 앞 수업에서 읽은 선택지와 기준을 그대로 재사용합니다.<br>
 `getChoice("intent")`·`getYesNo("human_support")`·`getScore("urgency")`처럼 **질문 이름과 답 타입**을 맞춰 결과를 읽습니다.<br>
 로컬 테스트는 전송한 HTTP 요청이 한 개이고 그 안의 질문이 세 개인지 검사합니다.<br>
+응답을 받은 뒤에는 세 답을 꺼내 `CustomerAssessment`의 `intent`·`humanSupportProbability`·`urgencyScore`에 넣습니다.<br>
+로컬 테스트는 API 응답의 이 세 필드도 확인합니다.<br>
 질문 세 개의 확률을 곱하거나 하나의 신뢰도로 합산하는 기능은 아닙니다.
 
 ## 실행과 확인

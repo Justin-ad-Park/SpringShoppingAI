@@ -17,12 +17,12 @@ Spring AI가 `EmbeddingModel` 인터페이스를 제공하고, 이번 수업에�
 |---|---|---|
 | 문자열 임베딩 `embed("배송비")` | `call()` → DJL 서비스의 `embedQuery()` | `query: 배송비` |
 | 문서 임베딩 `embed(document)` | DJL 서비스의 `embedDocument()` | `passage: 문서 본문` |
-| 저장소의 문서 일괄 임베딩 | 각 문서를 위 문서 임베딩으로 전달 | 문서마다 `passage: ` |
+| 문서 목록 임베딩 `embed(List<Document>, ...)` | 각 문서에 `embed(Document)`를 적용 | 문서마다 `passage: ` |
 | `dimensions()` | 설정한 모델의 차원 수 반환 | 추론 없이 384 반환 |
 
-`EmbeddingModel`의 문자열용 기본 메서드는 내부에서 `call()`을 호출합니다.<br>
-문서 일괄 처리도 별도로 연결해, 검색 대상 문서를 질문용 접두어로 임베딩하지 않도록 합니다.<br>
-이 어댑터는 설정된 한 모델로 문장을 하나씩 처리합니다.
+Spring AI 2.1.0의 `SimpleVectorStore`는 `add(...)`로 문서 목록을 받은 뒤 **문서마다 `embed(Document)`를 호출**합니다.<br>
+검색할 때 부르는 문자열용 `embed(String)`은 `EmbeddingModel`의 기본 메서드이며 내부에서 어댑터의 `call()`을 호출합니다.<br>
+문서 목록을 받는 오버로드는 그 메서드를 직접 사용할 때도 문서용 접두어를 적용하도록 구현한 것입니다.
 
 ```mermaid
 classDiagram
@@ -37,7 +37,7 @@ classDiagram
 ## 연결 코드 읽기
 
 아래는 어댑터의 문서용 메서드를 발췌한 코드입니다.<br>
-문서 목록을 받아 `embed(Document)`에 하나씩 전달합니다.
+이 저장소의 적재에서 실행되는 부분은 첫 번째 `embed(Document)`입니다.
 
 ```java
 @Override
@@ -77,7 +77,7 @@ public List<float[]> embed(List<Document> documents, EmbeddingOptions options,
 <summary>해설</summary>
 
 E5가 검색 질문과 검색 대상 문서를 구분하도록 각각 `query: `와 `passage: `를 붙이기 위해서입니다.<br>
-저장소의 문서 일괄 적재에서도 이 구분이 유지되어야 합니다.
+저장소에 여러 문서를 넣어도 문서마다 이 구분이 유지됩니다.
 
 </details>
 
