@@ -49,3 +49,20 @@ Live 테스트는 채팅·임베딩의 SDK 요청별 `timeout`을 각각 30초�
 이 모듈에는 별도의 90초 전체 실행 제한이 없습니다.<br>
 임베딩에 `OPENAI_EMBEDDING_MODEL`도 필요합니다.<br>
 문서 적재 시에도 외부 임베딩 API 사용량이 발생합니다.
+
+## 선택 실습: 12-7 검색과 답변을 나눠 평가하기
+
+[교재](../../docs/lessons/12-evaluation/07-retrieval-and-generation.md)를 읽고 다음 코드를 확인합니다.<br>
+기본 앱의 HTTP API는 유지하며, 선택 실습은 테스트에서 직접 호출합니다.
+
+| 역할 | 코드 |
+|---|---|
+| 구현 | [Lesson07RagStageEvaluationService](src/main/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationService.java) |
+| 고정 응답 모델 테스트 | [Lesson07RagStageEvaluationLocalModelTest](src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationLocalModelTest.java) |
+| 실제 OpenAI 테스트 | [Lesson07RagStageEvaluationOpenAiLiveTest](src/test/java/com/example/ailearning/l12evaluation/lesson07_stages/Lesson07RagStageEvaluationOpenAiLiveTest.java) |
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:12-00-evaluation:test --tests '*Lesson07RagStageEvaluationLocalModelTest'
+```
+
+Live 클래스는 별도 선택하며, 루트 `.env`의 OpenAI 설정과 실제 API 사용량이 필요합니다.

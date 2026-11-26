@@ -40,4 +40,13 @@ class Lesson03SearchOpenAiLiveTest {
         assertThat(vector.dimensions()).isPositive();
         assertThat(result.vectorHits()).isNotEmpty();
     }
+
+    @Test
+    @Timeout(180)
+    void 실제_OpenAI_임베딩으로_배송비_정책을_검색한다() {
+        var result = service.compareSearchResults("배송비는 얼마인가요?", 2, 0.0, null);
+        System.out.println("배송비 질문의 벡터 검색 결과: " + result.vectorHits());
+        // 연결 확인과 구분해, 이 질문에서 기대한 정책 ID가 검색됐는지 검사한다.
+        assertThat(result.vectorHits()).extracting(hit -> hit.id()).contains("shipping");
+    }
 }

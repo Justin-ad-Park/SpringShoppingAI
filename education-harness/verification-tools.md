@@ -21,46 +21,17 @@ Gradle 결과는 해당 모듈의 build/test-results/test와 build/reports/tests
 
 ## Markdown 링크 검사
 
-아래는 별도 파일 설치 없이 Node.js 기본 모듈로 실행하는 검사입니다.<br>
-기본 대상은 하네스이며 교재도 검사하려면 마지막 인자에 Spring-AI-Agent-Learning/docs를 추가합니다.<br>
-인라인 Markdown 링크와 일반 제목 앵커를 검사합니다.<br>
-참조형 링크·복잡한 HTML·플랫폼별 특수 앵커는 수동 확인이 필요합니다.<br>
-코드 블록 안의 예제 링크는 검사 대상에서 제외합니다.
+Node.js 기본 모듈만 사용하는 [링크 검사 스크립트](scripts/check-markdown-links.mjs)를 실행합니다.<br>
+문서 파일과 디렉터리를 함께 지정할 수 있으며, 인자를 생략하면 `education-harness`를 검사합니다.
 
 ```bash
-node --input-type=module - education-harness <<'JS'
-import fs from 'node:fs';
-import path from 'node:path';
-const files = p => fs.readdirSync(p, {withFileTypes:true}).flatMap(e => {
-  const f = path.join(p,e.name);
-  return e.isDirectory() ? files(f) : e.isFile() && f.endsWith('.md') ? [f] : [];
-});
-const prose = s => s.replace(/^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1\s*$/gm,'');
-const slug = s => s.replace(/<[^>]*>/g,'').toLowerCase().replace(/[^\p{L}\p{N}_\- ]/gu,'').replace(/ /g,'-');
-let count=0; const errors=[];
-for (const f of process.argv.slice(2).flatMap(files)) {
-  const text=prose(fs.readFileSync(f,'utf8'));
-  for (const m of text.matchAll(/\]\(([^)]+)\)/g)) {
-    if (/^[a-z][a-z0-9+.-]*:/i.test(m[1])) continue;
-    const [rel,anchor] = decodeURIComponent(m[1]).split('#');
-    const target = rel ? path.resolve(path.dirname(f),rel) : f;
-    count++;
-    if (!fs.existsSync(target)) { errors.push(`${f}: missing ${m[1]}`); continue; }
-    if (anchor && target.endsWith('.md')) {
-      const headings=new Set(); const seen=new Map();
-      for (const h of prose(fs.readFileSync(target,'utf8')).matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)) {
-        const base=slug(h[1]); const n=seen.get(base)||0;
-        headings.add(n ? `${base}-${n}` : base); seen.set(base,n+1);
-      }
-      if (!headings.has(anchor)) errors.push(`${f}: missing anchor ${m[1]}`);
-    }
-  }
-}
-console.log(`Local links checked: ${count}; errors: ${errors.length}`);
-for (const e of errors) console.error(e);
-if (errors.length) process.exitCode=1;
-JS
+node education-harness/scripts/check-markdown-links.mjs education-harness Spring-AI-Agent-Learning/docs
+node education-harness/scripts/check-markdown-links.mjs Spring-AI-Agent-Learning/docs/lessons/10-rag.md
 ```
+
+인라인 Markdown 링크와 일반 제목 앵커를 검사합니다.<br>
+참조형 링크·복잡한 HTML·플랫폼별 특수 앵커는 수동 확인이 필요합니다.<br>
+코드 블록 안의 예제 링크는 제외하고, 오류가 있으면 `파일:줄 번호:원인`을 출력하며 종료 코드 1을 반환합니다.
 
 ## Mermaid 문법 검사
 
@@ -73,34 +44,17 @@ HARNESS_TOOLS_DIR="$(mktemp -d)"
 npm install --prefix "$HARNESS_TOOLS_DIR" --no-save mermaid@11.17.2 jsdom@29.1.1
 ```
 
-같은 터미널에서 실행합니다.<br>
-마지막 인자는 검사할 문서 디렉터리이며 여러 개를 지정할 수 있습니다.
+같은 터미널에서 [Mermaid 검사 스크립트](scripts/check-mermaid.mjs)를 실행합니다.<br>
+첫 인자는 파서 설치 폴더이고, 나머지는 검사할 문서 파일 또는 디렉터리입니다.
 
 ```bash
-node --input-type=module - "$HARNESS_TOOLS_DIR" education-harness <<'JS'
-import fs from 'node:fs';
-import path from 'node:path';
-import {createRequire} from 'node:module';
-import {pathToFileURL} from 'node:url';
-const require=createRequire(path.join(process.argv[2],'package.json'));
-const {JSDOM}=await import(pathToFileURL(require.resolve('jsdom')).href);
-const dom=new JSDOM('<!doctype html><html><body></body></html>');
-globalThis.window=dom.window; globalThis.document=dom.window.document;
-const {default:mermaid}=await import(pathToFileURL(require.resolve('mermaid')).href);
-mermaid.initialize({startOnLoad:false});
-const files=p=>fs.readdirSync(p,{withFileTypes:true}).flatMap(e=>{
-  const f=path.join(p,e.name);
-  return e.isDirectory()?files(f):e.isFile()&&f.endsWith('.md')?[f]:[];
-});
-let count=0;
-for(const f of process.argv.slice(3).flatMap(files)) {
-  for(const m of fs.readFileSync(f,'utf8').matchAll(/^```mermaid\s*\n([\s\S]*?)^```\s*$/gm)) {
-    await mermaid.parse(m[1]); count++;
-  }
-}
-console.log(`Mermaid syntax passed: ${count}`);
-JS
+node education-harness/scripts/check-mermaid.mjs "$HARNESS_TOOLS_DIR" education-harness Spring-AI-Agent-Learning/docs
+node education-harness/scripts/check-mermaid.mjs "$HARNESS_TOOLS_DIR" Spring-AI-Agent-Learning/docs/lessons/10-rag.md
 ```
+
+검사한 블록 수와 오류 수를 출력합니다.<br>
+문법 오류가 있으면 해당 파일·블록 시작 줄을 출력하고 종료 코드 1을 반환합니다.<br>
+두 검사 스크립트는 [문서 파일 수집 코드](scripts/markdown-files.mjs)를 공유하며, 생성물·모델·의존성 폴더와 하위 심볼릭 링크는 순회하지 않습니다.
 
 문법 통과는 렌더링이나 교육적 정확성을 보장하지 않습니다.<br>
 실제 표시와 코드·그림의 호출 순서는 별도로 확인합니다.<br>

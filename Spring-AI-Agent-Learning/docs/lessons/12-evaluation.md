@@ -75,6 +75,7 @@ Spring AI는 평가 도구와 모델 호출 관련 측정 기능을 제공합니
 | 4 | [Actuator로 기본 메트릭 조회](12-evaluation/04-actuator.md) | `12-04-observability` | 호출 횟수·시간·토큰 지표 관찰 |
 | 5 | [실패·지연·재시도 관찰](12-evaluation/05-failures.md) | `12-00-evaluation` | 잘못된 답변과 요청 실패 구분, 02·05 보충 테스트로 제약·재시도 결과 비교 |
 | 선택 6 | [평가 결과로 변경을 판단하고 운영에서 관찰하기](12-evaluation/06-production-evaluation.md) | 설계 보충 | 고정 사례·반복 평가·운영 지표를 함께 해석 |
+| 선택 7 | [검색 결과와 답변을 따로 평가하기](12-evaluation/07-retrieval-and-generation.md) | `12-00-evaluation`의 별도 패키지 | 필요한 문서 누락과 답변 문구 오류를 구분 |
 
 12-1은 모델 없는 Lesson01RuleBasedEvaluatorUnitTest, 12-3은 usage-only 프로필의 Lesson03TokenUsageService로 시작합니다.<br>
 실제 RAG와 규칙·사용량·실패를 결합하는 실행은 12-5입니다.<br>

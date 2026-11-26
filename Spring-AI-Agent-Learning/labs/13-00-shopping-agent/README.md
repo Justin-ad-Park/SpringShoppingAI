@@ -24,3 +24,21 @@
 
 전체 실행 제한·호출 추적은 별도 [13-8](../13-08-limited-agent/README.md)에 있습니다.<br>
 기본 앱 응답에는 trace가 없습니다.
+
+## 선택 실습: 13-9 복합 요청의 누락 확인
+
+[교재](../../docs/lessons/13-shopping-agent/09-result-completeness.md)를 읽고 다음 코드를 확인합니다.<br>
+기본 앱의 HTTP API는 유지하며, 선택 실습은 테스트에서 직접 호출합니다.
+
+| 역할 | 코드 |
+|---|---|
+| 구현 | [Lesson09CompleteCounselService](src/main/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09CompleteCounselService.java) |
+| 고정 응답 모델 테스트 | [Lesson09CompleteCounselLocalModelTest](src/test/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09CompleteCounselLocalModelTest.java) |
+| 실제 OpenAI 테스트 | [Lesson09CompleteCounselOpenAiLiveTest](src/test/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09CompleteCounselOpenAiLiveTest.java) |
+| Java 누락 검사 | [Lesson09ResultCompletenessChecker](src/main/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09ResultCompletenessChecker.java) · [단위 테스트](src/test/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09ResultCompletenessCheckerUnitTest.java) |
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson09CompleteCounselLocalModelTest'
+```
+
+Live 클래스는 별도 선택하며, 루트 `.env`의 OpenAI 설정과 실제 API 사용량이 필요합니다.

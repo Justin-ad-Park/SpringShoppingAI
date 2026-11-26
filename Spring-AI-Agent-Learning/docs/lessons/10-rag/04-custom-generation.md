@@ -68,15 +68,21 @@ public List<PolicySearchResult> searchPolicies(String question) {
 ## 2. 검색 결과에 따라 생성 호출 결정하기
 
 [Lesson04RagService.answer()](../../../labs/10-03-custom-rag/src/main/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagService.java)는 검색 → 모델 요청 → 출처 검증 순서로 처리합니다.<br>
-검색 결과가 없으면 채팅 모델 호출을 생략합니다.
+검색 결과가 없으면 채팅 모델 호출을 생략합니다.<br>
+기본 `answer(question)`는 같은 질문을 검색과 생성에 사용합니다.<br>
+`answerWithSearchQuestion()`은 두 입력을 분리하는 메서드이며, 검색 질문을 별도로 만드는 [10-7 선택 실습](07-follow-up-search.md)에서 재사용합니다.
 
 ```java
 public Reply answer(String question) {
-    List<PolicySearchResult> retrievedPolicies = policySearch.searchPolicies(question);
+    return answerWithSearchQuestion(question, question);
+}
+
+public Reply answerWithSearchQuestion(String customerQuestion, String searchQuestion) {
+    List<PolicySearchResult> retrievedPolicies = policySearch.searchPolicies(searchQuestion);
     if (retrievedPolicies.isEmpty()) {
         return new Reply("NO_CONTEXT", "관련 정책 근거가 없습니다.", List.of());
     }
-    UnverifiedAnswer unverifiedAnswer = requestGroundedAnswer(question, retrievedPolicies);
+    UnverifiedAnswer unverifiedAnswer = requestGroundedAnswer(customerQuestion, retrievedPolicies);
     return verifyCitations(unverifiedAnswer, retrievedPolicies);
 }
 ```

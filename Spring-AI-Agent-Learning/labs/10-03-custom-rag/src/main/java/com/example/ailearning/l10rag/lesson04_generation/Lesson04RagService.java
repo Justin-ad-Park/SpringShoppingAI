@@ -23,11 +23,16 @@ public class Lesson04RagService {
     }
 
     public Reply answer(String question) {
-        List<PolicySearchResult> retrievedPolicies = policySearch.searchPolicies(question);
+        return answerWithSearchQuestion(question, question);
+    }
+
+    /** 10-7 선택 실습: 검색에는 풀어 쓴 질문을, 답변 생성에는 고객의 원래 질문을 사용한다. */
+    public Reply answerWithSearchQuestion(String customerQuestion, String searchQuestion) {
+        List<PolicySearchResult> retrievedPolicies = policySearch.searchPolicies(searchQuestion);
         if (retrievedPolicies.isEmpty()) {
             return new Reply("NO_CONTEXT", "관련 정책 근거가 없습니다.", List.of());
         }
-        UnverifiedAnswer unverifiedAnswer = requestGroundedAnswer(question, retrievedPolicies);
+        UnverifiedAnswer unverifiedAnswer = requestGroundedAnswer(customerQuestion, retrievedPolicies);
         return verifyCitations(unverifiedAnswer, retrievedPolicies);
     }
 

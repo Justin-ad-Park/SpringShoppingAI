@@ -88,6 +88,7 @@ Splitter도 임베딩 모델이 아니며 문서를 조각으로 나눕니다.<b
 | 4 | [관련 정책만 검색해 답변 만들기](10-rag/04-custom-generation.md) | `10-03-custom-rag` | 여러 정책 중 검색한 항목만 전달하고 질문에 필요한 답변 생성 |
 | 5 | [출처 확인과 답변 보류](10-rag/05-evidence.md) | `10-03-custom-rag` | 업무 규칙으로 출처 ID·보류 검증 |
 | 선택 6 | [상용 RAG의 자료 갱신과 품질 확인](10-rag/06-production-rag.md) | 설계 보충 | 실패 단계 구분과 개선 대상 판단 |
+| 선택 7 | [후속 질문을 검색 질문으로 바꾸기](10-rag/07-follow-up-search.md) | `10-03-custom-rag`의 별도 패키지 | 이전 대화로 대상을 보충해 검색하고 원래 대화로 답변 생성 |
 
 
 [공통 학습 방법](../learning-guide.md) · [전체 교육 계획](../curriculum.md)

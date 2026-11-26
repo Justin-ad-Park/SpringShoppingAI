@@ -61,3 +61,20 @@ Application·공통 Controller·도메인·자료형·테스트 보조 코드는
 |---|---|---|
 | 10-3 | [Lesson03PolicyLoader](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoader.java) · [Lesson03PolicySearch](src/main/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicySearch.java) | [Lesson03PolicyLoaderUnitTest](src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyLoaderUnitTest.java) · [JAR 호환성](src/test/java/com/example/ailearning/l10rag/lesson03_indexing/Lesson03PolicyJarLoadingUnitTest.java) |
 | 10-4 | [Lesson04RagService](src/main/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagService.java) | [Lesson04RagLocalModelTest](src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagLocalModelTest.java) · [Lesson04RagOpenAiLiveTest](src/test/java/com/example/ailearning/l10rag/lesson04_generation/Lesson04RagOpenAiLiveTest.java) |
+
+## 선택 실습: 10-7 후속 질문을 검색 질문으로 바꾸기
+
+[교재](../../docs/lessons/10-rag/07-follow-up-search.md)를 읽고 다음 코드를 확인합니다.<br>
+기본 앱의 HTTP API는 유지하며, 선택 실습은 테스트에서 직접 호출합니다.
+
+| 역할 | 코드 |
+|---|---|
+| 구현 | [Lesson07FollowUpRagService](src/main/java/com/example/ailearning/l10rag/lesson07_followup/Lesson07FollowUpRagService.java) |
+| 고정 응답 모델 테스트 | [Lesson07FollowUpRagLocalModelTest](src/test/java/com/example/ailearning/l10rag/lesson07_followup/Lesson07FollowUpRagLocalModelTest.java) |
+| 실제 OpenAI 테스트 | [Lesson07FollowUpRagOpenAiLiveTest](src/test/java/com/example/ailearning/l10rag/lesson07_followup/Lesson07FollowUpRagOpenAiLiveTest.java) |
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:10-03-custom-rag:test --tests '*Lesson07FollowUpRagLocalModelTest'
+```
+
+Live 클래스는 별도 선택하며, 루트 `.env`의 OpenAI 설정과 실제 API 사용량이 필요합니다.

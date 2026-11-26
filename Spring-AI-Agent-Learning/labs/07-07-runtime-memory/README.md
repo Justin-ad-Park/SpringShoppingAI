@@ -1,7 +1,7 @@
-# 07-03. 의도에 따라 Runtime ChatMemory 선택하기
+# 07-7. 의도에 따라 Runtime ChatMemory 선택하기
 
 **목표:** 분류한 대화 의도를 저장소 Enum으로 바꾸고, `chat(storage, ...)`의 Enum 파라미터로 요청마다 메모리를 선택합니다.<br>
-선수 지식은 04단원의 구조화 응답, 07단원의 직접 메모리 조회·저장, 07-02의 Redis 연결입니다.<br>
+선수 지식은 04단원의 구조화 응답, 07단원의 직접 메모리 조회·저장, 07-3의 Redis 연결입니다.<br>
 다른 실습 모듈을 import하지 않는 독립 앱입니다.
 
 
@@ -23,14 +23,14 @@
 `chat()`에서 `memorySelector.select(storage)`를 한 번 호출하고, 반환된 `ChatMemory` 객체를 메시지 구성과 저장 메서드에 인자로 전달합니다.<br>
 따라서 조회한 저장소와 저장할 저장소가 요청 도중 바뀌지 않습니다.
 
-## 07-02와 무엇이 다른가?
+## 07-3의 시작 시 저장소 선택과 무엇이 다른가?
 
 | 예제 | 선택 시점 | 메모리 구성 |
 |---|---|---|
 | 07-03-Redis-Selection | YAML 설정으로 앱 시작 시 선택 | 선택한 저장소 하나만 사용 |
 | 07-07-runtime-memory | 고객 메시지의 의도를 분류한 후 요청마다 선택 | InMemory와 Redis 메모리를 함께 준비 |
 
-07-03은 시작할 때 Redis에도 연결합니다.<br>
+이번 `07-07-runtime-memory` 앱은 시작할 때 Redis에도 연결합니다.<br>
 간단한 대화만 보내더라도 Redis Stack이 실행되어 있어야 합니다.
 
 | 분류 결과 | 예시 고객 요청 | 전달할 Enum |
@@ -104,7 +104,7 @@ public ChatMemory select(MemoryStorage storage) {
 모든 명령은 저장소 루트 기준입니다.
 
 기존 Docker Desktop을 실행하고 [runShell 실행·종료 안내](runShell/README.md)의 스크립트로 Redis Stack을 준비합니다.<br>
-기본 Redis 포트는 16380으로 07-02의 16379와 구분합니다.<br>
+기본 Redis 포트는 16380으로 07-3 실습의 16379와 구분합니다.<br>
 일반 Redis만으로는 Spring AI의 RedisJSON·검색 인덱스 기능을 사용할 수 없습니다.
 
 ```bash
@@ -201,4 +201,4 @@ TTL·Redis 영속화·세션 재시작 뒤 사용자 재연결과 다중 서버�
 
 </details>
 
-[07단원 목차](../../docs/lessons/07-chat-memory.md) · [07-02 시작 시 선택](../07-03-Redis-Selection/README.md)
+[07단원 목차](../../docs/lessons/07-chat-memory.md) · [07-3 시작 시 선택](../07-03-Redis-Selection/README.md)
