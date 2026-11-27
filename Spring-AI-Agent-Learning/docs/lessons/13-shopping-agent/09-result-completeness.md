@@ -110,4 +110,4 @@ Java 검사기는 모델이 추출한 요구를 기준으로 결과를 확인합
 
 </details>
 
-[13단원 목차](../13-shopping-agent.md) · [기본 검증으로 돌아가기](03-verify.md)
+[다음: 13-10 상품 추천과 반품 안내를 한 질문에서 처리하기](10-shopping-and-return.md) · [13단원 목차](../13-shopping-agent.md) · [기본 검증으로 돌아가기](03-verify.md)

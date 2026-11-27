@@ -42,3 +42,31 @@
 ```
 
 Live 클래스는 별도 선택하며, 루트 `.env`의 OpenAI 설정과 실제 API 사용량이 필요합니다.
+
+## 선택 실습: 13-10 상품 추천과 반품 안내
+
+[13-10 교재](../../docs/lessons/13-shopping-agent/10-shopping-and-return.md)를 읽고, 13-9와 같은 질문에서 두 조회가 어떻게 실행되는지 확인합니다.
+
+| 역할 | 코드 |
+|---|---|
+| 구현 | [Lesson10ShoppingAndReturnService](src/main/java/com/example/ailearning/l13shopping/lesson10_shoppingandreturn/Lesson10ShoppingAndReturnService.java) |
+| 로컬 검증 | [Lesson10ShoppingAndReturnLocalModelTest](src/test/java/com/example/ailearning/l13shopping/lesson10_shoppingandreturn/Lesson10ShoppingAndReturnLocalModelTest.java) |
+| 실제 OpenAI 검증 | [Lesson10ShoppingAndReturnOpenAiLiveTest](src/test/java/com/example/ailearning/l13shopping/lesson10_shoppingandreturn/Lesson10ShoppingAndReturnOpenAiLiveTest.java) |
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson10ShoppingAndReturnLocalModelTest'
+```
+
+## 선택 실습: 13-11 모델이 질문하고 도구를 선택하는 쇼핑 Agent
+
+[13-11 교재](../../docs/lessons/13-shopping-agent/11-model-led-shopping-agent.md)를 따라 모델에 도구와 이전 대화를 전달하는 흐름을 확인합니다.
+
+| 역할 | 코드 |
+|---|---|
+| 모델 요청과 답변 | [Lesson11ShoppingAgent](src/main/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgent.java) |
+| 상품·배송비·반품 정책 조회 | [Lesson11ShoppingTools](src/main/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingTools.java) |
+| 로컬 검증 | [Lesson11ShoppingAgentLocalModelTest](src/test/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgentLocalModelTest.java) |
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson11ShoppingAgentLocalModelTest'
+```

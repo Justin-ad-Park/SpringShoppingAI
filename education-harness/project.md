@@ -87,7 +87,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 15 Ollama 의사결정 | `15-00-ollama-decisions` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLocalModelTest`<br>`com.example.ailearning.l15ollama.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLiveTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLiveTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLiveTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLiveTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLiveTest` |
 
 보충 문서와의 대응은 실제 교육 계획과 소스를 기준으로 확인합니다.<br>
-추가된 선택 실습 10-7·12-7·13-9의 클래스·실행 명령은 각 기본 모듈의 README에서 관리합니다.<br>
+추가된 선택 실습 10-7·12-7·13-9·13-10·13-11의 클래스·실행 명령은 각 기본 모듈의 README에서 관리합니다.<br>
 소주제별 목록이 있는 모듈은 이 표에 모든 클래스 이름을 중복 복사하지 않습니다.
 
 ### 실습 폴더 이름과 정렬

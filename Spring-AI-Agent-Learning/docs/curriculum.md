@@ -142,3 +142,5 @@ RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 | 10-5 이후 | [10-7 후속 질문 검색](lessons/10-rag/07-follow-up-search.md) | 이전 대화로 검색 질문의 생략된 대상 보충 |
 | 12-1 이후, RAG 복습 시 | [12-7 단계별 평가](lessons/12-evaluation/07-retrieval-and-generation.md) | 필요한 근거 검색과 답변 문구 검사를 분리 |
 | 13-3 이후 | [13-9 결과 누락 확인](lessons/13-shopping-agent/09-result-completeness.md) | 유효한 값과 요청한 결과 종류의 충족을 구분 |
+| 13-9 이후 | [13-10 상품 추천과 반품 안내](lessons/13-shopping-agent/10-shopping-and-return.md) | 두 업무의 입력을 확인하고 상품과 정책을 각각 조회해 한 답변으로 제공 |
+| 13-10 이후 | [13-11 모델이 질문하고 도구를 선택하는 쇼핑 Agent](lessons/13-shopping-agent/11-model-led-shopping-agent.md) | 요청에 맞는 도구를 선택하고, 고객의 답을 받아 대화를 이어서 처리 |
