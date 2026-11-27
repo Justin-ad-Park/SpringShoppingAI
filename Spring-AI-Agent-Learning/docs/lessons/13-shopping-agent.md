@@ -106,6 +106,8 @@ Spring AI가 제공하는 것은 `ChatClient`, 구조화 변환, 도구 호출, 
 
 [13-11 모델이 질문하고 도구를 선택하는 쇼핑 Agent](13-shopping-agent/11-model-led-shopping-agent.md)는 여러 요청에 같은 도구를 제공하고, 모델이 필요한 조회와 고객에게 물을 내용을 선택하는 흐름을 실습합니다.
 
+[13-12 쇼핑 Agent에 기존 MCP 서버 연결](13-shopping-agent/12-mcp-shopping-agent.md)은 별도 모듈에서 13-11의 세 상담을 `shopping-mcp`의 도구로 처리합니다.
+
 [13-8 실행 제한과 추적](13-shopping-agent/08-execution-limits.md)은 별도 `13-08-limited-agent` 모듈에서 모델 요청 수·도구 상한·전체 대기 시간·실패 뒤 미저장을 검증합니다.<br>
 기본 상담과 분리해 실행합니다.
 

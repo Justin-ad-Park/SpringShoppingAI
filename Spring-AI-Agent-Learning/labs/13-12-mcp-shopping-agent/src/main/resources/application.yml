@@ -1,0 +1,26 @@
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: learning-mcp-shopping-agent
+  ai:
+    model:
+      embedding: none
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key: ${OPENAI_API_KEY}
+      timeout: 5s
+      chat:
+        max-retries: 0
+        options:
+          model: ${OPENAI_MODEL}
+    mcp:
+      client:
+        name: learning-shopping-agent-client
+        type: SYNC
+        request-timeout: 3s
+        streamable-http:
+          connections:
+            shopping:
+              url: ${LEARNING_MCP_URL:http://127.0.0.1:8082}
+              endpoint: /mcp

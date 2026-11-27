@@ -144,3 +144,4 @@ RAG나 MCP가 있어야만 Agent를 만들 수 있는 것은 아닙니다.
 | 13-3 이후 | [13-9 결과 누락 확인](lessons/13-shopping-agent/09-result-completeness.md) | 유효한 값과 요청한 결과 종류의 충족을 구분 |
 | 13-9 이후 | [13-10 상품 추천과 반품 안내](lessons/13-shopping-agent/10-shopping-and-return.md) | 두 업무의 입력을 확인하고 상품과 정책을 각각 조회해 한 답변으로 제공 |
 | 13-10 이후 | [13-11 모델이 질문하고 도구를 선택하는 쇼핑 Agent](lessons/13-shopping-agent/11-model-led-shopping-agent.md) | 요청에 맞는 도구를 선택하고, 고객의 답을 받아 대화를 이어서 처리 |
+| 13-11 이후 | [13-12 쇼핑 Agent에 기존 MCP 서버 연결](lessons/13-shopping-agent/12-mcp-shopping-agent.md) | 같은 세 상담을 원격 MCP 도구로 처리하고 결과 전달 확인 |
