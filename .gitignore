@@ -1,6 +1,7 @@
 /.gradle/
 **/build/
 /.run/
+/.arena/
 /.env
 *.log
 .idea/
