@@ -37,7 +37,7 @@ System.out.println(result.missingResults());
 |---|---|
 | `BASE_RESULT_NOT_VERIFIED` | 기본 상담이 보류·결과 없음 등으로 끝남. 그 결과를 유지 |
 | `MISSING_RESULTS` | 기본 검증은 통과했지만 필요한 상품 또는 정책 결과가 없음 |
-| `COMPLETE` | 기본 검증을 통과했고 요청한 결과 종류가 모두 있음 |
+| `COMPLETE` | 기본 검증을 통과했고 `requiredResults`에 표시된 결과 종류가 모두 있음 |
 
 `COMPLETE`도 이 두 결과 종류의 존재 검사까지만 통과했다는 뜻입니다.<br>
 정책이 질문에 정확히 답하는지, 추천이 최선인지, 여러 정책 요청을 모두 처리했는지까지 보장하지 않습니다.
@@ -49,11 +49,14 @@ System.out.println(result.missingResults());
 ```mermaid
 sequenceDiagram
     participant S as Lesson09CompleteCounselService
+    participant A as Spring AI ChatClient
     participant M as 모델
     participant W as 기존 CounselWorkflow
     participant C as 누락 검사기
-    S->>M: 상품 추천과 정책 안내의 필요 여부 추출
-    M-->>S: RequiredResults
+    S->>A: 고객 질문과 요구 추출 지시
+    A->>M: 상품 추천과 정책 안내의 필요 여부 요청
+    M-->>A: 두 값이 담긴 JSON 응답
+    A-->>S: entity로 변환한 Lesson09RequiredResults
     S->>W: 원래 고객 질문으로 상담 처리
     W-->>S: CounselResult
     S->>C: 필요한 결과와 실제 결과 대조
@@ -77,6 +80,12 @@ sequenceDiagram
 단위 테스트는 상품만 요청한 경우, 복합 요청의 정책 누락, 두 결과의 존재, 기본 상담 보류와 처리 범위 밖 요청을 확인합니다.<br>
 [로컬 모델 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09CompleteCounselLocalModelTest.java)는 요구 추출을 고정 응답으로 실행하고, 기존 Workflow는 Mockito 대역으로 정책이 빠진 결과를 반환하게 합니다.<br>
 기존 도구 흐름은 13-4 테스트가 검증하며, 이 테스트가 실제 도구 실행까지 재검증하는 것은 아닙니다.
+
+두 테스트에서 고객은 상품 추천과 반품 기간을 함께 묻고, 상담 결과에는 상품 추천만 담깁니다.<br>
+Java 검사기는 모델이 추출한 요구를 기준으로 결과를 확인합니다.<br>
+모델이 정책 안내도 필요하다고 표시하면 `MISSING_RESULTS`가 나옵니다.<br>
+모델이 정책 안내 요구를 놓치면 검사기는 상품 추천만 확인해 `COMPLETE`를 반환합니다.<br>
+고객은 반품 기간도 물었으므로, 실제 질문을 기준으로 보면 잘못된 완료 판정입니다.
 
 [실제 모델 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson09_completeness/Lesson09CompleteCounselOpenAiLiveTest.java)는 대역 없이 요구 추출과 기존 도구 상담을 함께 실행합니다.
 

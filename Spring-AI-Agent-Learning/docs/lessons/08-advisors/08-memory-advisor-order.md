@@ -211,7 +211,7 @@ Spring AI 2.1.0의 `MessageChatMemoryAdvisor.before()`는 이번 요청의 **마
 |---|---|
 | [Lesson08MemoryOrderChatService](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson08_memoryorder/Lesson08MemoryOrderChatService.java) | 준비한 메모리 Advisor를 defaultAdvisors로 등록하고 도구를 사용한 대화 실행 |
 | [TeaPriceTools](../../../labs/08-00-advisors/src/main/java/com/example/ailearning/l08advisors/lesson08_memoryorder/TeaPriceTools.java) | 상품명을 받아 고정 가격 12000원을 반환하는 학습용 도구 |
-| [Lesson08MemoryOrderLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson08_memoryorder/Lesson08MemoryOrderLocalModelTest.java) | 두 배치의 실행 순서·저장 메시지·system 전달을 고정 응답으로 검증 |
+| [Lesson08MemoryOrderLocalModelTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson08_memoryorder/Lesson08MemoryOrderLocalModelTest.java) | 두 배치의 실행 순서·저장 메시지·system 전달과 두 번째 요청의 도구 결과를 고정 응답으로 검증 |
 | [Lesson08MemoryOrderOpenAiLiveTest](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson08_memoryorder/Lesson08MemoryOrderOpenAiLiveTest.java) | 실제 OpenAI로 배치·후속 질문·6개 메시지 창을 비교하고 메모리 내용 출력 |
 | [MemoryOrderTestOutput](../../../labs/08-00-advisors/src/test/java/com/example/ailearning/l08advisors/lesson08_memoryorder/MemoryOrderTestOutput.java) | Spy의 before·after 호출 기록과 메모리 메시지를 출력하는 테스트 보조 코드 |
 

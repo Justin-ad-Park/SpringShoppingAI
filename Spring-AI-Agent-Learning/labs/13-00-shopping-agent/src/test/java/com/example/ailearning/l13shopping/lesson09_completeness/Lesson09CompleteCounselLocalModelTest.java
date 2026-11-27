@@ -19,6 +19,7 @@ import org.springframework.test.context.DynamicPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = "spring.config.import=")
 class Lesson09CompleteCounselLocalModelTest {
+    private static final String PRODUCT_AND_RETURN_QUESTION = "3만원 이하 음료를 추천하고 미개봉 반품 기간도 알려줘.";
     static final OpenAiStubServer MODEL = createModelServer();
     @Autowired Lesson09CompleteCounselService service;
     // 기존 도구 흐름은 13-4에서 검증한다. 여기서는 의도적으로 정책이 빠진 결과를 준비한다.
@@ -45,19 +46,36 @@ class Lesson09CompleteCounselLocalModelTest {
 
     @Test
     void 모델이_추출한_두_요구와_상담_결과를_대조한다() {
-        String question = "3만원 이하 음료를 추천하고 미개봉 반품 기간도 알려줘.";
         MODEL
                 .chat()
                 .setResponseMessage(createAssistantTextMessage("{\"productRecommendation\":true,\"policyGuidance\":true}"));
-        when(counselWorkflow.processCounselRequest(question, List.of())).thenReturn(productOnlyResult());
+        when(counselWorkflow.processCounselRequest(PRODUCT_AND_RETURN_QUESTION, List.of())).thenReturn(productOnlyResult());
 
-        var result = service.answer(question);
+        var result = service.answer(PRODUCT_AND_RETURN_QUESTION);
 
         System.out.println("요구 추출 후 누락 확인: " + result);
         assertThat(result.status()).isEqualTo("MISSING_RESULTS");
         assertThat(result.missingResults()).containsExactly("정책 안내");
         assertThat(MODEL.chat().getRequests()).hasSize(1);
-        verify(counselWorkflow).processCounselRequest(question, List.of());
+        verify(counselWorkflow).processCounselRequest(PRODUCT_AND_RETURN_QUESTION, List.of());
+    }
+
+    // 고객은 상품 추천과 반품 기간을 함께 묻지만, 모델 대역은 상품 추천만 필요하다고 응답한다.
+    // 검사기는 모델이 추출한 요구만 확인하므로, 반품 안내가 빠진 답변에도 COMPLETE를 반환한다.
+    @Test
+    void 모델이_정책_안내_요구를_놓치면_불완전한_답변이_완료로_잘못_표시된다() {
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage("{\"productRecommendation\":true,\"policyGuidance\":false}"));
+        when(counselWorkflow.processCounselRequest(PRODUCT_AND_RETURN_QUESTION, List.of())).thenReturn(productOnlyResult());
+
+        var result = service.answer(PRODUCT_AND_RETURN_QUESTION);
+
+        System.out.println("정책 요구를 빠뜨렸을 때의 판정: " + result);
+        assertThat(result.status()).isEqualTo("COMPLETE");
+        assertThat(result.missingResults()).isEmpty();
+        assertThat(result.counselResult().sources()).isEmpty();
+        verify(counselWorkflow).processCounselRequest(PRODUCT_AND_RETURN_QUESTION, List.of());
     }
 
     @Test

@@ -98,6 +98,49 @@ class Lesson07RagStageEvaluationLocalModelTest {
         assertThat(result.generationFailures()).isEmpty();
     }
 
+    @Test
+    void 기산점을_틀려도_7일이_있으면_문구_검사를_통과한다() {
+        String answer = "미개봉 상품은 주문 후 7일 이내 반품할 수 있습니다.";
+
+        var result = evaluateWithAnswer(answer);
+
+        assertThat(result.generationFailures()).isEmpty();
+    }
+
+    @Test
+    void 정책과_같은_뜻이어도_일주일은_7일_문구_검사에서_실패한다() {
+        String answer = "미개봉 상품은 수령 후 일주일 이내 반품할 수 있습니다.";
+
+        var result = evaluateWithAnswer(answer);
+
+        assertThat(result.generationFailures()).containsExactly("필수 문구 누락: 7일");
+    }
+
+    private Lesson07RagStageEvaluationService.Result evaluateWithAnswer(String answer) {
+        MODEL
+                .chat()
+                .setResponseMessage(createAssistantTextMessage(answer));
+
+        var result = service.evaluate("미개봉 반품 기간은?", List.of("return-sealed"), "7일");
+
+        assertThat(result.retrievedIds()).contains("return-sealed");
+        assertThat(result.retrievalPassed()).isTrue();
+        assertThat(result.generationEvaluated()).isTrue();
+        assertThat(result.answer()).isEqualTo(answer);
+        // 찾은 문서 ID와 실제 user 메시지의 정책 본문을 함께 확인한다.
+        var request = MODEL.chat().getRequests().getFirst();
+        var userMessage = request.path("messages")
+                .valueStream()
+                .filter(message -> message.path("role").asString().equals("user"))
+                .findFirst()
+                .orElseThrow();
+        String policyInRequest = userMessage.path("content").asString();
+        System.out.println("모델에 보낸 질문과 정책: " + policyInRequest);
+        System.out.println("검사 결과: " + result);
+        assertThat(policyInRequest).contains("[return-sealed] 미개봉 상품은 수령 후 7일 이내 반품할 수 있습니다.");
+        return result;
+    }
+
     private static float[] policyVector(String text) {
         return text.contains("반품") ? new float[]{0, 1} : new float[]{1, 0};
     }

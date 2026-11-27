@@ -98,6 +98,7 @@ class Lesson08MemoryOrderLocalModelTest {
         assertThat(messages.get(0).getText()).isEqualTo("허브티 가격은 얼마인가요?");
         assertThat(messages.get(1).getText()).isEqualTo(answer);
         assertThat(((AssistantMessage) messages.get(1)).getToolCalls()).isEmpty();
+        printAndVerifyToolResultSentToModel();
     }
 
     @Test
@@ -132,5 +133,21 @@ class Lesson08MemoryOrderLocalModelTest {
         assertThat(toolResult.id()).isEqualTo(toolCall.id());
         assertThat(toolResult.responseData()).contains("12000");
         assertThat(messages.get(3).getText()).isEqualTo(answer);
+        printAndVerifyToolResultSentToModel();
+    }
+
+    private void printAndVerifyToolResultSentToModel() {
+        var secondRequest = MODEL.chat().getRequests().get(1);
+        var toolMessage = secondRequest
+                .path("messages")
+                .valueStream()
+                .filter(message -> message.path("role").asString().equals("tool"))
+                .findFirst()
+                .orElseThrow();
+        String callId = toolMessage.path("tool_call_id").asString();
+        String content = toolMessage.path("content").asString();
+        System.out.printf("두 번째 모델 요청의 도구 메시지: role=tool, tool_call_id=%s, content=%s%n", callId, content);
+        assertThat(callId).isEqualTo("price-1");
+        assertThat(content).contains("12000");
     }
 }
