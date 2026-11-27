@@ -66,7 +66,12 @@ sequenceDiagram
 
 ## 같은 세 질문을 실행하기
 
-[로컬 테스트](../../../labs/13-12-mcp-shopping-agent/src/test/java/com/example/ailearning/l13mcpshopping/lesson12_mcpagent/Lesson12McpShoppingAgentLocalModelTest.java)는 실제 `shopping-mcp`를 로컬 임의 포트에서 시작하고, 채팅 모델만 고정 응답 서버로 연결합니다.<br>
+[로컬 테스트](../../../labs/13-12-mcp-shopping-agent/src/test/java/com/example/ailearning/l13mcpshopping/lesson12_mcpagent/Lesson12McpShoppingAgentLocalModelTest.java)는 실제 `shopping-mcp`를 로컬에서 시작하고, 채팅 모델만 고정 응답 서버로 연결합니다.
+
+1. 서버를 `--server.port=0`으로 시작하면 운영체제가 사용 가능한 포트를 배정합니다. [ShoppingMcpTestServer](../../../labs/13-12-mcp-shopping-agent/src/test/java/com/example/ailearning/l13mcpshopping/lesson12_mcpagent/ShoppingMcpTestServer.java)
+2. `getBaseUrl()`은 서버에 배정된 실제 포트를 읽어 `http://127.0.0.1:<포트>` 주소를 만듭니다.
+3. 테스트의 `@DynamicPropertySource`가 이 주소를 MCP 클라이언트 설정에 등록합니다. 클라이언트는 등록된 주소의 `/mcp`로 연결합니다.
+
 저장소 루트에서 다음 명령을 실행합니다. API 키와 서버 수동 실행은 필요 없습니다.
 
 ```bash
@@ -80,6 +85,14 @@ sequenceDiagram
 | “미개봉 반품 기간만 알려줘.” | 모델에 다시 전달되는 도구 결과는 `getReturnPolicy`의 결과 하나입니다. |
 
 테스트는 MCP 서버에서 조회한 값과 답변을 각각 확인합니다.<br>
-이 실습의 실행 결과는 고정된 모델 선택으로 확인한 것이며, 실제 모델의 선택 정확도는 별도 평가 대상입니다.
+
+## 실제 OpenAI로 확인하기
+
+[Live 테스트](../../../labs/13-12-mcp-shopping-agent/src/test/java/com/example/ailearning/l13mcpshopping/lesson12_mcpagent/Lesson12McpShoppingAgentOpenAiLiveTest.java)는 같은 세 질문에서 실제 모델의 답변과 실행된 MCP 도구를 확인합니다.<br>
+테스트가 `shopping-mcp`를 로컬에서 시작하고, 채팅은 루트 `.env`의 `OPENAI_API_KEY`와 `OPENAI_MODEL`을 사용해 실제 OpenAI API를 호출합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-12-mcp-shopping-agent:test --tests '*Lesson12McpShoppingAgentOpenAiLiveTest'
+```
 
 [실습 실행 안내](../../../labs/13-12-mcp-shopping-agent/README.md) · [이전: 13-11 로컬 도구 Agent](11-model-led-shopping-agent.md) · [13단원 목차](../13-shopping-agent.md)

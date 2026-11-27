@@ -35,10 +35,6 @@ public class Lesson11ShoppingTools {
 
     @Tool(description = "반품 기간과 조건을 검색합니다. 질문에 개봉 상태가 있으면 검색어에도 포함하세요.")
     public List<PolicySearchResult> searchReturnPolicy(@ToolParam(description = "검색할 반품 질문") String question) {
-        return policySearch
-                .searchPolicies(question)
-                .stream()
-                .filter(policy -> policy.id().startsWith("return-"))
-                .toList();
+        return policySearch.searchReturnPolicies(question);
     }
 }

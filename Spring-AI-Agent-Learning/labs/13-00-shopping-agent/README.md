@@ -66,7 +66,14 @@ Live 클래스는 별도 선택하며, 루트 `.env`의 OpenAI 설정과 실제 
 | 모델 요청과 답변 | [Lesson11ShoppingAgent](src/main/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgent.java) |
 | 상품·배송비·반품 정책 조회 | [Lesson11ShoppingTools](src/main/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingTools.java) |
 | 로컬 검증 | [Lesson11ShoppingAgentLocalModelTest](src/test/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgentLocalModelTest.java) |
+| 실제 OpenAI 검증 | [Lesson11ShoppingAgentOpenAiLiveTest](src/test/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgentOpenAiLiveTest.java) |
 
 ```bash
 ./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson11ShoppingAgentLocalModelTest'
+```
+
+루트 `.env`를 설정한 뒤 Live를 별도로 실행하면 실제 채팅·임베딩 API를 사용합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson11ShoppingAgentOpenAiLiveTest'
 ```

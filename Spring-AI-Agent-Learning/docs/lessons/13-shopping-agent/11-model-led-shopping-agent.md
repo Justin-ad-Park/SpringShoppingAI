@@ -22,6 +22,9 @@ Spring AI는 도구의 이름·설명·입력 형식을 모델에 전달합니�
 상품 검색의 상한은 상품가에 적용됩니다.<br>
 고객의 예산에 맞는지를 판단할 때 모델은 배송비 조회 결과의 총액을 사용합니다.
 
+반품 도구는 검색 대상을 개봉·미개봉으로 좁히고 두 정책을 후보로 제공합니다.<br>
+모델은 고객이 알려준 개봉 상태에 맞는 문장과 출처를 선택합니다.
+
 ## 한 요청 안에서 필요한 도구 호출하기
 
 다음은 첫 질문 한 번을 처리하는 경로입니다. 상품을 찾고, 찾은 상품의 배송비를 알아본 뒤, 반품 정책을 조회하는 순서는 로컬 테스트에서 관찰하는 한 가지 예입니다.
@@ -97,8 +100,16 @@ String answer = shoppingAgent.answer("배송비 포함 3만원이고, 개봉하�
 | 미개봉 반품 기간만 질문 | 모델에 돌아간 도구 결과는 반품 정책 하나입니다. |
 
 테스트에서는 채팅·임베딩 응답을 고정하고, Spring AI의 도구 실행과 실제 실습용 카탈로그·벡터 저장소를 연결합니다.<br>
-테스트는 고정된 모델 응답을 바탕으로 다음 요청에 담긴 도구 결과와 사용자에게 반환된 답변을 각각 확인합니다.<br>
-실제 모델이 질문이나 도구를 적절히 선택하는지는 별도의 모델 평가에서 확인할 수 있습니다.
+테스트는 고정된 모델 응답을 바탕으로 다음 요청에 담긴 도구 결과와 사용자에게 반환된 답변을 각각 확인합니다.
+
+## 실제 OpenAI로 확인하기
+
+[Live 테스트](../../../labs/13-00-shopping-agent/src/test/java/com/example/ailearning/l13shopping/lesson11_agent/Lesson11ShoppingAgentOpenAiLiveTest.java)는 같은 세 질문에 대해 실제 모델의 답변과 실제로 실행된 Java 도구를 확인합니다.<br>
+루트 `.env`의 `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_EMBEDDING_MODEL`을 사용합니다. 채팅과 임베딩 API 사용량이 발생합니다.
+
+```bash
+./gradlew :Spring-AI-Agent-Learning:labs:13-00-shopping-agent:test --tests '*Lesson11ShoppingAgentOpenAiLiveTest'
+```
 
 MCP 도구 연결은 후속 실습으로 확장할 수 있습니다. [11단원 MCP 실습](../11-mcp-workflow-agent.md)
 

@@ -15,12 +15,26 @@ public class PolicySearch {
         store.add(PolicyLoader.loadDocuments());
     }
     public List<PolicySearchResult> searchPolicies(String question) {
+        return search(SearchRequest.builder()
+                .query(question)
+                .topK(2)
+                .similarityThreshold(0.65)
+                .build());
+    }
+
+    public List<PolicySearchResult> searchReturnPolicies(String question) {
+        // 반품 전용 도구에는 개봉·미개봉 정책을 모두 근거로 제공한다.
+        return search(SearchRequest.builder()
+                .query(question)
+                .filterExpression("source in ['policies.md#return-sealed', 'policies.md#return-opened']")
+                .similarityThreshold(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL)
+                .topK(2)
+                .build());
+    }
+
+    private List<PolicySearchResult> search(SearchRequest request) {
         return store
-                .similaritySearch(SearchRequest.builder()
-                        .query(question)
-                        .topK(2)
-                        .similarityThreshold(0.65)
-                        .build())
+                .similaritySearch(request)
                 .stream()
                 .map(PolicySearchResult::fromDocument)
                 .toList();

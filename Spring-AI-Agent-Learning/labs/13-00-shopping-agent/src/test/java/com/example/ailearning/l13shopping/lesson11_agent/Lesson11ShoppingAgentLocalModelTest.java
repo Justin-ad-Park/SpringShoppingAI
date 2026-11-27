@@ -119,7 +119,9 @@ class Lesson11ShoppingAgentLocalModelTest {
         var toolResults = toolResultsSentBeforeFinalAnswer();
         assertThat(toolResults).hasSize(1);
         assertThat(toolResults.getFirst().path("tool_call_id").asString()).isEqualTo("return-1");
-        assertThat(toolResults.getFirst().path("content").asString()).contains("return-sealed", "수령 후 7일");
+        String policyDocuments = toolResults.getFirst().path("content").asString();
+        assertThat(policyDocuments).contains("return-sealed", "return-opened", "수령 후 7일");
+        assertThat(policyDocuments).doesNotContain("policies.md#shipping");
         assertThat(answer).contains("수령 후 7일 이내", "policies.md#return-sealed");
     }
 

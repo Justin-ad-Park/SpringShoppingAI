@@ -83,7 +83,7 @@ API·설정 설명은 해당 버전의 실제 소스·서명과 공식 문서로
 | 13 보충 8 실행 제한 | `13-08-limited-agent` | `com.example.ailearning.l13limited.lesson08_limits.Lesson08LimitedShoppingAgentLocalModelTest` | `com.example.ailearning.l13limited.lesson08_limits.Lesson08LimitedShoppingAgentOpenAiLiveTest` |
 | 13 보충 5 계층형 의도 분류 | `13-05-intent-classification` | `com.example.ailearning.l13intent.lesson05_intent.Lesson05IntentClassificationLocalModelTest`<br>`com.example.ailearning.l13intent.domain.IntentCatalogUnitTest` | `com.example.ailearning.l13intent.lesson05_intent.Lesson05IntentClassificationOpenAiLiveTest` |
 | 13 보충 6 모델별 의도 분류 품질 비교 | `13-06-intent-quality-evaluation` | 없음 (Live 전용) | `com.example.ailearning.l13intenteval.lesson06_quality.Lesson06IntentModelQualityOpenAiLiveTest` |
-| 13 보충 12 쇼핑 MCP Agent | `13-12-mcp-shopping-agent` | `com.example.ailearning.l13mcpshopping.lesson12_mcpagent.Lesson12McpShoppingAgentLocalModelTest` | 없음 |
+| 13 보충 12 쇼핑 MCP Agent | `13-12-mcp-shopping-agent` | `com.example.ailearning.l13mcpshopping.lesson12_mcpagent.Lesson12McpShoppingAgentLocalModelTest` | `com.example.ailearning.l13mcpshopping.lesson12_mcpagent.Lesson12McpShoppingAgentOpenAiLiveTest` |
 | 14 Jev | `14-00-jev-decisions` | `com.example.ailearning.l14jev.lesson01_choice.Lesson01JevChoiceLocalModelTest`<br>`com.example.ailearning.l14jev.lesson02_score.Lesson02JevScoreLocalModelTest`<br>`com.example.ailearning.l14jev.lesson03_noul.Lesson03JevNoulLocalModelTest`<br>`com.example.ailearning.l14jev.JevInputValidationLocalModelTest`<br>`com.example.ailearning.l14jev.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l14jev.lesson01_choice.Lesson01JevChoiceLiveTest`<br>`com.example.ailearning.l14jev.lesson02_score.Lesson02JevScoreLiveTest`<br>`com.example.ailearning.l14jev.lesson03_noul.Lesson03JevNoulLiveTest` |
 | 15 Ollama 의사결정 | `15-00-ollama-decisions` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLocalModelTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLocalModelTest`<br>`com.example.ailearning.l15ollama.domain.SupportRoutingPolicyUnitTest` | `com.example.ailearning.l15ollama.lesson02_choice.Lesson02IntentClassificationLiveTest`<br>`com.example.ailearning.l15ollama.lesson03_yesno.Lesson03HumanSupportRequestLiveTest`<br>`com.example.ailearning.l15ollama.lesson04_score.Lesson04SupportPriorityLiveTest`<br>`com.example.ailearning.l15ollama.lesson05_multiple.Lesson05CustomerAssessmentLiveTest`<br>`com.example.ailearning.l15ollama.lesson06_fields.Lesson06OrderContextLiveTest` |
 
@@ -273,12 +273,12 @@ return client
 이 절은 현재 과정의 테스트 실행 정책과 명령의 기준입니다.
 
 - 로컬 통합 테스트는 `.env` 읽기를 끄고 더미 설정과 고정 응답 HTTP 서버를 사용합니다.<br>
-  11장만 MCP 서버를 테스트 안에서 실제 실행하며 OpenAI 응답은 고정합니다.<br>
+  11단원과 13-12의 로컬 테스트는 실제 MCP 서버를 로컬에서 실행하며 OpenAI 응답은 고정합니다.<br>
   로컬 검증 시 위 대응표의 `UnitTest`와 `LocalModelTest`를 함께 선택합니다.
-- Live는 별도 클래스에서 실제 제공 업체 API를 호출합니다.<br>
+- [검증 절차의 실행 기준](common/workflows/verify-materials.md#4-테스트와-빌드)에 해당할 때만 대상 Live 클래스를 `--tests`로 지정합니다.<br>
   태그·실행 허용 변수·별도 Live 태스크를 추가하지 않습니다.
-- 학습 모듈의 전체 `test`에는 Live도 포함됩니다.<br>
-  로컬 검증은 반드시 `--tests`로 대상을 선택하고, 전체 저장소의 `./gradlew test`를 기본 명령으로 사용하지 않습니다.
+- 필터 없는 `test`와 이를 포함하는 `check`, `build`에는 Live도 포함됩니다.<br>
+  로컬 검증은 `test --tests`로 단위·로컬 클래스만 선택합니다. 테스트 소스 컴파일과 실행 JAR 생성은 각각 `compileTestJava`와 `bootJar`로 수행합니다.
 
 아래 명령은 저장소 루트에서 실행하며 실제 외부 API를 호출하지 않습니다.
 
